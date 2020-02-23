@@ -1,0 +1,4 @@
+.idea
+Flask/.pytest_cache
+Flask/venv
+
