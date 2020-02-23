@@ -1,4 +1,5 @@
 .idea
-Flask/.pytest_cache
+**/.pytest_cach
+**/__pycache__
 Flask/venv
 
