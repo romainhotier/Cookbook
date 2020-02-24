@@ -14,7 +14,7 @@ class Validator(object):
 
     def is_body_valid(self, _id, data):
         self.is_step_valid(data)
-        self.is_index_valid(_id, data)
+        self.is_position_valid(_id, data)
 
     @staticmethod
     def is_step_valid(data):
@@ -24,9 +24,9 @@ class Validator(object):
         return True
 
     @staticmethod
-    def is_index_valid(_id, data):
-        if "index" in data.keys():
-            validator.is_int("index", data["index"])
-            validator.is_between_x_y("index", data["index"], 0, steps.get_steps_length(_id))
+    def is_position_valid(_id, data):
+        if "position" in data.keys():
+            validator.is_int("position", data["position"])
+            validator.is_between_x_y("position", data["position"], 0, steps.get_steps_length(_id))
             return True
         return True

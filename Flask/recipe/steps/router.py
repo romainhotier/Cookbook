@@ -6,8 +6,8 @@ import recipe.steps.model as steps_model
 
 #import recipe.recipe.validator.GetRecipe as validator_GetRecipe
 import recipe.steps.validator.PostRecipeStep as validator_PostRecipeStep
-#import recipe.recipe.validator.PutRecipe as validator_PutRecipe
-#import recipe.recipe.validator.DeleteRecipe as validator_DeleteRecipe
+# import recipe.recipe.validator.PutRecipe as validator_PutRecipe
+import recipe.steps.validator.DeleteRecipeStep as validator_DeleteRecipeStep
 import recipe.steps.factory.PostRecipeStep as factory_PostRecipeStep
 #import recipe.recipe.factory.PutRecipe as factory_PutRecipe
 
@@ -19,7 +19,7 @@ steps = steps_model.Steps()
 #get_recipe_validator = validator_GetRecipe.Validator()
 post_recipe_step_validator = validator_PostRecipeStep.Validator()
 #put_recipe_validator = validator_PutRecipe.Validator()
-#delete_recipe_validator = validator_DeleteRecipe.Validator()
+delete_recipe_step_validator = validator_DeleteRecipeStep.Validator()
 post_recipe_step_factory = factory_PostRecipeStep.Factory()
 #put_recipe_factory = factory_PutRecipe.Factory()
 
@@ -40,6 +40,19 @@ def post_recipe_step(_id):
     post_recipe_step_validator.is_body_valid(_id, body)
     inserted = steps.insert(_id, body)
     return factory.ServerResponse().format_response(data=inserted, api="recipe_steps", is_mongo=True, code=201)
+
+
+@recipe_steps_api.route('/recipe/<_id>/step/<_index>', methods=['DELETE'])
+def delete_recipe_step(_id, _index):
+    """ delete one step to a recipe """
+    delete_recipe_step_validator.is_object_id(_id)
+    delete_recipe_step_validator.is_index_valid(_id, _index)
+    print("aaaaaaaaaaaaaaaa")
+    print(_id)
+    print(_index)
+
+    deleted = steps.delete(_id, _index)
+    return factory.ServerResponse().format_response(data=None, api="recipe", is_mongo=True, code=204)
 
 
 

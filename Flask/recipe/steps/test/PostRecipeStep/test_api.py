@@ -15,7 +15,7 @@ class PostRecipeStep(unittest.TestCase):
     def setUp(self):
         recipe.clean()
 
-    def test_0_api_ok_without_index(self):
+    def test_0_api_ok_without_position(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step"
@@ -33,11 +33,11 @@ class PostRecipeStep(unittest.TestCase):
         self.assertEqual(response_body[api.rep_data], tc_recipe.get_data_stringify_object_id())
         tc_recipe.select_ok()
 
-    def test_0_api_ok_with_index(self):
+    def test_0_api_ok_with_position(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step",
-                api.param_index: 1
+                api.param_position: 1
                 }
         """ cal api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
@@ -260,7 +260,7 @@ class PostRecipeStep(unittest.TestCase):
         self.assertEqual(response_body[api.rep_detail], detail)
         tc_recipe.select_ok()
 
-    def test_4_index_without(self):
+    def test_4_position_without(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step"}
@@ -277,11 +277,11 @@ class PostRecipeStep(unittest.TestCase):
         self.assertEqual(response_body[api.rep_data], tc_recipe.get_data_stringify_object_id())
         tc_recipe.select_ok()
 
-    def test_4_index_none(self):
+    def test_4_position_none(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step",
-                api.param_index: None}
+                api.param_position: None}
         """ cal api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
@@ -291,15 +291,15 @@ class PostRecipeStep(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
         self.assertEqual(response_body[api.rep_code_status], 400)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_index, server.detail_must_be_an_integer, body[api.param_index])
+        detail = api.create_detail(api.param_position, server.detail_must_be_an_integer, body[api.param_position])
         self.assertEqual(response_body[api.rep_detail], detail)
         tc_recipe.select_ok()
 
-    def test_4_index_empty(self):
+    def test_4_position_empty(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step",
-                api.param_index: ""}
+                api.param_position: ""}
         """ cal api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
@@ -309,15 +309,15 @@ class PostRecipeStep(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
         self.assertEqual(response_body[api.rep_code_status], 400)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_index, server.detail_must_be_an_integer, body[api.param_index])
+        detail = api.create_detail(api.param_position, server.detail_must_be_an_integer, body[api.param_position])
         self.assertEqual(response_body[api.rep_detail], detail)
         tc_recipe.select_ok()
 
-    def test_4_index_string(self):
+    def test_4_position_string(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step",
-                api.param_index: "invalid"}
+                api.param_position: "invalid"}
         """ cal api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
@@ -327,15 +327,15 @@ class PostRecipeStep(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
         self.assertEqual(response_body[api.rep_code_status], 400)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_index, server.detail_must_be_an_integer, body[api.param_index])
+        detail = api.create_detail(api.param_position, server.detail_must_be_an_integer, body[api.param_position])
         self.assertEqual(response_body[api.rep_detail], detail)
         tc_recipe.select_ok()
 
-    def test_4_index_tab(self):
+    def test_4_position_tab(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step",
-                api.param_index: []}
+                api.param_position: []}
         """ cal api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
@@ -345,15 +345,15 @@ class PostRecipeStep(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
         self.assertEqual(response_body[api.rep_code_status], 400)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_index, server.detail_must_be_an_integer, body[api.param_index])
+        detail = api.create_detail(api.param_position, server.detail_must_be_an_integer, body[api.param_position])
         self.assertEqual(response_body[api.rep_detail], detail)
         tc_recipe.select_ok()
 
-    def test_4_index_object(self):
+    def test_4_position_object(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step",
-                api.param_index: {}}
+                api.param_position: {}}
         """ cal api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
@@ -363,15 +363,15 @@ class PostRecipeStep(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
         self.assertEqual(response_body[api.rep_code_status], 400)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_index, server.detail_must_be_an_integer, body[api.param_index])
+        detail = api.create_detail(api.param_position, server.detail_must_be_an_integer, body[api.param_position])
         self.assertEqual(response_body[api.rep_detail], detail)
         tc_recipe.select_ok()
 
-    def test_4_index_int_min_over(self):
+    def test_4_position_int_min_over(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step",
-                api.param_index: -1}
+                api.param_position: -1}
         """ cal api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
@@ -381,15 +381,16 @@ class PostRecipeStep(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
         self.assertEqual(response_body[api.rep_code_status], 400)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_index, server.detail_must_be_between + " 0 and 2", body[api.param_index])
+        detail = api.create_detail(api.param_position, server.detail_must_be_between + " 0 and 2",
+                                   body[api.param_position])
         self.assertEqual(response_body[api.rep_detail], detail)
         tc_recipe.select_ok()
 
-    def test_4_index_int_min(self):
+    def test_4_position_int_min(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step",
-                api.param_index: 0}
+                api.param_position: 0}
         """ cal api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
@@ -403,11 +404,11 @@ class PostRecipeStep(unittest.TestCase):
         self.assertEqual(response_body[api.rep_data], tc_recipe.get_data_stringify_object_id())
         tc_recipe.select_ok()
 
-    def test_4_index_int_max(self):
+    def test_4_position_int_max(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step",
-                api.param_index: 2}
+                api.param_position: 2}
         """ cal api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
@@ -421,11 +422,11 @@ class PostRecipeStep(unittest.TestCase):
         self.assertEqual(response_body[api.rep_data], tc_recipe.get_data_stringify_object_id())
         tc_recipe.select_ok()
 
-    def test_4_index_int_max_over(self):
+    def test_4_position_int_max_over(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step",
-                api.param_index: 3}
+                api.param_position: 3}
         """ cal api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
@@ -435,13 +436,15 @@ class PostRecipeStep(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
         self.assertEqual(response_body[api.rep_code_status], 400)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_index, server.detail_must_be_between + " 0 and 2", body[api.param_index])
+        detail = api.create_detail(api.param_position, server.detail_must_be_between + " 0 and 2",
+                                   body[api.param_position])
         self.assertEqual(response_body[api.rep_detail], detail)
         tc_recipe.select_ok()
 
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(PostRecipeStep())
+        #cls.setUp(PostRecipeStep())
+        pass
 
 
 if __name__ == '__main__':

@@ -40,8 +40,12 @@ class Validator(object):
         if isinstance(value, int):
             return True
         else:
-            detail = {"param": param, "msg": server.detail_must_be_an_integer, "value": value}
-            return abort(400, description=detail)
+            try:
+                int(value)
+                return True
+            except (ValueError, TypeError):
+                detail = {"param": param, "msg": server.detail_must_be_an_integer, "value": value}
+                return abort(400, description=detail)
 
     @staticmethod
     def is_array(param, value):

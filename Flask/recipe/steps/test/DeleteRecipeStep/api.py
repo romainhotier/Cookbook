@@ -3,14 +3,13 @@ import factory as factory
 server = factory.Server()
 
 
-class PostRecipeStep(object):
+class DeleteRecipeStep(object):
 
     def __init__(self):
         self.url1 = 'recipe'
         self.url2 = 'step'
         self.param_id = "_id"
-        self.param_step = "step"
-        self.param_position = "position"
+        self.param_index = "index"
         self.rep_code_status = 'codeStatus'
         self.rep_code_msg = 'codeMsg'
         self.rep_data = 'data'

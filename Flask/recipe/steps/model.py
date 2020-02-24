@@ -13,7 +13,7 @@ json_format = mongo_conf.JSONEncoder()
 class Steps(object):
 
     def __init__(self):
-        self.list_param = ["step", "index"]
+        self.list_param = ["step", "position"]
 
     @staticmethod
     def get_steps_length(_id):
@@ -28,21 +28,28 @@ class Steps(object):
     def insert(_id, data):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
-        """ get recipe steps """
-        result = db.find_one({"_id": ObjectId(_id)})
-        if result is not None:
-            steps = result["steps"]
-            """ new step to add """
-            new_step = data["step"]
-            if "index" in data.keys():
-                steps.insert(data["index"], new_step)
-            else:
-                steps.append(new_step)
-            db.update_one({"_id": ObjectId(_id)}, {'$set': {"steps": steps}})
+        new_step = data["step"]
+        if "position" in data.keys():
+            position = data["position"]
+            db.update_one({"_id": ObjectId(_id)}, {'$push': {"steps": {"$each": [new_step], "$position": position}}})
+        else:
+            db.update_one({"_id": ObjectId(_id)}, {'$push': {"steps": {"$each": [new_step]}}})
         """ return result """
         result = db.find({"_id": ObjectId(_id)})
         client.close()
         return result
+
+    @staticmethod
+    def delete(_id, index):
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        db.update_one({"_id": ObjectId(_id)}, {'$unset': {"steps.{}".format(index): 1}})
+        db.update_one({"_id": ObjectId(_id)}, {'$pull': {"steps": None}})
+        """ return result """
+        result = db.find({"_id": ObjectId(_id)})
+        client.close()
+        return result
+
 
 """
     @staticmethod
