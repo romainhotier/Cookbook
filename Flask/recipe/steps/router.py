@@ -47,10 +47,6 @@ def delete_recipe_step(_id, _index):
     """ delete one step to a recipe """
     delete_recipe_step_validator.is_object_id(_id)
     delete_recipe_step_validator.is_index_valid(_id, _index)
-    print("aaaaaaaaaaaaaaaa")
-    print(_id)
-    print(_index)
-
     deleted = steps.delete(_id, _index)
     return factory.ServerResponse().format_response(data=None, api="recipe", is_mongo=True, code=204)
 
