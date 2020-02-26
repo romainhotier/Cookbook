@@ -151,11 +151,12 @@ class PostRecipeStep(unittest.TestCase):
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ assert """
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 201)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        self.assertEqual(response_body[api.rep_data], [])
+        self.assertEqual(response_body[api.rep_code_status], 400)
+        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
+        detail = api.create_detail(api.param_id, server.detail_doesnot_exist, tc_id)
+        self.assertEqual(response_body[api.rep_detail], detail)
         tc_recipe.select_ok()
 
     def test_3_step_without(self):
@@ -443,8 +444,7 @@ class PostRecipeStep(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        #cls.setUp(PostRecipeStep())
-        pass
+        cls.setUp(PostRecipeStep())
 
 
 if __name__ == '__main__':

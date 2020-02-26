@@ -83,11 +83,12 @@ class GetRecipe(unittest.TestCase):
         response = requests.get(url, verify=False)
         response_body = response.json()
         """ assert """
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 404)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_404)
-        self.assertEqual(response_body[api.rep_detail], "")
+        self.assertEqual(response_body[api.rep_code_status], 400)
+        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
+        detail = api.create_detail(api.param_id, server.detail_doesnot_exist, tc_id)
+        self.assertEqual(response_body[api.rep_detail], detail)
 
     @classmethod
     def tearDownClass(cls):

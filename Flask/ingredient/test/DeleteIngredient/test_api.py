@@ -84,9 +84,14 @@ class DeleteIngredient(unittest.TestCase):
         """ cal api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.delete(url, verify=False)
+        response_body = response.json()
         """ assert """
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body[api.rep_code_status], 400)
+        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
+        detail = api.create_detail(api.param_id, server.detail_doesnot_exist, tc_id)
+        self.assertEqual(response_body[api.rep_detail], detail)
         tc_ingredient1.select_ok()
         tc_ingredient2.select_ok()
 

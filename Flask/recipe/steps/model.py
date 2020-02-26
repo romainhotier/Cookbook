@@ -1,8 +1,5 @@
 from pymongo import MongoClient
 from bson import ObjectId
-import copy
-import re
-import json
 
 import mongo_config as mongo_conf
 
@@ -21,8 +18,11 @@ class Steps(object):
         db = client[mongo.name][mongo.collection_recipe]
         result = db.find_one({"_id": ObjectId(_id)})
         client.close()
-        steps_length = len(result["steps"])
-        return steps_length
+        if result is None:
+            return 0
+        else:
+            steps_length = len(result["steps"])
+            return steps_length
 
     @staticmethod
     def insert(_id, data):
@@ -40,10 +40,10 @@ class Steps(object):
         return result
 
     @staticmethod
-    def delete(_id, index):
+    def delete(_id, position):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
-        db.update_one({"_id": ObjectId(_id)}, {'$unset': {"steps.{}".format(index): 1}})
+        db.update_one({"_id": ObjectId(_id)}, {'$unset': {"steps.{}".format(position): 1}})
         db.update_one({"_id": ObjectId(_id)}, {'$pull': {"steps": None}})
         """ return result """
         result = db.find({"_id": ObjectId(_id)})

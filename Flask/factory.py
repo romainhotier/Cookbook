@@ -27,6 +27,7 @@ class Server(object):
         self.detail_must_be_not_empty = "Must be not empty"
         self.detail_must_be_between = "Must be between"
         self.detail_already_exist = "Already exist"
+        self.detail_doesnot_exist = "Doesn't exist"
         self.detail_url_not_found = "The requested URL was not found on the server. " \
                                     "If you entered the URL manually please check your spelling and try again."
 

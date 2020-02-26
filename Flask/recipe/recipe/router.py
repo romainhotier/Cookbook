@@ -43,9 +43,8 @@ def get_all_recipe():
 @recipe_api.route('/recipe/<_id>', methods=['GET'])
 def get_recipe(_id):
     """ route get one recipe by his ObjectId """
-    get_recipe_validator.is_object_id(_id)
+    get_recipe_validator.is_object_id_valid(_id)
     result = recipe.select_one(_id)
-    get_recipe_validator.is_result_empty(result)
     return factory.ServerResponse().format_response(data=result, api="recipe", is_mongo=True, code=200)
 
 
@@ -62,7 +61,7 @@ def post_recipe():
 @recipe_api.route('/recipe/<_id>', methods=['PUT'])
 def put_recipe(_id):
     """ update one recipe """
-    put_recipe_validator.is_object_id(_id)
+    put_recipe_validator.is_object_id_valid(_id)
     body = put_recipe_factory.clean_body(request.json)
     put_recipe_validator.is_body_valid(body)
     put_recipe_validator.is_title_already_exist(body)
@@ -73,7 +72,7 @@ def put_recipe(_id):
 @recipe_api.route('/recipe/<_id>', methods=['DELETE'])
 def delete_recipe(_id):
     """ delete one recipe """
-    delete_recipe_validator.is_object_id(_id)
+    delete_recipe_validator.is_object_id_valid(_id)
     recipe.delete(_id)
     return factory.ServerResponse().format_response(data=None, api="recipe", is_mongo=True, code=204)
 

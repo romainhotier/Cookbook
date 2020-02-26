@@ -43,9 +43,8 @@ def get_all_ingredient():
 @ingredient_api.route('/ingredient/<_id>', methods=['GET'])
 def get_ingredient(_id):
     """ route get one ingredient by his ObjectId """
-    get_ingredient_validator.is_object_id(_id)
+    get_ingredient_validator.is_object_id_valid(_id)
     result = ingredient.select_one(_id)
-    get_ingredient_validator.is_result_empty(result)
     return factory.ServerResponse().format_response(data=result, api="ingredient", is_mongo=True, code=200)
 
 
@@ -63,7 +62,7 @@ def post_ingredient():
 @ingredient_api.route('/ingredient/<_id>', methods=['PUT'])
 def put_ingredient(_id):
     """ update one ingredient """
-    put_ingredient_validator.is_object_id(_id)
+    put_ingredient_validator.is_object_id_valid(_id)
     body = put_ingredient_factory.clean_body(request.json)
     put_ingredient_validator.is_body_valid(body)
     put_ingredient_validator.is_name_already_exist(body)
@@ -74,7 +73,7 @@ def put_ingredient(_id):
 @ingredient_api.route('/ingredient/<_id>', methods=['DELETE'])
 def delete_ingredient(_id):
     """ delete one ingredient """
-    delete_ingredient_validator.is_object_id(_id)
+    delete_ingredient_validator.is_object_id_valid(_id)
     ingredient.delete(_id)
     return factory.ServerResponse().format_response(data=None, api="ingredient", is_mongo=False, code=204)
 

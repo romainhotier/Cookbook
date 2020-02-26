@@ -35,20 +35,20 @@ steps route
 @recipe_steps_api.route('/recipe/<_id>/step', methods=['POST'])
 def post_recipe_step(_id):
     """ insert one step to a recipe """
-    post_recipe_step_validator.is_object_id(_id)
+    post_recipe_step_validator.is_object_id_valid(_id)
     body = post_recipe_step_factory.clean_body(request.json)
     post_recipe_step_validator.is_body_valid(_id, body)
     inserted = steps.insert(_id, body)
     return factory.ServerResponse().format_response(data=inserted, api="recipe_steps", is_mongo=True, code=201)
 
 
-@recipe_steps_api.route('/recipe/<_id>/step/<_index>', methods=['DELETE'])
-def delete_recipe_step(_id, _index):
+@recipe_steps_api.route('/recipe/<_id>/step/<_position>', methods=['DELETE'])
+def delete_recipe_step(_id, _position):
     """ delete one step to a recipe """
-    delete_recipe_step_validator.is_object_id(_id)
-    delete_recipe_step_validator.is_index_valid(_id, _index)
-    deleted = steps.delete(_id, _index)
-    return factory.ServerResponse().format_response(data=None, api="recipe", is_mongo=True, code=204)
+    delete_recipe_step_validator.is_object_id_valid(_id)
+    delete_recipe_step_validator.is_index_valid(_id, _position)
+    deleted = steps.delete(_id, _position)
+    return factory.ServerResponse().format_response(data=deleted, api="recipe_steps", is_mongo=True, code=200)
 
 
 

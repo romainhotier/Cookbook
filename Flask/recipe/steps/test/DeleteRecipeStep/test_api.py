@@ -25,12 +25,93 @@ class DeleteRecipeStep(unittest.TestCase):
         response_body = response.json()
         tc_recipe.custom({"steps": ["a"]})
         """ assert """
-        print(response_body)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
-        # self.assertEqual(response_body[api.rep_code_status], 201)
-        # self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        # self.assertEqual(response_body[api.rep_data], tc_recipe.get_data_stringify_object_id())
+        self.assertEqual(response_body[api.rep_code_status], 200)
+        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_ok)
+        self.assertEqual(response_body[api.rep_data], tc_recipe.get_data_stringify_object_id())
+        tc_recipe.select_ok()
+
+    def test_1_url_not_found_1(self):
+        tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
+        tc_id = tc_recipe.get_id()
+        tc_step_index = "1"
+        """ cal api """
+        url = server.main_url + "/" + api.url1 + "x/" + tc_id + "/" + api.url2 + "/" + tc_step_index
+        response = requests.delete(url, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.headers["Content-Type"], 'application/json', )
+        self.assertEqual(response_body[api.rep_code_status], 404)
+        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_404_url)
+        self.assertEqual(response_body[api.rep_detail], server.detail_url_not_found)
+        tc_recipe.select_ok()
+
+    def test_1_url_not_found_2(self):
+        tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
+        tc_id = tc_recipe.get_id()
+        tc_step_index = "1"
+        """ cal api """
+        url = server.main_url + "/" + api.url1 + "/" + tc_id + "/x" + api.url2 + "/" + tc_step_index
+        response = requests.delete(url, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.headers["Content-Type"], 'application/json', )
+        self.assertEqual(response_body[api.rep_code_status], 404)
+        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_404_url)
+        self.assertEqual(response_body[api.rep_detail], server.detail_url_not_found)
+        tc_recipe.select_ok()
+
+    def test_2_id_without(self):
+        tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
+        tc_id = ""
+        tc_step_index = "1"
+        """ cal api """
+        url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2 + "/" + tc_step_index
+        response = requests.delete(url, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.headers["Content-Type"], 'application/json', )
+        self.assertEqual(response_body[api.rep_code_status], 404)
+        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_404_url)
+        self.assertEqual(response_body[api.rep_detail], server.detail_url_not_found)
+        tc_recipe.select_ok()
+
+    def test_2_id_string(self):
+        tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
+        tc_id = "invalid"
+        tc_step_index = "1"
+        """ cal api """
+        url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2 + "/" + tc_step_index
+        response = requests.delete(url, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], 'application/json', )
+        self.assertEqual(response_body[api.rep_code_status], 400)
+        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
+        detail = api.create_detail(api.param_id, server.detail_must_be_an_object_id, tc_id)
+        self.assertEqual(response_body[api.rep_detail], detail)
+        tc_recipe.select_ok()
+
+    def test_2_id_object_id_invalid(self):
+        tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
+        tc_id = "aaaaaaaaaaaaaaaaaaaaaaaa"
+        tc_step_index = "1"
+        """ cal api """
+        url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2 + "/" + tc_step_index
+        response = requests.delete(url, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], 'application/json', )
+        self.assertEqual(response_body[api.rep_code_status], 400)
+        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
+        detail = api.create_detail(api.param_id, server.detail_doesnot_exist, tc_id)
+        self.assertEqual(response_body[api.rep_detail], detail)
         tc_recipe.select_ok()
 
     @classmethod

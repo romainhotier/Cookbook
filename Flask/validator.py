@@ -1,8 +1,13 @@
 from flask import abort
+from pymongo import MongoClient
+from bson import ObjectId
 
 import factory as factory
+import mongo_config as mongo_conf
+
 
 server = factory.Server()
+mongo = mongo_conf.MongoConnection()
 
 
 class Validator(object):
@@ -17,13 +22,17 @@ class Validator(object):
             return False
 
     @staticmethod
-    def is_result_mongo_empty(result_mongo):
-        """ check cursor mongo is not empty """
-        if result_mongo.count() == 0:
-            detail = ""
-            return abort(404, description=detail)
+    def is_object_id_in_collection(_id, collection):
+        """ check objectId is present in a collection """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][collection]
+        result = db.count_documents({"_id": ObjectId(_id)})
+        client.close()
+        if result == 0:
+            detail = {"param": "_id", "msg": server.detail_doesnot_exist, "value": _id}
+            return abort(400, description=detail)
         else:
-            return False
+            return True
 
     @staticmethod
     def is_string(param, value):
