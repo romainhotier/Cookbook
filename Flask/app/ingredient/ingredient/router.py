@@ -24,9 +24,21 @@ put_ingredient_factory = factory_PutIngredient.Factory()
 @ingredient_api.route('/ingredient', methods=['GET'])
 def get_all_ingredient():
     """
-    @api {get} /ingredient  Get all ingredient
-    @apiName GetAllIngredient
+    @api {get} /ingredient  GetAllIngredient
     @apiGroup Ingredient
+    @apiDescription Get all ingredients
+
+    @apiExample {json} Example usage:
+    GET http://127.0.0.1:5000/ingredient
+
+    @apiSuccessExample {json} Success response:
+    HTTPS 200 OK
+    {
+        'codeMsg': 'cookbook.ingredient.success.ok',
+        'codeStatus': 200,
+        'data': [{'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr'},
+                 {'_id': '5e583de9b0fcef0a922a7bc2', 'name': 'bqa_rhr'}]
+    }
     """
     result = ingredient.select_all()
     return factory.ServerResponse().format_response(data=result, api="ingredient", is_mongo=True, code=200)
@@ -35,11 +47,30 @@ def get_all_ingredient():
 @ingredient_api.route('/ingredient/<_id>', methods=['GET'])
 def get_ingredient(_id):
     """
-    @api {get} /ingredient/<_id>  Get one ingredient
-    @apiName GetIngredient
+    @api {get} /ingredient/<_id>  GetIngredient
     @apiGroup Ingredient
+    @apiDescription Get an ingredient by it's ObjectId
 
-    @apiParam {ObjectId} _id Ingredient ObjectId
+    @apiParam (Query param) {String} _id Ingredient's ObjectId
+
+    @apiExample {json} Example usage:
+    GET http://127.0.0.1:5000/ingredient/<_id>
+
+    @apiSuccessExample {json} Success response:
+    HTTPS 200 OK
+    {
+        'codeMsg': 'cookbook.ingredient.success.ok',
+        'codeStatus': 200,
+        'data': {'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr'}
+    }
+
+    @apiErrorExample {json} Error response:
+    HTTPS 400 OK
+    {
+        'codeMsg': 'cookbook.ingredient.error.bad_request',
+        'codeStatus': 400,
+        'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
+    }
     """
     get_ingredient_validator.is_object_id_valid(_id)
     result = ingredient.select_one(_id)
@@ -49,11 +80,33 @@ def get_ingredient(_id):
 @ingredient_api.route('/ingredient', methods=['POST'])
 def post_ingredient():
     """
-    @api {get} /ingredient  Post an ingredient
-    @apiName PostIngredient
+    @api {post} /ingredient  PostIngredient
     @apiGroup Ingredient
+    @apiDescription Create an ingredient
 
-    @apiParam {String} name Ingredient's name
+    @apiParam (Body param) {String} name Ingredient's name
+
+    @apiExample {json} Example usage:
+    POST http://127.0.0.1:5000/ingredient
+    {
+        'name': <name>
+    }
+
+    @apiSuccessExample {json} Success response:
+    HTTPS 201 OK
+    {
+        'codeMsg': 'cookbook.ingredient.success.created',
+        'codeStatus': 201,
+        'data': {'_id': '5e5840e63ed55d9119064649', 'name': 'qa_rhr_name'}
+    }
+
+    @apiErrorExample {json} Error response:
+    HTTPS 400 OK
+    {
+        'codeMsg': 'cookbook.ingredient.error.bad_request',
+        'codeStatus': 400,
+        'detail': {'msg': 'Is required', 'param': 'name'}}
+    }
     """
     body = post_ingredient_factory.clean_body(request.json)
     post_ingredient_validator.is_body_valid(body)
@@ -64,7 +117,36 @@ def post_ingredient():
 
 @ingredient_api.route('/ingredient/<_id>', methods=['PUT'])
 def put_ingredient(_id):
-    """ update one ingredient """
+    """
+    @api {put} /ingredient/<_id>  UpdateIngredient
+    @apiGroup Ingredient
+    @apiDescription Update an ingredient by it's ObjectId
+
+    @apiParam (Query param) {String} _id Ingredient's ObjectId
+    @apiParam (Body Param) {String} name Ingredient's name
+
+    @apiExample {json} Example usage:
+    PUT http://127.0.0.1:5000/ingredient/<_id>
+    {
+        'name': <name>
+    }
+
+    @apiSuccessExample {json} Success response:
+    HTTPS 200 OK
+    {
+        'codeMsg': 'cookbook.ingredient.success.ok',
+        'codeStatus': 20O,
+        'data': {'_id': '5e5840e63ed55d9119064649', 'name': 'qa_rhr_name_update'}
+    }
+
+    @apiErrorExample {json} Error response:
+    HTTPS 400 OK
+    {
+        'codeMsg': 'cookbook.ingredient.error.bad_request',
+        'codeStatus': 400,
+        'detail': {'msg': 'Is required', 'param': 'name'}}
+    }
+    """
     put_ingredient_validator.is_object_id_valid(_id)
     body = put_ingredient_factory.clean_body(request.json)
     put_ingredient_validator.is_body_valid(body)
@@ -75,19 +157,30 @@ def put_ingredient(_id):
 
 @ingredient_api.route('/ingredient/<_id>', methods=['DELETE'])
 def delete_ingredient(_id):
-    """ delete one ingredient """
+    """
+    @api {delete} /ingredient/<_id>  DeleteIngredient
+    @apiGroup Ingredient
+    @apiDescription Delete an ingredient by it's ObjectId
+
+    @apiParam (Query param) {String} _id Ingredient's ObjectId
+
+    @apiExample {json} Example usage:
+    DELETE http://127.0.0.1:5000/ingredient/<_id>
+
+    @apiSuccessExample {json} Success response:
+    HTTPS 204 OK
+
+    @apiErrorExample {json} Error response:
+    HTTPS 400 OK
+    {
+        'codeMsg': 'cookbook.ingredient.error.bad_request',
+        'codeStatus': 400,
+        'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
+    }
+    """
     delete_ingredient_validator.is_object_id_valid(_id)
     ingredient.delete(_id)
     return factory.ServerResponse().format_response(data=None, api="ingredient", is_mongo=False, code=204)
-
-
-""" 
-ingredient error handler 
-
-http 400
-http 404
-
-"""
 
 
 @ingredient_api.errorhandler(400)

@@ -8,7 +8,7 @@ pip install -r requirements.txt
 https://apidocjs.com/
 ```
 npm install apidoc -g
-apidoc -i Flask/ -o Flask/apidoc/
+apidoc -i Flask/ -o apidoc/
 ```
 
 # Launch #

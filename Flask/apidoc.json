@@ -1,6 +1,6 @@
 {
-  "name": "example",
-  "version": "0.1.0",
-  "description": "apiDoc basic cookbook",
-  "title": "title here"
+  "name": "Flask",
+  "version": "0.0.0",
+  "description": "apiDoc for Flask's Cookbook",
+  "title": "Flask doc"
 }
