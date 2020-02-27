@@ -1,9 +1,12 @@
 from flask import Flask, make_response
 
-import factory as factory
-import ingredient.router as ingredient
-import recipe.recipe.router as recipe
-import recipe.steps.router as recipe_steps
+
+
+
+import server.factory as factory
+import app.ingredient.ingredient.router as ingredient
+import app.recipe.recipe.router as recipe
+import app.recipe.steps.router as recipe_steps
 
 
 app = Flask(__name__)
@@ -11,6 +14,12 @@ app = Flask(__name__)
 app.register_blueprint(ingredient.ingredient_api)
 app.register_blueprint(recipe.recipe_api)
 app.register_blueprint(recipe_steps.recipe_steps_api)
+
+
+@app.route('/coucou', methods=['GET'])
+def get_all_ingredient():
+    """ route get all ingredient """
+    make_response("c'est bon", 200)
 
 
 @app.errorhandler(404)
@@ -28,4 +37,4 @@ def method_not_allowed(error):
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    app.run(host='0.0.0.0', port=5000, debug=True)
