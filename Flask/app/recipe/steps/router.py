@@ -19,7 +19,7 @@ post_recipe_step_factory = factory_PostRecipeStep.Factory()
 @recipe_steps_api.route('/recipe/<_id>/step', methods=['POST'])
 def post_recipe_step(_id):
     """
-    @api {post} /recipe/<_id>/step' PostRecipeStep
+    @api {post} /recipe/<_id>/step PostRecipeStep
     @apiGroup RecipeSteps
     @apiDescription Create a recipe's step. Can specify where to add the step
 
