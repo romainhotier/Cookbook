@@ -2,6 +2,7 @@ from flask import Flask, make_response
 
 import server.factory as factory
 import app.ingredient.ingredient.router as ingredient
+import app.ingredient.file.router as ingredient_files
 import app.recipe.recipe.router as recipe
 import app.recipe.steps.router as recipe_steps
 
@@ -9,6 +10,7 @@ import app.recipe.steps.router as recipe_steps
 app = Flask(__name__)
 
 app.register_blueprint(ingredient.ingredient_api)
+app.register_blueprint(ingredient_files.ingredient_file_api)
 app.register_blueprint(recipe.recipe_api)
 app.register_blueprint(recipe_steps.recipe_steps_api)
 
