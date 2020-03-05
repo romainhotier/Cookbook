@@ -18,7 +18,7 @@ class PostIngredient(unittest.TestCase):
     def test_0_api_ok(self):
         body = {api.param_name: "qa_rhr_name"}
         tc_ingredient = ingredient_model.IngredientTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -35,7 +35,7 @@ class PostIngredient(unittest.TestCase):
         body = {api.param_name: "qa_rhr_name",
                 "invalid": "invalid"}
         tc_ingredient = ingredient_model.IngredientTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -51,7 +51,7 @@ class PostIngredient(unittest.TestCase):
     def test_1_url_not_found(self):
         body = {api.param_name: "qa_rhr_name"}
         tc_ingredient = ingredient_model.IngredientTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "x"
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -66,7 +66,7 @@ class PostIngredient(unittest.TestCase):
     def test_2_name_without(self):
         body = {}
         tc_ingredient = ingredient_model.IngredientTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -82,7 +82,7 @@ class PostIngredient(unittest.TestCase):
     def test_2_name_none(self):
         body = {api.param_name: None}
         tc_ingredient = ingredient_model.IngredientTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -98,7 +98,7 @@ class PostIngredient(unittest.TestCase):
     def test_2_name_empty(self):
         body = {api.param_name: ""}
         tc_ingredient = ingredient_model.IngredientTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -114,7 +114,7 @@ class PostIngredient(unittest.TestCase):
     def test_2_name_string(self):
         body = {api.param_name: "qa_rhr_name"}
         tc_ingredient = ingredient_model.IngredientTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -130,7 +130,7 @@ class PostIngredient(unittest.TestCase):
     def test_3_name_already_exist(self):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({}).insert()
         body = {api.param_name: tc_ingredient.get_data_value("name")}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()

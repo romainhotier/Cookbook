@@ -20,3 +20,5 @@ class MongoConnection(object):
         self.name = 'cookbook'
         self.collection_ingredient = 'ingredient'
         self.collection_recipe = 'recipe'
+        self.collection_fs_files = 'fs.files'
+        self.collection_fs_chunks = 'fs.chunks'

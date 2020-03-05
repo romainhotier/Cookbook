@@ -1,21 +1,19 @@
-import copy
-
 from server import factory as factory
 
 server = factory.Server()
 
 
-class PostIngredientFile(object):
+class GetFile(object):
 
     def __init__(self):
-        self.url = 'ingredient'
-        self.param_name = "file"
+        self.url = 'file'
+        self.param_id = "_id"
         self.rep_code_status = 'codeStatus'
         self.rep_code_msg = 'codeMsg'
         self.rep_data = 'data'
         self.rep_detail = 'detail'
-        self.rep_code_msg_created = server.rep_code_msg_created.replace("xxx", "ingredient")
-        self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "ingredient")
+        self.rep_code_msg_created = server.rep_code_msg_created.replace("xxx", "file")
+        self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "file")
         self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
         self.detail_param = "param"
         self.detail_msg = "msg"
@@ -26,11 +24,3 @@ class PostIngredientFile(object):
         if value != "missing":
             detail[self.detail_value] = value
         return detail
-
-"""
-    @staticmethod
-    def format_response(data):
-        format_response = copy.deepcopy(data)
-        format_response.pop("_id")
-        return format_response
-"""

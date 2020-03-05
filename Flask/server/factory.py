@@ -24,8 +24,10 @@ class Server(object):
         self.detail_must_be_an_integer = "Must be an integer"
         self.detail_must_be_an_array = "Must be an array"
         self.detail_must_be_an_object = "Must be an object"
+        self.detail_must_be_a_boolean = "Must be a boolean"
         self.detail_must_be_not_empty = "Must be not empty"
         self.detail_must_be_between = "Must be between"
+        self.detail_must_be_in = "Must be in"
         self.detail_already_exist = "Already exist"
         self.detail_doesnot_exist = "Doesn't exist"
         self.detail_url_not_found = "The requested URL was not found on the server. " \
@@ -39,7 +41,7 @@ class ServerResponse(object):
                      "codeMsg": ""
                      }
 
-    def format_response(self, data, api, is_mongo, code):
+    def format_response(self, data, api, is_mongo, code, **optional):
         """ return an HTTPResponse """
         if code == 400:
             body = self.set_response_body(api=api, http_code=code, data=None, detail=data)
@@ -59,9 +61,14 @@ class ServerResponse(object):
             return response
         elif code in [200, 201]:
             if is_mongo:
-                body = self.set_response_body(api=api, http_code=code,
-                                              data=self.get_data_result_mongo(data), detail=None)
-                return make_response(body, code)
+                if "detail" in optional.keys():
+                    body = self.set_response_body(api=api, http_code=code,
+                                                  data=self.get_data_result_mongo(data), detail=optional["detail"])
+                    return make_response(body, code)
+                else:
+                    body = self.set_response_body(api=api, http_code=code,
+                                                  data=self.get_data_result_mongo(data), detail=None)
+                    return make_response(body, code)
             else:
                 body = self.set_response_body(api=api, http_code=code, data=self.get_data_object(data), detail=None)
                 return make_response(body, code)

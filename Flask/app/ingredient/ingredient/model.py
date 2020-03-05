@@ -13,7 +13,7 @@ json_format = mongo_conf.JSONEncoder()
 class Ingredient(object):
 
     def __init__(self):
-        self.list_param = ["name"]
+        self.list_param = ["name", "files"]
 
     @staticmethod
     def select_all():
@@ -70,7 +70,8 @@ class IngredientTest(object):
 
     def __init__(self):
         self.data = {"_id": "",
-                     "name": ""
+                     "name": "",
+                     "files": []
                      }
 
     def display(self):
@@ -101,13 +102,13 @@ class IngredientTest(object):
 
     def custom(self, data):
         for i, j in data.items():
-            if i in ["_id", "name"]:
+            if i in ["_id", "name", "files"]:
                 self.data[i] = j
         return self
 
     def custom_test(self, data):
         for i, j in data.items():
-            if i in ["_id", "name"]:
+            if i in ["_id", "name", "files"]:
                 self.data[i] = j
         self.data["name"] = self.data["name"] + "qa_rhr"
         return self

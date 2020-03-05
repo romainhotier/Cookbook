@@ -1,6 +1,7 @@
 from flask import abort
 from pymongo import MongoClient
 from bson import ObjectId
+from os import path
 
 from server import factory as factory, mongo_config as mongo_conf
 
@@ -73,6 +74,15 @@ class Validator(object):
             return abort(400, description=detail)
 
     @staticmethod
+    def is_boolean(param, value):
+        """ check param is boolean """
+        if isinstance(value, bool):
+            return True
+        else:
+            detail = {"param": param, "msg": server.detail_must_be_a_boolean, "value": value}
+            return abort(400, description=detail)
+
+    @staticmethod
     def is_string_non_empty(param, value):
         """ check param is string non empty"""
         if value.strip() == "":
@@ -98,4 +108,22 @@ class Validator(object):
         else:
             detail = {"param": param, "msg": server.detail_must_be_between + " {0} and {1}".format(x, y),
                       "value": value}
+            return abort(400, description=detail)
+
+    @staticmethod
+    def is_in(param, value, values):
+        """ check param is in values """
+        if param in values:
+            return True
+        else:
+            detail = {"param": param, "msg": server.detail_must_be_in + values, "value": value}
+            return abort(400, description=detail)
+
+    @staticmethod
+    def is_path_exist(param, value):
+        """ check if path exist """
+        if path.exists(value):
+            return True
+        else:
+            detail = {"param": param, "msg": server.detail_doesnot_exist, "value": value}
             return abort(400, description=detail)
