@@ -20,7 +20,7 @@ class PutIngredient(unittest.TestCase):
         tc_ingredient2 = ingredient_model.IngredientTest().custom_test({"name": "b"}).insert()
         tc_id = tc_ingredient1.get_id()
         body = {api.param_name: "qa_rhr_name_update"}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
@@ -40,7 +40,7 @@ class PutIngredient(unittest.TestCase):
         tc_id = tc_ingredient.get_id()
         body = {api.param_name: "qa_rhr_name_update",
                 "invalid": "invalid"}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
@@ -58,7 +58,7 @@ class PutIngredient(unittest.TestCase):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({"name": "a"}).insert()
         tc_id = tc_ingredient.get_id()
         body = {api.param_name: "qa_rhr_name_update"}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "x/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
@@ -73,7 +73,7 @@ class PutIngredient(unittest.TestCase):
     def test_2_id_without(self):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({"name": "a"}).insert()
         body = {api.param_name: "qa_rhr_name_update"}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "/"
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
@@ -89,7 +89,7 @@ class PutIngredient(unittest.TestCase):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({"name": "a"}).insert()
         tc_id = "invalid"
         body = {api.param_name: "qa_rhr_name_update"}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
@@ -106,7 +106,7 @@ class PutIngredient(unittest.TestCase):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({"name": "a"}).insert()
         tc_id = "aaaaaaaaaaaaaaaaaaaaaaaa"
         body = {api.param_name: "qa_rhr_name_update"}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
@@ -123,7 +123,7 @@ class PutIngredient(unittest.TestCase):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({"name": "a"}).insert()
         tc_id = tc_ingredient.get_id()
         body = {}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
@@ -140,7 +140,7 @@ class PutIngredient(unittest.TestCase):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({"name": "a"}).insert()
         tc_id = tc_ingredient.get_id()
         body = {api.param_name: None}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
@@ -157,7 +157,7 @@ class PutIngredient(unittest.TestCase):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({"name": "a"}).insert()
         tc_id = tc_ingredient.get_id()
         body = {api.param_name: ""}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
@@ -174,7 +174,7 @@ class PutIngredient(unittest.TestCase):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({"name": "a"}).insert()
         tc_id = tc_ingredient.get_id()
         body = {api.param_name: "qa_rhr_name_update"}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
@@ -193,7 +193,7 @@ class PutIngredient(unittest.TestCase):
         tc_ingredient2 = ingredient_model.IngredientTest().custom_test({"name": "b"}).insert()
         tc_id = tc_ingredient1.get_id()
         body = {api.param_name: tc_ingredient2.get_data_value("name")}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()

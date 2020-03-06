@@ -43,7 +43,7 @@ def get_all_recipe():
     }
     """
     result = recipe.select_all()
-    return factory.ServerResponse().format_response(data=result, api="recipe", is_mongo=True, code=200)
+    return factory.ServerResponse().format_response(data=result, api="recipe", code=200)
 
 
 @recipe_api.route('/recipe/<_id>', methods=['GET'])
@@ -77,7 +77,7 @@ def get_recipe(_id):
     """
     get_recipe_validator.is_object_id_valid(_id)
     result = recipe.select_one(_id)
-    return factory.ServerResponse().format_response(data=result, api="recipe", is_mongo=True, code=200)
+    return factory.ServerResponse().format_response(data=result, api="recipe", code=200)
 
 
 @recipe_api.route('/recipe', methods=['POST'])
@@ -124,7 +124,7 @@ def post_recipe():
     post_recipe_validator.is_body_valid(body)
     post_recipe_validator.is_title_already_exist(body)
     inserted = recipe.insert(body)
-    return factory.ServerResponse().format_response(data=inserted, api="recipe", is_mongo=True, code=201)
+    return factory.ServerResponse().format_response(data=inserted, api="recipe", code=201)
 
 
 @recipe_api.route('/recipe/<_id>', methods=['PUT'])
@@ -173,7 +173,7 @@ def put_recipe(_id):
     put_recipe_validator.is_body_valid(body)
     put_recipe_validator.is_title_already_exist(body)
     updated = recipe.update(_id, body)
-    return factory.ServerResponse().format_response(data=updated, api="recipe", is_mongo=True, code=200)
+    return factory.ServerResponse().format_response(data=updated, api="recipe", code=200)
 
 
 @recipe_api.route('/recipe/<_id>', methods=['DELETE'])
@@ -201,16 +201,16 @@ def delete_recipe(_id):
     """
     delete_recipe_validator.is_object_id_valid(_id)
     recipe.delete(_id)
-    return factory.ServerResponse().format_response(data=None, api="recipe", is_mongo=True, code=204)
+    return factory.ServerResponse().format_response(data=None, api="recipe", code=204)
 
 
 @recipe_api.errorhandler(400)
 def validator_failed(error):
     """" abort 400 """
-    return factory.ServerResponse().format_response(data=error.description, api="recipe", is_mongo=False, code=400)
+    return factory.ServerResponse().format_response(data=error.description, api="recipe", code=400)
 
 
 @recipe_api.errorhandler(404)
 def not_found(error):
     """" abort 404 """
-    return factory.ServerResponse().format_response(data=error.description, api="recipe", is_mongo=False, code=404)
+    return factory.ServerResponse().format_response(data=error.description, api="recipe", code=404)

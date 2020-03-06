@@ -22,15 +22,20 @@ class Recipe(object):
         db = client[mongo.name][mongo.collection_recipe]
         result = db.find({})
         client.close()
-        return result
+        results = []
+        for recipe in result:
+            results.append(recipe)
+        result_json = json_format.encode(results)
+        return result_json
 
     @staticmethod
     def select_one(_id):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
-        result = db.find({"_id": ObjectId(_id)})
+        result = db.find_one({"_id": ObjectId(_id)})
         client.close()
-        return result
+        result_json = json_format.encode(result)
+        return result_json
 
     @staticmethod
     def select_one_by_title(title):
@@ -45,18 +50,20 @@ class Recipe(object):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
         query = db.insert_one(data)
-        result = db.find({"_id": ObjectId(query.inserted_id)})
+        result = db.find_one({"_id": ObjectId(query.inserted_id)})
         client.close()
-        return result
+        result_json = json_format.encode(result)
+        return result_json
 
     @staticmethod
     def update(_id, data):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
         db.update_one({"_id": ObjectId(_id)}, {'$set': data})
-        result = db.find({"_id": ObjectId(_id)})
+        result = db.find_one({"_id": ObjectId(_id)})
         client.close()
-        return result
+        result_json = json_format.encode(result)
+        return result_json
 
     @staticmethod
     def delete(_id):

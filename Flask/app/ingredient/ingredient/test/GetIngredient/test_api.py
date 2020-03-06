@@ -19,7 +19,7 @@ class GetIngredient(unittest.TestCase):
         tc_ingredient1 = ingredient_model.IngredientTest().custom_test({"name": "a"}).insert()
         ingredient_model.IngredientTest().custom_test({"name": "b"}).insert()
         tc_id = tc_ingredient1.get_id()
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.get(url, verify=False)
         response_body = response.json()
@@ -34,7 +34,7 @@ class GetIngredient(unittest.TestCase):
         tc_ingredient1 = ingredient_model.IngredientTest().custom_test({"name": "a"}).insert()
         ingredient_model.IngredientTest().custom_test({"name": "b"}).insert()
         tc_id = tc_ingredient1.get_id()
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "x/" + tc_id
         response = requests.get(url, verify=False)
         response_body = response.json()
@@ -48,7 +48,7 @@ class GetIngredient(unittest.TestCase):
     def test_2_id_without(self):
         tc_ingredient1 = ingredient_model.IngredientTest().custom_test({"name": "a"}).insert()
         tc_ingredient2 = ingredient_model.IngredientTest().custom_test({"name": "b"}).insert()
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.get(url, verify=False)
         response_body = response.json()
@@ -63,7 +63,7 @@ class GetIngredient(unittest.TestCase):
     def test_2_id_string(self):
         ingredient_model.IngredientTest().custom_test({"name": "a"}).insert()
         tc_id = "invalid"
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.get(url, verify=False)
         response_body = response.json()
@@ -78,7 +78,7 @@ class GetIngredient(unittest.TestCase):
     def test_2_id_object_id_invalid(self):
         ingredient_model.IngredientTest().custom_test({"name": "a"}).insert()
         tc_id = "aaaaaaaaaaaaaaaaaaaaaaaa"
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.get(url, verify=False)
         response_body = response.json()

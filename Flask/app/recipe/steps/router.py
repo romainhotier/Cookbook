@@ -55,7 +55,7 @@ def post_recipe_step(_id):
     body = post_recipe_step_factory.clean_body(request.json)
     post_recipe_step_validator.is_body_valid(_id, body)
     inserted = steps.insert(_id, body)
-    return factory.ServerResponse().format_response(data=inserted, api="recipe_steps", is_mongo=True, code=201)
+    return factory.ServerResponse().format_response(data=inserted, api="recipe_steps", code=201)
 
 
 @recipe_steps_api.route('/recipe/<_id>/step/<position>', methods=['DELETE'])
@@ -90,18 +90,16 @@ def delete_recipe_step(_id, position):
     delete_recipe_step_validator.is_object_id_valid(_id)
     delete_recipe_step_validator.is_position_valid(_id, position)
     deleted = steps.delete(_id, position)
-    return factory.ServerResponse().format_response(data=deleted, api="recipe_steps", is_mongo=True, code=200)
+    return factory.ServerResponse().format_response(data=deleted, api="recipe_steps", code=200)
 
 
 @recipe_steps_api.errorhandler(400)
 def validator_failed(error):
     """" abort 400 """
-    return factory.ServerResponse().format_response(data=error.description, api="recipe_steps", is_mongo=False,
-                                                    code=400)
+    return factory.ServerResponse().format_response(data=error.description, api="recipe_steps", code=400)
 
 
 @recipe_steps_api.errorhandler(404)
 def not_found(error):
     """" abort 404 """
-    return factory.ServerResponse().format_response(data=error.description, api="recipe_steps", is_mongo=False,
-                                                    code=404)
+    return factory.ServerResponse().format_response(data=error.description, api="recipe_steps", code=404)

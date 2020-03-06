@@ -41,7 +41,7 @@ class ServerResponse(object):
                      "codeMsg": ""
                      }
 
-    def format_response(self, data, api, is_mongo, code, **optional):
+    def format_response(self, data, api, code, **optional):
         """ return an HTTPResponse """
         if code == 400:
             body = self.set_response_body(api=api, http_code=code, data=None, detail=data)
@@ -60,17 +60,11 @@ class ServerResponse(object):
             response.headers['Content-Type'] = 'application/json'
             return response
         elif code in [200, 201]:
-            if is_mongo:
-                if "detail" in optional.keys():
-                    body = self.set_response_body(api=api, http_code=code,
-                                                  data=self.get_data_result_mongo(data), detail=optional["detail"])
-                    return make_response(body, code)
-                else:
-                    body = self.set_response_body(api=api, http_code=code,
-                                                  data=self.get_data_result_mongo(data), detail=None)
-                    return make_response(body, code)
+            if "detail" in optional.keys():
+                body = self.set_response_body(api=api, http_code=code, data=data, detail=optional["detail"])
+                return make_response(body, code)
             else:
-                body = self.set_response_body(api=api, http_code=code, data=self.get_data_object(data), detail=None)
+                body = self.set_response_body(api=api, http_code=code, data=data, detail=None)
                 return make_response(body, code)
 
     def set_response_body(self, api, http_code, data, detail):
@@ -104,24 +98,3 @@ class ServerResponse(object):
                 self.body["data"] = data
         if detail is not None:
             self.body["detail"] = detail
-
-    @staticmethod
-    def get_data_result_mongo(result):
-        """ format data from a cursor mongodb """
-        if result.count() == 1:
-            """ case cursor has only one document """
-            data = result[0]
-            return json_format.encode(data)
-        else:
-            """ case cursor has only one document """
-            data = []
-            for r in result:
-                data.append(r)
-            return json_format.encode(data)
-
-    @staticmethod
-    def get_data_object(obj):
-        """ format data from a ingredient object"""
-        #data = obj.get_data_stringify_object_id()
-        #return data
-        return obj

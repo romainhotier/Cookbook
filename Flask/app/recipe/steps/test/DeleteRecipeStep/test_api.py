@@ -19,7 +19,7 @@ class DeleteRecipeStep(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         tc_position = "1"
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2 + "/" + tc_position
         response = requests.delete(url, verify=False)
         response_body = response.json()
@@ -36,7 +36,7 @@ class DeleteRecipeStep(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         tc_position = "1"
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "x/" + tc_id + "/" + api.url2 + "/" + tc_position
         response = requests.delete(url, verify=False)
         response_body = response.json()
@@ -52,7 +52,7 @@ class DeleteRecipeStep(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         tc_position = "1"
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/x" + api.url2 + "/" + tc_position
         response = requests.delete(url, verify=False)
         response_body = response.json()
@@ -68,7 +68,7 @@ class DeleteRecipeStep(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = ""
         tc_position = "1"
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2 + "/" + tc_position
         response = requests.delete(url, verify=False)
         response_body = response.json()
@@ -84,7 +84,7 @@ class DeleteRecipeStep(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = "invalid"
         tc_position = "1"
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2 + "/" + tc_position
         response = requests.delete(url, verify=False)
         response_body = response.json()
@@ -101,7 +101,7 @@ class DeleteRecipeStep(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = "aaaaaaaaaaaaaaaaaaaaaaaa"
         tc_position = "1"
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2 + "/" + tc_position
         response = requests.delete(url, verify=False)
         response_body = response.json()
@@ -118,7 +118,7 @@ class DeleteRecipeStep(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         tc_position = ""
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2 + "/" + tc_position
         response = requests.delete(url, verify=False)
         response_body = response.json()
@@ -134,7 +134,7 @@ class DeleteRecipeStep(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         tc_position = "invalid"
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2 + "/" + tc_position
         response = requests.delete(url, verify=False)
         response_body = response.json()
@@ -151,7 +151,7 @@ class DeleteRecipeStep(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         tc_position = "-1"
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2 + "/" + tc_position
         response = requests.delete(url, verify=False)
         response_body = response.json()
@@ -168,7 +168,7 @@ class DeleteRecipeStep(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         tc_position = "0"
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2 + "/" + tc_position
         response = requests.delete(url, verify=False)
         response_body = response.json()
@@ -185,7 +185,7 @@ class DeleteRecipeStep(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         tc_position = "1"
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2 + "/" + tc_position
         response = requests.delete(url, verify=False)
         response_body = response.json()
@@ -202,7 +202,7 @@ class DeleteRecipeStep(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         tc_position = "2"
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2 + "/" + tc_position
         response = requests.delete(url, verify=False)
         response_body = response.json()

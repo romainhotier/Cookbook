@@ -18,7 +18,7 @@ class PostRecipe(unittest.TestCase):
     def test_0_api_ok(self):
         body = {api.param_title: "qa_rhr_title"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -35,7 +35,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 "invalid": "invalid"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -51,7 +51,7 @@ class PostRecipe(unittest.TestCase):
     def test_1_url_not_found(self):
         body = {api.param_title: "qa_rhr_title"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "x"
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -66,7 +66,7 @@ class PostRecipe(unittest.TestCase):
     def test_2_title_without(self):
         body = {}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -82,7 +82,7 @@ class PostRecipe(unittest.TestCase):
     def test_2_title_none(self):
         body = {api.param_title: None}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -98,7 +98,7 @@ class PostRecipe(unittest.TestCase):
     def test_2_title_empty(self):
         body = {api.param_title: ""}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -114,7 +114,7 @@ class PostRecipe(unittest.TestCase):
     def test_2_title_string(self):
         body = {api.param_title: "qa_rhr_title"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -130,7 +130,7 @@ class PostRecipe(unittest.TestCase):
     def test_2_title_tab(self):
         body = {api.param_title: []}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -146,7 +146,7 @@ class PostRecipe(unittest.TestCase):
     def test_2_title_object(self):
         body = {api.param_title: {}}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -162,7 +162,7 @@ class PostRecipe(unittest.TestCase):
     def test_3_level_without(self):
         body = {api.param_title: "qa_rhr_title"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -179,7 +179,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_level: None}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -196,7 +196,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_level: ""}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -213,7 +213,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_level: "invalid"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -230,7 +230,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_level: []}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -247,7 +247,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_level: {}}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -263,7 +263,7 @@ class PostRecipe(unittest.TestCase):
     def test_4_resume_without(self):
         body = {api.param_title: "qa_rhr_title"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -280,7 +280,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_resume: None}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -297,7 +297,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_resume: ""}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -314,7 +314,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_resume: "invalid"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -331,7 +331,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_resume: []}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -348,7 +348,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_resume: {}}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -364,7 +364,7 @@ class PostRecipe(unittest.TestCase):
     def test_5_cooking_time_without(self):
         body = {api.param_title: "qa_rhr_title"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -381,7 +381,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_cooking_time: None}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -398,7 +398,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_cooking_time: ""}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -415,7 +415,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_cooking_time: "invalid"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -432,7 +432,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_cooking_time: []}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -449,7 +449,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_cooking_time: {}}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -465,7 +465,7 @@ class PostRecipe(unittest.TestCase):
     def test_6_preparation_time_without(self):
         body = {api.param_title: "qa_rhr_title"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -482,7 +482,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_preparation_time: None}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -500,7 +500,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_preparation_time: ""}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -517,7 +517,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_preparation_time: "invalid"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -534,7 +534,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_preparation_time: []}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -552,7 +552,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_preparation_time: {}}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -569,7 +569,7 @@ class PostRecipe(unittest.TestCase):
     def test_7_nb_people_without(self):
         body = {api.param_title: "qa_rhr_title"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -586,7 +586,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_nb_people: None}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -603,7 +603,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_nb_people: ""}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -620,7 +620,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_nb_people: "invalid"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -637,7 +637,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_nb_people: []}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -654,7 +654,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_nb_people: {}}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -670,7 +670,7 @@ class PostRecipe(unittest.TestCase):
     def test_8_note_without(self):
         body = {api.param_title: "qa_rhr_title"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -687,7 +687,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_note: None}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -704,7 +704,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_note: ""}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -721,7 +721,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_note: "invalid"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -738,7 +738,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_note: []}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -755,7 +755,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_note: {}}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -771,7 +771,7 @@ class PostRecipe(unittest.TestCase):
     def test_9_ingredients_without(self):
         body = {api.param_title: "qa_rhr_title"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -788,7 +788,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_ingredients: None}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -805,7 +805,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_ingredients: ""}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -822,7 +822,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_ingredients: "invalid"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -839,7 +839,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_ingredients: []}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -856,7 +856,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_ingredients: {}}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -872,7 +872,7 @@ class PostRecipe(unittest.TestCase):
     def test_10_steps_without(self):
         body = {api.param_title: "qa_rhr_title"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -889,7 +889,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_steps: None}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -906,7 +906,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_steps: ""}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -923,7 +923,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_steps: "invalid"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -940,7 +940,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_steps: []}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -957,7 +957,7 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_steps: {}}
         tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -973,7 +973,7 @@ class PostRecipe(unittest.TestCase):
     def test_11_title_already_exist(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({}).insert()
         body = {api.param_title: tc_recipe.get_data_value("title")}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()

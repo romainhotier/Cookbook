@@ -21,15 +21,20 @@ class Ingredient(object):
         db = client[mongo.name][mongo.collection_ingredient]
         result = db.find({})
         client.close()
-        return result
+        results = []
+        for ingredient in result:
+            results.append(ingredient)
+        result_json = json_format.encode(results)
+        return result_json
 
     @staticmethod
     def select_one(_id):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient]
-        result = db.find({"_id": ObjectId(_id)})
+        result = db.find_one({"_id": ObjectId(_id)})
         client.close()
-        return result
+        result_json = json_format.encode(result)
+        return result_json
 
     @staticmethod
     def select_one_by_name(name):
@@ -40,22 +45,41 @@ class Ingredient(object):
         return result
 
     @staticmethod
+    def select_one_with_enrichment(_id):
+        client = MongoClient(mongo.ip, mongo.port)
+        db_ingredient = client[mongo.name][mongo.collection_ingredient]
+        db_file = client[mongo.name][mongo.collection_fs_files]
+        """ get ingredient """
+        result = db_ingredient.find_one({"_id": ObjectId(_id)})
+        result["files"] = []
+        """ get files """
+        files = db_file.find({"metadata._id": ObjectId(_id)})
+        for file in files:
+            file_enrichment = {"_id": file["_id"], "is_main": file["metadata"]["is_main"]}
+            result["files"].append(file_enrichment)
+        client.close()
+        result_json = json_format.encode(result)
+        return result_json
+
+    @staticmethod
     def insert(data):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient]
         query = db.insert_one(data)
-        result = db.find({"_id": ObjectId(query.inserted_id)})
+        result = db.find_one({"_id": ObjectId(query.inserted_id)})
         client.close()
-        return result
+        result_json = json_format.encode(result)
+        return result_json
 
     @staticmethod
     def update(_id, data):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient]
         db.update_one({"_id": ObjectId(_id)}, {'$set': data})
-        result = db.find({"_id": ObjectId(_id)})
+        result = db.find_one({"_id": ObjectId(_id)})
         client.close()
-        return result
+        result_json = json_format.encode(result)
+        return result_json
 
     @staticmethod
     def delete(_id):
@@ -70,8 +94,7 @@ class IngredientTest(object):
 
     def __init__(self):
         self.data = {"_id": "",
-                     "name": "",
-                     "files": []
+                     "name": ""
                      }
 
     def display(self):
@@ -88,6 +111,19 @@ class IngredientTest(object):
         data_without_id.pop("_id")
         return data_without_id
 
+    def get_data_with_enrichment(self):
+        client = MongoClient(mongo.ip, mongo.port)
+        db_file = client[mongo.name][mongo.collection_fs_files]
+        data = copy.deepcopy(self.get_data())
+        data["files"] = []
+        """ get files """
+        files = db_file.find({"metadata._id": ObjectId(self.get_id())})
+        for file in files:
+            file_enrichment = {"_id": file["_id"], "is_main": file["metadata"]["is_main"]}
+            data['files'].append(file_enrichment)
+        client.close()
+        return json.loads(json_format.encode(data))
+
     def get_id(self):
         return str(self.data["_id"])
 
@@ -102,13 +138,13 @@ class IngredientTest(object):
 
     def custom(self, data):
         for i, j in data.items():
-            if i in ["_id", "name", "files"]:
+            if i in ["_id", "name"]:
                 self.data[i] = j
         return self
 
     def custom_test(self, data):
         for i, j in data.items():
-            if i in ["_id", "name", "files"]:
+            if i in ["_id", "name"]:
                 self.data[i] = j
         self.data["name"] = self.data["name"] + "qa_rhr"
         return self

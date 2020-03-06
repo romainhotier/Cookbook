@@ -18,7 +18,7 @@ class GetAllIngredient(unittest.TestCase):
     def test_0_api_ok(self):
         tc_ingredient1 = ingredient_model.IngredientTest().custom_test({"name": "a"}).insert()
         tc_ingredient2 = ingredient_model.IngredientTest().custom_test({"name": "b"}).insert()
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.get(url, verify=False)
         response_body = response.json()
@@ -33,7 +33,7 @@ class GetAllIngredient(unittest.TestCase):
     def test_1_url_not_found(self):
         ingredient_model.IngredientTest().custom_test({"name": "a"}).insert()
         ingredient_model.IngredientTest().custom_test({"name": "b"}).insert()
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "x"
         response = requests.get(url, verify=False)
         response_body = response.json()

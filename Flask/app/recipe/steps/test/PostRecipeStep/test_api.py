@@ -20,7 +20,7 @@ class PostRecipeStep(unittest.TestCase):
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step"
                 }
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -39,7 +39,7 @@ class PostRecipeStep(unittest.TestCase):
         body = {api.param_step: "new_step",
                 api.param_position: 1
                 }
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -58,7 +58,7 @@ class PostRecipeStep(unittest.TestCase):
         body = {api.param_step: "new_step",
                 "invalid": "invalid"
                 }
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -77,7 +77,7 @@ class PostRecipeStep(unittest.TestCase):
         body = {api.param_step: "new_step",
                 "invalid": "invalid"
                 }
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "x/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -95,7 +95,7 @@ class PostRecipeStep(unittest.TestCase):
         body = {api.param_step: "new_step",
                 "invalid": "invalid"
                 }
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/x" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -112,7 +112,7 @@ class PostRecipeStep(unittest.TestCase):
         tc_id = ""
         body = {api.param_step: "new_step"
                 }
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -128,7 +128,7 @@ class PostRecipeStep(unittest.TestCase):
         tc_id = "invalid"
         body = {api.param_step: "new_step"
                 }
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -146,7 +146,7 @@ class PostRecipeStep(unittest.TestCase):
         tc_id = "aaaaaaaaaaaaaaaaaaaaaaaa"
         body = {api.param_step: "new_step"
                 }
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -163,7 +163,7 @@ class PostRecipeStep(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         body = {}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -180,7 +180,7 @@ class PostRecipeStep(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_step: None}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -197,7 +197,7 @@ class PostRecipeStep(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_step: ""}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -214,7 +214,7 @@ class PostRecipeStep(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "invalid"}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -231,7 +231,7 @@ class PostRecipeStep(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_step: []}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -248,7 +248,7 @@ class PostRecipeStep(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_step: {}}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -265,7 +265,7 @@ class PostRecipeStep(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step"}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -283,7 +283,7 @@ class PostRecipeStep(unittest.TestCase):
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step",
                 api.param_position: None}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -301,7 +301,7 @@ class PostRecipeStep(unittest.TestCase):
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step",
                 api.param_position: ""}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -319,7 +319,7 @@ class PostRecipeStep(unittest.TestCase):
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step",
                 api.param_position: "invalid"}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -337,7 +337,7 @@ class PostRecipeStep(unittest.TestCase):
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step",
                 api.param_position: []}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -355,7 +355,7 @@ class PostRecipeStep(unittest.TestCase):
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step",
                 api.param_position: {}}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -373,7 +373,7 @@ class PostRecipeStep(unittest.TestCase):
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step",
                 api.param_position: -1}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -392,7 +392,7 @@ class PostRecipeStep(unittest.TestCase):
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step",
                 api.param_position: 0}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -410,7 +410,7 @@ class PostRecipeStep(unittest.TestCase):
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step",
                 api.param_position: 2}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
@@ -428,7 +428,7 @@ class PostRecipeStep(unittest.TestCase):
         tc_id = tc_recipe.get_id()
         body = {api.param_step: "new_step",
                 api.param_position: 3}
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()

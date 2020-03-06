@@ -2,8 +2,8 @@ import unittest
 import requests
 
 from server import factory as factory
-import app.file.model as file_model
-import app.file.test.GetFile.api as api
+import app.file.all.model as file_model
+import app.file.all.test.GetFile.api as api
 
 server = factory.Server()
 api = api.GetFile()

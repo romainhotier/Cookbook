@@ -19,7 +19,7 @@ class DeleteRecipe(unittest.TestCase):
         tc_recipe1 = recipe_model.RecipeTest().custom_test({}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom_test({}).insert()
         tc_id = tc_recipe1.get_id()
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.delete(url, verify=False)
         """ assert """
@@ -32,7 +32,7 @@ class DeleteRecipe(unittest.TestCase):
         tc_recipe1 = recipe_model.RecipeTest().custom_test({}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom_test({}).insert()
         tc_id = tc_recipe1.get_id()
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "x/" + tc_id
         response = requests.delete(url, verify=False)
         response_body = response.json()
@@ -48,7 +48,7 @@ class DeleteRecipe(unittest.TestCase):
     def test_2_id_without(self):
         tc_recipe1 = recipe_model.RecipeTest().custom_test({}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom_test({}).insert()
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "/"
         response = requests.delete(url, verify=False)
         response_body = response.json()
@@ -63,7 +63,7 @@ class DeleteRecipe(unittest.TestCase):
         tc_recipe1 = recipe_model.RecipeTest().custom_test({}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom_test({}).insert()
         tc_id = "invalid"
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.delete(url, verify=False)
         response_body = response.json()
@@ -81,7 +81,7 @@ class DeleteRecipe(unittest.TestCase):
         tc_recipe1 = recipe_model.RecipeTest().custom_test({}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom_test({}).insert()
         tc_id = "aaaaaaaaaaaaaaaaaaaaaaaa"
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.delete(url, verify=False)
         response_body = response.json()

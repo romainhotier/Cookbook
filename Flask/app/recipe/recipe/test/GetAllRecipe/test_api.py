@@ -18,7 +18,7 @@ class GetAllRecipe(unittest.TestCase):
     def test_0_api_ok(self):
         tc_recipe1 = recipe_model.RecipeTest().custom_test({"title": "a"}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom_test({"title": "b"}).insert()
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.get(url, verify=False)
         response_body = response.json()
@@ -33,7 +33,7 @@ class GetAllRecipe(unittest.TestCase):
     def test_1_url_not_found(self):
         recipe_model.RecipeTest().custom_test({"title": "a"}).insert()
         recipe_model.RecipeTest().custom_test({"title": "b"}).insert()
-        """ cal api """
+        """ call api """
         url = server.main_url + "/" + api.url + "x"
         response = requests.get(url, verify=False)
         response_body = response.json()
