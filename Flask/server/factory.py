@@ -45,29 +45,40 @@ class ServerResponse(object):
         """ return an HTTPResponse """
         if code == 400:
             body = self.set_response_body(api=api, http_code=code, data=None, detail=data)
-            return make_response(body, code)
+            response = make_response(body, code)
+            response.headers['Access-Control-Allow-Origin'] = '*'
+            return response
         elif code == 404:
             body = self.set_response_body(api=api, http_code=code, data=None, detail=data)
-            return make_response(body, code)
+            response = make_response(body, code)
+            response.headers['Access-Control-Allow-Origin'] = '*'
+            return response
         elif code == 405:
             body = self.set_response_body(api=api, http_code=code, data=None, detail=data)
-            return make_response(body, code)
+            response = make_response(body, code)
+            response.headers['Access-Control-Allow-Origin'] = '*'
+            return response
         elif code == 500:
             body = self.set_response_body(api=api, http_code=code, data=None, detail=data)
-            return make_response(body, code)
+            response = make_response(body, code)
+            response.headers['Access-Control-Allow-Origin'] = '*'
+            return response
         elif code == 204:
             response = make_response("", code)
             response.headers['Content-Type'] = 'application/json'
+            response.headers['Access-Control-Allow-Origin'] = '*'
             return response
         elif code in [200, 201]:
             if "detail" in optional.keys():
                 body = self.set_response_body(api=api, http_code=code, data=data, detail=optional["detail"])
-                return make_response(body, code)
+                response = make_response(body, code)
+                response.headers['Access-Control-Allow-Origin'] = '*'
+                return response
             else:
                 body = self.set_response_body(api=api, http_code=code, data=data, detail=None)
-                rep = make_response(body, code)
-                rep.headers['Access-Control-Allow-Origin'] = '*'
-                return rep
+                response = make_response(body, code)
+                response.headers['Access-Control-Allow-Origin'] = '*'
+                return response
 
     def set_response_body(self, api, http_code, data, detail):
         self.body["codeStatus"] = http_code

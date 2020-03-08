@@ -53,6 +53,14 @@ class File(object):
         client.close()
         return result
 
+    @staticmethod
+    def delete(_id):
+        client = MongoClient(mongo.ip, mongo.port)
+        fs = gridfs.GridFS(client[mongo.name])
+        f = fs.delete(ObjectId(_id))
+        client.close()
+        return f
+
 
 class FileTest(object):
 

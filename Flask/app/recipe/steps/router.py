@@ -36,7 +36,7 @@ def post_recipe_step(_id):
     }
 
     @apiSuccessExample {json} Success response:
-    HTTPS 201 OK
+    HTTPS 201
     {
         'codeMsg': 'cookbook.recipe_steps.success.created',
         'codeStatus': 201,
@@ -44,7 +44,7 @@ def post_recipe_step(_id):
                  'note': '', 'preparation_time': '', 'resume': '', 'steps': ['a', 'new_step', 'b'], 'title': 'qa_rhr'}}
 
     @apiErrorExample {json} Error response:
-    HTTPS 400 OK
+    HTTPS 400
     {
         'codeMsg': 'cookbook.recipe_steps.error.bad_request',
         'codeStatus': 400,
@@ -72,7 +72,7 @@ def delete_recipe_step(_id, position):
     DELETE http://127.0.0.1:5000/recipe/<_id>/step/<position>
 
     @apiSuccessExample {json} Success response:
-    HTTPS 200 OK
+    HTTPS 200
     {
         'codeMsg': 'cookbook.recipe_steps.success.ok',
         'codeStatus': 200,
@@ -80,7 +80,7 @@ def delete_recipe_step(_id, position):
                  'note': '', 'preparation_time': '', 'resume': '', 'steps': ['a'], 'title': 'qa_rhr'}}
 
     @apiErrorExample {json} Error response:
-    HTTPS 400 OK
+    HTTPS 400
     {
         'codeMsg': 'cookbook.recipe_steps.error.bad_request',
         'codeStatus': 400,

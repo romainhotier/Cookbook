@@ -32,7 +32,7 @@ def get_all_ingredient():
     GET http://127.0.0.1:5000/ingredient
 
     @apiSuccessExample {json} Success response:
-    HTTPS 200 OK
+    HTTPS 200
     {
         'codeMsg': 'cookbook.ingredient.success.ok',
         'codeStatus': 200,
@@ -57,7 +57,7 @@ def get_ingredient(_id):
     GET http://127.0.0.1:5000/ingredient/<_id>
 
     @apiSuccessExample {json} Success response:
-    HTTPS 200 OK
+    HTTPS 200
     {
         'codeMsg': 'cookbook.ingredient.success.ok',
         'codeStatus': 200,
@@ -65,7 +65,7 @@ def get_ingredient(_id):
     }
 
     @apiErrorExample {json} Error response:
-    HTTPS 400 OK
+    HTTPS 400
     {
         'codeMsg': 'cookbook.ingredient.error.bad_request',
         'codeStatus': 400,
@@ -93,7 +93,7 @@ def post_ingredient():
     }
 
     @apiSuccessExample {json} Success response:
-    HTTPS 201 OK
+    HTTPS 201
     {
         'codeMsg': 'cookbook.ingredient.success.created',
         'codeStatus': 201,
@@ -101,7 +101,7 @@ def post_ingredient():
     }
 
     @apiErrorExample {json} Error response:
-    HTTPS 400 OK
+    HTTPS 400
     {
         'codeMsg': 'cookbook.ingredient.error.bad_request',
         'codeStatus': 400,
@@ -132,7 +132,7 @@ def put_ingredient(_id):
     }
 
     @apiSuccessExample {json} Success response:
-    HTTPS 200 OK
+    HTTPS 200
     {
         'codeMsg': 'cookbook.ingredient.success.ok',
         'codeStatus': 20O,
@@ -140,7 +140,7 @@ def put_ingredient(_id):
     }
 
     @apiErrorExample {json} Error response:
-    HTTPS 400 OK
+    HTTPS 400
     {
         'codeMsg': 'cookbook.ingredient.error.bad_request',
         'codeStatus': 400,
@@ -168,10 +168,10 @@ def delete_ingredient(_id):
     DELETE http://127.0.0.1:5000/ingredient/<_id>
 
     @apiSuccessExample {json} Success response:
-    HTTPS 204 OK
+    HTTPS 204
 
     @apiErrorExample {json} Error response:
-    HTTPS 400 OK
+    HTTPS 400
     {
         'codeMsg': 'cookbook.ingredient.error.bad_request',
         'codeStatus': 400,

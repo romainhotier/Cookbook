@@ -30,7 +30,7 @@ def post_ingredient_file(_id):
     GET http://127.0.0.1:5000/file/ingredient/<_id>
 
     @apiSuccessExample {json} Success response:
-    HTTPS 201 OK
+    HTTPS 201
     {
         'codeMsg': 'cookbook.file_ingredient.success.created',
         'codeStatus': 201,
@@ -41,7 +41,7 @@ def post_ingredient_file(_id):
     }
 
     @apiErrorExample {json} Error response:
-    HTTPS 400 OK
+    HTTPS 400
     {
         'codeMsg': 'cookbook.file_ingredient.error.bad_request',
         'codeStatus': 400,
