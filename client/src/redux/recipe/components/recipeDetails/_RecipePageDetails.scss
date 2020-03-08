@@ -1,0 +1,34 @@
+@import '../../../../styles/core.scss';
+
+.contentRecipe {
+  &_ingredientList, &_stepOfMake, &_note {
+    position: relative;
+    background-color: $white;
+    padding: 10px 15px;
+  }
+  &_stepOfMake {
+    .title {
+      text-align: center;
+    }
+    .metadata {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid $grey-500;
+      border-top: 1px solid $grey-500;
+      margin: 20px 0;
+      padding: 15px 5px;
+    }
+  }
+  .edit-link {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: $black;
+  }
+  .pictureOfRecipe {
+    margin-bottom: 20px;
+    img {
+      width: 100%;
+    }
+  }
+}
