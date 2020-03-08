@@ -65,7 +65,9 @@ class ServerResponse(object):
                 return make_response(body, code)
             else:
                 body = self.set_response_body(api=api, http_code=code, data=data, detail=None)
-                return make_response(body, code)
+                rep = make_response(body, code)
+                rep.headers['Access-Control-Allow-Origin'] = '*'
+                return rep
 
     def set_response_body(self, api, http_code, data, detail):
         self.body["codeStatus"] = http_code
