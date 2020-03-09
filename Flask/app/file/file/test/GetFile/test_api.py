@@ -2,8 +2,8 @@ import unittest
 import requests
 
 from server import factory as factory
-import app.file.all.model as file_model
-import app.file.all.test.GetFile.api as api
+import app.file.file.model as file_model
+import app.file.file.test.GetFile.api as api
 
 server = factory.Server()
 api = api.GetFile()
@@ -35,7 +35,7 @@ class GetFile(unittest.TestCase):
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 404)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_404_url)
         self.assertEqual(response_body[api.rep_detail], server.detail_url_not_found)
@@ -49,7 +49,7 @@ class GetFile(unittest.TestCase):
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 404)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_404_url)
         self.assertEqual(response_body[api.rep_detail], server.detail_url_not_found)
@@ -63,7 +63,7 @@ class GetFile(unittest.TestCase):
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 400)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
         detail = api.create_detail(api.param_id, server.detail_must_be_an_object_id, tc_id)
@@ -78,7 +78,7 @@ class GetFile(unittest.TestCase):
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 400)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
         detail = api.create_detail(api.param_id, server.detail_doesnot_exist, tc_id)

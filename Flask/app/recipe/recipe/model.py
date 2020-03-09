@@ -13,8 +13,7 @@ json_format = mongo_conf.JSONEncoder()
 class Recipe(object):
 
     def __init__(self):
-        self.list_param = ["title", "level", "resume", "cooking_time", "preparation_time", "nb_people", "note",
-                           "ingredients", "steps"]
+        self.list_param = ["title", "level", "resume", "cooking_time", "preparation_time", "nb_people", "note", "steps"]
 
     @staticmethod
     def select_all():
@@ -44,6 +43,23 @@ class Recipe(object):
         result = db.find({"title": title})
         client.close()
         return result
+
+    @staticmethod
+    def select_one_with_enrichment(_id):
+        client = MongoClient(mongo.ip, mongo.port)
+        db_recipe = client[mongo.name][mongo.collection_recipe]
+        db_file = client[mongo.name][mongo.collection_fs_files]
+        """ get recipe """
+        result = db_recipe.find_one({"_id": ObjectId(_id)})
+        result["files"] = []
+        """ get files """
+        files = db_file.find({"metadata._id": ObjectId(_id)})
+        for file in files:
+            file_enrichment = {"_id": file["_id"], "is_main": file["metadata"]["is_main"]}
+            result["files"].append(file_enrichment)
+        client.close()
+        result_json = json_format.encode(result)
+        return result_json
 
     @staticmethod
     def insert(data):
@@ -85,7 +101,6 @@ class RecipeTest(object):
                      "preparation_time": "",
                      "nb_people": "",
                      "note": "",
-                     "ingredients": {},
                      "steps": []
                      }
 

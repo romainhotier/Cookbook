@@ -7,9 +7,9 @@ mongo = mongo_conf.MongoConnection()
 class Validator(object):
 
     @staticmethod
-    def is_object_id_valid(_id):
+    def is_object_id_valid(_id, kind):
         validator.is_object_id(_id)
-        validator.is_object_id_in_collection(_id, mongo.collection_ingredient)
+        validator.is_object_id_in_collection(_id, mongo.select_collection(kind=kind))
         return True
 
     def is_body_valid(self, data):

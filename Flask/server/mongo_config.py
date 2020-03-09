@@ -22,3 +22,9 @@ class MongoConnection(object):
         self.collection_recipe = 'recipe'
         self.collection_fs_files = 'fs.files'
         self.collection_fs_chunks = 'fs.chunks'
+
+    def select_collection(self, kind):
+        if kind == "ingredient":
+            return self.collection_ingredient
+        elif kind == "recipe":
+            return self.collection_recipe

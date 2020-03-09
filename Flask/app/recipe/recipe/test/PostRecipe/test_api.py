@@ -768,7 +768,7 @@ class PostRecipe(unittest.TestCase):
         self.assertEqual(response_body[api.rep_detail], detail)
         tc_recipe.select_nok_by_title()
 
-    def test_9_ingredients_without(self):
+    def test_9_steps_without(self):
         body = {api.param_title: "qa_rhr_title"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
         """ call api """
@@ -784,108 +784,7 @@ class PostRecipe(unittest.TestCase):
         """ refacto """
         tc_recipe.custom({"_id": response_body[api.rep_data]["_id"]}).select_ok()
 
-    def test_9_ingredients_none(self):
-        body = {api.param_title: "qa_rhr_title",
-                api.param_ingredients: None}
-        tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ call api """
-        url = server.main_url + "/" + api.url
-        response = requests.post(url, json=body, verify=False)
-        response_body = response.json()
-        """ assert """
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_ingredients, server.detail_must_be_an_object, body[api.param_ingredients])
-        self.assertEqual(response_body[api.rep_detail], detail)
-        tc_recipe.select_nok_by_title()
-
-    def test_9_ingredients_empty(self):
-        body = {api.param_title: "qa_rhr_title",
-                api.param_ingredients: ""}
-        tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ call api """
-        url = server.main_url + "/" + api.url
-        response = requests.post(url, json=body, verify=False)
-        response_body = response.json()
-        """ assert """
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_ingredients, server.detail_must_be_an_object, body[api.param_ingredients])
-        self.assertEqual(response_body[api.rep_detail], detail)
-        tc_recipe.select_nok_by_title()
-
-    def test_9_ingredients_string(self):
-        body = {api.param_title: "qa_rhr_title",
-                api.param_ingredients: "invalid"}
-        tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ call api """
-        url = server.main_url + "/" + api.url
-        response = requests.post(url, json=body, verify=False)
-        response_body = response.json()
-        """ assert """
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_ingredients, server.detail_must_be_an_object, body[api.param_ingredients])
-        self.assertEqual(response_body[api.rep_detail], detail)
-        tc_recipe.select_nok_by_title()
-
-    def test_9_ingredients_tab(self):
-        body = {api.param_title: "qa_rhr_title",
-                api.param_ingredients: []}
-        tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ call api """
-        url = server.main_url + "/" + api.url
-        response = requests.post(url, json=body, verify=False)
-        response_body = response.json()
-        """ assert """
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_ingredients, server.detail_must_be_an_object, body[api.param_ingredients])
-        self.assertEqual(response_body[api.rep_detail], detail)
-        tc_recipe.select_nok_by_title()
-
-    def test_9_ingredients_object(self):
-        body = {api.param_title: "qa_rhr_title",
-                api.param_ingredients: {}}
-        tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ call api """
-        url = server.main_url + "/" + api.url
-        response = requests.post(url, json=body, verify=False)
-        response_body = response.json()
-        """ assert """
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 201)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        self.assertEqual(api.format_response(response_body[api.rep_data]), tc_recipe.get_data_without_id())
-        """ refacto """
-        tc_recipe.custom({"_id": response_body[api.rep_data]["_id"]}).select_ok()
-
-    def test_10_steps_without(self):
-        body = {api.param_title: "qa_rhr_title"}
-        tc_recipe = recipe_model.RecipeTest().custom(body)
-        """ call api """
-        url = server.main_url + "/" + api.url
-        response = requests.post(url, json=body, verify=False)
-        response_body = response.json()
-        """ assert """
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 201)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        self.assertEqual(api.format_response(response_body[api.rep_data]), tc_recipe.get_data_without_id())
-        """ refacto """
-        tc_recipe.custom({"_id": response_body[api.rep_data]["_id"]}).select_ok()
-
-    def test_10_steps_none(self):
+    def test_9_steps_none(self):
         body = {api.param_title: "qa_rhr_title",
                 api.param_steps: None}
         tc_recipe = recipe_model.RecipeTest().custom(body)
@@ -902,7 +801,7 @@ class PostRecipe(unittest.TestCase):
         self.assertEqual(response_body[api.rep_detail], detail)
         tc_recipe.select_nok_by_title()
 
-    def test_10_steps_empty(self):
+    def test_9_steps_empty(self):
         body = {api.param_title: "qa_rhr_title",
                 api.param_steps: ""}
         tc_recipe = recipe_model.RecipeTest().custom(body)
@@ -919,7 +818,7 @@ class PostRecipe(unittest.TestCase):
         self.assertEqual(response_body[api.rep_detail], detail)
         tc_recipe.select_nok_by_title()
 
-    def test_10_steps_string(self):
+    def test_9_steps_string(self):
         body = {api.param_title: "qa_rhr_title",
                 api.param_steps: "invalid"}
         tc_recipe = recipe_model.RecipeTest().custom(body)
@@ -936,7 +835,7 @@ class PostRecipe(unittest.TestCase):
         self.assertEqual(response_body[api.rep_detail], detail)
         tc_recipe.select_nok_by_title()
 
-    def test_10_steps_tab(self):
+    def test_9_steps_tab(self):
         body = {api.param_title: "qa_rhr_title",
                 api.param_steps: []}
         tc_recipe = recipe_model.RecipeTest().custom(body)
@@ -953,7 +852,7 @@ class PostRecipe(unittest.TestCase):
         """ refacto """
         tc_recipe.custom({"_id": response_body[api.rep_data]["_id"]}).select_ok()
 
-    def test_10_steps_object(self):
+    def test_9_steps_object(self):
         body = {api.param_title: "qa_rhr_title",
                 api.param_steps: {}}
         tc_recipe = recipe_model.RecipeTest().custom(body)

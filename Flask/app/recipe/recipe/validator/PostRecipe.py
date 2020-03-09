@@ -19,7 +19,6 @@ class Validator(object):
         self.is_preparation_time_valid(data)
         self.is_nb_people_valid(data)
         self.is_note_valid(data)
-        self.is_ingredients_valid(data)
         self.is_steps_valid(data)
 
     @staticmethod
@@ -75,13 +74,6 @@ class Validator(object):
     def is_steps_valid(data):
         if "steps" in data.keys():
             validator.is_array("steps", data["steps"])
-            return True
-        return True
-
-    @staticmethod
-    def is_ingredients_valid(data):
-        if "ingredients" in data.keys():
-            validator.is_object("ingredients", data["ingredients"])
             return True
         return True
 

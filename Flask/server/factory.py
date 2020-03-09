@@ -41,46 +41,33 @@ class ServerResponse(object):
                      "codeMsg": ""
                      }
 
-    def format_response(self, data, api, code, **optional):
+    def return_response(self, data, api, code, **optional):
         """ return an HTTPResponse """
-        if code == 400:
-            body = self.set_response_body(api=api, http_code=code, data=None, detail=data)
-            response = make_response(body, code)
-            response.headers['Access-Control-Allow-Origin'] = '*'
-            return response
-        elif code == 404:
-            body = self.set_response_body(api=api, http_code=code, data=None, detail=data)
-            response = make_response(body, code)
-            response.headers['Access-Control-Allow-Origin'] = '*'
-            return response
-        elif code == 405:
-            body = self.set_response_body(api=api, http_code=code, data=None, detail=data)
-            response = make_response(body, code)
-            response.headers['Access-Control-Allow-Origin'] = '*'
-            return response
-        elif code == 500:
-            body = self.set_response_body(api=api, http_code=code, data=None, detail=data)
-            response = make_response(body, code)
-            response.headers['Access-Control-Allow-Origin'] = '*'
-            return response
+        if code in [400, 404, 405, 500]:
+            body = self.format_body(api=api, http_code=code, data=None, detail=data)
+            return self.format_response(body=body, code=code)
         elif code == 204:
-            response = make_response("", code)
-            response.headers['Content-Type'] = 'application/json'
-            response.headers['Access-Control-Allow-Origin'] = '*'
-            return response
+            body = ""
+            return self.format_response(body=body, code=code)
         elif code in [200, 201]:
             if "detail" in optional.keys():
-                body = self.set_response_body(api=api, http_code=code, data=data, detail=optional["detail"])
-                response = make_response(body, code)
-                response.headers['Access-Control-Allow-Origin'] = '*'
-                return response
+                body = self.format_body(api=api, http_code=code, data=data, detail=optional["detail"])
+                return self.format_response(body=body, code=code)
             else:
-                body = self.set_response_body(api=api, http_code=code, data=data, detail=None)
-                response = make_response(body, code)
-                response.headers['Access-Control-Allow-Origin'] = '*'
-                return response
+                body = self.format_body(api=api, http_code=code, data=data, detail=None)
+                return self.format_response(body=body, code=code)
 
-    def set_response_body(self, api, http_code, data, detail):
+    def format_response(self, body, code):
+        response = self.format_headers(make_response(body, code))
+        return response
+
+    @staticmethod
+    def format_headers(response):
+        response.headers['Content-Type'] = 'application/json'
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        return response
+
+    def format_body(self, api, http_code, data, detail):
         self.body["codeStatus"] = http_code
         self.body["codeMsg"] = self.select_code_msg(http_code=http_code, api_category=api)
         self.add_data_detail(data, detail)

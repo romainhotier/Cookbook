@@ -116,7 +116,7 @@ class FileTest(object):
 
     def select_ok(self):
         client = MongoClient(mongo.ip, mongo.port)
-        """ check all file exist """
+        """ check file file exist """
         self.select_if_present_by_id()
         """ check metadata and more """
         db = client[mongo.name][mongo.collection_fs_files]
@@ -134,7 +134,7 @@ class FileTest(object):
     def clean():
         rgx = re.compile('.*qa_rhr.*', re.IGNORECASE)
         client = MongoClient(mongo.ip, mongo.port)
-        """ select all testfile """
+        """ select file testfile """
         db = client[mongo.name][mongo.collection_fs_files]
         files_to_clean = db.find({"filename": rgx})
         """ delete gridfs """

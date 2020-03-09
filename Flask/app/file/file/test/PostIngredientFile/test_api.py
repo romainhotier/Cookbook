@@ -1,19 +1,22 @@
 import unittest
 import requests
 import pathlib
+import platform
 
 from server import factory as factory
 import app.ingredient.ingredient.model as ingredient_model
-import app.file.all.model as file_model
-import app.file.ingredient.test.PostIngredientFile.api as api
+import app.file.file.model as file_model
+import app.file.file.test.PostIngredientFile.api as api
 
 server = factory.Server()
 api = api.PostIngredientFile()
 ingredient = ingredient_model.IngredientTest()
 file = file_model.FileTest()
 
-
-default_path = str(pathlib.Path().absolute()).replace("ingredient/test/PostIngredientFile", "_file_exemple/text.txt")
+if platform.system() == "Windows":
+    default_path = str(pathlib.Path().absolute()).replace("file\\test\\PostIngredientFile", "_file_exemple\\text.txt")
+elif platform.system() == "Linux":
+    default_path = str(pathlib.Path().absolute()).replace("file/test/PostIngredientFile", "_file_exemple/text.txt")
 
 
 class PostIngredientFile(unittest.TestCase):

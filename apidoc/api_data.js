@@ -1,6 +1,248 @@
 define({ "api": [
   {
     "type": "delete",
+    "url": "/file/<_id>",
+    "title": "DeleteFile",
+    "group": "File",
+    "description": "<p>Delete a file by it's ObjectId</p>",
+    "parameter": {
+      "fields": {
+        "Query param": [
+          {
+            "group": "Query param",
+            "type": "String",
+            "optional": false,
+            "field": "_id",
+            "description": "<p>Ingredient's ObjectId</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "DELETE http://127.0.0.1:5000/file/<_id>",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTPS 204",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "examples": [
+        {
+          "title": "Error response:",
+          "content": "HTTPS 400\n{\n    'codeMsg': 'cookbook.file.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "../Flask/app/file/file/router.py",
+    "groupTitle": "File",
+    "name": "DeleteFile_id"
+  },
+  {
+    "type": "get",
+    "url": "/file/<_id>",
+    "title": "DownloadFile",
+    "group": "File",
+    "description": "<p>Get a file by it's ObjectId</p>",
+    "parameter": {
+      "fields": {
+        "Query param": [
+          {
+            "group": "Query param",
+            "type": "String",
+            "optional": false,
+            "field": "_id",
+            "description": "<p>File's ObjectId</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "GET http://127.0.0.1:5000/file/<_id>",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTPS 200\n�PNG\n\u001anp������Q*D�l1<��j3",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "examples": [
+        {
+          "title": "Error response:",
+          "content": "HTTPS 400\n{\n    'codeMsg': 'cookbook.file.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "../Flask/app/file/file/router.py",
+    "groupTitle": "File",
+    "name": "GetFile_id"
+  },
+  {
+    "type": "post",
+    "url": "/file/ingredient/<_id>",
+    "title": "PostIngredientFile",
+    "group": "File",
+    "description": "<p>Add a file to an ingredient</p>",
+    "parameter": {
+      "fields": {
+        "Query param": [
+          {
+            "group": "Query param",
+            "type": "String",
+            "optional": false,
+            "field": "_id",
+            "description": "<p>Ingredient's ObjectId</p>"
+          }
+        ],
+        "Body Param": [
+          {
+            "group": "Body Param",
+            "type": "String",
+            "optional": false,
+            "field": "path",
+            "description": "<p>File's path</p>"
+          },
+          {
+            "group": "Body Param",
+            "type": "String",
+            "optional": false,
+            "field": "filename",
+            "description": "<p>File's filename</p>"
+          },
+          {
+            "group": "Body Param",
+            "type": "Boolean",
+            "optional": true,
+            "field": "is_main",
+            "description": "<p>If True, file will be the main file. False by default</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "GET http://127.0.0.1:5000/file/ingredient/<_id>",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTPS 201\n{\n    'codeMsg': 'cookbook.file.success.created',\n    'codeStatus': 201,\n    'data': {'_id': '5e622b52c49ed1e0df987e55',\n            'name': 'qa_rhr',\n            'files': [{'_id': '5e622b537aa097121df95d93', 'is_main': False}]},\n    'detail': 'added file ObjectId: 5e622b537aa097121df95d93'\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "examples": [
+        {
+          "title": "Error response:",
+          "content": "HTTPS 400\n{\n    'codeMsg': 'cookbook.file.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "../Flask/app/file/file/router.py",
+    "groupTitle": "File",
+    "name": "PostFileIngredient_id"
+  },
+  {
+    "type": "post",
+    "url": "/file/recipe/<_id>",
+    "title": "PostRecipeFile",
+    "group": "File",
+    "description": "<p>Add a file to a recipe</p>",
+    "parameter": {
+      "fields": {
+        "Query param": [
+          {
+            "group": "Query param",
+            "type": "String",
+            "optional": false,
+            "field": "_id",
+            "description": "<p>Recipe's ObjectId</p>"
+          }
+        ],
+        "Body Param": [
+          {
+            "group": "Body Param",
+            "type": "String",
+            "optional": false,
+            "field": "path",
+            "description": "<p>File's path</p>"
+          },
+          {
+            "group": "Body Param",
+            "type": "String",
+            "optional": false,
+            "field": "filename",
+            "description": "<p>File's filename</p>"
+          },
+          {
+            "group": "Body Param",
+            "type": "Boolean",
+            "optional": true,
+            "field": "is_main",
+            "description": "<p>If True, file will be the main file. False by default</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "GET http://127.0.0.1:5000/file/recipe/<_id>",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTPS 201\n{\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "examples": [
+        {
+          "title": "Error response:",
+          "content": "HTTPS 400\n{\n    'codeMsg': 'cookbook.file.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "../Flask/app/file/file/router.py",
+    "groupTitle": "File",
+    "name": "PostFileRecipe_id"
+  },
+  {
+    "type": "delete",
     "url": "/ingredient/<_id>",
     "title": "DeleteIngredient",
     "group": "Ingredient",
@@ -29,7 +271,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 204 OK",
+          "content": "HTTPS 204",
           "type": "json"
         }
       ]
@@ -38,13 +280,13 @@ define({ "api": [
       "examples": [
         {
           "title": "Error response:",
-          "content": "HTTPS 400 OK\n{\n    'codeMsg': 'cookbook.ingredient.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}\n}",
+          "content": "HTTPS 400\n{\n    'codeMsg': 'cookbook.ingredient.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}\n}",
           "type": "json"
         }
       ]
     },
     "version": "0.0.0",
-    "filename": "Flask/app/ingredient/ingredient/router.py",
+    "filename": "../Flask/app/ingredient/ingredient/router.py",
     "groupTitle": "Ingredient",
     "name": "DeleteIngredient_id"
   },
@@ -53,7 +295,7 @@ define({ "api": [
     "url": "/ingredient",
     "title": "GetAllIngredient",
     "group": "Ingredient",
-    "description": "<p>Get all ingredients</p>",
+    "description": "<p>Get file ingredients</p>",
     "examples": [
       {
         "title": "Example usage:",
@@ -65,13 +307,13 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 200 OK\n{\n    'codeMsg': 'cookbook.ingredient.success.ok',\n    'codeStatus': 200,\n    'data': [{'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr'},\n             {'_id': '5e583de9b0fcef0a922a7bc2', 'name': 'bqa_rhr'}]\n}",
+          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.ingredient.success.ok',\n    'codeStatus': 200,\n    'data': [{'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr'},\n             {'_id': '5e583de9b0fcef0a922a7bc2', 'name': 'bqa_rhr'}]\n}",
           "type": "json"
         }
       ]
     },
     "version": "0.0.0",
-    "filename": "Flask/app/ingredient/ingredient/router.py",
+    "filename": "../Flask/app/ingredient/ingredient/router.py",
     "groupTitle": "Ingredient",
     "name": "GetIngredient"
   },
@@ -105,7 +347,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 200 OK\n{\n    'codeMsg': 'cookbook.ingredient.success.ok',\n    'codeStatus': 200,\n    'data': {'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr'}\n}",
+          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.ingredient.success.ok',\n    'codeStatus': 200,\n    'data': {'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr'}\n}",
           "type": "json"
         }
       ]
@@ -114,13 +356,13 @@ define({ "api": [
       "examples": [
         {
           "title": "Error response:",
-          "content": "HTTPS 400 OK\n{\n    'codeMsg': 'cookbook.ingredient.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}\n}",
+          "content": "HTTPS 400\n{\n    'codeMsg': 'cookbook.ingredient.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}\n}",
           "type": "json"
         }
       ]
     },
     "version": "0.0.0",
-    "filename": "Flask/app/ingredient/ingredient/router.py",
+    "filename": "../Flask/app/ingredient/ingredient/router.py",
     "groupTitle": "Ingredient",
     "name": "GetIngredient_id"
   },
@@ -154,7 +396,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 201 OK\n{\n    'codeMsg': 'cookbook.ingredient.success.created',\n    'codeStatus': 201,\n    'data': {'_id': '5e5840e63ed55d9119064649', 'name': 'qa_rhr_name'}\n}",
+          "content": "HTTPS 201\n{\n    'codeMsg': 'cookbook.ingredient.success.created',\n    'codeStatus': 201,\n    'data': {'_id': '5e5840e63ed55d9119064649', 'name': 'qa_rhr_name'}\n}",
           "type": "json"
         }
       ]
@@ -163,13 +405,13 @@ define({ "api": [
       "examples": [
         {
           "title": "Error response:",
-          "content": "HTTPS 400 OK\n{\n    'codeMsg': 'cookbook.ingredient.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Is required', 'param': 'name'}}\n}",
+          "content": "HTTPS 400\n{\n    'codeMsg': 'cookbook.ingredient.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Is required', 'param': 'name'}}\n}",
           "type": "json"
         }
       ]
     },
     "version": "0.0.0",
-    "filename": "Flask/app/ingredient/ingredient/router.py",
+    "filename": "../Flask/app/ingredient/ingredient/router.py",
     "groupTitle": "Ingredient",
     "name": "PostIngredient"
   },
@@ -212,7 +454,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 200 OK\n{\n    'codeMsg': 'cookbook.ingredient.success.ok',\n    'codeStatus': 20O,\n    'data': {'_id': '5e5840e63ed55d9119064649', 'name': 'qa_rhr_name_update'}\n}",
+          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.ingredient.success.ok',\n    'codeStatus': 20O,\n    'data': {'_id': '5e5840e63ed55d9119064649', 'name': 'qa_rhr_name_update'}\n}",
           "type": "json"
         }
       ]
@@ -221,13 +463,13 @@ define({ "api": [
       "examples": [
         {
           "title": "Error response:",
-          "content": "HTTPS 400 OK\n{\n    'codeMsg': 'cookbook.ingredient.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Is required', 'param': 'name'}}\n}",
+          "content": "HTTPS 400\n{\n    'codeMsg': 'cookbook.ingredient.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Is required', 'param': 'name'}}\n}",
           "type": "json"
         }
       ]
     },
     "version": "0.0.0",
-    "filename": "Flask/app/ingredient/ingredient/router.py",
+    "filename": "../Flask/app/ingredient/ingredient/router.py",
     "groupTitle": "Ingredient",
     "name": "PutIngredient_id"
   },
@@ -261,7 +503,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 204 OK",
+          "content": "HTTPS 204",
           "type": "json"
         }
       ]
@@ -270,13 +512,13 @@ define({ "api": [
       "examples": [
         {
           "title": "Error response:",
-          "content": "HTTPS 400 OK\n{\n    'codeMsg': 'cookbook.recipe.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}\n}",
+          "content": "HTTPS 400\n{\n    'codeMsg': 'cookbook.recipe.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}\n}",
           "type": "json"
         }
       ]
     },
     "version": "0.0.0",
-    "filename": "Flask/app/recipe/recipe/router.py",
+    "filename": "../Flask/app/recipe/recipe/router.py",
     "groupTitle": "Recipe",
     "name": "DeleteRecipe_id"
   },
@@ -285,7 +527,7 @@ define({ "api": [
     "url": "/recipe",
     "title": "GetAllRecipe",
     "group": "Recipe",
-    "description": "<p>Get all recipes</p>",
+    "description": "<p>Get file recipes</p>",
     "examples": [
       {
         "title": "Example usage:",
@@ -297,13 +539,13 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 200 OK\n{\n    'codeMsg': 'cookbook.recipe.success.ok',\n    'codeStatus': 200,\n    'data': [{'_id': '5e58484037c99f3231407fbe', 'cooking_time': '', 'ingredients': {}, 'level': '',\n              'nb_people': '', 'note': '', 'preparation_time': '', 'resume': '', 'steps': [], 'title': 'aqa_rhr'},\n             {'_id': '5e58484037c99f3231407fc0', 'cooking_time': '', 'ingredients': {}, 'level': '',\n              'nb_people': '', 'note': '', 'preparation_time': '', 'resume': '', 'steps': [], 'title': 'bqa_rhr'}]\n}",
+          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.recipe.success.ok',\n    'codeStatus': 200,\n    'data': [{'_id': '5e58484037c99f3231407fbe', 'cooking_time': '', 'level': '', 'nb_people': '', 'note': '',\n              'preparation_time': '', 'resume': '', 'steps': [], 'title': 'aqa_rhr'},\n             {'_id': '5e58484037c99f3231407fc0', 'cooking_time': '', 'level': '', 'nb_people': '', 'note': '',\n              'preparation_time': '', 'resume': '', 'steps': [], 'title': 'bqa_rhr'}]\n}",
           "type": "json"
         }
       ]
     },
     "version": "0.0.0",
-    "filename": "Flask/app/recipe/recipe/router.py",
+    "filename": "../Flask/app/recipe/recipe/router.py",
     "groupTitle": "Recipe",
     "name": "GetRecipe"
   },
@@ -337,7 +579,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 200 OK\n{\n    'codeMsg': 'cookbook.recipe.success.ok',\n    'codeStatus': 200,\n    'data': {'_id': '5e58484037c99f3231407fbe', 'cooking_time': '', 'ingredients': {}, 'level': '',\n              'nb_people': '', 'note': '', 'preparation_time': '', 'resume': '', 'steps': [], 'title': 'aqa_rhr'}\n}",
+          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.recipe.success.ok',\n    'codeStatus': 200,\n    'data': {'_id': '5e58484037c99f3231407fbe', 'cooking_time': '', 'level': '', 'nb_people': '', 'note': '',\n             'preparation_time': '', 'resume': '', 'steps': [], 'title': 'aqa_rhr'}\n}",
           "type": "json"
         }
       ]
@@ -346,13 +588,13 @@ define({ "api": [
       "examples": [
         {
           "title": "Error response:",
-          "content": "HTTPS 400 OK\n{\n    'codeMsg': 'cookbook.recipe.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}\n}",
+          "content": "HTTPS 400\n{\n    'codeMsg': 'cookbook.recipe.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}\n}",
           "type": "json"
         }
       ]
     },
     "version": "0.0.0",
-    "filename": "Flask/app/recipe/recipe/router.py",
+    "filename": "../Flask/app/recipe/recipe/router.py",
     "groupTitle": "Recipe",
     "name": "GetRecipe_id"
   },
@@ -416,13 +658,6 @@ define({ "api": [
           },
           {
             "group": "Body param",
-            "type": "Object",
-            "optional": true,
-            "field": "ingredients",
-            "description": "<p>Recipe's ingredients</p>"
-          },
-          {
-            "group": "Body param",
             "type": "Array",
             "optional": true,
             "field": "steps",
@@ -442,7 +677,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 201 OK\n{\n    'codeMsg': 'cookbook.recipe.success.created',\n    'codeStatus': 201,\n    'data': {'_id': '5e584a621e2e0101d1d937e3', 'cooking_time': '', 'ingredients': {}, 'level': '', 'nb_people': '',\n             'note': '', 'preparation_time': '', 'resume': '', 'steps': [], 'title': 'qa_rhr_title'}\n}",
+          "content": "HTTPS 201\n{\n    'codeMsg': 'cookbook.recipe.success.created',\n    'codeStatus': 201,\n    'data': {'_id': '5e584a621e2e0101d1d937e3', 'cooking_time': '', 'level': '', 'nb_people': '',\n             'note': '', 'preparation_time': '', 'resume': '', 'steps': [], 'title': 'qa_rhr_title'}\n}",
           "type": "json"
         }
       ]
@@ -451,13 +686,13 @@ define({ "api": [
       "examples": [
         {
           "title": "Error response:",
-          "content": "HTTPS 400 OK\n{\n    'codeMsg': 'cookbook.recipe.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be a string', 'param': 'title', 'value': {}}\n}",
+          "content": "HTTPS 400\n{\n    'codeMsg': 'cookbook.recipe.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be a string', 'param': 'title', 'value': {}}\n}",
           "type": "json"
         }
       ]
     },
     "version": "0.0.0",
-    "filename": "Flask/app/recipe/recipe/router.py",
+    "filename": "../Flask/app/recipe/recipe/router.py",
     "groupTitle": "Recipe",
     "name": "PostRecipe"
   },
@@ -530,13 +765,6 @@ define({ "api": [
           },
           {
             "group": "Body param",
-            "type": "Object",
-            "optional": true,
-            "field": "ingredients",
-            "description": "<p>Recipe's ingredients</p>"
-          },
-          {
-            "group": "Body param",
             "type": "Array",
             "optional": true,
             "field": "steps",
@@ -556,7 +784,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 200 OK\n{\n    'codeMsg': 'cookbook.recipe.success.created',\n    'codeStatus': 201,\n    'data': {'_id': '5e584a621e2e0101d1d937e3', 'cooking_time': '', 'ingredients': {}, 'level': '', 'nb_people': '',\n             'note': '', 'preparation_time': '', 'resume': '', 'steps': [], 'title': 'qa_rhr_title_update'}\n}",
+          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.recipe.success.created',\n    'codeStatus': 201,\n    'data': {'_id': '5e584a621e2e0101d1d937e3', 'cooking_time': '', 'level': '', 'nb_people': '', 'note': '',\n             'preparation_time': '', 'resume': '', 'steps': [], 'title': 'qa_rhr_title_update'}\n}",
           "type": "json"
         }
       ]
@@ -565,13 +793,13 @@ define({ "api": [
       "examples": [
         {
           "title": "Error response:",
-          "content": "HTTPS 400 OK\n{\n    'codeMsg': 'cookbook.recipe.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be a string', 'param': 'title', 'value': {}}\n}",
+          "content": "HTTPS 400\n{\n    'codeMsg': 'cookbook.recipe.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be a string', 'param': 'title', 'value': {}}\n}",
           "type": "json"
         }
       ]
     },
     "version": "0.0.0",
-    "filename": "Flask/app/recipe/recipe/router.py",
+    "filename": "../Flask/app/recipe/recipe/router.py",
     "groupTitle": "Recipe",
     "name": "PutRecipe_id"
   },
@@ -612,7 +840,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 200 OK\n{\n    'codeMsg': 'cookbook.recipe_steps.success.ok',\n    'codeStatus': 200,\n    'data': {'_id': '5e584ffd0e7d15c4c1022389', 'cooking_time': '', 'ingredients': {}, 'level': '', 'nb_people': '',\n             'note': '', 'preparation_time': '', 'resume': '', 'steps': ['a'], 'title': 'qa_rhr'}}",
+          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.recipe_steps.success.ok',\n    'codeStatus': 200,\n    'data': {'_id': '5e584ffd0e7d15c4c1022389', 'cooking_time': '', 'ingredients': {}, 'level': '', 'nb_people': '',\n             'note': '', 'preparation_time': '', 'resume': '', 'steps': ['a'], 'title': 'qa_rhr'}}",
           "type": "json"
         }
       ]
@@ -621,13 +849,13 @@ define({ "api": [
       "examples": [
         {
           "title": "Error response:",
-          "content": "HTTPS 400 OK\n{\n    'codeMsg': 'cookbook.recipe_steps.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be an integer', 'param': 'position', 'value': 'invalid'}\n}",
+          "content": "HTTPS 400\n{\n    'codeMsg': 'cookbook.recipe_steps.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be an integer', 'param': 'position', 'value': 'invalid'}\n}",
           "type": "json"
         }
       ]
     },
     "version": "0.0.0",
-    "filename": "Flask/app/recipe/steps/router.py",
+    "filename": "../Flask/app/recipe/steps/router.py",
     "groupTitle": "RecipeSteps",
     "name": "DeleteRecipe_idStep_position"
   },
@@ -677,7 +905,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 201 OK\n{\n    'codeMsg': 'cookbook.recipe_steps.success.created',\n    'codeStatus': 201,\n    'data': {'_id': '5e584e658269f301022369ff', 'cooking_time': '', 'ingredients': {}, 'level': '', 'nb_people': '',\n             'note': '', 'preparation_time': '', 'resume': '', 'steps': ['a', 'new_step', 'b'], 'title': 'qa_rhr'}}",
+          "content": "HTTPS 201\n{\n    'codeMsg': 'cookbook.recipe_steps.success.created',\n    'codeStatus': 201,\n    'data': {'_id': '5e584e658269f301022369ff', 'cooking_time': '', 'ingredients': {}, 'level': '', 'nb_people': '',\n             'note': '', 'preparation_time': '', 'resume': '', 'steps': ['a', 'new_step', 'b'], 'title': 'qa_rhr'}}",
           "type": "json"
         }
       ]
@@ -686,13 +914,13 @@ define({ "api": [
       "examples": [
         {
           "title": "Error response:",
-          "content": "HTTPS 400 OK\n{\n    'codeMsg': 'cookbook.recipe_steps.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be an integer', 'param': 'position', 'value': 'invalid'}\n}",
+          "content": "HTTPS 400\n{\n    'codeMsg': 'cookbook.recipe_steps.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be an integer', 'param': 'position', 'value': 'invalid'}\n}",
           "type": "json"
         }
       ]
     },
     "version": "0.0.0",
-    "filename": "Flask/app/recipe/steps/router.py",
+    "filename": "../Flask/app/recipe/steps/router.py",
     "groupTitle": "RecipeSteps",
     "name": "PostRecipe_idStep"
   }

@@ -1,6 +1,6 @@
 from server import mongo_config as mongo_conf
 import app.ingredient.ingredient.model as ingredient_model
-import app.file.all.model as file_model
+import app.file.file.model as file_model
 
 mongo = mongo_conf.MongoConnection()
 json_format = mongo_conf.JSONEncoder()

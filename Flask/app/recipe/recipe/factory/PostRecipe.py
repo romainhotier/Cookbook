@@ -26,6 +26,4 @@ class Factory(object):
                     data[key] = ""
                 elif key in ["steps"]:
                     data[key] = []
-                elif key in ["ingredients"]:
-                    data[key] = {}
         return data

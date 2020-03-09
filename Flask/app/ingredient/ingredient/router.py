@@ -26,7 +26,7 @@ def get_all_ingredient():
     """
     @api {get} /ingredient  GetAllIngredient
     @apiGroup Ingredient
-    @apiDescription Get all ingredients
+    @apiDescription Get file ingredients
 
     @apiExample {json} Example usage:
     GET http://127.0.0.1:5000/ingredient
@@ -41,7 +41,7 @@ def get_all_ingredient():
     }
     """
     result = ingredient.select_all()
-    return factory.ServerResponse().format_response(data=result, api="ingredient", code=200)
+    return factory.ServerResponse().return_response(data=result, api="ingredient", code=200)
 
 
 @ingredient_api.route('/ingredient/<_id>', methods=['GET'])
@@ -74,7 +74,7 @@ def get_ingredient(_id):
     """
     get_ingredient_validator.is_object_id_valid(_id)
     result = ingredient.select_one(_id)
-    return factory.ServerResponse().format_response(data=result, api="ingredient", code=200)
+    return factory.ServerResponse().return_response(data=result, api="ingredient", code=200)
 
 
 @ingredient_api.route('/ingredient', methods=['POST'])
@@ -112,7 +112,7 @@ def post_ingredient():
     post_ingredient_validator.is_body_valid(body)
     post_ingredient_validator.is_name_already_exist(body)
     inserted = ingredient.insert(body)
-    return factory.ServerResponse().format_response(data=inserted, api="ingredient", code=201)
+    return factory.ServerResponse().return_response(data=inserted, api="ingredient", code=201)
 
 
 @ingredient_api.route('/ingredient/<_id>', methods=['PUT'])
@@ -152,7 +152,7 @@ def put_ingredient(_id):
     put_ingredient_validator.is_body_valid(body)
     put_ingredient_validator.is_name_already_exist(body)
     updated = ingredient.update(_id, body)
-    return factory.ServerResponse().format_response(data=updated, api="ingredient", code=200)
+    return factory.ServerResponse().return_response(data=updated, api="ingredient", code=200)
 
 
 @ingredient_api.route('/ingredient/<_id>', methods=['DELETE'])
@@ -180,16 +180,16 @@ def delete_ingredient(_id):
     """
     delete_ingredient_validator.is_object_id_valid(_id)
     ingredient.delete(_id)
-    return factory.ServerResponse().format_response(data=None, api="ingredient", code=204)
+    return factory.ServerResponse().return_response(data=None, api="ingredient", code=204)
 
 
 @ingredient_api.errorhandler(400)
 def validator_failed(error):
     """" abort 400 """
-    return factory.ServerResponse().format_response(data=error.description, api="ingredient", code=400)
+    return factory.ServerResponse().return_response(data=error.description, api="ingredient", code=400)
 
 
 @ingredient_api.errorhandler(404)
 def not_found(error):
     """" abort 404 """
-    return factory.ServerResponse().format_response(data=error.description, api="ingredient", code=404)
+    return factory.ServerResponse().return_response(data=error.description, api="ingredient", code=404)

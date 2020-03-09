@@ -26,7 +26,7 @@ def get_all_recipe():
     """
     @api {get} /recipe  GetAllRecipe
     @apiGroup Recipe
-    @apiDescription Get all recipes
+    @apiDescription Get file recipes
 
     @apiExample {json} Example usage:
     GET http://127.0.0.1:5000/recipe
@@ -36,14 +36,14 @@ def get_all_recipe():
     {
         'codeMsg': 'cookbook.recipe.success.ok',
         'codeStatus': 200,
-        'data': [{'_id': '5e58484037c99f3231407fbe', 'cooking_time': '', 'ingredients': {}, 'level': '',
-                  'nb_people': '', 'note': '', 'preparation_time': '', 'resume': '', 'steps': [], 'title': 'aqa_rhr'},
-                 {'_id': '5e58484037c99f3231407fc0', 'cooking_time': '', 'ingredients': {}, 'level': '',
-                  'nb_people': '', 'note': '', 'preparation_time': '', 'resume': '', 'steps': [], 'title': 'bqa_rhr'}]
+        'data': [{'_id': '5e58484037c99f3231407fbe', 'cooking_time': '', 'level': '', 'nb_people': '', 'note': '',
+                  'preparation_time': '', 'resume': '', 'steps': [], 'title': 'aqa_rhr'},
+                 {'_id': '5e58484037c99f3231407fc0', 'cooking_time': '', 'level': '', 'nb_people': '', 'note': '',
+                  'preparation_time': '', 'resume': '', 'steps': [], 'title': 'bqa_rhr'}]
     }
     """
     result = recipe.select_all()
-    return factory.ServerResponse().format_response(data=result, api="recipe", code=200)
+    return factory.ServerResponse().return_response(data=result, api="recipe", code=200)
 
 
 @recipe_api.route('/recipe/<_id>', methods=['GET'])
@@ -63,8 +63,8 @@ def get_recipe(_id):
     {
         'codeMsg': 'cookbook.recipe.success.ok',
         'codeStatus': 200,
-        'data': {'_id': '5e58484037c99f3231407fbe', 'cooking_time': '', 'ingredients': {}, 'level': '',
-                  'nb_people': '', 'note': '', 'preparation_time': '', 'resume': '', 'steps': [], 'title': 'aqa_rhr'}
+        'data': {'_id': '5e58484037c99f3231407fbe', 'cooking_time': '', 'level': '', 'nb_people': '', 'note': '',
+                 'preparation_time': '', 'resume': '', 'steps': [], 'title': 'aqa_rhr'}
     }
 
     @apiErrorExample {json} Error response:
@@ -77,7 +77,7 @@ def get_recipe(_id):
     """
     get_recipe_validator.is_object_id_valid(_id)
     result = recipe.select_one(_id)
-    return factory.ServerResponse().format_response(data=result, api="recipe", code=200)
+    return factory.ServerResponse().return_response(data=result, api="recipe", code=200)
 
 
 @recipe_api.route('/recipe', methods=['POST'])
@@ -94,7 +94,6 @@ def post_recipe():
     @apiParam (Body param) {String} [preparation_time] Recipe's preparation time
     @apiParam (Body param) {String} [nb_people] Recipe's number of people
     @apiParam (Body param) {String} [note] Recipe's note
-    @apiParam (Body param) {Object} [ingredients] Recipe's ingredients
     @apiParam (Body param) {Array} [steps] Recipe's steps
 
     @apiExample {json} Example usage:
@@ -108,7 +107,7 @@ def post_recipe():
     {
         'codeMsg': 'cookbook.recipe.success.created',
         'codeStatus': 201,
-        'data': {'_id': '5e584a621e2e0101d1d937e3', 'cooking_time': '', 'ingredients': {}, 'level': '', 'nb_people': '',
+        'data': {'_id': '5e584a621e2e0101d1d937e3', 'cooking_time': '', 'level': '', 'nb_people': '',
                  'note': '', 'preparation_time': '', 'resume': '', 'steps': [], 'title': 'qa_rhr_title'}
     }
 
@@ -124,7 +123,7 @@ def post_recipe():
     post_recipe_validator.is_body_valid(body)
     post_recipe_validator.is_title_already_exist(body)
     inserted = recipe.insert(body)
-    return factory.ServerResponse().format_response(data=inserted, api="recipe", code=201)
+    return factory.ServerResponse().return_response(data=inserted, api="recipe", code=201)
 
 
 @recipe_api.route('/recipe/<_id>', methods=['PUT'])
@@ -142,7 +141,6 @@ def put_recipe(_id):
     @apiParam (Body param) {String} [preparation_time] Recipe's preparation time
     @apiParam (Body param) {String} [nb_people] Recipe's number of people
     @apiParam (Body param) {String} [note] Recipe's note
-    @apiParam (Body param) {Object} [ingredients] Recipe's ingredients
     @apiParam (Body param) {Array} [steps] Recipe's steps
 
     @apiExample {json} Example usage:
@@ -156,8 +154,8 @@ def put_recipe(_id):
     {
         'codeMsg': 'cookbook.recipe.success.created',
         'codeStatus': 201,
-        'data': {'_id': '5e584a621e2e0101d1d937e3', 'cooking_time': '', 'ingredients': {}, 'level': '', 'nb_people': '',
-                 'note': '', 'preparation_time': '', 'resume': '', 'steps': [], 'title': 'qa_rhr_title_update'}
+        'data': {'_id': '5e584a621e2e0101d1d937e3', 'cooking_time': '', 'level': '', 'nb_people': '', 'note': '',
+                 'preparation_time': '', 'resume': '', 'steps': [], 'title': 'qa_rhr_title_update'}
     }
 
     @apiErrorExample {json} Error response:
@@ -173,7 +171,7 @@ def put_recipe(_id):
     put_recipe_validator.is_body_valid(body)
     put_recipe_validator.is_title_already_exist(body)
     updated = recipe.update(_id, body)
-    return factory.ServerResponse().format_response(data=updated, api="recipe", code=200)
+    return factory.ServerResponse().return_response(data=updated, api="recipe", code=200)
 
 
 @recipe_api.route('/recipe/<_id>', methods=['DELETE'])
@@ -201,16 +199,16 @@ def delete_recipe(_id):
     """
     delete_recipe_validator.is_object_id_valid(_id)
     recipe.delete(_id)
-    return factory.ServerResponse().format_response(data=None, api="recipe", code=204)
+    return factory.ServerResponse().return_response(data=None, api="recipe", code=204)
 
 
 @recipe_api.errorhandler(400)
 def validator_failed(error):
     """" abort 400 """
-    return factory.ServerResponse().format_response(data=error.description, api="recipe", code=400)
+    return factory.ServerResponse().return_response(data=error.description, api="recipe", code=400)
 
 
 @recipe_api.errorhandler(404)
 def not_found(error):
     """" abort 404 """
-    return factory.ServerResponse().format_response(data=error.description, api="recipe", code=404)
+    return factory.ServerResponse().return_response(data=error.description, api="recipe", code=404)
