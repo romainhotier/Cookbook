@@ -14,27 +14,25 @@ class Recipe(object):
 
     def __init__(self):
         self.list_param = ["title", "level", "resume", "cooking_time", "preparation_time", "nb_people", "note", "steps"]
+        self.result = {}
 
-    @staticmethod
-    def select_all():
+    def select_all(self):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
         result = db.find({})
         client.close()
-        results = []
+        self.result = []
         for recipe in result:
-            results.append(recipe)
-        result_json = json_format.encode(results)
-        return result_json
+            self.result.append(recipe)
+        return self
 
-    @staticmethod
-    def select_one(_id):
+    def select_one(self, _id):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
         result = db.find_one({"_id": ObjectId(_id)})
         client.close()
-        result_json = json_format.encode(result)
-        return result_json
+        self.result = result
+        return self
 
     @staticmethod
     def select_one_by_title(title):
@@ -44,42 +42,23 @@ class Recipe(object):
         client.close()
         return result
 
-    @staticmethod
-    def select_one_with_enrichment(_id):
-        client = MongoClient(mongo.ip, mongo.port)
-        db_recipe = client[mongo.name][mongo.collection_recipe]
-        db_file = client[mongo.name][mongo.collection_fs_files]
-        """ get recipe """
-        result = db_recipe.find_one({"_id": ObjectId(_id)})
-        result["files"] = []
-        """ get files """
-        files = db_file.find({"metadata._id": ObjectId(_id)})
-        for file in files:
-            file_enrichment = {"_id": file["_id"], "is_main": file["metadata"]["is_main"]}
-            result["files"].append(file_enrichment)
-        client.close()
-        result_json = json_format.encode(result)
-        return result_json
-
-    @staticmethod
-    def insert(data):
+    def insert(self, data):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
         query = db.insert_one(data)
         result = db.find_one({"_id": ObjectId(query.inserted_id)})
         client.close()
-        result_json = json_format.encode(result)
-        return result_json
+        self.result = result
+        return self
 
-    @staticmethod
-    def update(_id, data):
+    def update(self, _id, data):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
         db.update_one({"_id": ObjectId(_id)}, {'$set': data})
         result = db.find_one({"_id": ObjectId(_id)})
         client.close()
-        result_json = json_format.encode(result)
-        return result_json
+        self.result = result
+        return self
 
     @staticmethod
     def delete(_id):
@@ -88,6 +67,21 @@ class Recipe(object):
         db.delete_one({"_id": ObjectId(_id)})
         client.close()
         return
+
+    def add_enrichment_file(self):
+        client = MongoClient(mongo.ip, mongo.port)
+        db_file = client[mongo.name][mongo.collection_fs_files]
+        self.result["files"] = []
+        """ get files """
+        files = db_file.find({"metadata._id": ObjectId(self.result["_id"])})
+        for file in files:
+            file_enrichment = {"_id": file["_id"], "is_main": file["metadata"]["is_main"]}
+            self.result["files"].append(file_enrichment)
+        client.close()
+        return self
+
+    def get_result(self):
+        return json_format.encode(self.result)
 
 
 class RecipeTest(object):
@@ -117,6 +111,19 @@ class RecipeTest(object):
         data_without_id = copy.deepcopy(self.get_data())
         data_without_id.pop("_id")
         return data_without_id
+
+    def get_data_with_enrichment(self):
+        client = MongoClient(mongo.ip, mongo.port)
+        db_file = client[mongo.name][mongo.collection_fs_files]
+        data = copy.deepcopy(self.get_data())
+        data["files"] = []
+        """ get files """
+        files = db_file.find({"metadata._id": ObjectId(self.get_id())})
+        for file in files:
+            file_enrichment = {"_id": file["_id"], "is_main": file["metadata"]["is_main"]}
+            data['files'].append(file_enrichment)
+        client.close()
+        return json.loads(json_format.encode(data))
 
     def get_id(self):
         return str(self.data["_id"])

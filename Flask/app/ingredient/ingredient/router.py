@@ -40,8 +40,8 @@ def get_all_ingredient():
                  {'_id': '5e583de9b0fcef0a922a7bc2', 'name': 'bqa_rhr'}]
     }
     """
-    result = ingredient.select_all()
-    return factory.ServerResponse().return_response(data=result, api="ingredient", code=200)
+    data = ingredient.select_all().get_result()
+    return factory.ServerResponse().return_response(data=data, api="ingredient", code=200)
 
 
 @ingredient_api.route('/ingredient/<_id>', methods=['GET'])
@@ -73,8 +73,8 @@ def get_ingredient(_id):
     }
     """
     get_ingredient_validator.is_object_id_valid(_id)
-    result = ingredient.select_one(_id)
-    return factory.ServerResponse().return_response(data=result, api="ingredient", code=200)
+    data = ingredient.select_one(_id).get_result()
+    return factory.ServerResponse().return_response(data=data, api="ingredient", code=200)
 
 
 @ingredient_api.route('/ingredient', methods=['POST'])
@@ -111,8 +111,8 @@ def post_ingredient():
     body = post_ingredient_factory.clean_body(request.json)
     post_ingredient_validator.is_body_valid(body)
     post_ingredient_validator.is_name_already_exist(body)
-    inserted = ingredient.insert(body)
-    return factory.ServerResponse().return_response(data=inserted, api="ingredient", code=201)
+    data = ingredient.insert(body).get_result()
+    return factory.ServerResponse().return_response(data=data, api="ingredient", code=201)
 
 
 @ingredient_api.route('/ingredient/<_id>', methods=['PUT'])
@@ -151,8 +151,8 @@ def put_ingredient(_id):
     body = put_ingredient_factory.clean_body(request.json)
     put_ingredient_validator.is_body_valid(body)
     put_ingredient_validator.is_name_already_exist(body)
-    updated = ingredient.update(_id, body)
-    return factory.ServerResponse().return_response(data=updated, api="ingredient", code=200)
+    data = ingredient.update(_id, body).get_result()
+    return factory.ServerResponse().return_response(data=data, api="ingredient", code=200)
 
 
 @ingredient_api.route('/ingredient/<_id>', methods=['DELETE'])

@@ -42,8 +42,8 @@ def get_all_recipe():
                   'preparation_time': '', 'resume': '', 'steps': [], 'title': 'bqa_rhr'}]
     }
     """
-    result = recipe.select_all()
-    return factory.ServerResponse().return_response(data=result, api="recipe", code=200)
+    data = recipe.select_all().get_result()
+    return factory.ServerResponse().return_response(data=data, api="recipe", code=200)
 
 
 @recipe_api.route('/recipe/<_id>', methods=['GET'])
@@ -76,8 +76,8 @@ def get_recipe(_id):
     }
     """
     get_recipe_validator.is_object_id_valid(_id)
-    result = recipe.select_one(_id)
-    return factory.ServerResponse().return_response(data=result, api="recipe", code=200)
+    data = recipe.select_one(_id).get_result()
+    return factory.ServerResponse().return_response(data=data, api="recipe", code=200)
 
 
 @recipe_api.route('/recipe', methods=['POST'])
@@ -122,8 +122,8 @@ def post_recipe():
     body = post_recipe_factory.clean_body(request.json)
     post_recipe_validator.is_body_valid(body)
     post_recipe_validator.is_title_already_exist(body)
-    inserted = recipe.insert(body)
-    return factory.ServerResponse().return_response(data=inserted, api="recipe", code=201)
+    data = recipe.insert(body).get_result()
+    return factory.ServerResponse().return_response(data=data, api="recipe", code=201)
 
 
 @recipe_api.route('/recipe/<_id>', methods=['PUT'])
@@ -170,8 +170,8 @@ def put_recipe(_id):
     body = put_recipe_factory.clean_body(request.json)
     put_recipe_validator.is_body_valid(body)
     put_recipe_validator.is_title_already_exist(body)
-    updated = recipe.update(_id, body)
-    return factory.ServerResponse().return_response(data=updated, api="recipe", code=200)
+    data = recipe.update(_id, body).get_result()
+    return factory.ServerResponse().return_response(data=data, api="recipe", code=200)
 
 
 @recipe_api.route('/recipe/<_id>', methods=['DELETE'])

@@ -31,10 +31,9 @@ class PostIngredientFile(object):
         return detail
 
     @staticmethod
-    def format_response(data):
+    def format_response(data, position):
         format_response = copy.deepcopy(data)
-        for file in format_response["files"]:
-            file["_id"] = ""
+        format_response["files"][position]["_id"] = ""
         return format_response
 
     @staticmethod

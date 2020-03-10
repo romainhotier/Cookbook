@@ -14,27 +14,25 @@ class Ingredient(object):
 
     def __init__(self):
         self.list_param = ["name", "files"]
+        self.result = {}
 
-    @staticmethod
-    def select_all():
+    def select_all(self):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient]
         result = db.find({})
         client.close()
-        results = []
+        self.result = []
         for ingredient in result:
-            results.append(ingredient)
-        result_json = json_format.encode(results)
-        return result_json
+            self.result.append(ingredient)
+        return self
 
-    @staticmethod
-    def select_one(_id):
+    def select_one(self, _id):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient]
         result = db.find_one({"_id": ObjectId(_id)})
         client.close()
-        result_json = json_format.encode(result)
-        return result_json
+        self.result = result
+        return self
 
     @staticmethod
     def select_one_by_name(name):
@@ -44,42 +42,23 @@ class Ingredient(object):
         client.close()
         return result
 
-    @staticmethod
-    def select_one_with_enrichment(_id):
-        client = MongoClient(mongo.ip, mongo.port)
-        db_ingredient = client[mongo.name][mongo.collection_ingredient]
-        db_file = client[mongo.name][mongo.collection_fs_files]
-        """ get ingredient """
-        result = db_ingredient.find_one({"_id": ObjectId(_id)})
-        result["files"] = []
-        """ get files """
-        files = db_file.find({"metadata._id": ObjectId(_id)})
-        for file in files:
-            file_enrichment = {"_id": file["_id"], "is_main": file["metadata"]["is_main"]}
-            result["files"].append(file_enrichment)
-        client.close()
-        result_json = json_format.encode(result)
-        return result_json
-
-    @staticmethod
-    def insert(data):
+    def insert(self, data):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient]
         query = db.insert_one(data)
         result = db.find_one({"_id": ObjectId(query.inserted_id)})
         client.close()
-        result_json = json_format.encode(result)
-        return result_json
+        self.result = result
+        return self
 
-    @staticmethod
-    def update(_id, data):
+    def update(self, _id, data):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient]
         db.update_one({"_id": ObjectId(_id)}, {'$set': data})
         result = db.find_one({"_id": ObjectId(_id)})
         client.close()
-        result_json = json_format.encode(result)
-        return result_json
+        self.result = result
+        return self
 
     @staticmethod
     def delete(_id):
@@ -88,6 +67,21 @@ class Ingredient(object):
         db.delete_one({"_id": ObjectId(_id)})
         client.close()
         return
+
+    def add_enrichment_file(self):
+        client = MongoClient(mongo.ip, mongo.port)
+        db_file = client[mongo.name][mongo.collection_fs_files]
+        self.result["files"] = []
+        """ get files """
+        files = db_file.find({"metadata._id": ObjectId(self.result["_id"])})
+        for file in files:
+            file_enrichment = {"_id": file["_id"], "is_main": file["metadata"]["is_main"]}
+            self.result["files"].append(file_enrichment)
+        client.close()
+        return self
+
+    def get_result(self):
+        return json_format.encode(self.result)
 
 
 class IngredientTest(object):

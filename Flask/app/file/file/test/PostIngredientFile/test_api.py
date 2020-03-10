@@ -1,6 +1,6 @@
 import unittest
 import requests
-import pathlib
+import os
 import platform
 
 from server import factory as factory
@@ -13,10 +13,17 @@ api = api.PostIngredientFile()
 ingredient = ingredient_model.IngredientTest()
 file = file_model.FileTest()
 
+current_path = os.getcwd()
 if platform.system() == "Windows":
-    default_path = str(pathlib.Path().absolute()).replace("file\\test\\PostIngredientFile", "_file_exemple\\text.txt")
+    if current_path.split('\\')[-1] == "PostIngredientFile":
+        default_path = current_path.replace("file\\test\\PostIngredientFile", "_file_exemple\\text.txt")
+    elif current_path.split('\\')[-1] == "Flask":
+        default_path = current_path + "\\app\\file\\_file_exemple\\text.txt"
 elif platform.system() == "Linux":
-    default_path = str(pathlib.Path().absolute()).replace("file/test/PostIngredientFile", "_file_exemple/text.txt")
+    if current_path.split('/')[-1] == "PostIngredientFile":
+        default_path = current_path.replace("file/test/PostIngredientFile", "_file_exemple/text.txt")
+    elif current_path.split('/')[-1] == "Flask":
+        default_path = current_path + "/app/file/_file_exemple/text.txt"
 
 
 class PostIngredientFile(unittest.TestCase):
@@ -46,7 +53,7 @@ class PostIngredientFile(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 201)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        format_data = api.format_response(response_body[api.rep_data])
+        format_data = api.format_response(data=response_body[api.rep_data], position=0)
         format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_enrichment(), position=0)
         self.assertEqual(format_data, format_response)
         """ check ingredient """
@@ -76,7 +83,7 @@ class PostIngredientFile(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 201)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        format_data = api.format_response(response_body[api.rep_data])
+        format_data = api.format_response(data=response_body[api.rep_data], position=0)
         format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_enrichment(), position=0)
         self.assertEqual(format_data, format_response)
         """ check ingredient """
@@ -353,7 +360,7 @@ class PostIngredientFile(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 201)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        format_data = api.format_response(response_body[api.rep_data])
+        format_data = api.format_response(data=response_body[api.rep_data], position=0)
         format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_enrichment(), position=0)
         self.assertEqual(format_data, format_response)
         """ check ingredient """
@@ -381,7 +388,7 @@ class PostIngredientFile(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 201)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        format_data = api.format_response(response_body[api.rep_data])
+        format_data = api.format_response(data=response_body[api.rep_data], position=0)
         format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_enrichment(), position=0)
         self.assertEqual(format_data, format_response)
         """ check ingredient """
@@ -479,7 +486,7 @@ class PostIngredientFile(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 201)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        format_data = api.format_response(response_body[api.rep_data])
+        format_data = api.format_response(data=response_body[api.rep_data], position=0)
         format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_enrichment(), position=0)
         self.assertEqual(format_data, format_response)
         """ check ingredient """
@@ -508,7 +515,7 @@ class PostIngredientFile(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 201)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        format_data = api.format_response(response_body[api.rep_data])
+        format_data = api.format_response(data=response_body[api.rep_data], position=0)
         format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_enrichment(), position=0)
         self.assertEqual(format_data, format_response)
         """ check ingredient """
@@ -516,6 +523,40 @@ class PostIngredientFile(unittest.TestCase):
         """ check file """
         tc_file.set_id(api.return_new_file_id(response_body))
         tc_file.select_ok()
+
+    def test_5_is_main_true_already_exist(self):
+        tc_ingredient = ingredient_model.IngredientTest().custom_test({}).insert()
+        tc_id = tc_ingredient.get_id()
+        tc_file1 = file_model.FileTest().custom_metadata({"kind": "ingredient", "is_main": True, "_id": tc_id}).insert()
+        body = {api.param_path: default_path,
+                api.param_filename: "qa_rhr_filename_new",
+                api.param_is_main: True
+                }
+        tc_file2 = file_model.FileTest().\
+            custom_filename(body[api.param_filename]).custom_metadata({"kind": "ingredient",
+                                                                       "is_main": body[api.param_is_main],
+                                                                       "_id": tc_id})
+        tc_file1.custom_metadata({"is_main": False})
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.post(url, json=body, verify=False)
+        response_body = response.json()
+        tc_ingredient.custom({"files": [{"_id": tc_file2.get_id(), "is_main": False},
+                                        {"_id": "", "is_main": body[api.param_is_main]}]})
+        """ assert """
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body[api.rep_code_status], 201)
+        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
+        format_data = api.format_response(data=response_body[api.rep_data], position=1)
+        format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_enrichment(), position=1)
+        self.assertEqual(format_data, format_response)
+        """ check ingredient """
+        tc_ingredient.select_ok()
+        """ check file """
+        tc_file2.set_id(api.return_new_file_id(response_body))
+        tc_file2.select_ok()
+        tc_file1.select_ok()
 
     @classmethod
     def tearDownClass(cls):

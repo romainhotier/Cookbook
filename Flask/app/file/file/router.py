@@ -47,9 +47,9 @@ def get_file(_id):
     }
     """
     get_file_validator.is_object_id_valid(_id)
-    result = file.select_one(_id)
-    response = make_response(result.read(), 200)
-    response.mimetype = result.content_type
+    data = file.select_one(_id)
+    response = make_response(data.read(), 200)
+    response.mimetype = data.content_type
     return response
 
 
@@ -119,7 +119,7 @@ def post_ingredient_file(_id):
     body = post_file_factory.clean_body(request.json)
     post_file_validator.is_body_valid(body)
     inserted_id = file.insert(kind="ingredient", _id_parent=_id, metadata=body)
-    data = ingredient.select_one_with_enrichment(_id=_id)
+    data = ingredient.select_one(_id=_id).add_enrichment_file().get_result()
     detail = post_file_factory.detail_information(_id_file=inserted_id)
     return factory.ServerResponse().return_response(data=data, api="file", code=201, detail=detail)
 
@@ -142,6 +142,12 @@ def post_recipe_file(_id):
     @apiSuccessExample {json} Success response:
     HTTPS 201
     {
+        'codeMsg': 'cookbook.file.success.created',
+        'codeStatus': 201,
+        'data': {'_id': '5e67a99745378d7c10124235', 'cooking_time': '',
+                 'files': [{'_id': '5e67a997ed11fd9361b2e374', 'is_main': False}], 'level': '', 'nb_people': '',
+                 'note': '', 'preparation_time': '', 'resume': '', 'steps': [], 'title': 'qa_rhr'},
+        'detail': 'added file ObjectId: 5e67a997ed11fd9361b2e374'
     }
 
     @apiErrorExample {json} Error response:
@@ -156,7 +162,7 @@ def post_recipe_file(_id):
     body = post_file_factory.clean_body(request.json)
     post_file_validator.is_body_valid(body)
     inserted_id = file.insert(kind="recipe", _id_parent=_id, metadata=body)
-    data = recipe.select_one_with_enrichment(_id=_id)
+    data = recipe.select_one(_id=_id).add_enrichment_file().get_result()
     detail = post_file_factory.detail_information(_id_file=inserted_id)
     return factory.ServerResponse().return_response(data=data, api="file", code=201, detail=detail)
 

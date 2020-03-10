@@ -40,8 +40,8 @@ def post_recipe_step(_id):
     {
         'codeMsg': 'cookbook.recipe_steps.success.created',
         'codeStatus': 201,
-        'data': {'_id': '5e584e658269f301022369ff', 'cooking_time': '', 'ingredients': {}, 'level': '', 'nb_people': '',
-                 'note': '', 'preparation_time': '', 'resume': '', 'steps': ['a', 'new_step', 'b'], 'title': 'qa_rhr'}}
+        'data': {'_id': '5e584e658269f301022369ff', 'cooking_time': '', 'level': '', 'nb_people': '', 'note': '',
+                 'preparation_time': '', 'resume': '', 'steps': ['a', 'new_step', 'b'], 'title': 'qa_rhr'}}
 
     @apiErrorExample {json} Error response:
     HTTPS 400
@@ -76,8 +76,8 @@ def delete_recipe_step(_id, position):
     {
         'codeMsg': 'cookbook.recipe_steps.success.ok',
         'codeStatus': 200,
-        'data': {'_id': '5e584ffd0e7d15c4c1022389', 'cooking_time': '', 'ingredients': {}, 'level': '', 'nb_people': '',
-                 'note': '', 'preparation_time': '', 'resume': '', 'steps': ['a'], 'title': 'qa_rhr'}}
+        'data': {'_id': '5e584ffd0e7d15c4c1022389', 'cooking_time': '', 'level': '', 'nb_people': '', 'note': '',
+                 'preparation_time': '', 'resume': '', 'steps': ['a'], 'title': 'qa_rhr'}}
 
     @apiErrorExample {json} Error response:
     HTTPS 400
