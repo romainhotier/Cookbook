@@ -444,7 +444,8 @@ class PostRecipeStep(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(PostRecipeStep())
+        #cls.setUp(PostRecipeStep())
+        pass
 
 
 if __name__ == '__main__':

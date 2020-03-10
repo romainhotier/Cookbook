@@ -1,4 +1,6 @@
 import copy
+import os
+import platform
 
 from server import factory as factory
 
@@ -45,3 +47,20 @@ class PostIngredientFile(object):
     def return_new_file_id(response):
         return response["detail"].split(": ")[1]
 
+    @staticmethod
+    def get_file_path_for_test():
+        current_path = os.getcwd()
+        if platform.system() == "Windows":
+            if current_path.split('\\')[-1] == "PostIngredientFile":
+                default_path = current_path.replace("file\\test\\PostIngredientFile", "_file_exemple\\text.txt")
+                return default_path
+            elif current_path.split('\\')[-1] == "Flask":
+                default_path = current_path + "\\app\\file\\_file_exemple\\text.txt"
+                return default_path
+        elif platform.system() == "Linux":
+            if current_path.split('/')[-1] == "PostIngredientFile":
+                default_path = current_path.replace("file/test/PostIngredientFile", "_file_exemple/text.txt")
+                return default_path
+            elif current_path.split('/')[-1] == "Flask":
+                default_path = current_path + "/app/file/_file_exemple/text.txt"
+                return default_path

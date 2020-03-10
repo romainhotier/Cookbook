@@ -1,7 +1,5 @@
 import unittest
 import requests
-import os
-import platform
 
 from server import factory as factory
 import app.ingredient.ingredient.model as ingredient_model
@@ -13,17 +11,7 @@ api = api.PostIngredientFile()
 ingredient = ingredient_model.IngredientTest()
 file = file_model.FileTest()
 
-current_path = os.getcwd()
-if platform.system() == "Windows":
-    if current_path.split('\\')[-1] == "PostIngredientFile":
-        default_path = current_path.replace("file\\test\\PostIngredientFile", "_file_exemple\\text.txt")
-    elif current_path.split('\\')[-1] == "Flask":
-        default_path = current_path + "\\app\\file\\_file_exemple\\text.txt"
-elif platform.system() == "Linux":
-    if current_path.split('/')[-1] == "PostIngredientFile":
-        default_path = current_path.replace("file/test/PostIngredientFile", "_file_exemple/text.txt")
-    elif current_path.split('/')[-1] == "Flask":
-        default_path = current_path + "/app/file/_file_exemple/text.txt"
+file_path = api.get_file_path_for_test()
 
 
 class PostIngredientFile(unittest.TestCase):
@@ -35,7 +23,7 @@ class PostIngredientFile(unittest.TestCase):
     def test_0_api_ok(self):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({}).insert()
         tc_id = tc_ingredient.get_id()
-        body = {api.param_path: default_path,
+        body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
                 api.param_is_main: False
                 }
@@ -65,7 +53,7 @@ class PostIngredientFile(unittest.TestCase):
     def test_0_api_ok_more_param(self):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({}).insert()
         tc_id = tc_ingredient.get_id()
-        body = {api.param_path: default_path,
+        body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
                 api.param_is_main: False,
                 "invalid": "invalid"
@@ -95,7 +83,7 @@ class PostIngredientFile(unittest.TestCase):
     def test_1_url_not_found(self):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({}).insert()
         tc_id = tc_ingredient.get_id()
-        body = {api.param_path: default_path,
+        body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
                 api.param_is_main: False,
                 "invalid": "invalid"
@@ -118,7 +106,7 @@ class PostIngredientFile(unittest.TestCase):
     def test_2_id_without(self):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({}).insert()
         tc_id = ""
-        body = {api.param_path: default_path,
+        body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
                 api.param_is_main: False
                 }
@@ -140,7 +128,7 @@ class PostIngredientFile(unittest.TestCase):
     def test_2_id_string(self):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({}).insert()
         tc_id = "invalid"
-        body = {api.param_path: default_path,
+        body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
                 api.param_is_main: False
                 }
@@ -163,7 +151,7 @@ class PostIngredientFile(unittest.TestCase):
     def test_2_id_object_id_invalid(self):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({}).insert()
         tc_id = "aaaaaaaaaaaaaaaaaaaaaaaa"
-        body = {api.param_path: default_path,
+        body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
                 api.param_is_main: False
                 }
@@ -277,7 +265,7 @@ class PostIngredientFile(unittest.TestCase):
     def test_4_filename_without(self):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({}).insert()
         tc_id = tc_ingredient.get_id()
-        body = {api.param_path: default_path,
+        body = {api.param_path: file_path,
                 api.param_is_main: False
                 }
         """ call api """
@@ -297,7 +285,7 @@ class PostIngredientFile(unittest.TestCase):
     def test_4_filename_null(self):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({}).insert()
         tc_id = tc_ingredient.get_id()
-        body = {api.param_path: default_path,
+        body = {api.param_path: file_path,
                 api.param_filename: None,
                 api.param_is_main: False
                 }
@@ -320,7 +308,7 @@ class PostIngredientFile(unittest.TestCase):
     def test_4_filename_empty(self):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({}).insert()
         tc_id = tc_ingredient.get_id()
-        body = {api.param_path: default_path,
+        body = {api.param_path: file_path,
                 api.param_filename: "",
                 api.param_is_main: False
                 }
@@ -343,7 +331,7 @@ class PostIngredientFile(unittest.TestCase):
     def test_4_filename_string(self):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({}).insert()
         tc_id = tc_ingredient.get_id()
-        body = {api.param_path: default_path,
+        body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
                 api.param_is_main: False
                 }
@@ -372,7 +360,7 @@ class PostIngredientFile(unittest.TestCase):
     def test_5_is_main_without(self):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({}).insert()
         tc_id = tc_ingredient.get_id()
-        body = {api.param_path: default_path,
+        body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename"
                 }
         tc_file = file_model.FileTest().custom_metadata({"kind": "ingredient",
@@ -400,7 +388,7 @@ class PostIngredientFile(unittest.TestCase):
     def test_5_is_main_null(self):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({}).insert()
         tc_id = tc_ingredient.get_id()
-        body = {api.param_path: default_path,
+        body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
                 api.param_is_main: None
                 }
@@ -423,7 +411,7 @@ class PostIngredientFile(unittest.TestCase):
     def test_5_is_main_empty(self):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({}).insert()
         tc_id = tc_ingredient.get_id()
-        body = {api.param_path: default_path,
+        body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
                 api.param_is_main: ""
                 }
@@ -446,7 +434,7 @@ class PostIngredientFile(unittest.TestCase):
     def test_5_is_main_string(self):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({}).insert()
         tc_id = tc_ingredient.get_id()
-        body = {api.param_path: default_path,
+        body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
                 api.param_is_main: "invalid"
                 }
@@ -469,7 +457,7 @@ class PostIngredientFile(unittest.TestCase):
     def test_5_is_main_false(self):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({}).insert()
         tc_id = tc_ingredient.get_id()
-        body = {api.param_path: default_path,
+        body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
                 api.param_is_main: False
                 }
@@ -498,7 +486,7 @@ class PostIngredientFile(unittest.TestCase):
     def test_5_is_main_true(self):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({}).insert()
         tc_id = tc_ingredient.get_id()
-        body = {api.param_path: default_path,
+        body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
                 api.param_is_main: True
                 }
@@ -528,7 +516,7 @@ class PostIngredientFile(unittest.TestCase):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({}).insert()
         tc_id = tc_ingredient.get_id()
         tc_file1 = file_model.FileTest().custom_metadata({"kind": "ingredient", "is_main": True, "_id": tc_id}).insert()
-        body = {api.param_path: default_path,
+        body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename_new",
                 api.param_is_main: True
                 }
