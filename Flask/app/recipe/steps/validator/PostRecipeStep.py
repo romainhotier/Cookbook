@@ -10,8 +10,8 @@ class Validator(object):
 
     @staticmethod
     def is_object_id_valid(_id):
-        validator.is_object_id(_id)
-        validator.is_object_id_in_collection(_id, mongo.collection_recipe)
+        validator.is_object_id(param="_id", value=_id)
+        validator.is_object_id_in_collection(param="_id", value=_id, collection=mongo.collection_recipe)
         return True
 
     def is_body_valid(self, _id, data):
@@ -20,15 +20,15 @@ class Validator(object):
 
     @staticmethod
     def is_step_valid(data):
-        validator.is_mandatory("step", data)
-        validator.is_string("step", data["step"])
-        validator.is_string_non_empty("step", data["step"])
+        validator.is_mandatory(param="step", data=data)
+        validator.is_string(param="step", value=data["step"])
+        validator.is_string_non_empty(param="step", value=data["step"])
         return True
 
     @staticmethod
     def is_position_valid(_id, data):
         if "position" in data.keys():
             validator.is_int("position", data["position"])
-            validator.is_between_x_y("position", data["position"], 0, steps.get_steps_length(_id, mode="insert"))
+            validator.is_between_x_y("position", data["position"], 0, steps.get_steps_length(_id=_id))
             return True
         return True

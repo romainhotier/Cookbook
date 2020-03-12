@@ -1,5 +1,6 @@
 import unittest
 import requests
+from bson import ObjectId
 
 from server import factory as factory
 import app.recipe.recipe.model as recipe_model
@@ -24,14 +25,17 @@ class PostRecipeStep(unittest.TestCase):
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
-        tc_recipe.custom({"steps": ["a", "b", "new_step"]})
+        tc_recipe.custom({"steps": ["a", "b", {"_id": "", "step": "new_step"}]})
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 201)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        self.assertEqual(response_body[api.rep_data], tc_recipe.get_data_stringify_object_id())
-        tc_recipe.select_ok()
+        self.assertEqual(api.format_data(data=response_body[api.rep_data], position=2),
+                         tc_recipe.get_data_stringify_object_id())
+        """ refacto recipe """
+        new_id = api.get_new_id(data=response_body[api.rep_data], position=2)
+        tc_recipe.custom({"steps": ["a", "b", {"_id": ObjectId(new_id), "step": "new_step"}]}).select_ok()
 
     def test_0_api_ok_with_position(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
@@ -43,14 +47,17 @@ class PostRecipeStep(unittest.TestCase):
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
-        tc_recipe.custom({"steps": ["a", "new_step", "b"]})
+        tc_recipe.custom({"steps": ["a", {"_id": "", "step": "new_step"}, "b"]})
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 201)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        self.assertEqual(response_body[api.rep_data], tc_recipe.get_data_stringify_object_id())
-        tc_recipe.select_ok()
+        self.assertEqual(api.format_data(data=response_body[api.rep_data], position=body[api.param_position]),
+                         tc_recipe.get_data_stringify_object_id())
+        """ refacto recipe """
+        new_id = api.get_new_id(data=response_body[api.rep_data], position=body[api.param_position])
+        tc_recipe.custom({"steps": ["a", {"_id": ObjectId(new_id), "step": "new_step"}, "b"]}).select_ok()
 
     def test_0_api_ok_more_param(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
@@ -62,14 +69,17 @@ class PostRecipeStep(unittest.TestCase):
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
-        tc_recipe.custom({"steps": ["a", "b", "new_step"]})
+        tc_recipe.custom({"steps": ["a", "b", {"_id": "", "step": "new_step"}]})
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 201)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        self.assertEqual(response_body[api.rep_data], tc_recipe.get_data_stringify_object_id())
-        tc_recipe.select_ok()
+        self.assertEqual(api.format_data(data=response_body[api.rep_data], position=2),
+                         tc_recipe.get_data_stringify_object_id())
+        """ refacto recipe """
+        new_id = api.get_new_id(data=response_body[api.rep_data], position=2)
+        tc_recipe.custom({"steps": ["a", "b", {"_id": ObjectId(new_id), "step": "new_step"}]}).select_ok()
 
     def test_1_url_not_found_1(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
@@ -213,19 +223,23 @@ class PostRecipeStep(unittest.TestCase):
     def test_3_step_string(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
-        body = {api.param_step: "invalid"}
+        body = {api.param_step: "new_step"
+                }
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
-        tc_recipe.custom({"steps": ["a", "b", "invalid"]})
+        tc_recipe.custom({"steps": ["a", "b", {"_id": "", "step": "new_step"}]})
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 201)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        self.assertEqual(response_body[api.rep_data], tc_recipe.get_data_stringify_object_id())
-        tc_recipe.select_ok()
+        self.assertEqual(api.format_data(data=response_body[api.rep_data], position=2),
+                         tc_recipe.get_data_stringify_object_id())
+        """ refacto recipe """
+        new_id = api.get_new_id(data=response_body[api.rep_data], position=2)
+        tc_recipe.custom({"steps": ["a", "b", {"_id": ObjectId(new_id), "step": "new_step"}]}).select_ok()
 
     def test_3_step_tab(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
@@ -264,19 +278,23 @@ class PostRecipeStep(unittest.TestCase):
     def test_4_position_without(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
         tc_id = tc_recipe.get_id()
-        body = {api.param_step: "new_step"}
+        body = {api.param_step: "new_step"
+                }
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
-        tc_recipe.custom({"steps": ["a", "b", "new_step"]})
+        tc_recipe.custom({"steps": ["a", "b", {"_id": "", "step": "new_step"}]})
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 201)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        self.assertEqual(response_body[api.rep_data], tc_recipe.get_data_stringify_object_id())
-        tc_recipe.select_ok()
+        self.assertEqual(api.format_data(data=response_body[api.rep_data], position=2),
+                         tc_recipe.get_data_stringify_object_id())
+        """ refacto recipe """
+        new_id = api.get_new_id(data=response_body[api.rep_data], position=2)
+        tc_recipe.custom({"steps": ["a", "b", {"_id": ObjectId(new_id), "step": "new_step"}]}).select_ok()
 
     def test_4_position_none(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
@@ -396,14 +414,17 @@ class PostRecipeStep(unittest.TestCase):
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
-        tc_recipe.custom({"steps": ["new_step", "a", "b"]})
+        tc_recipe.custom({"steps": [{"_id": "", "step": "new_step"}, "a", "b"]})
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 201)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        self.assertEqual(response_body[api.rep_data], tc_recipe.get_data_stringify_object_id())
-        tc_recipe.select_ok()
+        self.assertEqual(api.format_data(data=response_body[api.rep_data], position=0),
+                         tc_recipe.get_data_stringify_object_id())
+        """ refacto recipe """
+        new_id = api.get_new_id(data=response_body[api.rep_data], position=0)
+        tc_recipe.custom({"steps": [{"_id": ObjectId(new_id), "step": "new_step"}, "a", "b"]}).select_ok()
 
     def test_4_position_int_max(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
@@ -414,14 +435,17 @@ class PostRecipeStep(unittest.TestCase):
         url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
-        tc_recipe.custom({"steps": ["a", "b", "new_step"]})
+        tc_recipe.custom({"steps": ["a", "b", {"_id": "", "step": "new_step"}]})
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 201)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        self.assertEqual(response_body[api.rep_data], tc_recipe.get_data_stringify_object_id())
-        tc_recipe.select_ok()
+        self.assertEqual(api.format_data(data=response_body[api.rep_data], position=2),
+                         tc_recipe.get_data_stringify_object_id())
+        """ refacto recipe """
+        new_id = api.get_new_id(data=response_body[api.rep_data], position=2)
+        tc_recipe.custom({"steps": ["a", "b", {"_id": ObjectId(new_id), "step": "new_step"}]}).select_ok()
 
     def test_4_position_int_max_over(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
@@ -444,8 +468,7 @@ class PostRecipeStep(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        #cls.setUp(PostRecipeStep())
-        pass
+        cls.setUp(PostRecipeStep())
 
 
 if __name__ == '__main__':

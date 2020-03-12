@@ -7,10 +7,23 @@ mongo = mongo_conf.MongoConnection()
 class Validator(object):
 
     @staticmethod
-    def is_object_id_valid(_id, kind):
-        validator.is_object_id(_id)
-        validator.is_object_id_in_collection(_id, mongo.select_collection(kind=kind))
+    def is_object_id_valid(kind, _id):
+        validator.is_object_id(param="_id", value=_id)
+        validator.is_object_id_in_collection(param="_id", value=_id, collection=mongo.select_collection(kind=kind))
         return True
+
+    @staticmethod
+    def is_object_id_valid_special_step(kind, _id_recipe, **optional):
+        if kind in ["recipe"]:
+            validator.is_object_id(param="_id_recipe", value=_id_recipe)
+            validator.is_object_id_in_collection(param="_id_recipe", value=_id_recipe,
+                                                 collection=mongo.select_collection(kind=kind))
+            return True
+        if kind in ["step"]:
+            validator.is_object_id(param="_id_step", value=optional["_id_step"])
+            validator.is_object_id_in_collection_special_step(param="_id_step", _id_recipe=_id_recipe,
+                                                              _id_step=optional["_id_step"])
+            return True
 
     def is_body_valid(self, data):
         self.is_path_valid(data)

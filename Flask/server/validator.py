@@ -12,23 +12,37 @@ mongo = mongo_conf.MongoConnection()
 class Validator(object):
 
     @staticmethod
-    def is_object_id(_id):
+    def is_object_id(param, value):
         """ check _id is a correcte ObjectId type """
-        if len(_id) != 24:
-            detail = {"param": "_id", "msg": server.detail_must_be_an_object_id, "value": _id}
+        if len(value) != 24:
+            detail = {"param": param, "msg": server.detail_must_be_an_object_id, "value": value}
             return abort(400, description=detail)
         else:
             return False
 
     @staticmethod
-    def is_object_id_in_collection(_id, collection):
+    def is_object_id_in_collection(param, value, collection):
         """ check objectId is present in a collection """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][collection]
-        result = db.count_documents({"_id": ObjectId(_id)})
+        result = db.count_documents({"_id": ObjectId(value)})
         client.close()
         if result == 0:
-            detail = {"param": "_id", "msg": server.detail_doesnot_exist, "value": _id}
+            detail = {"param": param, "msg": server.detail_doesnot_exist, "value": value}
+            return abort(400, description=detail)
+        else:
+            return True
+
+    @staticmethod
+    def is_object_id_in_collection_special_step(param, _id_recipe, _id_step):
+        """ check objectId is present in a recipe steps """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        result = db.find({"$and": [{"_id": ObjectId(_id_recipe)},
+                                   {"steps": {"$elemMatch": {"_id": ObjectId(_id_step)}}}]})
+        client.close()
+        if result.count() == 0:
+            detail = {"param": param, "msg": server.detail_doesnot_exist, "value": _id_step}
             return abort(400, description=detail)
         else:
             return True

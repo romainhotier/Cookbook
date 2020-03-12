@@ -8,8 +8,8 @@ class DeleteRecipeStep(object):
     def __init__(self):
         self.url1 = 'recipe'
         self.url2 = 'step'
-        self.param_id = "_id"
-        self.param_position = "position"
+        self.param_id_recipe = "_id_recipe"
+        self.param_id_step = "_id_step"
         self.rep_code_status = 'codeStatus'
         self.rep_code_msg = 'codeMsg'
         self.rep_data = 'data'

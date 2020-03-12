@@ -81,7 +81,7 @@ class Ingredient(object):
         return self
 
     def get_result(self):
-        return json_format.encode(self.result)
+        return json.loads(json_format.encode(self.result))
 
 
 class IngredientTest(object):

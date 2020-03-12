@@ -15,9 +15,9 @@ class Validator(object):
 
     @staticmethod
     def is_name_valid(data):
-        validator.is_mandatory("name", data)
-        validator.is_string("name", data["name"])
-        validator.is_string_non_empty("name", data["name"])
+        validator.is_mandatory(param="name", data=data)
+        validator.is_string(param="name", value=data["name"])
+        validator.is_string_non_empty(param="name", value=data["name"])
         return True
 
     @staticmethod

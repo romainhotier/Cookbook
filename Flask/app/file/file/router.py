@@ -46,8 +46,8 @@ def get_file(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
-    get_file_validator.is_object_id_valid(_id)
-    data = file.select_one(_id)
+    get_file_validator.is_object_id_valid(_id=_id)
+    data = file.select_one(_id=_id)
     response = make_response(data.read(), 200)
     response.mimetype = data.content_type
     return response
@@ -76,8 +76,8 @@ def delete_file(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
-    delete_file_validator.is_object_id_valid(_id)
-    file.delete(_id)
+    delete_file_validator.is_object_id_valid(_id=_id)
+    file.delete(_id=_id)
     return factory.ServerResponse().return_response(data=None, api="file", code=204)
 
 
@@ -95,6 +95,11 @@ def post_ingredient_file(_id):
 
     @apiExample {json} Example usage:
     POST http://127.0.0.1:5000/file/ingredient/<_id>
+    {
+        'path': <path>,
+        'filename': <filename>,
+        'is_main': <is_main>
+    }
 
     @apiSuccessExample {json} Success response:
     HTTPS 201
@@ -115,9 +120,9 @@ def post_ingredient_file(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
-    post_file_validator.is_object_id_valid(_id, kind="ingredient")
-    body = post_file_factory.clean_body(request.json)
-    post_file_validator.is_body_valid(body)
+    post_file_validator.is_object_id_valid(kind="ingredient", _id=_id)
+    body = post_file_factory.clean_body(data=request.json)
+    post_file_validator.is_body_valid(data=body)
     inserted_id = file.insert(kind="ingredient", _id_parent=_id, metadata=body)
     data = ingredient.select_one(_id=_id).add_enrichment_file().get_result()
     detail = post_file_factory.detail_information(_id_file=inserted_id)
@@ -138,6 +143,11 @@ def post_recipe_file(_id):
 
     @apiExample {json} Example usage:
     POST http://127.0.0.1:5000/file/recipe/<_id>
+    {
+        'path': <path>,
+        'filename': <filename>,
+        'is_main': <is_main>
+    }
 
     @apiSuccessExample {json} Success response:
     HTTPS 201
@@ -158,11 +168,63 @@ def post_recipe_file(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
-    post_file_validator.is_object_id_valid(_id, kind="recipe")
-    body = post_file_factory.clean_body(request.json)
-    post_file_validator.is_body_valid(body)
+    post_file_validator.is_object_id_valid(kind="recipe", _id=_id)
+    body = post_file_factory.clean_body(data=request.json)
+    post_file_validator.is_body_valid(data=body)
     inserted_id = file.insert(kind="recipe", _id_parent=_id, metadata=body)
     data = recipe.select_one(_id=_id).add_enrichment_file().get_result()
+    detail = post_file_factory.detail_information(_id_file=inserted_id)
+    return factory.ServerResponse().return_response(data=data, api="file", code=201, detail=detail)
+
+
+@file_api.route('/file/recipe/<_id_recipe>/step/<_id_step>', methods=['POST'])
+def post_step_file(_id_recipe, _id_step):
+    """
+    @api {post} /file/recipe/<_id_recipe>/step/<_id_step> PostStepFile
+    @apiGroup File
+    @apiDescription Add a file to a step
+
+    @apiParam (Query param) {String} _id_recipe Recipe's ObjectId
+    @apiParam (Query param) {String} _id_step Steps's ObjectId
+    @apiParam (Body Param) {String} path File's path
+    @apiParam (Body Param) {String} filename File's filename
+    @apiParam (Body Param) {Boolean} [is_main] If True, file will be the main file. False by default
+
+    @apiExample {json} Example usage:
+    POST http://127.0.0.1:5000/file/recipe/<_id_recipe>/step/<_id_step>
+    {
+        'path': <path>,
+        'filename': <filename>,
+        'is_main': <is_main>
+    }
+
+    @apiSuccessExample {json} Success response:
+    HTTPS 201
+    {
+        'codeMsg': 'cookbook.file.success.created',
+        'codeStatus': 201,
+        'data': {'_id': '5e6a4223e664b60da7cd8626', 'cooking_time': '', 'files': [], 'level': '', 'nb_people': '',
+                 'note': '', 'preparation_time': '', 'resume': '',
+                 'steps': [{'_id': '111111111111111111111111', 'files': [{'_id': '5e6a42237e59e8439a883d99',
+                 'is_main': False}], 'step': 'a'}, {'_id': '222222222222222222222222', 'files': [], 'step': 'b'}],
+                 'title': 'qa_rhr'},
+        'detail': 'added file ObjectId: 5e6a42237e59e8439a883d99'
+    }
+
+    @apiErrorExample {json} Error response:
+    HTTPS 400
+    {
+        'codeMsg': 'cookbook.file.error.bad_request',
+        'codeStatus': 400,
+        'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
+    }
+    """
+    post_file_validator.is_object_id_valid_special_step(kind="recipe", _id_recipe=_id_recipe)
+    post_file_validator.is_object_id_valid_special_step(kind="step", _id_recipe=_id_recipe, _id_step=_id_step)
+    body = post_file_factory.clean_body(data=request.json)
+    post_file_validator.is_body_valid(data=body)
+    inserted_id = file.insert(kind="step", _id_parent=_id_step, metadata=body)
+    data = recipe.select_one(_id=_id_recipe).add_enrichment_file().get_result()
     detail = post_file_factory.detail_information(_id_file=inserted_id)
     return factory.ServerResponse().return_response(data=data, api="file", code=201, detail=detail)
 

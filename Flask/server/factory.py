@@ -92,9 +92,6 @@ class ServerResponse(object):
     def add_data_detail(self, data, detail):
         """ add data or detail """
         if data is not None:
-            if isinstance(data, str):
-                self.body["data"] = json.loads(data)
-            else:
-                self.body["data"] = data
+            self.body["data"] = data
         if detail is not None:
             self.body["detail"] = detail

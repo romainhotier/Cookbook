@@ -72,8 +72,8 @@ def get_ingredient(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
-    get_ingredient_validator.is_object_id_valid(_id)
-    data = ingredient.select_one(_id).get_result()
+    get_ingredient_validator.is_object_id_valid(_id=_id)
+    data = ingredient.select_one(_id=_id).get_result()
     return factory.ServerResponse().return_response(data=data, api="ingredient", code=200)
 
 
@@ -108,10 +108,10 @@ def post_ingredient():
         'detail': {'msg': 'Is required', 'param': 'name'}}
     }
     """
-    body = post_ingredient_factory.clean_body(request.json)
-    post_ingredient_validator.is_body_valid(body)
-    post_ingredient_validator.is_name_already_exist(body)
-    data = ingredient.insert(body).get_result()
+    body = post_ingredient_factory.clean_body(data=request.json)
+    post_ingredient_validator.is_body_valid(data=body)
+    post_ingredient_validator.is_name_already_exist(data=body)
+    data = ingredient.insert(data=body).get_result()
     return factory.ServerResponse().return_response(data=data, api="ingredient", code=201)
 
 
@@ -147,11 +147,11 @@ def put_ingredient(_id):
         'detail': {'msg': 'Is required', 'param': 'name'}}
     }
     """
-    put_ingredient_validator.is_object_id_valid(_id)
-    body = put_ingredient_factory.clean_body(request.json)
-    put_ingredient_validator.is_body_valid(body)
-    put_ingredient_validator.is_name_already_exist(body)
-    data = ingredient.update(_id, body).get_result()
+    put_ingredient_validator.is_object_id_valid(_id=_id)
+    body = put_ingredient_factory.clean_body(data=request.json)
+    put_ingredient_validator.is_body_valid(data=body)
+    put_ingredient_validator.is_name_already_exist(data=body)
+    data = ingredient.update(_id=_id, data=body).get_result()
     return factory.ServerResponse().return_response(data=data, api="ingredient", code=200)
 
 
@@ -178,8 +178,8 @@ def delete_ingredient(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
-    delete_ingredient_validator.is_object_id_valid(_id)
-    ingredient.delete(_id)
+    delete_ingredient_validator.is_object_id_valid(_id=_id)
+    ingredient.delete(_id=_id)
     return factory.ServerResponse().return_response(data=None, api="ingredient", code=204)
 
 

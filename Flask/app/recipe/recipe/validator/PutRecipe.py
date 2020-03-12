@@ -14,8 +14,8 @@ class Validator(object):
 
     @staticmethod
     def is_object_id_valid(_id):
-        validator.is_object_id(_id)
-        validator.is_object_id_in_collection(_id, mongo.collection_recipe)
+        validator.is_object_id(param="_id", value=_id)
+        validator.is_object_id_in_collection(param="_id", value=_id, collection=mongo.collection_recipe)
         return True
 
     def is_body_valid(self, data):
@@ -30,57 +30,57 @@ class Validator(object):
 
     @staticmethod
     def is_title_valid(data):
-        validator.is_mandatory("title", data)
-        validator.is_string("title", data["title"])
-        validator.is_string_non_empty("title", data["title"])
+        validator.is_mandatory(param="title", data=data)
+        validator.is_string(param="title", value=data["title"])
+        validator.is_string_non_empty(param="title", value=data["title"])
         return True
 
     @staticmethod
     def is_level_valid(data):
         if "level" in data.keys():
-            validator.is_string("level", data["level"])
+            validator.is_string(param="level", value=data["level"])
             return True
         return True
 
     @staticmethod
     def is_resume_valid(data):
         if "resume" in data.keys():
-            validator.is_string("resume", data["resume"])
+            validator.is_string(param="resume", value=data["resume"])
             return True
         return True
 
     @staticmethod
     def is_cooking_time_valid(data):
         if "cooking_time" in data.keys():
-            validator.is_string("cooking_time", data["cooking_time"])
+            validator.is_string(param="cooking_time", value=data["cooking_time"])
             return True
         return True
 
     @staticmethod
     def is_preparation_time_valid(data):
         if "preparation_time" in data.keys():
-            validator.is_string("preparation_time", data["preparation_time"])
+            validator.is_string(param="preparation_time", value=data["preparation_time"])
             return True
         return True
 
     @staticmethod
     def is_nb_people_valid(data):
         if "nb_people" in data.keys():
-            validator.is_string("nb_people", data["nb_people"])
+            validator.is_string(param="nb_people", value=data["nb_people"])
             return True
         return True
 
     @staticmethod
     def is_note_valid(data):
         if "note" in data.keys():
-            validator.is_string("note", data["note"])
+            validator.is_string(param="note", value=data["note"])
             return True
         return True
 
     @staticmethod
     def is_steps_valid(data):
         if "steps" in data.keys():
-            validator.is_array("steps", data["steps"])
+            validator.is_array(param="steps", value=data["steps"])
             return True
         return True
 

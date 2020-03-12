@@ -1,7 +1,6 @@
 import app.recipe.steps.model as steps_model
 
 list_param_step = steps_model.Steps().list_param
-list_param_step.append("position")
 
 
 class Factory(object):

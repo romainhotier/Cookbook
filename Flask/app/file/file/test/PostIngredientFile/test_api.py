@@ -85,8 +85,7 @@ class PostIngredientFile(unittest.TestCase):
         tc_id = tc_ingredient.get_id()
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False,
-                "invalid": "invalid"
+                api.param_is_main: False
                 }
         """ call api """
         url = server.main_url + "/" + api.url + "x/" + tc_id

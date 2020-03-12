@@ -72,16 +72,23 @@ class Recipe(object):
         client = MongoClient(mongo.ip, mongo.port)
         db_file = client[mongo.name][mongo.collection_fs_files]
         self.result["files"] = []
-        """ get files """
-        files = db_file.find({"metadata._id": ObjectId(self.result["_id"])})
-        for file in files:
+        """ get files for recipe """
+        files_recipe = db_file.find({"metadata._id": ObjectId(self.result["_id"])})
+        for file in files_recipe:
             file_enrichment = {"_id": file["_id"], "is_main": file["metadata"]["is_main"]}
             self.result["files"].append(file_enrichment)
+        """ get files for steps """
+        for step in self.result["steps"]:
+            step["files"] = []
+            files_step = db_file.find({"metadata._id": ObjectId(step["_id"])})
+            for file in files_step:
+                file_enrichment = {"_id": file["_id"], "is_main": file["metadata"]["is_main"]}
+                step["files"].append(file_enrichment)
         client.close()
         return self
 
     def get_result(self):
-        return json_format.encode(self.result)
+        return json.loads(json_format.encode(self.result))
 
 
 class RecipeTest(object):
@@ -122,6 +129,13 @@ class RecipeTest(object):
         for file in files:
             file_enrichment = {"_id": file["_id"], "is_main": file["metadata"]["is_main"]}
             data['files'].append(file_enrichment)
+        """ get files for steps """
+        for step in data["steps"]:
+            step["files"] = []
+            files_step = db_file.find({"metadata._id": ObjectId(step["_id"])})
+            for file in files_step:
+                file_enrichment = {"_id": file["_id"], "is_main": file["metadata"]["is_main"]}
+                step["files"].append(file_enrichment)
         client.close()
         return json.loads(json_format.encode(data))
 
@@ -148,6 +162,12 @@ class RecipeTest(object):
             if i in Recipe().list_param or i == "_id":
                 self.data[i] = j
         self.data["title"] = self.data["title"] + "qa_rhr"
+        return self
+
+    def custom_step(self, step_index, data):
+        for i, j in data.items():
+            if i in ["_id", "step", "files"]:
+                self.data["steps"][step_index][i] = j
         return self
 
     def select_ok(self):
@@ -210,3 +230,5 @@ class RecipeTest(object):
         db.delete_many({"title": rgx})
         client.close()
         return
+
+

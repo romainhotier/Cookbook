@@ -13,8 +13,8 @@ class Validator(object):
 
     @staticmethod
     def is_object_id_valid(_id):
-        validator.is_object_id(_id)
-        validator.is_object_id_in_collection(_id, mongo.collection_ingredient)
+        validator.is_object_id(param="_id", value=_id)
+        validator.is_object_id_in_collection(param="_id", value=_id, collection=mongo.collection_ingredient)
         return True
 
     def is_body_valid(self, data):
@@ -22,9 +22,9 @@ class Validator(object):
 
     @staticmethod
     def is_name_valid(data):
-        validator.is_mandatory("name", data)
-        validator.is_string("name", data["name"])
-        validator.is_string_non_empty("name", data["name"])
+        validator.is_mandatory(param="name", data=data)
+        validator.is_string(param="name", value=data["name"])
+        validator.is_string_non_empty(param="name", value=data["name"])
         return True
 
     @staticmethod

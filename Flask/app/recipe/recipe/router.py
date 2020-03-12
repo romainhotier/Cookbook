@@ -75,8 +75,8 @@ def get_recipe(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
-    get_recipe_validator.is_object_id_valid(_id)
-    data = recipe.select_one(_id).get_result()
+    get_recipe_validator.is_object_id_valid(_id=_id)
+    data = recipe.select_one(_id=_id).get_result()
     return factory.ServerResponse().return_response(data=data, api="recipe", code=200)
 
 
@@ -119,10 +119,10 @@ def post_recipe():
         'detail': {'msg': 'Must be a string', 'param': 'title', 'value': {}}
     }
     """
-    body = post_recipe_factory.clean_body(request.json)
-    post_recipe_validator.is_body_valid(body)
-    post_recipe_validator.is_title_already_exist(body)
-    data = recipe.insert(body).get_result()
+    body = post_recipe_factory.clean_body(data=request.json)
+    post_recipe_validator.is_body_valid(data=body)
+    post_recipe_validator.is_title_already_exist(data=body)
+    data = recipe.insert(data=body).get_result()
     return factory.ServerResponse().return_response(data=data, api="recipe", code=201)
 
 
@@ -166,11 +166,11 @@ def put_recipe(_id):
         'detail': {'msg': 'Must be a string', 'param': 'title', 'value': {}}
     }
     """
-    put_recipe_validator.is_object_id_valid(_id)
-    body = put_recipe_factory.clean_body(request.json)
-    put_recipe_validator.is_body_valid(body)
-    put_recipe_validator.is_title_already_exist(body)
-    data = recipe.update(_id, body).get_result()
+    put_recipe_validator.is_object_id_valid(_id=_id)
+    body = put_recipe_factory.clean_body(data=request.json)
+    put_recipe_validator.is_body_valid(data=body)
+    put_recipe_validator.is_title_already_exist(data=body)
+    data = recipe.update(_id=_id, data=body).get_result()
     return factory.ServerResponse().return_response(data=data, api="recipe", code=200)
 
 
@@ -197,8 +197,8 @@ def delete_recipe(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
-    delete_recipe_validator.is_object_id_valid(_id)
-    recipe.delete(_id)
+    delete_recipe_validator.is_object_id_valid(_id=_id)
+    recipe.delete(_id=_id)
     return factory.ServerResponse().return_response(data=None, api="recipe", code=204)
 
 

@@ -37,7 +37,7 @@ class File(object):
         return f
 
     @staticmethod
-    def erase_is_main_if_exist(_id_parent, ):
+    def erase_is_main_if_exist(_id_parent):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_fs_files]
         db.update_one({'$and': [{"metadata._id": ObjectId(_id_parent)}, {"metadata.is_main": True}]},
