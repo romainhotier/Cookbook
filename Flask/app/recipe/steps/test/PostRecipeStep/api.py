@@ -11,6 +11,7 @@ class PostRecipeStep(object):
         self.url1 = 'recipe'
         self.url2 = 'step'
         self.param_id = "_id"
+        self.param_with_files = "with_files"
         self.param_step = "step"
         self.param_position = "position"
         self.rep_code_status = 'codeStatus'

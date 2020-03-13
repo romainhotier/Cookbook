@@ -2,7 +2,9 @@ from flask import Blueprint, request
 
 from server import factory as factory
 import app.recipe.recipe.model as recipe_model
+import app.file.file.model as file_model
 import app.recipe.recipe.validator.GetRecipe as validator_GetRecipe
+import app.recipe.recipe.validator.GetAllRecipe as validator_GetAllRecipe
 import app.recipe.recipe.validator.PostRecipe as validator_PostRecipe
 import app.recipe.recipe.validator.PutRecipe as validator_PutRecipe
 import app.recipe.recipe.validator.DeleteRecipe as validator_DeleteRecipe
@@ -13,7 +15,9 @@ import app.recipe.recipe.factory.PutRecipe as factory_PutRecipe
 recipe_api = Blueprint('recipe_api', __name__)
 
 recipe = recipe_model.Recipe()
+file = file_model.File()
 get_recipe_validator = validator_GetRecipe.Validator()
+get_all_recipe_validator = validator_GetAllRecipe.Validator()
 post_recipe_validator = validator_PostRecipe.Validator()
 put_recipe_validator = validator_PutRecipe.Validator()
 delete_recipe_validator = validator_DeleteRecipe.Validator()
@@ -27,6 +31,8 @@ def get_all_recipe():
     @api {get} /recipe  GetAllRecipe
     @apiGroup Recipe
     @apiDescription Get file recipes
+
+    @apiParam (Query param) {String} [with_files] if "true", add recipe's files
 
     @apiExample {json} Example usage:
     GET http://127.0.0.1:5000/recipe
@@ -42,8 +48,15 @@ def get_all_recipe():
                   'preparation_time': '', 'resume': '', 'steps': [], 'title': 'bqa_rhr'}]
     }
     """
-    data = recipe.select_all().get_result()
-    return factory.ServerResponse().return_response(data=data, api="recipe", code=200)
+    """ check param enrichment """
+    with_files = get_all_recipe_validator.is_string_boolean(with_files=request.args.get('with_files'))[1]
+    """ get all recipe """
+    data = recipe.select_all()
+    """ add enrichment if needed """
+    if with_files:
+        data.add_enrichment_file_for_all()
+    """ return response """
+    return factory.ServerResponse().return_response(data=data.get_result(), api="recipe", code=200)
 
 
 @recipe_api.route('/recipe/<_id>', methods=['GET'])
@@ -54,6 +67,7 @@ def get_recipe(_id):
     @apiDescription Get a recipe by it's ObjectId
 
     @apiParam (Query param) {String} _id Recipe's ObjectId
+    @apiParam (Query param) {String} [with_files] if "true", add recipe's files
 
     @apiExample {json} Example usage:
     GET http://127.0.0.1:5000/recipe/<_id>
@@ -75,9 +89,17 @@ def get_recipe(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
+    """ check param enrichment """
+    with_files = get_recipe_validator.is_string_boolean(with_files=request.args.get('with_files'))[1]
+    """ check param _id """
     get_recipe_validator.is_object_id_valid(_id=_id)
-    data = recipe.select_one(_id=_id).get_result()
-    return factory.ServerResponse().return_response(data=data, api="recipe", code=200)
+    """ get recipe """
+    data = recipe.select_one(_id=_id)
+    """ add enrichment if needed """
+    if with_files:
+        data.add_enrichment_file_for_one()
+    """ return response """
+    return factory.ServerResponse().return_response(data=data.get_result(), api="recipe", code=200)
 
 
 @recipe_api.route('/recipe', methods=['POST'])
@@ -119,11 +141,14 @@ def post_recipe():
         'detail': {'msg': 'Must be a string', 'param': 'title', 'value': {}}
     }
     """
+    """ check body """
     body = post_recipe_factory.clean_body(data=request.json)
     post_recipe_validator.is_body_valid(data=body)
     post_recipe_validator.is_title_already_exist(data=body)
-    data = recipe.insert(data=body).get_result()
-    return factory.ServerResponse().return_response(data=data, api="recipe", code=201)
+    """ insert recipe """
+    data = recipe.insert(data=body)
+    """ return result """
+    return factory.ServerResponse().return_response(data=data.get_result(), api="recipe", code=201)
 
 
 @recipe_api.route('/recipe/<_id>', methods=['PUT'])
@@ -134,6 +159,7 @@ def put_recipe(_id):
     @apiDescription Update a recipe
 
     @apiParam (Query param) {String} _id Recipe's ObjectId
+    @apiParam (Query param) {String} [with_files] if "true", add recipe's files
     @apiParam (Body param) {String} title Recipe's title
     @apiParam (Body param) {String} [level] Recipe's level
     @apiParam (Body param) {String} [resume] Recipe's resume
@@ -166,12 +192,21 @@ def put_recipe(_id):
         'detail': {'msg': 'Must be a string', 'param': 'title', 'value': {}}
     }
     """
+    """ check param enrichment """
+    with_files = put_recipe_validator.is_string_boolean(with_files=request.args.get('with_files'))[1]
+    """ check param _id """
     put_recipe_validator.is_object_id_valid(_id=_id)
+    """ check body """
     body = put_recipe_factory.clean_body(data=request.json)
     put_recipe_validator.is_body_valid(data=body)
     put_recipe_validator.is_title_already_exist(data=body)
-    data = recipe.update(_id=_id, data=body).get_result()
-    return factory.ServerResponse().return_response(data=data, api="recipe", code=200)
+    """ update recipe """
+    data = recipe.update(_id=_id, data=body)
+    """ add enrichment if needed """
+    if with_files:
+        data.add_enrichment_file_for_one()
+    """ return response """
+    return factory.ServerResponse().return_response(data=data.get_result(), api="recipe", code=200)
 
 
 @recipe_api.route('/recipe/<_id>', methods=['DELETE'])
@@ -197,8 +232,16 @@ def delete_recipe(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
+    """ check param _id """
     delete_recipe_validator.is_object_id_valid(_id=_id)
+    """ clean files recipe """
+    file.clean_file_by_id_parent(_id_parent=_id)
+    """ clean files steps """
+    for _id_step in recipe.get_all_step_id(_id=_id):
+        file.clean_file_by_id_parent(_id_parent=_id_step)
+    """ delete recipe """
     recipe.delete(_id=_id)
+    """ return response """
     return factory.ServerResponse().return_response(data=None, api="recipe", code=204)
 
 

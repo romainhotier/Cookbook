@@ -10,6 +10,7 @@ class PutRecipe(object):
     def __init__(self):
         self.url = 'recipe'
         self.param_id = "_id"
+        self.param_with_files = "with_files"
         self.param_title = "title"
         self.param_level = "level"
         self.param_resume = "resume"

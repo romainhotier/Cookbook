@@ -4,17 +4,20 @@ from bson import ObjectId
 
 from server import factory as factory
 import app.recipe.recipe.model as recipe_model
+import app.file.file.model as file_model
 import app.recipe.steps.test.PostRecipeStep.api as api
 
 server = factory.Server()
 api = api.PostRecipeStep()
 recipe = recipe_model.RecipeTest()
+file = file_model.FileTest()
 
 
 class PostRecipeStep(unittest.TestCase):
 
     def setUp(self):
         recipe.clean()
+        file.clean()
 
     def test_0_api_ok_without_position(self):
         tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
@@ -66,7 +69,7 @@ class PostRecipeStep(unittest.TestCase):
                 "invalid": "invalid"
                 }
         """ call api """
-        url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
+        url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2 + "?invalid=invalid"
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         tc_recipe.custom({"steps": ["a", "b", {"_id": "", "step": "new_step"}]})
@@ -465,6 +468,113 @@ class PostRecipeStep(unittest.TestCase):
                                    body[api.param_position])
         self.assertEqual(response_body[api.rep_detail], detail)
         tc_recipe.select_ok()
+
+    def test_5_with_files_without(self):
+        tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
+        tc_id = tc_recipe.get_id()
+        body = {api.param_step: "new_step"
+                }
+        """ call api """
+        url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2
+        response = requests.post(url, json=body, verify=False)
+        response_body = response.json()
+        tc_recipe.custom({"steps": ["a", "b", {"_id": "", "step": "new_step"}]})
+        """ assert """
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body[api.rep_code_status], 201)
+        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
+        self.assertEqual(api.format_data(data=response_body[api.rep_data], position=2),
+                         tc_recipe.get_data_stringify_object_id())
+        """ refacto recipe """
+        new_id = api.get_new_id(data=response_body[api.rep_data], position=2)
+        tc_recipe.custom({"steps": ["a", "b", {"_id": ObjectId(new_id), "step": "new_step"}]}).select_ok()
+
+    def test_5_with_files_empty(self):
+        tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
+        tc_id = tc_recipe.get_id()
+        tc_with_files = ""
+        body = {api.param_step: "new_step"
+                }
+        """ call api """
+        url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2 + "?" \
+            + api.param_with_files + "=" + tc_with_files
+        response = requests.post(url, json=body, verify=False)
+        response_body = response.json()
+        tc_recipe.custom({"steps": ["a", "b", {"_id": "", "step": "new_step"}]})
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body[api.rep_code_status], 400)
+        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
+        detail = api.create_detail(api.param_with_files, server.detail_must_be_in + " [true, false]", tc_with_files)
+        self.assertEqual(response_body[api.rep_detail], detail)
+
+    def test_5_with_files_string(self):
+        tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
+        tc_id = tc_recipe.get_id()
+        tc_with_files = "invalid"
+        body = {api.param_step: "new_step"
+                }
+        """ call api """
+        url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2 + "?" \
+            + api.param_with_files + "=" + tc_with_files
+        response = requests.post(url, json=body, verify=False)
+        response_body = response.json()
+        tc_recipe.custom({"steps": ["a", "b", {"_id": "", "step": "new_step"}]})
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body[api.rep_code_status], 400)
+        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
+        detail = api.create_detail(api.param_with_files, server.detail_must_be_in + " [true, false]", tc_with_files)
+        self.assertEqual(response_body[api.rep_detail], detail)
+
+    def test_5_with_files_string_false(self):
+        tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
+        tc_id = tc_recipe.get_id()
+        tc_with_files = "false"
+        body = {api.param_step: "new_step"
+                }
+        """ call api """
+        url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2 + "?" \
+            + api.param_with_files + "=" + tc_with_files
+        response = requests.post(url, json=body, verify=False)
+        response_body = response.json()
+        tc_recipe.custom({"steps": ["a", "b", {"_id": "", "step": "new_step"}]})
+        """ assert """
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body[api.rep_code_status], 201)
+        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
+        self.assertEqual(api.format_data(data=response_body[api.rep_data], position=2),
+                         tc_recipe.get_data_stringify_object_id())
+        """ refacto recipe """
+        new_id = api.get_new_id(data=response_body[api.rep_data], position=2)
+        tc_recipe.custom({"steps": ["a", "b", {"_id": ObjectId(new_id), "step": "new_step"}]}).select_ok()
+
+    # def test_5_with_files_string_true(self):
+    #     tc_recipe = recipe_model.RecipeTest().custom_test({"steps": ["a", "b"]}).insert()
+    #     tc_id = tc_recipe.get_id()
+    #     tc_with_files = "false"
+    #     body = {api.param_step: "new_step"
+    #             }
+    #     """ call api """
+    #     url = server.main_url + "/" + api.url1 + "/" + tc_id + "/" + api.url2 + "?" \
+    #         + api.param_with_files + "=" + tc_with_files
+    #     response = requests.post(url, json=body, verify=False)
+    #     response_body = response.json()
+    #     tc_recipe.custom({"steps": ["a", "b", {"_id": "", "step": "new_step"}]})
+    #     """ assert """
+    #     self.assertEqual(response.status_code, 201)
+    #     self.assertEqual(response.headers["Content-Type"], 'application/json')
+    #     self.assertEqual(response_body[api.rep_code_status], 201)
+    #     self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
+    #     self.assertEqual(api.format_data(data=response_body[api.rep_data], position=2),
+    #                      tc_recipe.get_data_stringify_object_id())
+    #     """ refacto recipe """
+    #     new_id = api.get_new_id(data=response_body[api.rep_data], position=2)
+    #     tc_recipe.custom({"steps": ["a", "b", {"_id": ObjectId(new_id), "step": "new_step"}]}).select_ok()
 
     @classmethod
     def tearDownClass(cls):

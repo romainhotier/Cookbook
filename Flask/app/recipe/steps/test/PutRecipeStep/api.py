@@ -10,6 +10,7 @@ class PutRecipeStep(object):
         self.url2 = 'step'
         self.param_id_recipe = "_id_recipe"
         self.param_id_step = "_id_step"
+        self.param_with_files = "with_files"
         self.param_step = "step"
         self.param_position = "position"
         self.rep_code_status = 'codeStatus'

@@ -35,14 +35,14 @@ class PostIngredientFile(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
-        tc_ingredient.custom({"files": [{"_id": "", "is_main": body[api.param_is_main]}]})
+        tc_ingredient.add_file(body[api.param_is_main])
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 201)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
         format_data = api.format_response(data=response_body[api.rep_data], position=0)
-        format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_enrichment(), position=0)
+        format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_file(files=[tc_file]), position=0)
         self.assertEqual(format_data, format_response)
         """ check ingredient """
         tc_ingredient.select_ok()
@@ -65,14 +65,14 @@ class PostIngredientFile(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
-        tc_ingredient.custom({"files": [{"_id": "", "is_main": body[api.param_is_main]}]})
+        tc_ingredient.add_file(body[api.param_is_main])
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 201)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
         format_data = api.format_response(data=response_body[api.rep_data], position=0)
-        format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_enrichment(), position=0)
+        format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_file(files=[tc_file]), position=0)
         self.assertEqual(format_data, format_response)
         """ check ingredient """
         tc_ingredient.select_ok()
@@ -341,14 +341,14 @@ class PostIngredientFile(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
-        tc_ingredient.custom({"files": [{"_id": "", "is_main": body[api.param_is_main]}]})
+        tc_ingredient.add_file(body[api.param_is_main])
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 201)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
         format_data = api.format_response(data=response_body[api.rep_data], position=0)
-        format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_enrichment(), position=0)
+        format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_file(files=[tc_file]), position=0)
         self.assertEqual(format_data, format_response)
         """ check ingredient """
         tc_ingredient.select_ok()
@@ -376,7 +376,7 @@ class PostIngredientFile(unittest.TestCase):
         self.assertEqual(response_body[api.rep_code_status], 201)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
         format_data = api.format_response(data=response_body[api.rep_data], position=0)
-        format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_enrichment(), position=0)
+        format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_file(files=[tc_file]), position=0)
         self.assertEqual(format_data, format_response)
         """ check ingredient """
         tc_ingredient.select_ok()
@@ -467,14 +467,14 @@ class PostIngredientFile(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
-        tc_ingredient.custom({"files": [{"_id": "", "is_main": body[api.param_is_main]}]})
+        tc_ingredient.add_file(body[api.param_is_main])
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 201)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
         format_data = api.format_response(data=response_body[api.rep_data], position=0)
-        format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_enrichment(), position=0)
+        format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_file(files=[tc_file]), position=0)
         self.assertEqual(format_data, format_response)
         """ check ingredient """
         tc_ingredient.select_ok()
@@ -496,14 +496,14 @@ class PostIngredientFile(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
-        tc_ingredient.custom({"files": [{"_id": "", "is_main": body[api.param_is_main]}]})
+        tc_ingredient.add_file(body[api.param_is_main])
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 201)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
         format_data = api.format_response(data=response_body[api.rep_data], position=0)
-        format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_enrichment(), position=0)
+        format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_file(files=[tc_file]), position=0)
         self.assertEqual(format_data, format_response)
         """ check ingredient """
         tc_ingredient.select_ok()
@@ -535,8 +535,9 @@ class PostIngredientFile(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 201)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        format_data = api.format_response(data=response_body[api.rep_data], position=1)
-        format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_enrichment(), position=1)
+        format_data = api.format_response(data=response_body[api.rep_data], position=0)
+        format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_file(files=[tc_file1, tc_file2]),
+                                                 position=0)
         self.assertEqual(format_data, format_response)
         """ check ingredient """
         tc_ingredient.select_ok()

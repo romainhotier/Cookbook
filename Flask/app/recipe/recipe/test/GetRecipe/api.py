@@ -8,6 +8,7 @@ class GetRecipe(object):
     def __init__(self):
         self.url = 'recipe'
         self.param_id = "_id"
+        self.param_with_files = "with_files"
         self.rep_code_status = 'codeStatus'
         self.rep_code_msg = 'codeMsg'
         self.rep_data = 'data'

@@ -3,11 +3,13 @@ import requests
 
 from server import factory as factory
 import app.recipe.recipe.model as recipe_model
+import app.file.file.model as file_model
 import app.recipe.recipe.test.DeleteRecipe.api as api
 
 server = factory.Server()
 api = api.DeleteRecipe()
 recipe = recipe_model.RecipeTest()
+file = file_model.FileTest()
 
 
 class DeleteRecipe(unittest.TestCase):
@@ -94,6 +96,40 @@ class DeleteRecipe(unittest.TestCase):
         self.assertEqual(response_body[api.rep_detail], detail)
         tc_recipe1.select_ok()
         tc_recipe2.select_ok()
+
+    def test_3_clean_file(self):
+        tc_recipe1 = recipe_model.RecipeTest().custom_test({"title": "a"})
+        tc_recipe2 = recipe_model.RecipeTest().custom_test({"title": "b"})
+        tc_recipe1.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
+        tc_recipe1.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe2.add_step(_id_step="333333333333333333333333", step="step recipe 2 - 1st")
+        tc_recipe1.insert()
+        tc_recipe2.insert()
+        tc_file_recipe11 = tc_recipe1.add_file_recipe(is_main=True)
+        tc_file_recipe12 = tc_recipe1.add_file_recipe(is_main=False)
+        tc_file_recipe2 = tc_recipe2.add_file_recipe(is_main=False)
+        tc_file_step111 = tc_recipe1.add_file_step(_id_step="111111111111111111111111", is_main=False)
+        tc_file_step121 = tc_recipe1.add_file_step(_id_step="222222222222222222222222", is_main=False)
+        tc_file_step122 = tc_recipe1.add_file_step(_id_step="222222222222222222222222", is_main=True)
+        tc_file_step211 = tc_recipe2.add_file_step(_id_step="333333333333333333333333", is_main=True)
+        tc_file_step212 = tc_recipe2.add_file_step(_id_step="333333333333333333333333", is_main=False)
+        tc_id = tc_recipe1.get_id()
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.delete(url, verify=False)
+        """ assert """
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        tc_recipe1.select_nok()
+        tc_file_recipe11.select_nok()
+        tc_file_recipe12.select_nok()
+        tc_file_step111.select_nok()
+        tc_file_step121.select_nok()
+        tc_file_step122.select_nok()
+        tc_recipe2.select_ok()
+        tc_file_recipe2.select_ok()
+        tc_file_step211.select_ok()
+        tc_file_step212.select_ok()
 
     @classmethod
     def tearDownClass(cls):

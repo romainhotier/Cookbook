@@ -75,5 +75,5 @@ class Steps(object):
         return recipe.get_result()
 
     @staticmethod
-    def add_enrichment_file():
-        return recipe.add_enrichment_file()
+    def add_enrichment_file_for_one():
+        return recipe.add_enrichment_file_for_one()

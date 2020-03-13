@@ -57,9 +57,22 @@ class File(object):
     def delete(_id):
         client = MongoClient(mongo.ip, mongo.port)
         fs = gridfs.GridFS(client[mongo.name])
-        f = fs.delete(ObjectId(_id))
+        fs.delete(ObjectId(_id))
         client.close()
-        return f
+        return
+
+    @staticmethod
+    def clean_file_by_id_parent(_id_parent):
+        client = MongoClient(mongo.ip, mongo.port)
+        """ file all files """
+        db = client[mongo.name][mongo.collection_fs_files]
+        files = db.find({"metadata._id": ObjectId(_id_parent)})
+        """ delete files """
+        fs = gridfs.GridFS(client[mongo.name])
+        for file in files:
+            fs.delete(ObjectId(file["_id"]))
+        client.close()
+        return
 
 
 class FileTest(object):
@@ -88,6 +101,9 @@ class FileTest(object):
 
     def get_data(self):
         return self.data[0].decode("utf-8")
+
+    def get_data_for_enrichment(self):
+        return {"_id": self._id, "is_main": self.metadata["is_main"]}
 
     def custom_filename(self, filename):
         self.filename = filename
@@ -124,6 +140,11 @@ class FileTest(object):
         client.close()
         assert result["filename"] == self.filename
         assert result["metadata"] == self.metadata
+
+    def select_nok(self):
+        client = MongoClient(mongo.ip, mongo.port)
+        fs = gridfs.GridFS(client[mongo.name])
+        assert not fs.exists({"_id": ObjectId(self.get_id())})
 
     def select_nok_by_filename(self):
         client = MongoClient(mongo.ip, mongo.port)

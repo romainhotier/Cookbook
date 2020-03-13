@@ -5,6 +5,7 @@ import re
 import json
 
 from server import mongo_config as mongo_conf
+import app.file.file.model as file_model
 
 mongo = mongo_conf.MongoConnection()
 json_format = mongo_conf.JSONEncoder()
@@ -68,7 +69,27 @@ class Recipe(object):
         client.close()
         return
 
-    def add_enrichment_file(self):
+    def add_enrichment_file_for_all(self):
+        client = MongoClient(mongo.ip, mongo.port)
+        db_file = client[mongo.name][mongo.collection_fs_files]
+        for recipe in self.result:
+            recipe["files"] = []
+            """ get files for recipe """
+            files_recipe = db_file.find({"metadata._id": ObjectId(recipe["_id"])})
+            for file in files_recipe:
+                file_enrichment = {"_id": file["_id"], "is_main": file["metadata"]["is_main"]}
+                recipe["files"].append(file_enrichment)
+            """ get files for steps """
+            for step in recipe["steps"]:
+                step["files"] = []
+                files_step = db_file.find({"metadata._id": ObjectId(step["_id"])})
+                for file in files_step:
+                    file_enrichment = {"_id": file["_id"], "is_main": file["metadata"]["is_main"]}
+                    step["files"].append(file_enrichment)
+        client.close()
+        return self
+
+    def add_enrichment_file_for_one(self):
         client = MongoClient(mongo.ip, mongo.port)
         db_file = client[mongo.name][mongo.collection_fs_files]
         self.result["files"] = []
@@ -86,6 +107,17 @@ class Recipe(object):
                 step["files"].append(file_enrichment)
         client.close()
         return self
+
+    @staticmethod
+    def get_all_step_id(_id):
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        steps_ids = []
+        result = db.find_one({"_id": ObjectId(_id)})
+        for step in result["steps"]:
+            steps_ids.append(step["_id"])
+        client.close()
+        return steps_ids
 
     def get_result(self):
         return json.loads(json_format.encode(self.result))
@@ -119,25 +151,17 @@ class RecipeTest(object):
         data_without_id.pop("_id")
         return data_without_id
 
-    def get_data_with_enrichment(self):
-        client = MongoClient(mongo.ip, mongo.port)
-        db_file = client[mongo.name][mongo.collection_fs_files]
-        data = copy.deepcopy(self.get_data())
-        data["files"] = []
-        """ get files """
-        files = db_file.find({"metadata._id": ObjectId(self.get_id())})
-        for file in files:
-            file_enrichment = {"_id": file["_id"], "is_main": file["metadata"]["is_main"]}
-            data['files'].append(file_enrichment)
-        """ get files for steps """
-        for step in data["steps"]:
-            step["files"] = []
-            files_step = db_file.find({"metadata._id": ObjectId(step["_id"])})
-            for file in files_step:
-                file_enrichment = {"_id": file["_id"], "is_main": file["metadata"]["is_main"]}
-                step["files"].append(file_enrichment)
-        client.close()
-        return json.loads(json_format.encode(data))
+    def get_data_with_file(self, files_recipe, files_steps):
+        self.data["files"] = []
+        for recipe_file in files_recipe:
+            self.data["files"].append(recipe_file.get_data_for_enrichment())
+        for i, j in files_steps.items():
+            for step in self.data["steps"]:
+                if str(step["_id"]) == i:
+                    step["files"] = []
+                    for step_file in j:
+                        step["files"].append(step_file.get_data_for_enrichment())
+        return json.loads(json_format.encode(self.data))
 
     def get_id(self):
         return str(self.data["_id"])
@@ -164,12 +188,6 @@ class RecipeTest(object):
         self.data["title"] = self.data["title"] + "qa_rhr"
         return self
 
-    def custom_step(self, step_index, data):
-        for i, j in data.items():
-            if i in ["_id", "step", "files"]:
-                self.data["steps"][step_index][i] = j
-        return self
-
     def select_ok(self):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
@@ -178,7 +196,7 @@ class RecipeTest(object):
         assert result.count() == 1
         assert isinstance(result[0]["_id"], ObjectId)
         for value in result[0]:
-            if value not in ["_id"]:
+            if value not in ["_id", "files"]:
                 assert result[0][value] == self.data[value]
 
     def select_ok_by_title(self):
@@ -231,4 +249,22 @@ class RecipeTest(object):
         client.close()
         return
 
+    def add_step(self, _id_step, step):
+        self.data["steps"].append({"_id": ObjectId(_id_step), "step": step})
 
+    def custom_step(self, position, data):
+        self.data["steps"][position]["step"]=data
+
+    def remove_step(self, position):
+        del self.data["steps"][position]
+
+    def add_file_recipe(self, is_main):
+        return file_model.FileTest().custom_metadata({"kind": "recipe",
+                                                      "_id": ObjectId(self.data["_id"]),
+                                                      "is_main": is_main}).insert()
+
+    @staticmethod
+    def add_file_step(_id_step, is_main):
+        return file_model.FileTest().custom_metadata({"kind": "step",
+                                                      "_id": ObjectId(_id_step),
+                                                      "is_main": is_main}).insert()

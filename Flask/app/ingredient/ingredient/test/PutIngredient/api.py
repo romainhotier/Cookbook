@@ -8,6 +8,7 @@ class PutIngredient(object):
     def __init__(self):
         self.url = 'ingredient'
         self.param_id = "_id"
+        self.param_with_files = "with_files"
         self.param_name = "name"
         self.rep_code_status = 'codeStatus'
         self.rep_code_msg = 'codeMsg'

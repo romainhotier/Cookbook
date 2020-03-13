@@ -46,8 +46,11 @@ def get_file(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
+    """ check param _id """
     get_file_validator.is_object_id_valid(_id=_id)
+    """ get file """
     data = file.select_one(_id=_id)
+    """ return response """
     response = make_response(data.read(), 200)
     response.mimetype = data.content_type
     return response
@@ -76,8 +79,11 @@ def delete_file(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
+    """ check param _id """
     delete_file_validator.is_object_id_valid(_id=_id)
+    """ delete file """
     file.delete(_id=_id)
+    """ return response """
     return factory.ServerResponse().return_response(data=None, api="file", code=204)
 
 
@@ -120,13 +126,17 @@ def post_ingredient_file(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
+    """ check param _id """
     post_file_validator.is_object_id_valid(kind="ingredient", _id=_id)
+    """ check body """
     body = post_file_factory.clean_body(data=request.json)
     post_file_validator.is_body_valid(data=body)
+    """ insert file """
     inserted_id = file.insert(kind="ingredient", _id_parent=_id, metadata=body)
-    data = ingredient.select_one(_id=_id).add_enrichment_file().get_result()
+    """ return response """
+    data = ingredient.select_one(_id=_id).add_enrichment_file_for_one()
     detail = post_file_factory.detail_information(_id_file=inserted_id)
-    return factory.ServerResponse().return_response(data=data, api="file", code=201, detail=detail)
+    return factory.ServerResponse().return_response(data=data.get_result(), api="file", code=201, detail=detail)
 
 
 @file_api.route('/file/recipe/<_id>', methods=['POST'])

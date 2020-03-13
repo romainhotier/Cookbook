@@ -5,6 +5,7 @@ import copy
 import json
 
 from server import mongo_config as mongo_conf
+import app.file.file.model as file_model
 
 mongo = mongo_conf.MongoConnection()
 json_format = mongo_conf.JSONEncoder()
@@ -68,7 +69,20 @@ class Ingredient(object):
         client.close()
         return
 
-    def add_enrichment_file(self):
+    def add_enrichment_file_for_all(self):
+        client = MongoClient(mongo.ip, mongo.port)
+        db_file = client[mongo.name][mongo.collection_fs_files]
+        for ingredient in self.result:
+            ingredient["files"] = []
+            """ get files """
+            files = db_file.find({"metadata._id": ObjectId(ingredient["_id"])})
+            for file in files:
+                file_enrichment = {"_id": file["_id"], "is_main": file["metadata"]["is_main"]}
+                ingredient["files"].append(file_enrichment)
+        client.close()
+        return self
+
+    def add_enrichment_file_for_one(self):
         client = MongoClient(mongo.ip, mongo.port)
         db_file = client[mongo.name][mongo.collection_fs_files]
         self.result["files"] = []
@@ -105,18 +119,11 @@ class IngredientTest(object):
         data_without_id.pop("_id")
         return data_without_id
 
-    def get_data_with_enrichment(self):
-        client = MongoClient(mongo.ip, mongo.port)
-        db_file = client[mongo.name][mongo.collection_fs_files]
-        data = copy.deepcopy(self.get_data())
-        data["files"] = []
-        """ get files """
-        files = db_file.find({"metadata._id": ObjectId(self.get_id())})
+    def get_data_with_file(self, files):
+        self.data["files"] = []
         for file in files:
-            file_enrichment = {"_id": file["_id"], "is_main": file["metadata"]["is_main"]}
-            data['files'].append(file_enrichment)
-        client.close()
-        return json.loads(json_format.encode(data))
+            self.data["files"].append(file.get_data_for_enrichment())
+        return json.loads(json_format.encode(self.data))
 
     def get_id(self):
         return str(self.data["_id"])
@@ -203,3 +210,8 @@ class IngredientTest(object):
         db.delete_many({"name": rgx})
         client.close()
         return
+
+    def add_file(self, is_main):
+        return file_model.FileTest().custom_metadata({"kind": "ingredient",
+                                                      "_id": ObjectId(self.data["_id"]),
+                                                      "is_main": is_main}).insert()

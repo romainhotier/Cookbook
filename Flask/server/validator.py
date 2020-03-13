@@ -127,10 +127,10 @@ class Validator(object):
     @staticmethod
     def is_in(param, value, values):
         """ check param is in values """
-        if param in values:
+        if value in values:
             return True
         else:
-            detail = {"param": param, "msg": server.detail_must_be_in + values, "value": value}
+            detail = {"param": param, "msg": server.detail_must_be_in + " [" + ', '.join(values) + "]", "value": value}
             return abort(400, description=detail)
 
     @staticmethod

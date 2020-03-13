@@ -3,17 +3,20 @@ import requests
 
 from server import factory as factory
 import app.ingredient.ingredient.model as ingredient_model
+import app.file.file.model as file_model
 import app.ingredient.ingredient.test.DeleteIngredient.api as api
 
 server = factory.Server()
 api = api.DeleteIngredient()
 ingredient = ingredient_model.IngredientTest()
+file = file_model.FileTest()
 
 
 class DeleteIngredient(unittest.TestCase):
 
     def setUp(self):
         ingredient.clean()
+        file.clean()
 
     def test_0_api_ok(self):
         tc_ingredient1 = ingredient_model.IngredientTest().custom_test({}).insert()
@@ -94,6 +97,21 @@ class DeleteIngredient(unittest.TestCase):
         self.assertEqual(response_body[api.rep_detail], detail)
         tc_ingredient1.select_ok()
         tc_ingredient2.select_ok()
+
+    def test_3_file_clean(self):
+        tc_ingredient1 = ingredient_model.IngredientTest().custom_test({}).insert()
+        tc_file1 = tc_ingredient1.add_file(is_main=False)
+        tc_file2 = tc_ingredient1.add_file(is_main=False)
+        tc_id = tc_ingredient1.get_id()
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.delete(url, verify=False)
+        """ assert """
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        tc_ingredient1.select_nok()
+        tc_file1.select_nok()
+        tc_file2.select_nok()
 
     @classmethod
     def tearDownClass(cls):
