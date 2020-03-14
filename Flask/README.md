@@ -11,6 +11,11 @@ npm install apidoc -g
 apidoc -i ../Flask/ -o ../apidoc/
 ```
 
+# Populate #
+```
+python populate.py
+```
+
 # Launch #
 ```
 python server.py
