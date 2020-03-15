@@ -160,8 +160,8 @@ class GetIngredient(unittest.TestCase):
     def test_3_with_files_string_false(self):
         tc_ingredient1 = ingredient_model.IngredientTest().custom_test({"name": "a"}).insert()
         ingredient_model.IngredientTest().custom_test({"name": "b"}).insert()
-        tc_ingredient1.add_file(is_main=False)
-        tc_ingredient1.add_file(is_main=True)
+        tc_ingredient1.add_file(filename="qa_rhr_1", is_main=False)
+        tc_ingredient1.add_file(filename="qa_rhr_2", is_main=True)
         tc_id = tc_ingredient1.get_id()
         tc_with_files = "false"
         """ call api """
@@ -178,8 +178,8 @@ class GetIngredient(unittest.TestCase):
     def test_3_with_files_string_true(self):
         tc_ingredient1 = ingredient_model.IngredientTest().custom_test({"name": "a"}).insert()
         ingredient_model.IngredientTest().custom_test({"name": "b"}).insert()
-        tc_file1 = tc_ingredient1.add_file(is_main=False)
-        tc_file2 = tc_ingredient1.add_file(is_main=True)
+        tc_file1 = tc_ingredient1.add_file(filename="qa_rhr_1", is_main=False)
+        tc_file2 = tc_ingredient1.add_file(filename="qa_rhr_2", is_main=True)
         tc_id = tc_ingredient1.get_id()
         tc_with_files = "true"
         """ call api """

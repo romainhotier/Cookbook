@@ -57,7 +57,7 @@ class PostRecipeFile(object):
             elif current_path.split('\\')[-1] == "Flask":
                 default_path = current_path + "\\app\\file\\_file_exemple\\text.txt"
                 return default_path
-        elif platform.system() == "Linux":
+        elif platform.system() in ["Linux", "Darwin"]:
             if current_path.split('/')[-1] == "PostRecipeFile":
                 default_path = current_path.replace("file/test/PostRecipeFile", "_file_exemple/text.txt")
                 return default_path

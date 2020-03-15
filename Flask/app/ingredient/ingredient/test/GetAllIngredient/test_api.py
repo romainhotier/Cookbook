@@ -112,9 +112,9 @@ class GetAllIngredient(unittest.TestCase):
     def test_2_with_files_string_false(self):
         tc_ingredient1 = ingredient_model.IngredientTest().custom_test({"name": "a"}).insert()
         tc_ingredient2 = ingredient_model.IngredientTest().custom_test({"name": "b"}).insert()
-        tc_ingredient1.add_file(is_main=False)
-        tc_ingredient1.add_file(is_main=True)
-        tc_ingredient2.add_file(is_main=False)
+        tc_ingredient1.add_file(filename="qa_rhr_1", is_main=False)
+        tc_ingredient1.add_file(filename="qa_rhr_2", is_main=True)
+        tc_ingredient2.add_file(filename="qa_rhr_3", is_main=False)
         tc_with_files = "false"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_with_files + "=" + tc_with_files
@@ -131,9 +131,9 @@ class GetAllIngredient(unittest.TestCase):
     def test_2_with_files_string_true(self):
         tc_ingredient1 = ingredient_model.IngredientTest().custom_test({"name": "a"}).insert()
         tc_ingredient2 = ingredient_model.IngredientTest().custom_test({"name": "b"}).insert()
-        tc_file1 = tc_ingredient1.add_file(is_main=False)
-        tc_file2 = tc_ingredient1.add_file(is_main=True)
-        tc_file3 = tc_ingredient2.add_file(is_main=False)
+        tc_file1 = tc_ingredient1.add_file(filename="qa_rhr_1", is_main=False)
+        tc_file2 = tc_ingredient1.add_file(filename="qa_rhr_2", is_main=True)
+        tc_file3 = tc_ingredient2.add_file(filename="qa_rhr_3", is_main=False)
         tc_with_files = "true"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_with_files + "=" + tc_with_files

@@ -105,14 +105,19 @@ class DeleteRecipe(unittest.TestCase):
         tc_recipe2.add_step(_id_step="333333333333333333333333", step="step recipe 2 - 1st")
         tc_recipe1.insert()
         tc_recipe2.insert()
-        tc_file_recipe11 = tc_recipe1.add_file_recipe(is_main=True)
-        tc_file_recipe12 = tc_recipe1.add_file_recipe(is_main=False)
-        tc_file_recipe2 = tc_recipe2.add_file_recipe(is_main=False)
-        tc_file_step111 = tc_recipe1.add_file_step(_id_step="111111111111111111111111", is_main=False)
-        tc_file_step121 = tc_recipe1.add_file_step(_id_step="222222222222222222222222", is_main=False)
-        tc_file_step122 = tc_recipe1.add_file_step(_id_step="222222222222222222222222", is_main=True)
-        tc_file_step211 = tc_recipe2.add_file_step(_id_step="333333333333333333333333", is_main=True)
-        tc_file_step212 = tc_recipe2.add_file_step(_id_step="333333333333333333333333", is_main=False)
+        tc_file_recipe11 = tc_recipe1.add_file_recipe(filename="qa_rhr_1", is_main=True)
+        tc_file_recipe12 = tc_recipe1.add_file_recipe(filename="qa_rhr_2", is_main=False)
+        tc_file_recipe2 = tc_recipe2.add_file_recipe(filename="qa_rhr_3", is_main=False)
+        tc_file_step111 = tc_recipe1.add_file_step(_id_step="111111111111111111111111", filename="qa_rhr_11",
+                                                   is_main=False)
+        tc_file_step121 = tc_recipe1.add_file_step(_id_step="222222222222222222222222", filename="qa_rhr_21",
+                                                   is_main=False)
+        tc_file_step122 = tc_recipe1.add_file_step(_id_step="222222222222222222222222", filename="qa_rhr_22",
+                                                   is_main=True)
+        tc_file_step211 = tc_recipe2.add_file_step(_id_step="333333333333333333333333", filename="qa_rhr_31",
+                                                   is_main=True)
+        tc_file_step212 = tc_recipe2.add_file_step(_id_step="333333333333333333333333", filename="qa_rhr_32",
+                                                   is_main=False)
         tc_id = tc_recipe1.get_id()
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id

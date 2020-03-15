@@ -27,15 +27,11 @@ class PostIngredientFile(unittest.TestCase):
                 api.param_filename: "qa_rhr_filename",
                 api.param_is_main: False
                 }
-        tc_file = file_model.FileTest().custom_metadata({"kind": "ingredient",
-                                                         "is_main": body[api.param_is_main],
-                                                         "_id": tc_id}).\
-            custom_filename(body[api.param_filename])
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
-        tc_ingredient.add_file(body[api.param_is_main])
+        tc_file = tc_ingredient.add_file(filename=body[api.param_filename], is_main=body[api.param_is_main])
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
@@ -58,14 +54,11 @@ class PostIngredientFile(unittest.TestCase):
                 api.param_is_main: False,
                 "invalid": "invalid"
                 }
-        tc_file = file_model.FileTest().custom_metadata({"kind": "ingredient",
-                                                         "is_main": body[api.param_is_main],
-                                                         "_id": tc_id})
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
-        tc_ingredient.add_file(body[api.param_is_main])
+        tc_file = tc_ingredient.add_file(filename=body[api.param_filename], is_main=body[api.param_is_main])
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
@@ -334,14 +327,11 @@ class PostIngredientFile(unittest.TestCase):
                 api.param_filename: "qa_rhr_filename",
                 api.param_is_main: False
                 }
-        tc_file = file_model.FileTest().custom_metadata({"kind": "ingredient",
-                                                         "is_main": body[api.param_is_main],
-                                                         "_id": tc_id})
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
-        tc_ingredient.add_file(body[api.param_is_main])
+        tc_file = tc_ingredient.add_file(filename=body[api.param_filename], is_main=body[api.param_is_main])
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
@@ -362,14 +352,11 @@ class PostIngredientFile(unittest.TestCase):
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename"
                 }
-        tc_file = file_model.FileTest().custom_metadata({"kind": "ingredient",
-                                                         "is_main": False,
-                                                         "_id": tc_id})
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
-        tc_ingredient.custom({"files": [{"_id": "", "is_main": False}]})
+        tc_file = tc_ingredient.add_file(filename=body[api.param_filename], is_main=False)
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
@@ -460,14 +447,11 @@ class PostIngredientFile(unittest.TestCase):
                 api.param_filename: "qa_rhr_filename",
                 api.param_is_main: False
                 }
-        tc_file = file_model.FileTest().custom_metadata({"kind": "ingredient",
-                                                         "is_main": body[api.param_is_main],
-                                                         "_id": tc_id})
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
-        tc_ingredient.add_file(body[api.param_is_main])
+        tc_file = tc_ingredient.add_file(filename=body[api.param_filename], is_main=body[api.param_is_main])
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
@@ -489,14 +473,11 @@ class PostIngredientFile(unittest.TestCase):
                 api.param_filename: "qa_rhr_filename",
                 api.param_is_main: True
                 }
-        tc_file = file_model.FileTest().custom_metadata({"kind": "ingredient",
-                                                         "is_main": body[api.param_is_main],
-                                                         "_id": tc_id})
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
-        tc_ingredient.add_file(body[api.param_is_main])
+        tc_file = tc_ingredient.add_file(filename=body[api.param_filename], is_main=body[api.param_is_main])
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
@@ -513,31 +494,26 @@ class PostIngredientFile(unittest.TestCase):
 
     def test_5_is_main_true_already_exist(self):
         tc_ingredient = ingredient_model.IngredientTest().custom_test({}).insert()
+        tc_file1 = tc_ingredient.add_file(filename="qa_rhr_filename", is_main=True)
         tc_id = tc_ingredient.get_id()
-        tc_file1 = file_model.FileTest().custom_metadata({"kind": "ingredient", "is_main": True, "_id": tc_id}).insert()
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename_new",
                 api.param_is_main: True
                 }
-        tc_file2 = file_model.FileTest().\
-            custom_filename(body[api.param_filename]).custom_metadata({"kind": "ingredient",
-                                                                       "is_main": body[api.param_is_main],
-                                                                       "_id": tc_id})
-        tc_file1.custom_metadata({"is_main": False})
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
-        tc_ingredient.custom({"files": [{"_id": tc_file2.get_id(), "is_main": False},
-                                        {"_id": "", "is_main": body[api.param_is_main]}]})
+        tc_file1.custom_metadata({"is_main": False})
+        tc_file2 = tc_ingredient.add_file(filename=body[api.param_filename], is_main=body[api.param_is_main])
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 201)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        format_data = api.format_response(data=response_body[api.rep_data], position=0)
+        format_data = api.format_response(data=response_body[api.rep_data], position=1)
         format_response = api.refacto_file_added(data=tc_ingredient.get_data_with_file(files=[tc_file1, tc_file2]),
-                                                 position=0)
+                                                 position=1)
         self.assertEqual(format_data, format_response)
         """ check ingredient """
         tc_ingredient.select_ok()

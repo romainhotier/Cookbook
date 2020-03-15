@@ -1030,11 +1030,11 @@ class PutRecipe(unittest.TestCase):
         tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
         tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
         tc_recipe.insert()
-        tc_recipe.add_file_recipe(is_main=True)
-        tc_recipe.add_file_recipe(is_main=False)
-        tc_recipe.add_file_step(_id_step="111111111111111111111111", is_main=False)
-        tc_recipe.add_file_step(_id_step="222222222222222222222222", is_main=False)
-        tc_recipe.add_file_step(_id_step="222222222222222222222222", is_main=True)
+        tc_recipe.add_file_recipe(filename="qa_rhr_1", is_main=True)
+        tc_recipe.add_file_recipe(filename="qa_rhr_2", is_main=False)
+        tc_recipe.add_file_step(_id_step="111111111111111111111111", filename="qa_rhr_11", is_main=False)
+        tc_recipe.add_file_step(_id_step="222222222222222222222222", filename="qa_rhr_21", is_main=False)
+        tc_recipe.add_file_step(_id_step="222222222222222222222222", filename="qa_rhr_22", is_main=True)
         tc_id = tc_recipe.get_id()
         tc_with_files = "false"
         body = {api.param_title: "qa_rhr_title_update"}
@@ -1056,11 +1056,14 @@ class PutRecipe(unittest.TestCase):
         tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
         tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
         tc_recipe.insert()
-        tc_file_recipe11 = tc_recipe.add_file_recipe(is_main=True)
-        tc_file_recipe12 = tc_recipe.add_file_recipe(is_main=False)
-        tc_file_step111 = tc_recipe.add_file_step(_id_step="111111111111111111111111", is_main=False)
-        tc_file_step121 = tc_recipe.add_file_step(_id_step="222222222222222222222222", is_main=False)
-        tc_file_step122 = tc_recipe.add_file_step(_id_step="222222222222222222222222", is_main=True)
+        tc_file_recipe11 = tc_recipe.add_file_recipe(filename="qa_rhr_1", is_main=True)
+        tc_file_recipe12 = tc_recipe.add_file_recipe(filename="qa_rhr_2", is_main=False)
+        tc_file_step111 = tc_recipe.add_file_step(_id_step="111111111111111111111111", filename="qa_rhr_11",
+                                                  is_main=False)
+        tc_file_step121 = tc_recipe.add_file_step(_id_step="222222222222222222222222", filename="qa_rhr_21",
+                                                  is_main=False)
+        tc_file_step122 = tc_recipe.add_file_step(_id_step="222222222222222222222222", filename="qa_rhr_22",
+                                                  is_main=True)
         tc_id = tc_recipe.get_id()
         tc_with_files = "true"
         body = {api.param_title: "qa_rhr_title_update"}

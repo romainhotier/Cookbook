@@ -152,16 +152,18 @@ class RecipeTest(object):
         return data_without_id
 
     def get_data_with_file(self, files_recipe, files_steps):
-        self.data["files"] = []
+        tmp_data = copy.deepcopy(self)
+        tmp_data.data["files"] = []
         for recipe_file in files_recipe:
-            self.data["files"].append(recipe_file.get_data_for_enrichment())
-        for i, j in files_steps.items():
-            for step in self.data["steps"]:
-                if str(step["_id"]) == i:
-                    step["files"] = []
-                    for step_file in j:
-                        step["files"].append(step_file.get_data_for_enrichment())
-        return json.loads(json_format.encode(self.data))
+            tmp_data.data["files"].append(recipe_file.get_data_for_enrichment())
+        if len(files_steps) != 0:
+            for i, j in files_steps.items():
+                for step in tmp_data.data["steps"]:
+                    if str(step["_id"]) == i:
+                        step["files"] = []
+                        for step_file in j:
+                            step["files"].append(step_file.get_data_for_enrichment())
+        return json.loads(json_format.encode(tmp_data.data))
 
     def get_id(self):
         return str(self.data["_id"])
@@ -258,13 +260,15 @@ class RecipeTest(object):
     def remove_step(self, position):
         del self.data["steps"][position]
 
-    def add_file_recipe(self, is_main):
-        return file_model.FileTest().custom_metadata({"kind": "recipe",
-                                                      "_id": ObjectId(self.data["_id"]),
-                                                      "is_main": is_main}).insert()
+    def add_file_recipe(self, filename, is_main):
+        return file_model.FileTest().custom_filename(filename).\
+            custom_metadata({"kind": "recipe",
+                             "_id": ObjectId(self.data["_id"]),
+                             "is_main": is_main}).insert()
 
     @staticmethod
-    def add_file_step(_id_step, is_main):
-        return file_model.FileTest().custom_metadata({"kind": "step",
-                                                      "_id": ObjectId(_id_step),
-                                                      "is_main": is_main}).insert()
+    def add_file_step(_id_step, filename, is_main):
+        return file_model.FileTest().custom_filename(filename).\
+            custom_metadata({"kind": "step",
+                             "_id": ObjectId(_id_step),
+                             "is_main": is_main}).insert()

@@ -100,8 +100,8 @@ class DeleteIngredient(unittest.TestCase):
 
     def test_3_file_clean(self):
         tc_ingredient1 = ingredient_model.IngredientTest().custom_test({}).insert()
-        tc_file1 = tc_ingredient1.add_file(is_main=False)
-        tc_file2 = tc_ingredient1.add_file(is_main=False)
+        tc_file1 = tc_ingredient1.add_file(filename="qa_rhr_1", is_main=False)
+        tc_file2 = tc_ingredient1.add_file(filename="qa_rhr_2", is_main=False)
         tc_id = tc_ingredient1.get_id()
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id

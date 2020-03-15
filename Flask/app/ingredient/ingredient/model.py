@@ -211,7 +211,8 @@ class IngredientTest(object):
         client.close()
         return
 
-    def add_file(self, is_main):
-        return file_model.FileTest().custom_metadata({"kind": "ingredient",
-                                                      "_id": ObjectId(self.data["_id"]),
-                                                      "is_main": is_main}).insert()
+    def add_file(self, filename, is_main):
+        return file_model.FileTest().custom_filename(filename).\
+            custom_metadata({"kind": "ingredient",
+                             "_id": ObjectId(self.data["_id"]),
+                             "is_main": is_main}).insert()

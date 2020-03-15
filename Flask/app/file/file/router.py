@@ -178,13 +178,17 @@ def post_recipe_file(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
+    """ check param _id """
     post_file_validator.is_object_id_valid(kind="recipe", _id=_id)
+    """ check body """
     body = post_file_factory.clean_body(data=request.json)
     post_file_validator.is_body_valid(data=body)
+    """ insert file """
     inserted_id = file.insert(kind="recipe", _id_parent=_id, metadata=body)
-    data = recipe.select_one(_id=_id).add_enrichment_file().get_result()
+    """ return response """
+    data = recipe.select_one(_id=_id).add_enrichment_file_for_one()
     detail = post_file_factory.detail_information(_id_file=inserted_id)
-    return factory.ServerResponse().return_response(data=data, api="file", code=201, detail=detail)
+    return factory.ServerResponse().return_response(data=data.get_result(), api="file", code=201, detail=detail)
 
 
 @file_api.route('/file/recipe/<_id_recipe>/step/<_id_step>', methods=['POST'])
@@ -229,14 +233,18 @@ def post_step_file(_id_recipe, _id_step):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
+    """ check param _id """
     post_file_validator.is_object_id_valid_special_step(kind="recipe", _id_recipe=_id_recipe)
     post_file_validator.is_object_id_valid_special_step(kind="step", _id_recipe=_id_recipe, _id_step=_id_step)
+    """ check body """
     body = post_file_factory.clean_body(data=request.json)
     post_file_validator.is_body_valid(data=body)
+    """ insert file """
     inserted_id = file.insert(kind="step", _id_parent=_id_step, metadata=body)
-    data = recipe.select_one(_id=_id_recipe).add_enrichment_file().get_result()
+    """ return response """
+    data = recipe.select_one(_id=_id_recipe).add_enrichment_file_for_one()
     detail = post_file_factory.detail_information(_id_file=inserted_id)
-    return factory.ServerResponse().return_response(data=data, api="file", code=201, detail=detail)
+    return factory.ServerResponse().return_response(data=data.get_result(), api="file", code=201, detail=detail)
 
 
 @file_api.errorhandler(400)
