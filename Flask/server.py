@@ -4,6 +4,7 @@ import server.factory as factory
 import app.ingredient.ingredient.router as ingredient
 import app.recipe.recipe.router as recipe
 import app.recipe.steps.router as recipe_steps
+import app.steps.steps.router as steps
 import app.file.file.router as file
 
 
@@ -12,6 +13,7 @@ app = Flask(__name__)
 app.register_blueprint(ingredient.ingredient_api)
 app.register_blueprint(recipe.recipe_api)
 app.register_blueprint(recipe_steps.recipe_steps_api)
+app.register_blueprint(steps.steps_api)
 app.register_blueprint(file.file_api)
 
 

@@ -12,7 +12,7 @@ class GetFile(object):
         self.rep_code_msg = 'codeMsg'
         self.rep_data = 'data'
         self.rep_detail = 'detail'
-        self.rep_code_msg_created = server.rep_code_msg_created.replace("xxx", "file")
+        self.rep_code_msg_ok = server.rep_code_msg_ok.replace("xxx", "file")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "file")
         self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
         self.detail_param = "param"

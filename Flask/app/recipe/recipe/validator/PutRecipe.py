@@ -41,7 +41,6 @@ class Validator(object):
         self.is_nb_people_valid(data)
         self.is_note_valid(data)
         self.is_categories_valid(data)
-        self.is_steps_valid(data)
 
     def is_title_valid(self, data):
         if "title" in data.keys():
@@ -106,13 +105,6 @@ class Validator(object):
     def is_categories_valid(data):
         if "categories" in data.keys():
             validator.is_array(param="categories", value=data["categories"])
-            return True
-        return True
-
-    @staticmethod
-    def is_steps_valid(data):
-        if "steps" in data.keys():
-            validator.is_array(param="steps", value=data["steps"])
             return True
         return True
 

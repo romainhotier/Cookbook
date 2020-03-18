@@ -169,7 +169,6 @@ def put_recipe(_id):
     @apiParam (Body param) {String} [preparation_time] Recipe's preparation time
     @apiParam (Body param) {String} [nb_people] Recipe's number of people
     @apiParam (Body param) {String} [note] Recipe's note
-    @apiParam (Body param) {Array} [steps] Recipe's steps
     @apiParam (Body param) {Array} [categories] Recipe's categories
 
     @apiExample {json} Example usage:

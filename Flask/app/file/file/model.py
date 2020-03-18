@@ -74,6 +74,15 @@ class File(object):
         client.close()
         return
 
+    def set_is_main_true(self, _id):
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_fs_files]
+        _id_parent = db.find_one({"_id": ObjectId(_id)})["metadata"]["_id"]
+        self.erase_is_main_if_exist(_id_parent=_id_parent)
+        db.update_one({"_id": ObjectId(_id)}, {'$set': {"metadata.is_main": True}})
+        client.close()
+        return _id_parent
+
 
 class FileTest(object):
 

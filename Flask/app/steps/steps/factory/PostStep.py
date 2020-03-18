@@ -1,7 +1,8 @@
-import app.recipe.recipe.model as recipe_model
+from bson import ObjectId
 
-list_param_recipe_put = recipe_model.Recipe().list_param
-list_param_recipe_put.remove("steps")
+import app.recipe.steps.model as steps_model
+
+list_param_step = steps_model.Steps().list_param
 
 
 class Factory(object):
@@ -14,6 +15,11 @@ class Factory(object):
     def remove_foreign_key(data):
         clean_data = {}
         for i, j in data.items():
-            if i in list_param_recipe_put:
+            if i in list_param_step:
                 clean_data[i] = j
         return clean_data
+
+    @staticmethod
+    def create_step(data):
+        return {"_id": str(ObjectId()),
+                "step": data["step"]}

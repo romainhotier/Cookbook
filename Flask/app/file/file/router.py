@@ -6,6 +6,8 @@ import app.recipe.recipe.model as recipe_model
 import app.file.file.model as file_model
 import app.file.file.validator.GetFile as validator_GetFile
 import app.file.file.validator.DeleteFile as validator_DeleteFile
+import app.file.file.validator.PutFileIsMain as validator_PutFileIsMain
+import app.file.file.factory.PutFileIsMain as factory_PutFileIsMain
 import app.file.file.factory.PostFile as factory_PostFile
 import app.file.file.validator.PostFile as validator_PostFile
 
@@ -17,6 +19,8 @@ ingredient = ingredient_model.Ingredient()
 recipe = recipe_model.Recipe()
 get_file_validator = validator_GetFile.Validator()
 delete_file_validator = validator_DeleteFile.Validator()
+put_file_is_main_validator = validator_PutFileIsMain.Validator()
+put_file_is_main_factory = factory_PutFileIsMain.Factory()
 post_file_factory = factory_PostFile.Factory()
 post_file_validator = validator_PostFile.Validator()
 
@@ -63,7 +67,7 @@ def delete_file(_id):
     @apiGroup File
     @apiDescription Delete a file by it's ObjectId
 
-    @apiParam (Query param) {String} _id Ingredient's ObjectId
+    @apiParam (Query param) {String} _id File's ObjectId
 
     @apiExample {json} Example usage:
     DELETE http://127.0.0.1:5000/file/<_id>
@@ -85,6 +89,42 @@ def delete_file(_id):
     file.delete(_id=_id)
     """ return response """
     return factory.ServerResponse().return_response(data=None, api="file", code=204)
+
+
+@file_api.route('/file/is_main/<_id>', methods=['PUT'])
+def put_file_is_main(_id):
+    """
+    @api {put} /file/<_id>  PutFileIsMain
+    @apiGroup File
+    @apiDescription Update a file and set is_main to True by it's ObjectId
+
+    @apiParam (Query param) {String} _id File's ObjectId
+
+    @apiExample {json} Example usage:
+    PUT http://127.0.0.1:5000/file/is_main/<_id>
+
+    @apiSuccessExample {json} Success response:
+    HTTPS 200
+    {
+        'codeMsg': 'cookbook.file.success.ok',
+        'codeStatus': 200,
+        'data': '5e71f5c94acb9085a19f10b4 is now set as main file for 111111111111111111111111'}
+
+    @apiErrorExample {json} Error response:
+    HTTPS 400
+    {
+        'codeMsg': 'cookbook.file.error.bad_request',
+        'codeStatus': 400,
+        'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
+    }
+    """
+    """ check param _id """
+    put_file_is_main_validator.is_object_id_valid(_id=_id)
+    """ update file """
+    _id_parent = file.set_is_main_true(_id=_id)
+    """ return response """
+    data = put_file_is_main_factory.data_information(_id_file=_id, _id_parent=_id_parent)
+    return factory.ServerResponse().return_response(data=data, api="file", code=200)
 
 
 @file_api.route('/file/ingredient/<_id>', methods=['POST'])
