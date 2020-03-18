@@ -28,6 +28,7 @@ class Server(object):
         self.detail_must_be_not_empty = "Must be not empty"
         self.detail_must_be_between = "Must be between"
         self.detail_must_be_in = "Must be in"
+        self.detail_must_contain_at_least_one_key = "Must contain at least one key"
         self.detail_already_exist = "Already exist"
         self.detail_doesnot_exist = "Doesn't exist"
         self.detail_url_not_found = "The requested URL was not found on the server. " \

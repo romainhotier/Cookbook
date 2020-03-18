@@ -88,6 +88,15 @@ class Validator(object):
             return abort(400, description=detail)
 
     @staticmethod
+    def has_at_least_one_key(data):
+        """ check data is object with at least one key """
+        if len(data.keys()) != 0:
+            return True
+        else:
+            detail = {"param": "body", "msg": server.detail_must_contain_at_least_one_key, "value": data}
+            return abort(400, description=detail)
+
+    @staticmethod
     def is_boolean(param, value):
         """ check param is boolean """
         if isinstance(value, bool):

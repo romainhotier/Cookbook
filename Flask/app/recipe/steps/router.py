@@ -46,8 +46,8 @@ def post_recipe_step(_id):
     {
         'codeMsg': 'cookbook.recipe_steps.success.created',
         'codeStatus': 201,
-        'data': {'_id': '5e68acb9e067528c70c75f3c', 'cooking_time': '', 'level': '', 'nb_people': '', 'note': '',
-                 'preparation_time': '', 'resume': '', title': 'qa_rhr',
+        'data': {'_id': '5e68acb9e067528c70c75f3c', 'cooking_time': 0, 'level': 0, 'nb_people': 0, 'note': '',
+                 'preparation_time': 0, 'resume': '', title': 'qa_rhr', 'slug': '', 'categories': [],
                  'steps': [{'_id': '5e68acb97b0ead079be3cef7', 'step': 'new_step'}]}
     }
 
@@ -98,9 +98,9 @@ def put_recipe_step(_id_recipe, _id_step):
     {
         'codeMsg': 'cookbook.recipe_steps.success.ok',
         'codeStatus': 200,
-        'data': {'_id': '5e584ffd0e7d15c4c1022389', 'cooking_time': '', 'level': '', 'nb_people': '', 'note': '',
-                 'preparation_time': '', 'resume': '', 'title': 'qa_rhr',
-                 'steps': [{'_id': '5e68acb97b0ead079be3cef7', 'step': 'step_update'}]}
+        'data': {'_id': '5e68acb9e067528c70c75f3c', 'cooking_time': 0, 'level': 0, 'nb_people': 0, 'note': '',
+                 'preparation_time': 0, 'resume': '', title': 'qa_rhr', 'slug': '', 'categories': [],
+                 'steps': [{'_id': '5e68acb97b0ead079be3cef7', 'step': 'updated_step'}]}
     }
 
     @apiErrorExample {json} Error response:
@@ -147,9 +147,9 @@ def delete_recipe_step(_id_recipe, _id_step):
     {
         'codeMsg': 'cookbook.recipe_steps.success.ok',
         'codeStatus': 200,
-        'data': {'_id': '5e584ffd0e7d15c4c1022389', 'cooking_time': '', 'level': '', 'nb_people': '', 'note': '',
-                 'preparation_time': '', 'resume': '', 'title': 'qa_rhr',
-                 'steps': [{'_id': '5e68acb97b0ead079be3cef7', 'step': 'old_step'}]}
+        'data': {'_id': '5e68acb9e067528c70c75f3c', 'cooking_time': 0, 'level': 0, 'nb_people': 0, 'note': '',
+                 'preparation_time': 0, 'resume': '', title': 'qa_rhr', 'slug': '', 'categories': [],
+                 'steps': [{'_id': '5e68acb97b0ead079be3cef7', 'step': 'another_previous_step'}]}
     }
 
     @apiErrorExample {json} Error response:

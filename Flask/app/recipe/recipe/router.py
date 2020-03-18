@@ -42,10 +42,10 @@ def get_all_recipe():
     {
         'codeMsg': 'cookbook.recipe.success.ok',
         'codeStatus': 200,
-        'data': [{'_id': '5e58484037c99f3231407fbe', 'cooking_time': '', 'level': '', 'nb_people': '', 'note': '',
-                  'preparation_time': '', 'resume': '', 'steps': [], 'title': 'aqa_rhr'},
-                 {'_id': '5e58484037c99f3231407fc0', 'cooking_time': '', 'level': '', 'nb_people': '', 'note': '',
-                  'preparation_time': '', 'resume': '', 'steps': [], 'title': 'bqa_rhr'}]
+        'data': [{'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,
+                  'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'qa_rhr_1'},
+                 {'_id': '5e71eb8f39358991f2ea19f7', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,
+                  'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr_2'}]
     }
     """
     """ check param enrichment """
@@ -77,8 +77,8 @@ def get_recipe(_id):
     {
         'codeMsg': 'cookbook.recipe.success.ok',
         'codeStatus': 200,
-        'data': {'_id': '5e58484037c99f3231407fbe', 'cooking_time': '', 'level': '', 'nb_people': '', 'note': '',
-                 'preparation_time': '', 'resume': '', 'steps': [], 'title': 'aqa_rhr'}
+        'data': {'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,
+                 'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr'}
     }
 
     @apiErrorExample {json} Error response:
@@ -110,13 +110,15 @@ def post_recipe():
     @apiDescription Create a recipe
 
     @apiParam (Body param) {String} title Recipe's title
-    @apiParam (Body param) {String} [level] Recipe's level
+    @apiParam (Body param) {String} slug Recipe's slug for url
+    @apiParam (Body param) {Integer} [level] Recipe's level (between 0 and 3)
     @apiParam (Body param) {String} [resume] Recipe's resume
-    @apiParam (Body param) {String} [cooking_time] Recipe's cooking time
-    @apiParam (Body param) {String} [preparation_time] Recipe's preparation time
+    @apiParam (Body param) {Integer} [cooking_time] Recipe's cooking time
+    @apiParam (Body param) {Integer} [preparation_time] Recipe's preparation time
     @apiParam (Body param) {String} [nb_people] Recipe's number of people
     @apiParam (Body param) {String} [note] Recipe's note
     @apiParam (Body param) {Array} [steps] Recipe's steps
+    @apiParam (Body param) {Array} [categories] Recipe's categories
 
     @apiExample {json} Example usage:
     POST http://127.0.0.1:5000/recipe
@@ -129,8 +131,8 @@ def post_recipe():
     {
         'codeMsg': 'cookbook.recipe.success.created',
         'codeStatus': 201,
-        'data': {'_id': '5e584a621e2e0101d1d937e3', 'cooking_time': '', 'level': '', 'nb_people': '',
-                 'note': '', 'preparation_time': '', 'resume': '', 'steps': [], 'title': 'qa_rhr_title'}
+        'data': {'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,
+                 'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr'}
     }
 
     @apiErrorExample {json} Error response:
@@ -144,7 +146,6 @@ def post_recipe():
     """ check body """
     body = post_recipe_factory.clean_body(data=request.json)
     post_recipe_validator.is_body_valid(data=body)
-    post_recipe_validator.is_title_already_exist(data=body)
     """ insert recipe """
     data = recipe.insert(data=body)
     """ return result """
@@ -160,7 +161,8 @@ def put_recipe(_id):
 
     @apiParam (Query param) {String} _id Recipe's ObjectId
     @apiParam (Query param) {String} [with_files] if "true", add recipe's files
-    @apiParam (Body param) {String} title Recipe's title
+    @apiParam (Body param) {String} [title] Recipe's title
+    @apiParam (Body param) {String} [slug] Recipe's slug for url
     @apiParam (Body param) {String} [level] Recipe's level
     @apiParam (Body param) {String} [resume] Recipe's resume
     @apiParam (Body param) {String} [cooking_time] Recipe's cooking time
@@ -168,6 +170,7 @@ def put_recipe(_id):
     @apiParam (Body param) {String} [nb_people] Recipe's number of people
     @apiParam (Body param) {String} [note] Recipe's note
     @apiParam (Body param) {Array} [steps] Recipe's steps
+    @apiParam (Body param) {Array} [categories] Recipe's categories
 
     @apiExample {json} Example usage:
     PUT http://127.0.0.1:5000/recipe/<_id>
@@ -180,8 +183,8 @@ def put_recipe(_id):
     {
         'codeMsg': 'cookbook.recipe.success.created',
         'codeStatus': 201,
-        'data': {'_id': '5e584a621e2e0101d1d937e3', 'cooking_time': '', 'level': '', 'nb_people': '', 'note': '',
-                 'preparation_time': '', 'resume': '', 'steps': [], 'title': 'qa_rhr_title_update'}
+        'data': {'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,
+                 'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr'}
     }
 
     @apiErrorExample {json} Error response:
@@ -199,7 +202,6 @@ def put_recipe(_id):
     """ check body """
     body = put_recipe_factory.clean_body(data=request.json)
     put_recipe_validator.is_body_valid(data=body)
-    put_recipe_validator.is_title_already_exist(data=body)
     """ update recipe """
     data = recipe.update(_id=_id, data=body)
     """ add enrichment if needed """

@@ -10,12 +10,14 @@ class PostRecipe(object):
     def __init__(self):
         self.url = 'recipe'
         self.param_title = "title"
+        self.param_slug = "slug"
         self.param_level = "level"
         self.param_resume = "resume"
         self.param_cooking_time = "cooking_time"
         self.param_preparation_time = "preparation_time"
         self.param_nb_people = "nb_people"
         self.param_note = "note"
+        self.param_categories = "categories"
         self.param_steps = "steps"
         self.param_ingredients = "ingredients"
         self.rep_code_status = 'codeStatus'

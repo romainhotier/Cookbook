@@ -14,7 +14,8 @@ json_format = mongo_conf.JSONEncoder()
 class Recipe(object):
 
     def __init__(self):
-        self.list_param = ["title", "level", "resume", "cooking_time", "preparation_time", "nb_people", "note", "steps"]
+        self.list_param = ["title", "slug", "level", "resume", "cooking_time", "preparation_time", "nb_people",
+                           "note", "steps", "categories"]
         self.result = {}
 
     def select_all(self):
@@ -128,12 +129,14 @@ class RecipeTest(object):
     def __init__(self):
         self.data = {"_id": "",
                      "title": "",
-                     "level": "",
+                     "slug": "",
+                     "level": 0,
                      "resume": "",
-                     "cooking_time": "",
-                     "preparation_time": "",
-                     "nb_people": "",
+                     "cooking_time": 0,
+                     "preparation_time": 0,
+                     "nb_people": 0,
                      "note": "",
+                     "categories": [],
                      "steps": []
                      }
 

@@ -164,9 +164,10 @@ def post_recipe_file(_id):
     {
         'codeMsg': 'cookbook.file.success.created',
         'codeStatus': 201,
-        'data': {'_id': '5e67a99745378d7c10124235', 'cooking_time': '',
-                 'files': [{'_id': '5e67a997ed11fd9361b2e374', 'is_main': False}], 'level': '', 'nb_people': '',
-                 'note': '', 'preparation_time': '', 'resume': '', 'steps': [], 'title': 'qa_rhr'},
+        'data': {'_id': '5e67a99745378d7c10124235', 'cooking_time': 0,
+                 'files': [{'_id': '5e67a997ed11fd9361b2e374', 'is_main': False}], 'level': 0, 'nb_people': 0,
+                 'note': '', 'preparation_time': 0, 'resume': '', 'steps': [], 'title': 'qa_rhr', 'slug': 'x',
+                 'categories': []},
         'detail': 'added file ObjectId: 5e67a997ed11fd9361b2e374'
     }
 
@@ -217,11 +218,11 @@ def post_step_file(_id_recipe, _id_step):
     {
         'codeMsg': 'cookbook.file.success.created',
         'codeStatus': 201,
-        'data': {'_id': '5e6a4223e664b60da7cd8626', 'cooking_time': '', 'files': [], 'level': '', 'nb_people': '',
-                 'note': '', 'preparation_time': '', 'resume': '',
+        'data': {'_id': '5e6a4223e664b60da7cd8626', 'cooking_time': 0, 'files': [], 'level': 0, 'nb_people': 0,
+                 'note': '', 'preparation_time': 0, 'resume': '',
                  'steps': [{'_id': '111111111111111111111111', 'files': [{'_id': '5e6a42237e59e8439a883d99',
                  'is_main': False}], 'step': 'a'}, {'_id': '222222222222222222222222', 'files': [], 'step': 'b'}],
-                 'title': 'qa_rhr'},
+                 'title': 'qa_rhr', 'slug': 'x', 'categories': []},
         'detail': 'added file ObjectId: 5e6a42237e59e8439a883d99'
     }
 

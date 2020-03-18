@@ -22,8 +22,10 @@ class Factory(object):
     def fill_body_with_missing_key(data):
         for key in list_param_recipe:
             if key not in data.keys():
-                if key in ["level", "resume", "cooking_time", "preparation_time", "nb_people", "note"]:
+                if key in ["resume", "note"]:
                     data[key] = ""
-                elif key in ["steps"]:
+                elif key in ["level", "cooking_time", "preparation_time", "nb_people"]:
+                    data[key] = 0
+                elif key in ["categories", "steps"]:
                     data[key] = []
         return data
