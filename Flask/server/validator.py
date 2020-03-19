@@ -14,7 +14,7 @@ class Validator(object):
     @staticmethod
     def is_object_id(param, value):
         """ check _id is a correcte ObjectId type """
-        if len(value) != 24:
+        if value is None or len(value) != 24:
             detail = {"param": param, "msg": server.detail_must_be_an_object_id, "value": value}
             return abort(400, description=detail)
         else:

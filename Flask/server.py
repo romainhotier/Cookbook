@@ -6,6 +6,7 @@ import app.recipe.recipe.router as recipe
 import app.recipe.steps.router as recipe_steps
 import app.steps.steps.router as steps
 import app.file.file.router as file
+import app.link.ingredient_recipe.router as link_ingredient_recipe
 
 
 app = Flask(__name__)
@@ -15,6 +16,7 @@ app.register_blueprint(recipe.recipe_api)
 app.register_blueprint(recipe_steps.recipe_steps_api)
 app.register_blueprint(steps.steps_api)
 app.register_blueprint(file.file_api)
+app.register_blueprint(link_ingredient_recipe.ingredient_recipe_api)
 
 
 @app.errorhandler(404)

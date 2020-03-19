@@ -94,6 +94,14 @@ class Ingredient(object):
         client.close()
         return self
 
+    @staticmethod
+    def get_name_by_id(_id):
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_ingredient]
+        result = db.find_one({"_id": ObjectId(_id)})
+        client.close()
+        return result["name"]
+
     def get_result(self):
         return json.loads(json_format.encode(self.result))
 
@@ -128,6 +136,9 @@ class IngredientTest(object):
     def get_id(self):
         return str(self.data["_id"])
 
+    def get_id_objectId(self):
+        return self.data["_id"]
+
     def set_id(self, _id):
         self.data["_id"] = _id
 
@@ -147,7 +158,7 @@ class IngredientTest(object):
         for i, j in data.items():
             if i in ["_id", "name"]:
                 self.data[i] = j
-        self.data["name"] = self.data["name"] + "qa_rhr"
+        self.data["name"] = self.data["name"] + "_qa_rhr"
         return self
 
     def select_ok(self):
