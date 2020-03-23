@@ -4,7 +4,7 @@ import re
 import copy
 import json
 
-from server import mongo_config as mongo_conf
+import server.mongo_config as mongo_conf
 import app.file.file.model as file_model
 
 mongo = mongo_conf.MongoConnection()

@@ -3,9 +3,9 @@ from pymongo import MongoClient
 from bson import ObjectId
 from os import path
 
-from server import factory as factory, mongo_config as mongo_conf
+from server import server as server, mongo_config as mongo_conf
 
-server = factory.Server()
+server = server.Server()
 mongo = mongo_conf.MongoConnection()
 
 

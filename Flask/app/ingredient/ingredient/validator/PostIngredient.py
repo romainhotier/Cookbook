@@ -1,9 +1,9 @@
 from flask import abort
 
-from server import factory as factory, validator as validator
+from server import server as server, validator as validator
 import app.ingredient.ingredient.model as ingredient
 
-server = factory.Server()
+server = server.Server()
 validator = validator.Validator()
 ingredient = ingredient.Ingredient()
 
@@ -25,11 +25,11 @@ class Validator(object):
     def is_body_valid(self, data):
         self.is_name_valid(data)
 
-    @staticmethod
-    def is_name_valid(data):
+    def is_name_valid(self, data):
         validator.is_mandatory(param="name", data=data)
         validator.is_string(param="name", value=data["name"])
         validator.is_string_non_empty(param="name", value=data["name"])
+        self.is_name_already_exist(data)
         return True
 
     @staticmethod

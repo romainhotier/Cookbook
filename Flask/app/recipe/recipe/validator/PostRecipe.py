@@ -1,10 +1,10 @@
 from flask import abort
 
-from server import factory as factory, validator as validator
+from server import server as server, validator as validator
 import app.recipe.recipe.model as recipe
 
 
-server = factory.Server()
+server = server.Server()
 validator = validator.Validator()
 recipe = recipe.Recipe()
 

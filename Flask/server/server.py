@@ -1,5 +1,4 @@
 from flask import make_response
-import json
 
 from server import mongo_config as mongo_conf
 
@@ -44,7 +43,7 @@ class ServerResponse(object):
 
     def return_response(self, data, api, code, **optional):
         """ return an HTTPResponse """
-        if code in [400, 404, 405, 500]:
+        if code in [400, 401, 404, 405, 500]:
             body = self.format_body(api=api, http_code=code, data=None, detail=data)
             return self.format_response(body=body, code=code)
         elif code == 204:
@@ -83,6 +82,8 @@ class ServerResponse(object):
             return "cookbook.{}.success.created".format(api_category)
         elif http_code == 400:
             return "cookbook.{}.error.bad_request".format(api_category)
+        elif http_code == 401:
+            return "cookbook.{}.error.unauthorized".format(api_category)
         elif http_code == 404:
             return "cookbook.{}.error.not_found".format(api_category)
         elif http_code == 405:

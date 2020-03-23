@@ -1,7 +1,8 @@
-# Python3 (3.x) and package #
+# Python3 (3.x) package and config #
 
 ```
 pip install -r requirements.txt
+export COOKBOOK_ENV="path/to/config.cfg"
 ```
 
 # Documentation # 
@@ -13,12 +14,12 @@ apidoc -i ../Flask/ -o ../apidoc/
 
 # Populate #
 ```
-python populate.py
+python populate.py <-- à refaire
 ```
 
 # Launch #
 ```
-python server.py
+python run.py
 ```
 
 # Test #

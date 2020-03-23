@@ -1,11 +1,11 @@
 import unittest
 import requests
 
-from server import factory as factory
+import server.server as server
 import app.link.ingredient_recipe.model as link_model
 import app.link.ingredient_recipe.test.DeleteIngredientRecipe.api as api
 
-server = factory.Server()
+server = server.Server()
 api = api.DeleteIngredientRecipe()
 link = link_model.LinkIngredientRecipeTest()
 

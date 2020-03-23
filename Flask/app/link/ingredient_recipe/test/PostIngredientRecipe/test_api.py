@@ -2,13 +2,13 @@ import unittest
 import requests
 from bson import ObjectId
 
-from server import factory as factory
+import server.server as server
 import app.ingredient.ingredient.model as ingredient_model
 import app.recipe.recipe.model as recipe_model
 import app.link.ingredient_recipe.model as link_model
 import app.link.ingredient_recipe.test.PostIngredientRecipe.api as api
 
-server = factory.Server()
+server = server.Server()
 api = api.PostIngredientRecipe()
 recipe = recipe_model.RecipeTest()
 link = link_model.LinkIngredientRecipeTest()

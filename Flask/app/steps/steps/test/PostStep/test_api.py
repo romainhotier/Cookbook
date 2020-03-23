@@ -1,10 +1,10 @@
 import unittest
 import requests
 
-from server import factory as factory
+import server.server as server
 import app.steps.steps.test.PostStep.api as api
 
-server = factory.Server()
+server = server.Server()
 api = api.PostStep()
 
 

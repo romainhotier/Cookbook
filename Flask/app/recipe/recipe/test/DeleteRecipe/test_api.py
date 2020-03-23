@@ -1,14 +1,18 @@
 import unittest
 import requests
 
-from server import factory as factory
+import server.server as server
+import app.ingredient.ingredient.model as ingredient_model
 import app.recipe.recipe.model as recipe_model
+import app.link.ingredient_recipe.model as link_model
 import app.file.file.model as file_model
 import app.recipe.recipe.test.DeleteRecipe.api as api
 
-server = factory.Server()
+server = server.Server()
 api = api.DeleteRecipe()
+ingredient = ingredient_model.IngredientTest()
 recipe = recipe_model.RecipeTest()
+link = link_model.LinkIngredientRecipeTest()
 file = file_model.FileTest()
 
 
@@ -16,6 +20,9 @@ class DeleteRecipe(unittest.TestCase):
 
     def setUp(self):
         recipe.clean()
+        ingredient.clean()
+        file.clean()
+        link.clean()
 
     def test_0_api_ok(self):
         tc_recipe1 = recipe_model.RecipeTest().custom_test({}).insert()
@@ -135,6 +142,23 @@ class DeleteRecipe(unittest.TestCase):
         tc_file_recipe2.select_ok()
         tc_file_step211.select_ok()
         tc_file_step212.select_ok()
+
+    def test_4_link_clean(self):
+        tc_ingredient = ingredient_model.IngredientTest().custom_test({}).insert()
+        tc_recipe = recipe_model.RecipeTest().custom_test({}).insert()
+        tc_link = link_model.LinkIngredientRecipeTest().custom_test({"_id_ingredient": tc_ingredient.get_id_objectId(),
+                                                                     "_id_recipe": tc_recipe.get_id_objectId()}).\
+            insert()
+        tc_id = tc_recipe.get_id()
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.delete(url, verify=False)
+        """ assert """
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        tc_ingredient.select_ok()
+        tc_recipe.select_nok()
+        tc_link.select_nok()
 
     @classmethod
     def tearDownClass(cls):

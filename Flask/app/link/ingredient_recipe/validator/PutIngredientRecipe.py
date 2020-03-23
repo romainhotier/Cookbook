@@ -1,6 +1,6 @@
-from server import factory as factory, validator as validator, mongo_config as mongo_conf
+from server import server as server, validator as validator, mongo_config as mongo_conf
 
-server = factory.Server()
+server = server.Server()
 mongo = mongo_conf.MongoConnection()
 validator = validator.Validator()
 

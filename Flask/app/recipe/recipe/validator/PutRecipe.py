@@ -1,10 +1,10 @@
 from flask import abort
 
-from server import factory as factory, mongo_config as mongo_conf, validator as validator
+from server import server as server, mongo_config as mongo_conf, validator as validator
 import app.recipe.recipe.model as recipe
 
 
-server = factory.Server()
+server = server.Server()
 validator = validator.Validator()
 mongo = mongo_conf.MongoConnection()
 recipe = recipe.Recipe()

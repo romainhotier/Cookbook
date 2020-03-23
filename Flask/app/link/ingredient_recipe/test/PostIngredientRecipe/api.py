@@ -1,8 +1,8 @@
 import copy
 
-from server import factory as factory
+import server.server as server
 
-server = factory.Server()
+server = server.Server()
 
 
 class PostIngredientRecipe(object):

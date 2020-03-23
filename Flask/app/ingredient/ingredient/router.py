@@ -1,28 +1,40 @@
 from flask import Blueprint, request
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
-import server.factory as factory
+import server.server as server
+import server.auth as auth
 import app.ingredient.ingredient.model as ingredient_model
 import app.file.file.model as file_model
+import app.link.ingredient_recipe.model as link_model
 import app.ingredient.ingredient.validator.GetAllIngredient as validator_GetAllIngredient
 import app.ingredient.ingredient.validator.GetIngredient as validator_GetIngredient
 import app.ingredient.ingredient.validator.PostIngredient as validator_PostIngredient
 import app.ingredient.ingredient.validator.PutIngredient as validator_PutIngredient
 import app.ingredient.ingredient.validator.DeleteIngredient as validator_DeleteIngredient
-import app.ingredient.ingredient.factory.PostIngredient as factory_PostIngredient
-import app.ingredient.ingredient.factory.PutIngredient as factory_PutIngredient
+import app.ingredient.ingredient.factory.PostIngredient as server_PostIngredient
+import app.ingredient.ingredient.factory.PutIngredient as server_PutIngredient
 
 
 ingredient_api = Blueprint('ingredient_api', __name__)
+auth = auth.Auth()
+
 
 ingredient = ingredient_model.Ingredient()
 file = file_model.File()
+link = link_model.LinkIngredientRecipe()
 get_all_ingredient_validator = validator_GetAllIngredient.Validator()
 get_ingredient_validator = validator_GetIngredient.Validator()
 post_ingredient_validator = validator_PostIngredient.Validator()
 put_ingredient_validator = validator_PutIngredient.Validator()
 delete_ingredient_validator = validator_DeleteIngredient.Validator()
-post_ingredient_factory = factory_PostIngredient.Factory()
-put_ingredient_factory = factory_PutIngredient.Factory()
+post_ingredient_factory = server_PostIngredient.Factory()
+put_ingredient_factory = server_PutIngredient.Factory()
+
+
+#@ingredient_api.before_request
+#@auth.login_required
+#def protect():
+#    pass
 
 
 @ingredient_api.route('/ingredient', methods=['GET'])
@@ -53,8 +65,10 @@ def get_all_ingredient():
     """ add enrichment if needed """
     if with_files:
         data.add_enrichment_file_for_all()
+    #print(get_jwt_identity())
+    #headers={"Authorization": "Bearer " + token}
     """ return response """
-    return factory.ServerResponse().return_response(data=data.get_result(), api="ingredient", code=200)
+    return server.ServerResponse().return_response(data=data.get_result(), api="ingredient", code=200)
 
 
 @ingredient_api.route('/ingredient/<_id>', methods=['GET'])
@@ -96,7 +110,7 @@ def get_ingredient(_id):
     if with_files:
         data.add_enrichment_file_for_one()
     """ return response """
-    return factory.ServerResponse().return_response(data=data.get_result(), api="ingredient", code=200)
+    return server.ServerResponse().return_response(data=data.get_result(), api="ingredient", code=200)
 
 
 @ingredient_api.route('/ingredient', methods=['POST'])
@@ -133,11 +147,10 @@ def post_ingredient():
     """ check body """
     body = post_ingredient_factory.clean_body(data=request.json)
     post_ingredient_validator.is_body_valid(data=body)
-    post_ingredient_validator.is_name_already_exist(data=body)
     """ add ingredient """
     data = ingredient.insert(data=body)
     """ return response """
-    return factory.ServerResponse().return_response(data=data.get_result(), api="ingredient", code=201)
+    return server.ServerResponse().return_response(data=data.get_result(), api="ingredient", code=201)
 
 
 @ingredient_api.route('/ingredient/<_id>', methods=['PUT'])
@@ -180,14 +193,13 @@ def put_ingredient(_id):
     """ check body """
     body = put_ingredient_factory.clean_body(data=request.json)
     put_ingredient_validator.is_body_valid(data=body)
-    put_ingredient_validator.is_name_already_exist(data=body)
     """ update ingredient """
     data = ingredient.update(_id=_id, data=body)
     """ add enrichment if needed """
     if with_files:
         data.add_enrichment_file_for_one()
     """ return response """
-    return factory.ServerResponse().return_response(data=data.get_result(), api="ingredient", code=200)
+    return server.ServerResponse().return_response(data=data.get_result(), api="ingredient", code=200)
 
 
 @ingredient_api.route('/ingredient/<_id>', methods=['DELETE'])
@@ -215,20 +227,21 @@ def delete_ingredient(_id):
     """
     """ check param _id """
     delete_ingredient_validator.is_object_id_valid(_id=_id)
-    """ clean files """
+    """ clean files and link """
     file.clean_file_by_id_parent(_id_parent=_id)
+    link.clean_link_by_id_ingredient(_id_ingredient=_id)
     """ delete ingredient """
     ingredient.delete(_id=_id)
-    return factory.ServerResponse().return_response(data=None, api="ingredient", code=204)
+    return server.ServerResponse().return_response(data=None, api="ingredient", code=204)
 
 
 @ingredient_api.errorhandler(400)
 def validator_failed(error):
     """" abort 400 """
-    return factory.ServerResponse().return_response(data=error.description, api="ingredient", code=400)
+    return server.ServerResponse().return_response(data=error.description, api="ingredient", code=400)
 
 
 @ingredient_api.errorhandler(404)
 def not_found(error):
     """" abort 404 """
-    return factory.ServerResponse().return_response(data=error.description, api="ingredient", code=404)
+    return server.ServerResponse().return_response(data=error.description, api="ingredient", code=404)

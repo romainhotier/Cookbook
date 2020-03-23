@@ -1,12 +1,12 @@
 import unittest
 import requests
 
-from server import factory as factory
+import server.server as server
 import app.ingredient.ingredient.model as ingredient_model
 import app.file.file.model as file_model
 import app.file.file.test.PostIngredientFile.api as api
 
-server = factory.Server()
+server = server.Server()
 api = api.PostIngredientFile()
 ingredient = ingredient_model.IngredientTest()
 file = file_model.FileTest()

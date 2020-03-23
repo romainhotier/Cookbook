@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 
-import server.factory as factory
+import server.server as server
 import app.link.ingredient_recipe.model as link_model
 import app.link.ingredient_recipe.validator.GetIngredientForRecipe as validator_GetIngredientForRecipe
 import app.link.ingredient_recipe.validator.GetRecipeForIngredient as validator_GetRecipeForIngredient
@@ -64,7 +64,7 @@ def get_recipe_for_ingredient(_id_ingredient):
     if with_title:
         data.add_enrichment_title_for_all()
     """ return response """
-    return factory.ServerResponse().return_response(data=data.get_result(), api="link_ingredient_recipe", code=200)
+    return server.ServerResponse().return_response(data=data.get_result(), api="link_ingredient_recipe", code=200)
 
 
 @ingredient_recipe_api.route('/link_ingredient_recipe/recipe/<_id_recipe>', methods=['GET'])
@@ -109,7 +109,7 @@ def get_ingredient_for_recipe(_id_recipe):
     if with_name:
         data.add_enrichment_name_for_all()
     """ return response """
-    return factory.ServerResponse().return_response(data=data.get_result(), api="link_ingredient_recipe", code=200)
+    return server.ServerResponse().return_response(data=data.get_result(), api="link_ingredient_recipe", code=200)
 
 
 @ingredient_recipe_api.route('/link_ingredient_recipe', methods=['POST'])
@@ -159,7 +159,7 @@ def post_ingredient_recipe():
     """ add link """
     data = link.insert(data=body)
     """ return response """
-    return factory.ServerResponse().return_response(data=data.get_result(), api="link_ingredient_recipe", code=201)
+    return server.ServerResponse().return_response(data=data.get_result(), api="link_ingredient_recipe", code=201)
 
 
 @ingredient_recipe_api.route('/link_ingredient_recipe/<_id>', methods=['PUT'])
@@ -205,7 +205,7 @@ def put_ingredient_recipe(_id):
     """ update link """
     data = link.update(_id=_id, data=body)
     """ return response """
-    return factory.ServerResponse().return_response(data=data.get_result(), api="link_ingredient_recipe", code=200)
+    return server.ServerResponse().return_response(data=data.get_result(), api="link_ingredient_recipe", code=200)
 
 
 @ingredient_recipe_api.route('/link_ingredient_recipe/<_id>', methods=['DELETE'])
@@ -236,16 +236,16 @@ def delete_ingredient_recipe(_id):
     """ delete link """
     link.delete(_id=_id)
     """ return response """
-    return factory.ServerResponse().return_response(data=None, api="link_ingredient_recipe", code=204)
+    return server.ServerResponse().return_response(data=None, api="link_ingredient_recipe", code=204)
 
 
 @ingredient_recipe_api.errorhandler(400)
 def validator_failed(error):
     """" abort 400 """
-    return factory.ServerResponse().return_response(data=error.description, api="link_ingredient_recipe", code=400)
+    return server.ServerResponse().return_response(data=error.description, api="link_ingredient_recipe", code=400)
 
 
 @ingredient_recipe_api.errorhandler(404)
 def not_found(error):
     """" abort 404 """
-    return factory.ServerResponse().return_response(data=error.description, api="ingredient_recipe", code=404)
+    return server.ServerResponse().return_response(data=error.description, api="ingredient_recipe", code=404)

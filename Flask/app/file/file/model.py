@@ -5,7 +5,7 @@ import mimetypes
 import re
 
 
-from server import mongo_config as mongo_conf
+import server.mongo_config as mongo_conf
 
 mongo = mongo_conf.MongoConnection()
 

@@ -1,6 +1,6 @@
 from flask import Blueprint, make_response, request
 
-import server.factory as factory
+import server.server as server
 import app.ingredient.ingredient.model as ingredient_model
 import app.recipe.recipe.model as recipe_model
 import app.file.file.model as file_model
@@ -88,7 +88,7 @@ def delete_file(_id):
     """ delete file """
     file.delete(_id=_id)
     """ return response """
-    return factory.ServerResponse().return_response(data=None, api="file", code=204)
+    return server.ServerResponse().return_response(data=None, api="file", code=204)
 
 
 @file_api.route('/file/is_main/<_id>', methods=['PUT'])
@@ -124,7 +124,7 @@ def put_file_is_main(_id):
     _id_parent = file.set_is_main_true(_id=_id)
     """ return response """
     data = put_file_is_main_factory.data_information(_id_file=_id, _id_parent=_id_parent)
-    return factory.ServerResponse().return_response(data=data, api="file", code=200)
+    return server.ServerResponse().return_response(data=data, api="file", code=200)
 
 
 @file_api.route('/file/ingredient/<_id>', methods=['POST'])
@@ -176,7 +176,7 @@ def post_ingredient_file(_id):
     """ return response """
     data = ingredient.select_one(_id=_id).add_enrichment_file_for_one()
     detail = post_file_factory.detail_information(_id_file=inserted_id)
-    return factory.ServerResponse().return_response(data=data.get_result(), api="file", code=201, detail=detail)
+    return server.ServerResponse().return_response(data=data.get_result(), api="file", code=201, detail=detail)
 
 
 @file_api.route('/file/recipe/<_id>', methods=['POST'])
@@ -229,7 +229,7 @@ def post_recipe_file(_id):
     """ return response """
     data = recipe.select_one(_id=_id).add_enrichment_file_for_one()
     detail = post_file_factory.detail_information(_id_file=inserted_id)
-    return factory.ServerResponse().return_response(data=data.get_result(), api="file", code=201, detail=detail)
+    return server.ServerResponse().return_response(data=data.get_result(), api="file", code=201, detail=detail)
 
 
 @file_api.route('/file/recipe/<_id_recipe>/step/<_id_step>', methods=['POST'])
@@ -285,16 +285,16 @@ def post_step_file(_id_recipe, _id_step):
     """ return response """
     data = recipe.select_one(_id=_id_recipe).add_enrichment_file_for_one()
     detail = post_file_factory.detail_information(_id_file=inserted_id)
-    return factory.ServerResponse().return_response(data=data.get_result(), api="file", code=201, detail=detail)
+    return server.ServerResponse().return_response(data=data.get_result(), api="file", code=201, detail=detail)
 
 
 @file_api.errorhandler(400)
 def validator_failed(error):
     """" abort 400 """
-    return factory.ServerResponse().return_response(data=error.description, api="file", code=400)
+    return server.ServerResponse().return_response(data=error.description, api="file", code=400)
 
 
 @file_api.errorhandler(404)
 def not_found(error):
     """" abort 404 """
-    return factory.ServerResponse().return_response(data=error.description, api="file", code=404)
+    return server.ServerResponse().return_response(data=error.description, api="file", code=404)

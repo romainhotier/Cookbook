@@ -1,4 +1,4 @@
-from server import mongo_config as mongo_conf
+import server.mongo_config as mongo_conf
 import app.ingredient.ingredient.model as ingredient_model
 import app.file.file.model as file_model
 

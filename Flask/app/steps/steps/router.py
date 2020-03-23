@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 
-from server import factory as factory
+import server.server as server
 import app.recipe.steps.model as steps_model
 import app.file.file.model as file_model
 import app.steps.steps.validator.PostStep as validator_PostStep
@@ -52,16 +52,16 @@ def post_step():
     """ insert step """
     data = post_step_factory.create_step(data=body)
     """ return response """
-    return factory.ServerResponse().return_response(data=data, api="step", code=201)
+    return server.ServerResponse().return_response(data=data, api="step", code=201)
 
 
 @steps_api.errorhandler(400)
 def validator_failed(error):
     """" abort 400 """
-    return factory.ServerResponse().return_response(data=error.description, api="step", code=400)
+    return server.ServerResponse().return_response(data=error.description, api="step", code=400)
 
 
 @steps_api.errorhandler(404)
 def not_found(error):
     """" abort 404 """
-    return factory.ServerResponse().return_response(data=error.description, api="step", code=404)
+    return server.ServerResponse().return_response(data=error.description, api="step", code=404)

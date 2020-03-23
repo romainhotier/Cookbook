@@ -1,8 +1,6 @@
-import copy
+import server.server as server
 
-from server import factory as factory
-
-server = factory.Server()
+server = server.Server()
 
 
 class GetAllIngredient(object):

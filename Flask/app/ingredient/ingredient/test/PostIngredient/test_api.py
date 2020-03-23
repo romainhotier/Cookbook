@@ -1,11 +1,11 @@
 import unittest
 import requests
 
-from server import factory as factory
+import server.server as server
 import app.ingredient.ingredient.model as ingredient_model
 import app.ingredient.ingredient.test.PostIngredient.api as api
 
-server = factory.Server()
+server = server.Server()
 api = api.PostIngredient()
 ingredient = ingredient_model.IngredientTest()
 

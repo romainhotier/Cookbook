@@ -18,6 +18,7 @@ class MongoConnection(object):
         self.login = 'rhr'
         self.password = 'admin'
         self.name = 'cookbook'
+        self.collection_user = 'user'
         self.collection_ingredient = 'ingredient'
         self.collection_recipe = 'recipe'
         self.collection_link_ingr_recip = "link_ingr_recip"

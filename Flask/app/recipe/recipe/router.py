@@ -1,7 +1,8 @@
 from flask import Blueprint, request
 
-from server import factory as factory
+import server.server as server
 import app.recipe.recipe.model as recipe_model
+import app.link.ingredient_recipe.model as link_model
 import app.file.file.model as file_model
 import app.recipe.recipe.validator.GetRecipe as validator_GetRecipe
 import app.recipe.recipe.validator.GetAllRecipe as validator_GetAllRecipe
@@ -15,6 +16,7 @@ import app.recipe.recipe.factory.PutRecipe as factory_PutRecipe
 recipe_api = Blueprint('recipe_api', __name__)
 
 recipe = recipe_model.Recipe()
+link = link_model.LinkIngredientRecipe()
 file = file_model.File()
 get_recipe_validator = validator_GetRecipe.Validator()
 get_all_recipe_validator = validator_GetAllRecipe.Validator()
@@ -56,7 +58,7 @@ def get_all_recipe():
     if with_files:
         data.add_enrichment_file_for_all()
     """ return response """
-    return factory.ServerResponse().return_response(data=data.get_result(), api="recipe", code=200)
+    return server.ServerResponse().return_response(data=data.get_result(), api="recipe", code=200)
 
 
 @recipe_api.route('/recipe/<_id>', methods=['GET'])
@@ -99,7 +101,7 @@ def get_recipe(_id):
     if with_files:
         data.add_enrichment_file_for_one()
     """ return response """
-    return factory.ServerResponse().return_response(data=data.get_result(), api="recipe", code=200)
+    return server.ServerResponse().return_response(data=data.get_result(), api="recipe", code=200)
 
 
 @recipe_api.route('/recipe', methods=['POST'])
@@ -149,7 +151,7 @@ def post_recipe():
     """ insert recipe """
     data = recipe.insert(data=body)
     """ return result """
-    return factory.ServerResponse().return_response(data=data.get_result(), api="recipe", code=201)
+    return server.ServerResponse().return_response(data=data.get_result(), api="recipe", code=201)
 
 
 @recipe_api.route('/recipe/<_id>', methods=['PUT'])
@@ -207,7 +209,7 @@ def put_recipe(_id):
     if with_files:
         data.add_enrichment_file_for_one()
     """ return response """
-    return factory.ServerResponse().return_response(data=data.get_result(), api="recipe", code=200)
+    return server.ServerResponse().return_response(data=data.get_result(), api="recipe", code=200)
 
 
 @recipe_api.route('/recipe/<_id>', methods=['DELETE'])
@@ -237,22 +239,23 @@ def delete_recipe(_id):
     delete_recipe_validator.is_object_id_valid(_id=_id)
     """ clean files recipe """
     file.clean_file_by_id_parent(_id_parent=_id)
-    """ clean files steps """
+    """ clean files steps and link """
     for _id_step in recipe.get_all_step_id(_id=_id):
         file.clean_file_by_id_parent(_id_parent=_id_step)
+    link.clean_link_by_id_recipe(_id_recipe=_id)
     """ delete recipe """
     recipe.delete(_id=_id)
     """ return response """
-    return factory.ServerResponse().return_response(data=None, api="recipe", code=204)
+    return server.ServerResponse().return_response(data=None, api="recipe", code=204)
 
 
 @recipe_api.errorhandler(400)
 def validator_failed(error):
     """" abort 400 """
-    return factory.ServerResponse().return_response(data=error.description, api="recipe", code=400)
+    return server.ServerResponse().return_response(data=error.description, api="recipe", code=400)
 
 
 @recipe_api.errorhandler(404)
 def not_found(error):
     """" abort 404 """
-    return factory.ServerResponse().return_response(data=error.description, api="recipe", code=404)
+    return server.ServerResponse().return_response(data=error.description, api="recipe", code=404)

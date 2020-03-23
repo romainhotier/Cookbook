@@ -1,13 +1,13 @@
 import unittest
 import requests
 
-from server import factory as factory
+import server.server as server
 import app.ingredient.ingredient.model as ingredient_model
 import app.recipe.recipe.model as recipe_model
 import app.link.ingredient_recipe.model as link_model
 import app.link.ingredient_recipe.test.GetRecipeForIngredient.api as api
 
-server = factory.Server()
+server = server.Server()
 api = api.GetRecipeForIngredient()
 ingredient = ingredient_model.IngredientTest()
 recipe = recipe_model.RecipeTest()

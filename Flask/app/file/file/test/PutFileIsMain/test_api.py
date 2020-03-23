@@ -2,11 +2,11 @@ import unittest
 import requests
 from bson import ObjectId
 
-from server import factory as factory
+import server.server as server
 import app.file.file.model as file_model
 import app.file.file.test.PutFileIsMain.api as api
 
-server = factory.Server()
+server = server.Server()
 api = api.PutFileIsMain()
 file = file_model.FileTest()
 

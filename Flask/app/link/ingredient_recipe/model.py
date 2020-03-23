@@ -64,6 +64,22 @@ class LinkIngredientRecipe(object):
         return
 
     @staticmethod
+    def clean_link_by_id_ingredient(_id_ingredient):
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_link_ingr_recip]
+        db.delete_many({"_id_ingredient": ObjectId(_id_ingredient)})
+        client.close()
+        return
+
+    @staticmethod
+    def clean_link_by_id_recipe(_id_recipe):
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_link_ingr_recip]
+        db.delete_many({"_id_recipe": ObjectId(_id_recipe)})
+        client.close()
+        return
+
+    @staticmethod
     def check_link_is_unique(_id_ingredient, _id_recipe):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_link_ingr_recip]

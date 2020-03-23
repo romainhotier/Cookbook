@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 
-from server import factory as factory
+import server.server as server
 import app.recipe.steps.model as steps_model
 import app.file.file.model as file_model
 import app.recipe.steps.validator.PostRecipeStep as validator_PostRecipeStep
@@ -72,7 +72,7 @@ def post_recipe_step(_id):
     if with_files:
         data.add_enrichment_file_for_one()
     """ return response """
-    return factory.ServerResponse().return_response(data=data.get_result(), api="recipe_steps", code=201)
+    return server.ServerResponse().return_response(data=data.get_result(), api="recipe_steps", code=201)
 
 
 @recipe_steps_api.route('/recipe/<_id_recipe>/step/<_id_step>', methods=['PUT'])
@@ -125,7 +125,7 @@ def put_recipe_step(_id_recipe, _id_step):
     if with_files:
         data.add_enrichment_file_for_one()
     """ return response """
-    return factory.ServerResponse().return_response(data=data.get_result(), api="recipe_steps", code=200)
+    return server.ServerResponse().return_response(data=data.get_result(), api="recipe_steps", code=200)
 
 
 @recipe_steps_api.route('/recipe/<_id_recipe>/step/<_id_step>', methods=['DELETE'])
@@ -173,16 +173,16 @@ def delete_recipe_step(_id_recipe, _id_step):
     if with_files:
         data.add_enrichment_file_for_one()
     """ return response """
-    return factory.ServerResponse().return_response(data=data.get_result(), api="recipe_steps", code=200)
+    return server.ServerResponse().return_response(data=data.get_result(), api="recipe_steps", code=200)
 
 
 @recipe_steps_api.errorhandler(400)
 def validator_failed(error):
     """" abort 400 """
-    return factory.ServerResponse().return_response(data=error.description, api="recipe_steps", code=400)
+    return server.ServerResponse().return_response(data=error.description, api="recipe_steps", code=400)
 
 
 @recipe_steps_api.errorhandler(404)
 def not_found(error):
     """" abort 404 """
-    return factory.ServerResponse().return_response(data=error.description, api="recipe_steps", code=404)
+    return server.ServerResponse().return_response(data=error.description, api="recipe_steps", code=404)

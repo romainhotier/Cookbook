@@ -1,12 +1,12 @@
 import unittest
 import requests
 
-from server import factory as factory
+import server.server as server
 import app.recipe.recipe.model as recipe_model
 import app.file.file.model as file_model
 import app.recipe.recipe.test.GetAllRecipe.api as api
 
-server = factory.Server()
+server = server.Server()
 api = api.GetAllRecipe()
 recipe = recipe_model.RecipeTest()
 file = file_model.FileTest()
