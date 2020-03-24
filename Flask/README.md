@@ -18,16 +18,17 @@ python populate.py
 ```
 
 # Launch #
+sur linux
 ```
+source ./launcher.sh
 python run.py
+```
+sur windows
+```
+sh launcher_w.sh
 ```
 
 # Test #
 ```
 python -W ignore -m pytest
-```
-# Amelie #
-active le venv / installe les packages / maj de la doc / lance le server
-```
-source ./launcher.sh
 ```
