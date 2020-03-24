@@ -14,7 +14,7 @@ apidoc -i ../Flask/ -o ../apidoc/
 
 # Populate #
 ```
-python populate.py <-- à refaire
+python populate.py
 ```
 
 # Launch #
@@ -25,4 +25,9 @@ python run.py
 # Test #
 ```
 python -W ignore -m pytest
+```
+# Amelie #
+active le venv / installe les packages / maj de la doc / lance le server
+```
+source ./launcher.sh
 ```
