@@ -1,5 +1,6 @@
 Flask==1.1.1
-pymongo==3.10.1
+#pymongo==3.10.1 not compatible with mongo 2.4 on pi4#
+pymongo==3.4.0
 requests==2.23.0
 pytest==5.3.5
 flask-bcrypt==0.7.1
