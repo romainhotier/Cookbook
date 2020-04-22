@@ -44,10 +44,10 @@ class GetIngredientForRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 200)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_ok)
-        self.assertIn(tc_link11.get_data_stringify_object_id(), response_body[api.rep_data])
-        self.assertIn(tc_link12.get_data_stringify_object_id(), response_body[api.rep_data])
-        self.assertNotIn(tc_link21.get_data_stringify_object_id(), response_body[api.rep_data])
-        self.assertNotIn(tc_link23.get_data_stringify_object_id(), response_body[api.rep_data])
+        self.assertIn(tc_link11.get_stringify(), response_body[api.rep_data])
+        self.assertIn(tc_link12.get_stringify(), response_body[api.rep_data])
+        self.assertNotIn(tc_link21.get_stringify(), response_body[api.rep_data])
+        self.assertNotIn(tc_link23.get_stringify(), response_body[api.rep_data])
 
     def test_1_url_not_found_1(self):
         tc_recipe = recipe_model.RecipeTest().insert()
@@ -155,8 +155,8 @@ class GetIngredientForRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 200)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_ok)
-        self.assertIn(tc_link1.get_data_stringify_object_id(), response_body[api.rep_data])
-        self.assertIn(tc_link2.get_data_stringify_object_id(), response_body[api.rep_data])
+        self.assertIn(tc_link1.get_stringify(), response_body[api.rep_data])
+        self.assertIn(tc_link2.get_stringify(), response_body[api.rep_data])
 
     def test_3_with_name_empty(self):
         tc_recipe1 = recipe_model.RecipeTest().insert()
@@ -224,8 +224,8 @@ class GetIngredientForRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 200)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_ok)
-        self.assertIn(tc_link1.get_data_stringify_object_id(), response_body[api.rep_data])
-        self.assertIn(tc_link2.get_data_stringify_object_id(), response_body[api.rep_data])
+        self.assertIn(tc_link1.get_stringify(), response_body[api.rep_data])
+        self.assertIn(tc_link2.get_stringify(), response_body[api.rep_data])
 
     def test_3_with_name_string_true(self):
         tc_recipe1 = recipe_model.RecipeTest().insert()
@@ -247,8 +247,8 @@ class GetIngredientForRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body[api.rep_code_status], 200)
         self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_ok)
-        self.assertIn(tc_link1.add_name().get_data_stringify_object_id(), response_body[api.rep_data])
-        self.assertIn(tc_link2.add_name().get_data_stringify_object_id(), response_body[api.rep_data])
+        self.assertIn(tc_link1.add_name().get_stringify(), response_body[api.rep_data])
+        self.assertIn(tc_link2.add_name().get_stringify(), response_body[api.rep_data])
 
     @classmethod
     def tearDownClass(cls):
