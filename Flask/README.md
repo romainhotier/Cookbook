@@ -1,8 +1,8 @@
-# Python3 (3.x) package and config #
+# Python3 (3.8) package and config #
 
 ```
 pip install -r requirements.txt
-export COOKBOOK_ENV="path/to/config.cfg"
+### TBD ### export COOKBOOK_ENV="path/to/config.cfg"
 ```
 
 # Documentation # 
@@ -12,20 +12,10 @@ npm install apidoc -g
 apidoc -i ../Flask/ -o ../apidoc/
 ```
 
-# Populate #
-```
-python populate.py
-```
-
 # Launch #
-sur linux
 ```
 source ./launcher.sh
 python run.py
-```
-sur windows
-```
-sh launcher_w.sh
 ```
 
 # Test #
