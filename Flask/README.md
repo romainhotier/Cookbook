@@ -40,6 +40,18 @@ you need to update Flask/start_server.sh with your config
 > cd Flask
 > source ./start_server.sh
 ```
+# Raspberry Launch #
+- power on raspberry (check ethernet is connected)
+- get ip's raspberry  (bbox tools or cmd "arp -a" on linux)
+- go to https://ip_raspberry:9090
+- log in (ask for login/password)
+- go in terminal tab
+- lanch with script
+```
+> cd Workspace/Cookbook/Flask
+> ./start_server.sh
+```
+
 # Documentation # 
 https://apidocjs.com/
 - install node.js
