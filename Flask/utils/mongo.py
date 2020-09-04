@@ -1,5 +1,10 @@
 import json
+import sys
+
 from bson import ObjectId
+from pymongo import MongoClient, errors
+
+import utils
 
 
 class JSONEncoder(json.JSONEncoder):
@@ -34,3 +39,13 @@ class Mongo(object):
     @staticmethod
     def format_json(data):
         return json.loads(JSONEncoder().encode(data))
+
+    def check_mongodb_up(self):
+        try:
+            client = MongoClient(self.ip, self.port, serverSelectionTimeoutMS=2000)
+            client.server_info()
+            client.close()
+        except errors.ServerSelectionTimeoutError:
+            utils.Server.logger.critical("Connexion to MongoDB Failed !!!")
+            sys.exit()
+
