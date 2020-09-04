@@ -26,3 +26,10 @@ class GetRecipeForIngredient(object):
         else:
             data_expected = link.get_stringify()
         return data_expected
+
+    @staticmethod
+    def check_not_present(value, rep):
+        if value in rep.keys():
+            return False
+        else:
+            return True

@@ -34,3 +34,11 @@ class PostIngredient(object):
             return {"result": True, "error": None}
         except jsonschema.exceptions.ValidationError as err:
             return {"result": False, "error": err}
+
+    @staticmethod
+    def check_not_present(value, rep):
+        if value in rep.keys():
+            return False
+        else:
+            return True
+

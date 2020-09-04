@@ -26,15 +26,8 @@ class GetAllIngredient(object):
         return data_expected
 
     @staticmethod
-    def check_no_data(rep):
-        if "data" in rep.keys():
-            return False
-        else:
-            return True
-
-    @staticmethod
-    def check_no_detail(rep):
-        if "detail" in rep.keys():
+    def check_not_present(value, rep):
+        if value in rep.keys():
             return False
         else:
             return True

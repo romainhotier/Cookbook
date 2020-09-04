@@ -17,8 +17,8 @@ class DeleteIngredient(object):
         return detail
 
     @staticmethod
-    def check_no_data(rep):
-        if "data" in rep.keys():
+    def check_not_present(value, rep):
+        if value in rep.keys():
             return False
         else:
             return True

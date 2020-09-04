@@ -1,8 +1,6 @@
 import unittest
 import requests
 
-proxies = {"http": "http://172.16.99.9:3129", "https": "http://172.16.99.9:3129"}
-
 import utils
 import tests.ingredient.PutIngredient.api as api
 import tests.ingredient.model as ingredient_model
@@ -36,6 +34,7 @@ class PutIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(ingredient=tc_ingredient1))
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ refacto """
         tc_ingredient1.select_ok()
         tc_ingredient2.select_ok()
@@ -56,6 +55,7 @@ class PutIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(ingredient=tc_ingredient))
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ refacto """
         tc_ingredient.select_ok()
 
@@ -72,6 +72,7 @@ class PutIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 404)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         self.assertEqual(response_body["detail"], server.detail_url_not_found)
         tc_ingredient.select_ok()
 
@@ -81,14 +82,13 @@ class PutIngredient(unittest.TestCase):
         """ call api """
         url = server.main_url + "/" + api.url + "/"
         response = requests.put(url, json=body, verify=False)
-        print(response)
-        print(response.text)
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 404)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         self.assertEqual(response_body["detail"], server.detail_url_not_found)
         tc_ingredient.select_ok()
 
@@ -105,6 +105,7 @@ class PutIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_id, msg=server.detail_must_be_an_object_id, value=tc_id)
         self.assertEqual(response_body["detail"], detail)
         tc_ingredient.select_ok()
@@ -122,6 +123,7 @@ class PutIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_id, msg=server.detail_doesnot_exist, value=tc_id)
         self.assertEqual(response_body["detail"], detail)
         tc_ingredient.select_ok()
@@ -139,6 +141,7 @@ class PutIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_name, msg=server.detail_is_required)
         self.assertEqual(response_body["detail"], detail)
         tc_ingredient.select_ok()
@@ -156,6 +159,7 @@ class PutIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_name, msg=server.detail_must_be_a_string, value=body[api.param_name])
         self.assertEqual(response_body["detail"], detail)
         tc_ingredient.select_ok()
@@ -173,6 +177,7 @@ class PutIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_name, msg=server.detail_must_be_not_empty, 
                                    value=body[api.param_name])
         self.assertEqual(response_body["detail"], detail)
@@ -193,6 +198,7 @@ class PutIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(ingredient=tc_ingredient))
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ refacto """
         tc_ingredient.select_ok()
 
@@ -211,6 +217,7 @@ class PutIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(ingredient=tc_ingredient))
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ refacto """
         tc_ingredient.select_ok()
 
@@ -228,6 +235,7 @@ class PutIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + " [true, false]", 
                                    value=tc_with_files)
         self.assertEqual(response_body["detail"], detail)
@@ -247,6 +255,7 @@ class PutIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + " [true, false]", 
                                    value=tc_with_files)
         self.assertEqual(response_body["detail"], detail)
@@ -270,6 +279,7 @@ class PutIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(ingredient=tc_ingredient1))
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ refacto """
         tc_ingredient1.select_ok()
 

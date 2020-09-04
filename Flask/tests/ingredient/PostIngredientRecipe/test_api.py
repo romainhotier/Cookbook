@@ -40,6 +40,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
         data_check = api.json_check(data=response_body["data"], data_expected=tc_link)
         self.assertTrue(data_check["result"], data_check["error"])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ refacto """
         tc_link.custom({"_id": response_body["data"]["_id"]}).select_ok()
 
@@ -63,6 +64,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
         data_check = api.json_check(data=response_body["data"], data_expected=tc_link)
         self.assertTrue(data_check["result"], data_check["error"])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ refacto """
         tc_link.custom({"_id": response_body["data"]["_id"]}).select_ok()
 
@@ -83,6 +85,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 404)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         self.assertEqual(response_body["detail"], server.detail_url_not_found)
         tc_link.select_nok_by_unit()
 
@@ -101,6 +104,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_id_ingredient, msg=server.detail_is_required)
         self.assertEqual(response_body["detail"], detail)
         tc_link.select_nok_by_unit()
@@ -121,6 +125,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_id_ingredient, msg=server.detail_must_be_an_object_id,
                                    value=body[api.param_id_ingredient])
         self.assertEqual(response_body["detail"], detail)
@@ -142,6 +147,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_id_ingredient, msg=server.detail_must_be_an_object_id,
                                    value=body[api.param_id_ingredient])
         self.assertEqual(response_body["detail"], detail)
@@ -163,6 +169,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_id_ingredient, msg=server.detail_must_be_an_object_id,
                                    value=body[api.param_id_ingredient])
         self.assertEqual(response_body["detail"], detail)
@@ -184,6 +191,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_id_ingredient, msg=server.detail_doesnot_exist,
                                    value=body[api.param_id_ingredient])
         self.assertEqual(response_body["detail"], detail)
@@ -204,6 +212,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_id_recipe, msg=server.detail_is_required)
         self.assertEqual(response_body["detail"], detail)
         tc_link.select_nok_by_unit()
@@ -224,6 +233,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_id_recipe, msg=server.detail_must_be_an_object_id,
                                    value=body[api.param_id_recipe])
         self.assertEqual(response_body["detail"], detail)
@@ -245,6 +255,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_id_recipe, msg=server.detail_must_be_an_object_id,
                                    value=body[api.param_id_recipe])
         self.assertEqual(response_body["detail"], detail)
@@ -266,6 +277,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_id_recipe, msg=server.detail_must_be_an_object_id,
                                    value=body[api.param_id_recipe])
         self.assertEqual(response_body["detail"], detail)
@@ -287,6 +299,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_id_recipe, msg=server.detail_doesnot_exist,
                                    value=body[api.param_id_recipe])
         self.assertEqual(response_body["detail"], detail)
@@ -308,6 +321,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_quantity, msg=server.detail_is_required)
         self.assertEqual(response_body["detail"], detail)
         tc_link.select_nok_by_linked()
@@ -329,6 +343,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_quantity, msg=server.detail_must_be_an_integer,
                                    value=body[api.param_quantity])
         self.assertEqual(response_body["detail"], detail)
@@ -351,6 +366,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_quantity, msg=server.detail_must_be_an_integer,
                                    value=body[api.param_quantity])
         self.assertEqual(response_body["detail"], detail)
@@ -373,6 +389,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_quantity, msg=server.detail_must_be_an_integer,
                                    value=body[api.param_quantity])
         self.assertEqual(response_body["detail"], detail)
@@ -397,6 +414,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
         data_check = api.json_check(data=response_body["data"], data_expected=tc_link)
         self.assertTrue(data_check["result"], data_check["error"])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ refacto """
         tc_link.custom({"_id": response_body["data"]["_id"]}).select_ok()
 
@@ -416,6 +434,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_unit, msg=server.detail_is_required)
         self.assertEqual(response_body["detail"], detail)
         tc_link.select_nok_by_linked()
@@ -437,6 +456,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_unit, msg=server.detail_must_be_a_string, value=body[api.param_unit])
         self.assertEqual(response_body["detail"], detail)
         tc_link.select_nok_by_linked()
@@ -460,6 +480,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
         data_check = api.json_check(data=response_body["data"], data_expected=tc_link)
         self.assertTrue(data_check["result"], data_check["error"])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ refacto """
         tc_link.custom({"_id": response_body["data"]["_id"]}).select_ok()
 
@@ -482,6 +503,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
         data_check = api.json_check(data=response_body["data"], data_expected=tc_link)
         self.assertTrue(data_check["result"], data_check["error"])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ refacto """
         tc_link.custom({"_id": response_body["data"]["_id"]}).select_ok()
 
@@ -507,6 +529,7 @@ class PostIngredientRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = "link between {} and {} ".format(tc_id_ingredient, tc_id_recipe) + server.detail_already_exist.lower()
         self.assertEqual(response_body["detail"], detail)
         tc_link.select_ok()

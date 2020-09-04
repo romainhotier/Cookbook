@@ -31,6 +31,7 @@ class PostIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
         data_check = api.json_check(data=response_body["data"], data_expected=tc_ingredient)
         self.assertTrue(data_check["result"], data_check["error"])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ refacto """
         tc_ingredient.custom({"_id": response_body["data"]["_id"]}).select_ok()
 
@@ -49,6 +50,7 @@ class PostIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
         data_check = api.json_check(data=response_body["data"], data_expected=tc_ingredient)
         self.assertTrue(data_check["result"], data_check["error"])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ refacto """
         tc_ingredient.custom({"_id": response_body["data"]["_id"]}).select_ok()
 
@@ -64,6 +66,7 @@ class PostIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
         self.assertEqual(response_body["codeStatus"], 404)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         self.assertEqual(response_body["detail"], server.detail_url_not_found)
         tc_ingredient.select_nok_by_name()
 
@@ -79,6 +82,7 @@ class PostIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_name, msg=server.detail_is_required)
         self.assertEqual(response_body["detail"], detail)
         tc_ingredient.select_nok_by_name()
@@ -95,6 +99,7 @@ class PostIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_name, msg=server.detail_must_be_a_string, value=body[api.param_name])
         self.assertEqual(response_body["detail"], detail)
         tc_ingredient.select_nok_by_name()
@@ -111,6 +116,7 @@ class PostIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_name, msg=server.detail_must_be_not_empty,
                                    value=body[api.param_name])
         self.assertEqual(response_body["detail"], detail)
@@ -130,6 +136,7 @@ class PostIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
         data_check = api.json_check(data=response_body["data"], data_expected=tc_ingredient)
         self.assertTrue(data_check["result"], data_check["error"])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ refacto """
         tc_ingredient.custom({"_id": response_body["data"]["_id"]}).select_ok()
 
@@ -145,6 +152,7 @@ class PostIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_name, msg=server.detail_already_exist, value=body[api.param_name])
         self.assertEqual(response_body["detail"], detail)
         tc_ingredient.select_ok()
