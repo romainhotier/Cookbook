@@ -38,7 +38,7 @@ class IngredientTest(object):
     def get_stringify(self):
         return mongo.format_json(self.get())
 
-    def get_stringify_with_file(self, files):
+    def get_stringify_with_files(self, files):
         data = mongo.format_json(self.get())
         data["files"] = []
         for file in files:
@@ -136,6 +136,12 @@ class IngredientRecipeTest(object):
 
     def get_id(self):
         return str(self._id)
+
+    def get_id_ingredient(self):
+        return str(self._id_ingredient)
+
+    def get_id_recipe(self):
+        return str(self._id_recipe)
 
     def get(self):
         return copy.deepcopy(self.__dict__)

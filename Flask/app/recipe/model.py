@@ -10,14 +10,14 @@ mongo = utils.Mongo
 class Recipe(object):
 
     def __init__(self):
-        self.json = {}
+        self.result = {}
 
     def select_all(self):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
         cursor = db.find({})
         client.close()
-        self.json = mongo.format_json([recipe for recipe in cursor])
+        self.result = mongo.format_json([recipe for recipe in cursor])
         return self
 
     def select_one(self, _id):
@@ -25,7 +25,7 @@ class Recipe(object):
         db = client[mongo.name][mongo.collection_recipe]
         result = db.find_one({"_id": ObjectId(_id)})
         client.close()
-        self.json = mongo.format_json(result)
+        self.result = mongo.format_json(result)
         return self
 
     @staticmethod
@@ -42,7 +42,7 @@ class Recipe(object):
         query = db.insert_one(data)
         result = db.find_one({"_id": ObjectId(query.inserted_id)})
         client.close()
-        self.json = mongo.format_json(result)
+        self.result = mongo.format_json(result)
         return self
 
     def update(self, _id, data):
@@ -51,7 +51,7 @@ class Recipe(object):
         db.update_one({"_id": ObjectId(_id)}, {'$set': data})
         result = db.find_one({"_id": ObjectId(_id)})
         client.close()
-        self.json = mongo.format_json(result)
+        self.result = mongo.format_json(result)
         return self
 
     @staticmethod
@@ -63,7 +63,7 @@ class Recipe(object):
         return
 
     def add_enrichment_file_for_all(self):
-        for recipe in self.json:
+        for recipe in self.result:
             recipe["files"] = []
             """ get files for recipe """
             files_recipe = file_model.FileModel.get_all_file_by_id_parent(_id_parent=recipe["_id"]).json
@@ -80,14 +80,14 @@ class Recipe(object):
         return self
 
     def add_enrichment_file_for_one(self):
-        self.json["files"] = []
+        self.result["files"] = []
         """ get files for recipe """
-        files_recipe = file_model.FileModel.get_all_file_by_id_parent(_id_parent=self.json["_id"]).json
+        files_recipe = file_model.FileModel.get_all_file_by_id_parent(_id_parent=self.result["_id"]).json
         for file in files_recipe:
             file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
-            self.json["files"].append(file_enrichment)
+            self.result["files"].append(file_enrichment)
         """ get files for steps """
-        for step in self.json["steps"]:
+        for step in self.result["steps"]:
             step["files"] = []
             files_step = file_model.FileModel.get_all_file_by_id_parent(_id_parent=step["_id"]).json
             for file in files_step:
@@ -116,7 +116,7 @@ class Recipe(object):
 class Step(object):
 
     def __init__(self):
-        self.json = {}
+        self.result = {}
 
     @staticmethod
     def get_steps_length(_id):
@@ -141,7 +141,7 @@ class Step(object):
             db.update_one({"_id": ObjectId(_id)}, {'$push': {"steps": {"$each": [new_step]}}})
         client.close()
         """ return result """
-        self.json = Recipe().select_one(_id=_id).json
+        self.result = Recipe().select_one(_id=_id).result
         return self
 
     def update(self, _id_recipe, _id_step, data):
@@ -151,7 +151,7 @@ class Step(object):
         db.update_one({"_id": ObjectId(_id_recipe)}, {'$set': {"steps.{0}.step".format(position): data["step"]}})
         client.close()
         """ return result """
-        self.json = Recipe().select_one(_id=_id_recipe).json
+        self.result = Recipe().select_one(_id=_id_recipe).result
         return self
 
     def delete(self, _id_recipe, _id_step):
@@ -160,12 +160,12 @@ class Step(object):
         db.update_one({"_id": ObjectId(_id_recipe)}, {'$pull': {"steps": {"_id": ObjectId(_id_step)}}})
         client.close()
         """ return result """
-        self.json = Recipe().select_one(_id=_id_recipe).json
+        self.result = Recipe().select_one(_id=_id_recipe).result
         return self
 
     @staticmethod
     def get_step_index(_id_recipe, _id_step):
-        steps = Recipe().select_one(_id=_id_recipe).json["steps"]
+        steps = Recipe().select_one(_id=_id_recipe).result["steps"]
         i = 0
         for step in steps:
             if step["_id"] == _id_step:
@@ -174,14 +174,14 @@ class Step(object):
                 i += 1
 
     def add_enrichment_file_for_one(self):
-        self.json["files"] = []
+        self.result["files"] = []
         """ get files for recipe """
-        files_recipe = file_model.FileModel.get_all_file_by_id_parent(_id_parent=self.json["_id"]).json
+        files_recipe = file_model.FileModel.get_all_file_by_id_parent(_id_parent=self.result["_id"]).json
         for file in files_recipe:
             file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
-            self.json["files"].append(file_enrichment)
+            self.result["files"].append(file_enrichment)
         """ get files for steps """
-        for step in self.json["steps"]:
+        for step in self.result["steps"]:
             step["files"] = []
             files_step = file_model.FileModel.get_all_file_by_id_parent(_id_parent=step["_id"]).json
             for file in files_step:

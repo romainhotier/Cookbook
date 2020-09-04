@@ -54,7 +54,7 @@ def signup():
     """ add user """
     data = user_model.UserModel.insert(data=body)
     """ return response """
-    return utils.Server.return_response(data=data.json, api=api.name, code=201)
+    return utils.Server.return_response(data=data.result, api=api.name, code=201)
 
 
 @api.route('/login', methods=['POST'])
