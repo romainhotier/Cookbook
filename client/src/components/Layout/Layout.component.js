@@ -1,6 +1,6 @@
 import React from 'react'
 
-// import RecipeRouter from 'redux/recipe/components/RecipeRouter'
+import RecipeRouter from 'modules/recipe/RecipeRouter'
 // import CategoryRouter from 'redux/category/components/CategoryRouter'
 // import NavigationItem from '../navigation/NavigationItem'
 
@@ -33,8 +33,8 @@ const Layout = () => {
       </nav>
       <main className='layout_content'>
           coucou
-        {/* { RecipeRouter }
-        { CategoryRouter } */}
+        { RecipeRouter }
+        {/* { CategoryRouter } */}
       </main>
     </div>
   )
