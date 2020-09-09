@@ -112,11 +112,14 @@ class IngredientTest(object):
         client.close()
         return
 
-    def add_file(self, filename, is_main):
-        return file_model.FileTest().custom({"filename": filename,
+    def add_file(self, filename, is_main, **kwargs):
+        file = file_model.FileTest().custom({"filename": filename,
                                              "metadata": {"kind": "ingredient",
                                                           "_id": ObjectId(self._id),
                                                           "is_main": is_main}}).insert()
+        if "identifier" in kwargs.keys():
+            file.custom({"_id": kwargs["identifier"]})
+        return file
 
 
 class IngredientRecipeTest(object):

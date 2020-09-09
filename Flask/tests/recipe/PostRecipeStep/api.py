@@ -42,30 +42,9 @@ class PostRecipeStep(object):
         return {"steps": steps}
 
     @staticmethod
-    def create_schema(recipe):
-        return {"type": "object",
-                "properties": {
-                    "_id": {"type": "string"},
-                    "categories": {"enum": [recipe.categories]},
-                    "cooking_time": {"enum": [recipe.cooking_time]},
-                    "level": {"enum": [recipe.level]},
-                    "nb_people": {"enum": [recipe.nb_people]},
-                    "note": {"enum": [recipe.note]},
-                    "preparation_time": {"enum": [recipe.preparation_time]},
-                    "resume": {"enum": [recipe.resume]},
-                    "slug": {"enum": [recipe.slug]},
-                    "steps": {"enum": [recipe.get_steps_stringify()]},
-                    "title": {"enum": [recipe.title]}},
-                "required": ["_id", "categories", "cooking_time", "level", "nb_people", "note", "preparation_time",
-                             "resume", "slug", "steps", "title"],
-                "additionalProperties": False}
-
-    def json_check(self, data, data_expected):
-        try:
-            jsonschema.validate(instance=data, schema=self.create_schema(recipe=data_expected))
-            return {"result": True, "error": None}
-        except jsonschema.exceptions.ValidationError as err:
-            return {"result": False, "error": err}
+    def data_expected(recipe):
+        data_expected = recipe.get_stringify()
+        return data_expected
 
     @staticmethod
     def get_new_id(data, position):

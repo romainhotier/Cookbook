@@ -29,6 +29,9 @@ class FileTest(object):
     def get_id(self):
         return str(self._id)
 
+    def get_is_main(self):
+        return self.metadata["is_main"]
+
     def get_data(self):
         return copy.deepcopy(self.data[0].decode("utf-8"))
 

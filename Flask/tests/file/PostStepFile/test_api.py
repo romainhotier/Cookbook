@@ -29,32 +29,26 @@ class PostStepFile(unittest.TestCase):
         tc_id_step = "111111111111111111111111"
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
+        new_id = api.return_new_file_id(response_body)
         tc_file = tc_recipe.add_file_step(_id_step="111111111111111111111111",
                                           filename=body[api.param_filename],
-                                          is_main=body[api.param_is_main])
+                                          is_main=body[api.param_is_main],
+                                          identifier=new_id)
         """ assert """
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 201)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        format_data = api.format_response(data=response_body[api.rep_data], step_index=0, file_index=0)
-        format_response = api.\
-            refacto_file_added(data=tc_recipe.
-                               get_stringify_with_file(files_recipe=[],
-                                                       files_steps={"111111111111111111111111": [tc_file], 
-                                                                    "222222222222222222222222": []}),
-                               step_index=0, file_index=0)
-        self.assertEqual(format_data, format_response)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 201)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
+        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe, files=[tc_file], index=0))
+        self.assertEqual(response_body["detail"], api.detail_expected(new_id=new_id))
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
-        tc_file.custom({"_id": api.return_new_file_id(response_body)})
         tc_file.select_ok()
 
     def test_0_api_ok_more_param(self):
@@ -67,32 +61,26 @@ class PostStepFile(unittest.TestCase):
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
                 api.param_is_main: False,
-                "invalid": "invalid"
-                }
+                "invalid": "invalid"}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
+        new_id = api.return_new_file_id(response_body)
         tc_file = tc_recipe.add_file_step(_id_step="111111111111111111111111",
                                           filename=body[api.param_filename],
-                                          is_main=body[api.param_is_main])
+                                          is_main=body[api.param_is_main],
+                                          identifier=new_id)
         """ assert """
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 201)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        format_data = api.format_response(data=response_body[api.rep_data], step_index=0, file_index=0)
-        format_response = api.\
-            refacto_file_added(data=tc_recipe.
-                               get_stringify_with_file(files_recipe=[],
-                                                       files_steps={"111111111111111111111111": [tc_file],
-                                                                    "222222222222222222222222": []}),
-                               step_index=0, file_index=0)
-        self.assertEqual(format_data, format_response)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 201)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
+        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe, files=[tc_file], index=0))
+        self.assertEqual(response_body["detail"], api.detail_expected(new_id=new_id))
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
-        tc_file.custom({"_id": api.return_new_file_id(response_body)})
         tc_file.select_ok()
 
     def test_1_url_not_found_1(self):
@@ -104,18 +92,18 @@ class PostStepFile(unittest.TestCase):
         tc_id_step = "111111111111111111111111"
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url1 + "x/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 404)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_404_url)
-        self.assertEqual(response_body[api.rep_detail], server.detail_url_not_found)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 404)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        self.assertEqual(response_body["detail"], server.detail_url_not_found)
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
@@ -130,18 +118,18 @@ class PostStepFile(unittest.TestCase):
         tc_id_step = "111111111111111111111111"
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/x" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 404)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_404_url)
-        self.assertEqual(response_body[api.rep_detail], server.detail_url_not_found)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 404)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        self.assertEqual(response_body["detail"], server.detail_url_not_found)
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
@@ -156,18 +144,18 @@ class PostStepFile(unittest.TestCase):
         tc_id_step = "111111111111111111111111"
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 404)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_404_url)
-        self.assertEqual(response_body[api.rep_detail], server.detail_url_not_found)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 404)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        self.assertEqual(response_body["detail"], server.detail_url_not_found)
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
@@ -182,19 +170,20 @@ class PostStepFile(unittest.TestCase):
         tc_id_step = "111111111111111111111111"
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_id_recipe, server.detail_must_be_an_object_id, tc_id_recipe)
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_id_recipe, msg=server.detail_must_be_an_object_id, 
+                                   value=tc_id_recipe)
+        self.assertEqual(response_body["detail"], detail)
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
@@ -209,19 +198,19 @@ class PostStepFile(unittest.TestCase):
         tc_id_step = "111111111111111111111111"
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_id_recipe, server.detail_doesnot_exist, tc_id_recipe)
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_id_recipe, msg=server.detail_doesnot_exist, value=tc_id_recipe)
+        self.assertEqual(response_body["detail"], detail)
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
@@ -236,18 +225,18 @@ class PostStepFile(unittest.TestCase):
         tc_id_step = ""
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 404)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_404_url)
-        self.assertEqual(response_body[api.rep_detail], server.detail_url_not_found)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 404)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        self.assertEqual(response_body["detail"], server.detail_url_not_found)
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
@@ -262,19 +251,19 @@ class PostStepFile(unittest.TestCase):
         tc_id_step = "invalid"
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_id_step, server.detail_must_be_an_object_id, tc_id_step)
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_id_step, msg=server.detail_must_be_an_object_id, value=tc_id_step)
+        self.assertEqual(response_body["detail"], detail)
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
@@ -289,19 +278,19 @@ class PostStepFile(unittest.TestCase):
         tc_id_step = "aaaaaaaaaaaaaaaaaaaaaaaa"
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_id_step, server.detail_doesnot_exist, tc_id_step)
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_id_step, msg=server.detail_doesnot_exist, value=tc_id_step)
+        self.assertEqual(response_body["detail"], detail)
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
@@ -315,19 +304,19 @@ class PostStepFile(unittest.TestCase):
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
         body = {api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_path, server.detail_is_required, "missing")
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_path, msg=server.detail_is_required)
+        self.assertEqual(response_body["detail"], detail)
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
@@ -342,19 +331,19 @@ class PostStepFile(unittest.TestCase):
         tc_id_step = "111111111111111111111111"
         body = {api.param_path: None,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_path, server.detail_must_be_a_string, body[api.param_path])
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_path, msg=server.detail_must_be_a_string, value=body[api.param_path])
+        self.assertEqual(response_body["detail"], detail)
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
@@ -369,19 +358,20 @@ class PostStepFile(unittest.TestCase):
         tc_id_step = "111111111111111111111111"
         body = {api.param_path: "",
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_path, server.detail_must_be_not_empty, body[api.param_path])
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_path, msg=server.detail_must_be_not_empty,
+                                   value=body[api.param_path])
+        self.assertEqual(response_body["detail"], detail)
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
@@ -396,19 +386,19 @@ class PostStepFile(unittest.TestCase):
         tc_id_step = "111111111111111111111111"
         body = {api.param_path: "invalid",
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_path, server.detail_doesnot_exist, body[api.param_path])
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_path, msg=server.detail_doesnot_exist, value=body[api.param_path])
+        self.assertEqual(response_body["detail"], detail)
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
@@ -422,19 +412,19 @@ class PostStepFile(unittest.TestCase):
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
         body = {api.param_path: file_path,
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_filename, server.detail_is_required, "missing")
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_filename, msg=server.detail_is_required)
+        self.assertEqual(response_body["detail"], detail)
         """ check recipe """
         tc_recipe.select_ok()
 
@@ -447,19 +437,20 @@ class PostStepFile(unittest.TestCase):
         tc_id_step = "111111111111111111111111"
         body = {api.param_path: file_path,
                 api.param_filename: None,
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_filename, server.detail_must_be_a_string, body[api.param_filename])
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_filename, msg=server.detail_must_be_a_string,
+                                   value=body[api.param_filename])
+        self.assertEqual(response_body["detail"], detail)
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
@@ -474,19 +465,20 @@ class PostStepFile(unittest.TestCase):
         tc_id_step = "111111111111111111111111"
         body = {api.param_path: file_path,
                 api.param_filename: "",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_filename, server.detail_must_be_not_empty, body[api.param_filename])
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_filename, msg=server.detail_must_be_not_empty,
+                                   value=body[api.param_filename])
+        self.assertEqual(response_body["detail"], detail)
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
@@ -501,32 +493,26 @@ class PostStepFile(unittest.TestCase):
         tc_id_step = "111111111111111111111111"
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
+        new_id = api.return_new_file_id(response_body)
         tc_file = tc_recipe.add_file_step(_id_step="111111111111111111111111",
                                           filename=body[api.param_filename],
-                                          is_main=body[api.param_is_main])
+                                          is_main=body[api.param_is_main],
+                                          identifier=new_id)
         """ assert """
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 201)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        format_data = api.format_response(data=response_body[api.rep_data], step_index=0, file_index=0)
-        format_response = api.\
-            refacto_file_added(data=tc_recipe.
-                               get_stringify_with_file(files_recipe=[],
-                                                       files_steps={"111111111111111111111111": [tc_file],
-                                                                    "222222222222222222222222": []}),
-                               step_index=0, file_index=0)
-        self.assertEqual(format_data, format_response)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 201)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
+        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe, files=[tc_file], index=0))
+        self.assertEqual(response_body["detail"], api.detail_expected(new_id=new_id))
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
-        tc_file.custom({"_id": api.return_new_file_id(response_body)})
         tc_file.select_ok()
 
     def test_6_is_main_without(self):
@@ -538,32 +524,26 @@ class PostStepFile(unittest.TestCase):
         tc_id_step = "111111111111111111111111"
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
+        new_id = api.return_new_file_id(response_body)
         tc_file = tc_recipe.add_file_step(_id_step="111111111111111111111111",
                                           filename=body[api.param_filename],
-                                          is_main=False)
+                                          is_main=False,
+                                          identifier=new_id)
         """ assert """
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 201)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        format_data = api.format_response(data=response_body[api.rep_data], step_index=0, file_index=0)
-        format_response = api.\
-            refacto_file_added(data=tc_recipe.
-                               get_stringify_with_file(files_recipe=[],
-                                                       files_steps={"111111111111111111111111": [tc_file],
-                                                                    "222222222222222222222222": []}),
-                               step_index=0, file_index=0)
-        self.assertEqual(format_data, format_response)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 201)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
+        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe, files=[tc_file], index=0))
+        self.assertEqual(response_body["detail"], api.detail_expected(new_id=new_id))
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
-        tc_file.custom({"_id": api.return_new_file_id(response_body)})
         tc_file.select_ok()
 
     def test_6_is_main_null(self):
@@ -575,19 +555,20 @@ class PostStepFile(unittest.TestCase):
         tc_id_step = "111111111111111111111111"
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: None
-                }
+                api.param_is_main: None}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_is_main, server.detail_must_be_a_boolean, body[api.param_is_main])
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_is_main, msg=server.detail_must_be_a_boolean,
+                                   value=body[api.param_is_main])
+        self.assertEqual(response_body["detail"], detail)
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
@@ -602,19 +583,20 @@ class PostStepFile(unittest.TestCase):
         tc_id_step = "111111111111111111111111"
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: ""
-                }
+                api.param_is_main: ""}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_is_main, server.detail_must_be_a_boolean, body[api.param_is_main])
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_is_main, msg=server.detail_must_be_a_boolean,
+                                   value=body[api.param_is_main])
+        self.assertEqual(response_body["detail"], detail)
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
@@ -629,19 +611,20 @@ class PostStepFile(unittest.TestCase):
         tc_id_step = "111111111111111111111111"
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: "invalid"
-                }
+                api.param_is_main: "invalid"}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_is_main, server.detail_must_be_a_boolean, body[api.param_is_main])
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_is_main, msg=server.detail_must_be_a_boolean,
+                                   value=body[api.param_is_main])
+        self.assertEqual(response_body["detail"], detail)
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
@@ -656,32 +639,26 @@ class PostStepFile(unittest.TestCase):
         tc_id_step = "111111111111111111111111"
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
+        new_id = api.return_new_file_id(response_body)
         tc_file = tc_recipe.add_file_step(_id_step="111111111111111111111111",
                                           filename=body[api.param_filename],
-                                          is_main=body[api.param_is_main])
+                                          is_main=body[api.param_is_main],
+                                          identifier=new_id)
         """ assert """
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 201)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        format_data = api.format_response(data=response_body[api.rep_data], step_index=0, file_index=0)
-        format_response = api.\
-            refacto_file_added(data=tc_recipe.
-                               get_stringify_with_file(files_recipe=[],
-                                                       files_steps={"111111111111111111111111": [tc_file],
-                                                                    "222222222222222222222222": []}),
-                               step_index=0, file_index=0)
-        self.assertEqual(format_data, format_response)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 201)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
+        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe, files=[tc_file], index=0))
+        self.assertEqual(response_body["detail"], api.detail_expected(new_id=new_id))
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
-        tc_file.custom({"_id": api.return_new_file_id(response_body)})
         tc_file.select_ok()
 
     def test_6_is_main_true(self):
@@ -693,32 +670,26 @@ class PostStepFile(unittest.TestCase):
         tc_id_step = "111111111111111111111111"
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: True
-                }
+                api.param_is_main: True}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
+        new_id = api.return_new_file_id(response_body)
         tc_file = tc_recipe.add_file_step(_id_step="111111111111111111111111",
                                           filename=body[api.param_filename],
-                                          is_main=body[api.param_is_main])
+                                          is_main=body[api.param_is_main],
+                                          identifier=new_id)
         """ assert """
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 201)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        format_data = api.format_response(data=response_body[api.rep_data], step_index=0, file_index=0)
-        format_response = api.\
-            refacto_file_added(data=tc_recipe.
-                               get_stringify_with_file(files_recipe=[],
-                                                       files_steps={"111111111111111111111111": [tc_file],
-                                                                    "222222222222222222222222": []}),
-                               step_index=0, file_index=0)
-        self.assertEqual(format_data, format_response)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 201)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
+        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe, files=[tc_file], index=0))
+        self.assertEqual(response_body["detail"], api.detail_expected(new_id=new_id))
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """
-        tc_file.custom({"_id": api.return_new_file_id(response_body)})
         tc_file.select_ok()
 
     def test_6_is_main_true_already_exist(self):
@@ -740,22 +711,19 @@ class PostStepFile(unittest.TestCase):
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         tc_file1.custom_is_main(False)
+        new_id = api.return_new_file_id(response_body)
         tc_file2 = tc_recipe.add_file_step(_id_step="111111111111111111111111",
                                            filename=body[api.param_filename],
-                                           is_main=body[api.param_is_main])
+                                           is_main=body[api.param_is_main],
+                                           identifier=new_id)
         """ assert """
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 201)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_created)
-        format_data = api.format_response(data=response_body[api.rep_data], step_index=0, file_index=1)
-        format_response = api.\
-            refacto_file_added(data=tc_recipe.
-                               get_stringify_with_file(files_recipe=[],
-                                                       files_steps={"111111111111111111111111": [tc_file1, tc_file2],
-                                                                    "222222222222222222222222": []}),
-                               step_index=0, file_index=1)
-        self.assertEqual(format_data, format_response)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 201)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
+        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe, files=[tc_file1, tc_file2],
+                                                                  index=0))
+        self.assertEqual(response_body["detail"], api.detail_expected(new_id=new_id))
         """ check recipe """
         tc_recipe.select_ok()
         """ check file """

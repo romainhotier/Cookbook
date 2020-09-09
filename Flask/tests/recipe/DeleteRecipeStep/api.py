@@ -12,6 +12,7 @@ class DeleteRecipeStep(object):
         self.rep_code_msg_ok = utils.Server.rep_code_msg_ok.replace("xxx", "recipe")
         self.rep_code_msg_error_400 = utils.Server.rep_code_msg_error_400.replace("xxx", "recipe")
         self.rep_code_msg_error_404_url = utils.Server.rep_code_msg_error_404.replace("xxx", "cookbook")
+        self.rep_code_msg_error_405 = utils.Server.rep_code_msg_error_405.replace("xxx", "cookbook")
 
     @staticmethod
     def create_detail(param, msg, **kwargs):
