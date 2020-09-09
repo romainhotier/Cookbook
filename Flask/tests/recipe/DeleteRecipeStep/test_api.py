@@ -33,9 +33,10 @@ class DeleteRecipeStep(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 200)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_ok)
-        self.assertEqual(response_body[api.rep_data], tc_recipe.get_stringify())
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         tc_recipe.select_ok()
 
     def test_0_api_ok_more_param(self):
@@ -54,9 +55,10 @@ class DeleteRecipeStep(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 200)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_ok)
-        self.assertEqual(response_body[api.rep_data], tc_recipe.get_stringify())
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         tc_recipe.select_ok()
 
     def test_1_url_not_found_1(self):
@@ -73,9 +75,10 @@ class DeleteRecipeStep(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 404)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_404_url)
-        self.assertEqual(response_body[api.rep_detail], server.detail_url_not_found)
+        self.assertEqual(response_body["codeStatus"], 404)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        self.assertEqual(response_body["detail"], server.detail_url_not_found)
         tc_recipe.select_ok()
 
     def test_1_url_not_found_2(self):
@@ -92,9 +95,10 @@ class DeleteRecipeStep(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 404)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_404_url)
-        self.assertEqual(response_body[api.rep_detail], server.detail_url_not_found)
+        self.assertEqual(response_body["codeStatus"], 404)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        self.assertEqual(response_body["detail"], server.detail_url_not_found)
         tc_recipe.select_ok()
 
     def test_2_id_recipe_without(self):
@@ -111,9 +115,10 @@ class DeleteRecipeStep(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 404)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_404_url)
-        self.assertEqual(response_body[api.rep_detail], server.detail_url_not_found)
+        self.assertEqual(response_body["codeStatus"], 404)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        self.assertEqual(response_body["detail"], server.detail_url_not_found)
         tc_recipe.select_ok()
 
     def test_2_id_recipe_string(self):
@@ -130,10 +135,12 @@ class DeleteRecipeStep(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_id_recipe, server.detail_must_be_an_object_id, tc_id_recipe)
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_id_recipe, msg=server.detail_must_be_an_object_id,
+                                   value=tc_id_recipe)
+        self.assertEqual(response_body["detail"], detail)
         tc_recipe.select_ok()
 
     def test_2_id_recipe_object_id_invalid(self):
@@ -150,10 +157,11 @@ class DeleteRecipeStep(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_id_recipe, server.detail_doesnot_exist, tc_id_recipe)
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_id_recipe, msg=server.detail_doesnot_exist, value=tc_id_recipe)
+        self.assertEqual(response_body["detail"], detail)
         tc_recipe.select_ok()
 
     def test_3_id_step_without(self):
@@ -170,9 +178,10 @@ class DeleteRecipeStep(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 404)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_404_url)
-        self.assertEqual(response_body[api.rep_detail], server.detail_url_not_found)
+        self.assertEqual(response_body["codeStatus"], 404)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        self.assertEqual(response_body["detail"], server.detail_url_not_found)
         tc_recipe.select_ok()
 
     def test_3_id_step_string(self):
@@ -189,10 +198,11 @@ class DeleteRecipeStep(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_id_step, server.detail_must_be_an_object_id, tc_id_step)
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_id_step, msg=server.detail_must_be_an_object_id, value=tc_id_step)
+        self.assertEqual(response_body["detail"], detail)
         tc_recipe.select_ok()
 
     def test_3_id_step_object_id_invalid(self):
@@ -209,10 +219,11 @@ class DeleteRecipeStep(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_id_step, server.detail_doesnot_exist, tc_id_step)
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_id_step, msg=server.detail_doesnot_exist, value=tc_id_step)
+        self.assertEqual(response_body["detail"], detail)
         tc_recipe.select_ok()
 
     def test_4_with_files_without(self):
@@ -230,9 +241,10 @@ class DeleteRecipeStep(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 200)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_ok)
-        self.assertEqual(response_body[api.rep_data], tc_recipe.get_stringify())
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         tc_recipe.select_ok()
 
     def test_4_with_files_empty(self):
@@ -252,10 +264,12 @@ class DeleteRecipeStep(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_with_files, server.detail_must_be_in + " [true, false]", tc_with_files)
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + " [true, false]",
+                                   value=tc_with_files)
+        self.assertEqual(response_body["detail"], detail)
 
     def test_4_with_files_string(self):
         tc_recipe = recipe_model.RecipeTest()
@@ -274,10 +288,12 @@ class DeleteRecipeStep(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_with_files, server.detail_must_be_in + " [true, false]", tc_with_files)
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + " [true, false]",
+                                   value=tc_with_files)
+        self.assertEqual(response_body["detail"], detail)
 
     def test_4_with_files_string_false(self):
         tc_recipe = recipe_model.RecipeTest()
@@ -301,9 +317,10 @@ class DeleteRecipeStep(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 200)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_ok)
-        self.assertEqual(response_body[api.rep_data], tc_recipe.get_stringify())
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         tc_recipe.select_ok()
 
     def test_4_with_files_string_true(self):
@@ -330,12 +347,14 @@ class DeleteRecipeStep(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 200)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_ok)
-        r1 = tc_recipe.get_stringify_with_file(files_recipe=[tc_file_recipe11, tc_file_recipe12],
-                                               files_steps={"222222222222222222222222": [tc_file_step121,
-                                                                                         tc_file_step122]})
-        self.assertEqual(response_body[api.rep_data], r1)
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertEqual(response_body["data"],
+                         api.data_expected(recipe=tc_recipe,
+                                           files={"recipe": [tc_file_recipe11, tc_file_recipe12],
+                                                  "steps": {"222222222222222222222222": [tc_file_step121,
+                                                                                         tc_file_step122]}}))
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_5_clean_file(self):
         tc_recipe = recipe_model.RecipeTest()
@@ -358,9 +377,10 @@ class DeleteRecipeStep(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 200)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_ok)
-        self.assertEqual(response_body[api.rep_data], tc_recipe.get_stringify())
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         tc_file_step111.select_nok()
         tc_file_step121.select_ok()
         tc_file_step122.select_ok()

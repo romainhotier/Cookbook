@@ -33,6 +33,7 @@ class DeleteRecipe(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 204)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response.text, '')
         tc_recipe1.select_nok()
         tc_recipe2.select_ok()
 
@@ -47,9 +48,10 @@ class DeleteRecipe(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.headers["Content-Type"], 'application/json', )
-        self.assertEqual(response_body[api.rep_code_status], 404)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_404_url)
-        self.assertEqual(response_body[api.rep_detail], server.detail_url_not_found)
+        self.assertEqual(response_body["codeStatus"], 404)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        self.assertEqual(response_body["detail"], server.detail_url_not_found)
         tc_recipe1.select_ok()
         tc_recipe2.select_ok()
 
@@ -63,7 +65,10 @@ class DeleteRecipe(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 404)
+        self.assertEqual(response_body["codeStatus"], 404)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        self.assertEqual(response_body["detail"], server.detail_url_not_found)
         tc_recipe1.select_ok()
         tc_recipe2.select_ok()
 
@@ -78,10 +83,10 @@ class DeleteRecipe(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_id, server.detail_must_be_an_object_id, tc_id)
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        detail = api.create_detail(param=api.param_id, msg=server.detail_must_be_an_object_id, value=tc_id)
+        self.assertEqual(response_body["detail"], detail)
         tc_recipe1.select_ok()
         tc_recipe2.select_ok()
 
@@ -96,10 +101,10 @@ class DeleteRecipe(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body[api.rep_code_status], 400)
-        self.assertEqual(response_body[api.rep_code_msg], api.rep_code_msg_error_400)
-        detail = api.create_detail(api.param_id, server.detail_doesnot_exist, tc_id)
-        self.assertEqual(response_body[api.rep_detail], detail)
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        detail = api.create_detail(param=api.param_id, msg=server.detail_doesnot_exist, value=tc_id)
+        self.assertEqual(response_body["detail"], detail)
         tc_recipe1.select_ok()
         tc_recipe2.select_ok()
 
@@ -131,6 +136,7 @@ class DeleteRecipe(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 204)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response.text, '')
         tc_recipe1.select_nok()
         tc_file_recipe11.select_nok()
         tc_file_recipe12.select_nok()
@@ -154,6 +160,7 @@ class DeleteRecipe(unittest.TestCase):
         """ assert """
         self.assertEqual(response.status_code, 204)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response.text, '')
         tc_ingredient.select_ok()
         tc_recipe.select_nok()
         tc_lk.select_nok()

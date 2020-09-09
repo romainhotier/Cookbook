@@ -66,14 +66,14 @@ class Recipe(object):
         for recipe in self.result:
             recipe["files"] = []
             """ get files for recipe """
-            files_recipe = file_model.FileModel.get_all_file_by_id_parent(_id_parent=recipe["_id"]).json
+            files_recipe = file_model.FileModel.get_all_file_by_id_parent(_id_parent=recipe["_id"]).result
             for file in files_recipe:
                 file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
                 recipe["files"].append(file_enrichment)
             """ get files for steps """
             for step in recipe["steps"]:
                 step["files"] = []
-                files_step = file_model.FileModel.get_all_file_by_id_parent(_id_parent=step["_id"]).json
+                files_step = file_model.FileModel.get_all_file_by_id_parent(_id_parent=step["_id"]).result
                 for file in files_step:
                     file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
                     step["files"].append(file_enrichment)
@@ -82,14 +82,14 @@ class Recipe(object):
     def add_enrichment_file_for_one(self):
         self.result["files"] = []
         """ get files for recipe """
-        files_recipe = file_model.FileModel.get_all_file_by_id_parent(_id_parent=self.result["_id"]).json
+        files_recipe = file_model.FileModel.get_all_file_by_id_parent(_id_parent=self.result["_id"]).result
         for file in files_recipe:
             file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
             self.result["files"].append(file_enrichment)
         """ get files for steps """
         for step in self.result["steps"]:
             step["files"] = []
-            files_step = file_model.FileModel.get_all_file_by_id_parent(_id_parent=step["_id"]).json
+            files_step = file_model.FileModel.get_all_file_by_id_parent(_id_parent=step["_id"]).result
             for file in files_step:
                 file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
                 step["files"].append(file_enrichment)
@@ -176,14 +176,14 @@ class Step(object):
     def add_enrichment_file_for_one(self):
         self.result["files"] = []
         """ get files for recipe """
-        files_recipe = file_model.FileModel.get_all_file_by_id_parent(_id_parent=self.result["_id"]).json
+        files_recipe = file_model.FileModel.get_all_file_by_id_parent(_id_parent=self.result["_id"]).result
         for file in files_recipe:
             file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
             self.result["files"].append(file_enrichment)
         """ get files for steps """
         for step in self.result["steps"]:
             step["files"] = []
-            files_step = file_model.FileModel.get_all_file_by_id_parent(_id_parent=step["_id"]).json
+            files_step = file_model.FileModel.get_all_file_by_id_parent(_id_parent=step["_id"]).result
             for file in files_step:
                 file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
                 step["files"].append(file_enrichment)

@@ -35,6 +35,9 @@ class RecipeTest(object):
     def get_id(self):
         return str(self._id)
 
+    def get_steps_stringify(self):
+        return mongo.format_json(self.steps)
+
     def get(self):
         return copy.deepcopy(self.__dict__)
 

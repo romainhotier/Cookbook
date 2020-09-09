@@ -12,6 +12,7 @@ backend = Flask(__name__)
 
 """ backend.config.from_envvar('COOKBOOK_ENV') """
 backend.config["ENV"] = "testing"
+#backend.config["ENV"] = "production"
 backend.config["JWT_SECRET_KEY"] = "super-secret-cookbook"
 backend.config["EXPIRATION_TOKEN"] = 5
 
