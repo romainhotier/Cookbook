@@ -12,6 +12,7 @@ backend = Flask(__name__)
 
 """ backend.config.from_envvar('COOKBOOK_ENV') """
 backend.config["ENV"] = "testing"
+#backend.config["ENV"] = "production"
 backend.config["JWT_SECRET_KEY"] = "super-secret-cookbook"
 backend.config["EXPIRATION_TOKEN"] = 5
 
@@ -39,4 +40,7 @@ def method_not_allowed(error):
 
 
 if __name__ == "__main__":
+    """ check mongo up """
+    utils.Mongo.check_mongodb_up()
+    """ launch server """
     backend.run(host='0.0.0.0', port=5000, debug=(backend.config["ENV"] in ["testing", "development"]))

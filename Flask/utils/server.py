@@ -1,9 +1,15 @@
 from flask import make_response
 
+import logging
+
+logFormatter = '%(asctime)s - %(levelname)s - %(message)s'
+logging.basicConfig(format=logFormatter, level=logging.INFO)
+
 
 class Server(object):
 
     def __init__(self):
+        self.logger = logging.getLogger(__name__)
         self.secure = 'http'
         self.ip = '127.0.0.1'
         self.port = '5000'
@@ -29,9 +35,6 @@ class Server(object):
         self.detail_url_not_found = "The requested URL was not found on the server. " \
                                     "If you entered the URL manually please check your spelling and try again."
         self.detail_method_not_allowed = "The method is not allowed for the requested URL."
-        self.body = {"codeStatus": "",
-                     "codeMsg": ""
-                     }
 
     def return_response(self, data, api, code, **optional):
         """ return an HTTPResponse """
@@ -60,10 +63,12 @@ class Server(object):
         return response
 
     def format_body(self, api, http_code, data, detail):
-        self.body["codeStatus"] = http_code
-        self.body["codeMsg"] = self.select_code_msg(http_code=http_code, api_category=api)
-        self.add_data_detail(data, detail)
-        return self.body
+        body = {"codeStatus": http_code, "codeMsg": self.select_code_msg(http_code=http_code, api_category=api)}
+        if data is not None:
+            body["data"] = data
+        if detail is not None:
+            body["detail"] = detail
+        return body
 
     @staticmethod
     def select_code_msg(http_code, api_category):
@@ -82,10 +87,3 @@ class Server(object):
             return "cookbook.{}.error.method_not_allowed".format(api_category)
         elif http_code == 500:
             return "cookbook.{}.error.internal_error".format(api_category)
-
-    def add_data_detail(self, data, detail):
-        """ add data or detail """
-        if data is not None:
-            self.body["data"] = data
-        if detail is not None:
-            self.body["detail"] = detail

@@ -129,7 +129,7 @@ def post_ingredient_file(_id):
     """ return response """
     data = ingredient.select_one(_id=_id).add_enrichment_file_for_one()
     detail = factory.FactoryPostFile.detail_information(_id_file=inserted_id)
-    return utils.Server.return_response(data=data.json, api=api.name, code=201, detail=detail)
+    return utils.Server.return_response(data=data.result, api=api.name, code=201, detail=detail)
 
 
 @api.route('/recipe/<_id>', methods=['POST'])
@@ -182,7 +182,7 @@ def post_recipe_file(_id):
     """ return response """
     data = recipe.select_one(_id=_id).add_enrichment_file_for_one()
     detail = factory.FactoryPostFile.detail_information(_id_file=inserted_id)
-    return utils.Server.return_response(data=data.json, api=api.name, code=201, detail=detail)
+    return utils.Server.return_response(data=data.result, api=api.name, code=201, detail=detail)
 
 
 @api.route('/recipe/<_id_recipe>/step/<_id_step>', methods=['POST'])
@@ -238,7 +238,7 @@ def post_step_file(_id_recipe, _id_step):
     """ return response """
     data = recipe.select_one(_id=_id_recipe).add_enrichment_file_for_one()
     detail = factory.FactoryPostFile.detail_information(_id_file=inserted_id)
-    return utils.Server.return_response(data=data.json, api=api.name, code=201, detail=detail)
+    return utils.Server.return_response(data=data.result, api=api.name, code=201, detail=detail)
 
 
 @api.route('/is_main/<_id>', methods=['PUT'])

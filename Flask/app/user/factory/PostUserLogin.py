@@ -21,7 +21,7 @@ class Factory(object):
 
     @staticmethod
     def check_password(data):
-        user = user_model.UserModel.select_one_by_email(email=data["email"]).json
+        user = user_model.UserModel.select_one_by_email(email=data["email"]).result
         authorized = user_model.UserModel.check_password(true_password=user["password"],
                                                          password_attempt=data["password"])
         if not authorized:

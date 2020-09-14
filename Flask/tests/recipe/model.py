@@ -123,7 +123,7 @@ class RecipeTest(object):
         rgx = re.compile('.*qa_rhr.*', re.IGNORECASE)
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
-        db.delete_many({"title": rgx})
+        db.delete_many({"title": {"$regex": rgx}})
         client.close()
         return
 
@@ -136,17 +136,21 @@ class RecipeTest(object):
     def remove_step(self, position):
         del self.steps[position]
 
-    def add_file_recipe(self, filename, is_main):
-        return file_model.FileTest().custom({"filename": filename,
+    def add_file_recipe(self, filename, is_main, **kwargs):
+        file = file_model.FileTest().custom({"filename": filename,
                                              "metadata": {"kind": "recipe",
                                                           "_id": ObjectId(self._id),
-                                                          "is_main": is_main}}).\
-            insert()
+                                                          "is_main": is_main}}).insert()
+        if "identifier" in kwargs.keys():
+            file.custom({"_id": kwargs["identifier"]})
+        return file
 
     @staticmethod
-    def add_file_step(_id_step, filename, is_main):
-        return file_model.FileTest().custom({"filename": filename,
+    def add_file_step(_id_step, filename, is_main, **kwargs):
+        file = file_model.FileTest().custom({"filename": filename,
                                              "metadata": {"kind": "step",
                                                           "_id": ObjectId(_id_step),
-                                                          "is_main": is_main}})\
-            .insert()
+                                                          "is_main": is_main}}).insert()
+        if "identifier" in kwargs.keys():
+            file.custom({"_id": kwargs["identifier"]})
+        return file

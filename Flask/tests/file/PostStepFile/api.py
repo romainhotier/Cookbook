@@ -1,6 +1,6 @@
-import copy
 import os
 import platform
+from bson import ObjectId
 
 import utils
 
@@ -15,38 +15,40 @@ class PostStepFile(object):
         self.param_path = "path"
         self.param_filename = "filename"
         self.param_is_main = "is_main"
-        self.rep_code_status = 'codeStatus'
-        self.rep_code_msg = 'codeMsg'
-        self.rep_data = 'data'
-        self.rep_detail = 'detail'
         self.rep_code_msg_created = utils.Server.rep_code_msg_created.replace("xxx", "file")
         self.rep_code_msg_error_400 = utils.Server.rep_code_msg_error_400.replace("xxx", "file")
         self.rep_code_msg_error_404_url = utils.Server.rep_code_msg_error_404.replace("xxx", "cookbook")
-        self.detail_param = "param"
-        self.detail_msg = "msg"
-        self.detail_value = "value"
 
-    def create_detail(self, param, msg, value):
-        detail = {self.detail_param: param, self.detail_msg: msg}
-        if value != "missing":
-            detail[self.detail_value] = value
+    @staticmethod
+    def create_detail(param, msg, **kwargs):
+        detail = {"param": param, "msg": msg}
+        if "value" in kwargs:
+            detail["value"] = kwargs["value"]
         return detail
 
     @staticmethod
-    def format_response(data, step_index, file_index):
-        format_response = copy.deepcopy(data)
-        format_response["steps"][step_index]["files"][file_index] = ""
-        return format_response
+    def check_not_present(value, rep):
+        if value in rep.keys():
+            return False
+        else:
+            return True
 
     @staticmethod
-    def refacto_file_added(data, step_index, file_index):
-        format_response = copy.deepcopy(data)
-        format_response["steps"][step_index]["files"][file_index] = ""
-        return format_response
+    def data_expected(recipe, files, index):
+        data_expected = recipe.get_stringify()
+        data_expected["files"] = []
+        for s in data_expected["steps"]:
+            s["files"] = []
+        data_expected["steps"][index]["files"] = [{"_id": f.get_id(), "is_main": f.get_is_main()} for f in files]
+        return data_expected
+
+    @staticmethod
+    def detail_expected(new_id):
+        return "added file ObjectId: {0}".format(str(new_id))
 
     @staticmethod
     def return_new_file_id(response):
-        return response["detail"].split(": ")[1]
+        return ObjectId(response["detail"].split(": ")[1])
 
     @staticmethod
     def get_file_path_for_test():

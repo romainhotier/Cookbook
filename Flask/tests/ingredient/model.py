@@ -38,7 +38,7 @@ class IngredientTest(object):
     def get_stringify(self):
         return mongo.format_json(self.get())
 
-    def get_stringify_with_file(self, files):
+    def get_stringify_with_files(self, files):
         data = mongo.format_json(self.get())
         data["files"] = []
         for file in files:
@@ -108,15 +108,18 @@ class IngredientTest(object):
         rgx = re.compile('.*qa_rhr.*', re.IGNORECASE)
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient]
-        db.delete_many({"name": rgx})
+        db.delete_many({"name": {"$regex": rgx}})
         client.close()
         return
 
-    def add_file(self, filename, is_main):
-        return file_model.FileTest().custom({"filename": filename,
+    def add_file(self, filename, is_main, **kwargs):
+        file = file_model.FileTest().custom({"filename": filename,
                                              "metadata": {"kind": "ingredient",
                                                           "_id": ObjectId(self._id),
                                                           "is_main": is_main}}).insert()
+        if "identifier" in kwargs.keys():
+            file.custom({"_id": kwargs["identifier"]})
+        return file
 
 
 class IngredientRecipeTest(object):
@@ -136,6 +139,12 @@ class IngredientRecipeTest(object):
 
     def get_id(self):
         return str(self._id)
+
+    def get_id_ingredient(self):
+        return str(self._id_ingredient)
+
+    def get_id_recipe(self):
+        return str(self._id_recipe)
 
     def get(self):
         return copy.deepcopy(self.__dict__)
@@ -210,8 +219,8 @@ class IngredientRecipeTest(object):
         rgx2 = re.compile('.*invalid.*', re.IGNORECASE)
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient_recipe]
-        db.delete_many({"unit": rgx})
-        db.delete_many({"unit": rgx2})
+        db.delete_many({"unit": {"$regex": rgx}})
+        db.delete_many({"unit": {"$regex": rgx2}})
         client.close()
 
     def add_name(self):

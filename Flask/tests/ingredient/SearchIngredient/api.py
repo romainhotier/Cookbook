@@ -1,15 +1,14 @@
 import utils
 
 
-class GetIngredientForRecipe(object):
+class SearchIngredient(object):
 
     def __init__(self):
-        self.url1 = 'recipe'
-        self.url2 = 'ingredient'
-        self.param_id_recipe = "_id_recipe"
-        self.param_with_name = "with_name"
-        self.rep_code_msg_ok = utils.Server.rep_code_msg_ok.replace("xxx", "recipe")
-        self.rep_code_msg_error_400 = utils.Server.rep_code_msg_error_400.replace("xxx", "recipe")
+        self.url = 'ingredient/search'
+        self.param_name = "name"
+        self.param_with_files = "with_files"
+        self.rep_code_msg_ok = utils.Server.rep_code_msg_ok.replace("xxx", "ingredient")
+        self.rep_code_msg_error_400 = utils.Server.rep_code_msg_error_400.replace("xxx", "ingredient")
         self.rep_code_msg_error_404_url = utils.Server.rep_code_msg_error_404.replace("xxx", "cookbook")
 
     @staticmethod
@@ -20,11 +19,11 @@ class GetIngredientForRecipe(object):
         return detail
 
     @staticmethod
-    def data_expected(link, **kwargs):
-        if "names" in kwargs.keys():
-            data_expected = link.add_name().get_stringify()
+    def data_expected(ingredient, **kwargs):
+        if "files" in kwargs.keys():
+            data_expected = ingredient.get_stringify_with_files(files=kwargs["files"])
         else:
-            data_expected = link.get_stringify()
+            data_expected = ingredient.get_stringify()
         return data_expected
 
     @staticmethod

@@ -8,7 +8,7 @@ mongo = utils.Mongo
 
 class User(object):
     def __init__(self):
-        self.json = {}
+        self.result = {}
 
     @staticmethod
     def hash_password(password):
@@ -27,7 +27,7 @@ class User(object):
         result = db.find_one({"_id": ObjectId(query.inserted_id)})
         result.pop("password")
         client.close()
-        self.json = mongo.format_json(result)
+        self.result = mongo.format_json(result)
         return self
 
     def select_one_by_email(self, email):
@@ -35,7 +35,7 @@ class User(object):
         db = client[mongo.name][mongo.collection_user]
         result = db.find_one({"email": email})
         client.close()
-        self.json = mongo.format_json(result)
+        self.result = mongo.format_json(result)
         return self
 
     @staticmethod

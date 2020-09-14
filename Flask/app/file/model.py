@@ -11,7 +11,7 @@ mongo = utils.Mongo
 class File(object):
 
     def __init__(self):
-        self.json = {}
+        self.result = {}
 
     def insert(self, kind, _id_parent, metadata):
         client = MongoClient(mongo.ip, mongo.port)
@@ -48,7 +48,7 @@ class File(object):
         db = client[mongo.name][mongo.collection_fs_files]
         cursor = db.find({"metadata._id": ObjectId(_id_parent)})
         client.close()
-        self.json = [file for file in cursor]
+        self.result = [file for file in cursor]
         return self
 
     @staticmethod

@@ -97,7 +97,7 @@ def delete_recipe_step(_id_recipe, _id_step):
     if with_files:
         data.add_enrichment_file_for_one()
     """ return response """
-    return utils.Server.return_response(data=data.json, api=api.name, code=200)
+    return utils.Server.return_response(data=data.result, api=api.name, code=200)
 
 
 @api.route('', methods=['GET'])
@@ -131,7 +131,7 @@ def get_all_recipe():
     if with_files:
         data.add_enrichment_file_for_all()
     """ return response """
-    return utils.Server.return_response(data=data.json, api=api.name, code=200)
+    return utils.Server.return_response(data=data.result, api=api.name, code=200)
 
 
 @api.route('/<_id_recipe>/ingredient', methods=['GET'])
@@ -176,7 +176,7 @@ def get_ingredient_for_recipe(_id_recipe):
     if with_name:
         data.add_enrichment_name_for_all()
     """ return response """
-    return utils.Server.return_response(data=data.json, api=api.name, code=200)
+    return utils.Server.return_response(data=data.result, api=api.name, code=200)
 
 
 @api.route('/<_id>', methods=['GET'])
@@ -219,7 +219,7 @@ def get_recipe(_id):
     if with_files:
         data.add_enrichment_file_for_one()
     """ return response """
-    return utils.Server.return_response(data=data.json, api=api.name, code=200)
+    return utils.Server.return_response(data=data.result, api=api.name, code=200)
 
 
 @api.route('', methods=['POST'])
@@ -269,13 +269,13 @@ def post_recipe():
     """ insert recipe """
     data = recipe.insert(data=body)
     """ return result """
-    return utils.Server.return_response(data=data.json, api=api.name, code=201)
+    return utils.Server.return_response(data=data.result, api=api.name, code=201)
 
 
-@api.route('/<_id>/step', methods=['POST'])
+@api.route('/step/<_id>', methods=['POST'])
 def post_recipe_step(_id):
     """
-    @api {post} /recipe/<_id_recipe>/step PostRecipeStep
+    @api {post} /recipe/step/<_id_recipe> PostRecipeStep
     @apiGroup Recipe
     @apiDescription Create a recipe's step. Can specify where to add the step
 
@@ -286,7 +286,7 @@ def post_recipe_step(_id):
                                                 If not specified, add at the end of the array
 
     @apiExample {json} Example usage:
-    POST http://127.0.0.1:5000/recipe/<_id_recipe>/step
+    POST http://127.0.0.1:5000/recipe/step/<_id_recipe>
     {
         'step': <step>,
         'position': <position>
@@ -323,7 +323,7 @@ def post_recipe_step(_id):
     if with_files:
         data.add_enrichment_file_for_one()
     """ return response """
-    return utils.Server.return_response(data=data.json, api=api.name, code=201)
+    return utils.Server.return_response(data=data.result, api=api.name, code=201)
 
 
 @api.route('/step', methods=['POST'])
@@ -421,7 +421,7 @@ def put_recipe(_id):
     if with_files:
         data.add_enrichment_file_for_one()
     """ return response """
-    return utils.Server.return_response(data=data.json, api=api.name, code=200)
+    return utils.Server.return_response(data=data.result, api=api.name, code=200)
 
 
 @api.route('/<_id_recipe>/step/<_id_step>', methods=['PUT'])
@@ -474,7 +474,7 @@ def put_recipe_step(_id_recipe, _id_step):
     if with_files:
         data.add_enrichment_file_for_one()
     """ return response """
-    return utils.Server.return_response(data=data.json, api=api.name, code=200)
+    return utils.Server.return_response(data=data.result, api=api.name, code=200)
 
 
 @api.errorhandler(400)

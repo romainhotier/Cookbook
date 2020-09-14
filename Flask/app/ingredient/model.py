@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from bson import ObjectId
+import re
 
 import utils
 import app.file as file_model
@@ -11,14 +12,14 @@ mongo = utils.Mongo
 class Ingredient(object):
 
     def __init__(self):
-        self.json = {}
+        self.result = {}
 
     def select_all(self):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient]
         cursor = db.find({})
         client.close()
-        self.json = mongo.format_json([ingredient for ingredient in cursor])
+        self.result = mongo.format_json([ingredient for ingredient in cursor])
         return self
 
     def select_one(self, _id):
@@ -26,7 +27,16 @@ class Ingredient(object):
         db = client[mongo.name][mongo.collection_ingredient]
         result = db.find_one({"_id": ObjectId(_id)})
         client.close()
-        self.json = mongo.format_json(result)
+        self.result = mongo.format_json(result)
+        return self
+
+    def search(self, key):
+        rgx = re.compile('.*{0}.*'.format(key), re.IGNORECASE)
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_ingredient]
+        cursor = db.find({"name": {"$regex": rgx}})
+        client.close()
+        self.result = mongo.format_json([ingredient for ingredient in cursor])
         return self
 
     @staticmethod
@@ -43,7 +53,7 @@ class Ingredient(object):
         query = db.insert_one(data)
         result = db.find_one({"_id": ObjectId(query.inserted_id)})
         client.close()
-        self.json = mongo.format_json(result)
+        self.result = mongo.format_json(result)
         return self
 
     def update(self, _id, data):
@@ -52,7 +62,7 @@ class Ingredient(object):
         db.update_one({"_id": ObjectId(_id)}, {'$set': data})
         result = db.find_one({"_id": ObjectId(_id)})
         client.close()
-        self.json = mongo.format_json(result)
+        self.result = mongo.format_json(result)
         return self
 
     @staticmethod
@@ -64,22 +74,22 @@ class Ingredient(object):
         return
 
     def add_enrichment_file_for_all(self):
-        for ingredient in self.json:
+        for ingredient in self.result:
             ingredient["files"] = []
             """ get files """
-            files = file_model.FileModel.get_all_file_by_id_parent(_id_parent=ingredient["_id"]).json
+            files = file_model.FileModel.get_all_file_by_id_parent(_id_parent=ingredient["_id"]).result
             for file in files:
                 file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
                 ingredient["files"].append(file_enrichment)
         return self
 
     def add_enrichment_file_for_one(self):
-        self.json["files"] = []
+        self.result["files"] = []
         """ get files """
-        files = file_model.FileModel.get_all_file_by_id_parent(_id_parent=self.json["_id"]).json
+        files = file_model.FileModel.get_all_file_by_id_parent(_id_parent=self.result["_id"]).result
         for file in files:
             file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
-            self.json["files"].append(file_enrichment)
+            self.result["files"].append(file_enrichment)
         return self
 
     @staticmethod
@@ -94,7 +104,7 @@ class Ingredient(object):
 class IngredientRecipe(object):
 
     def __init__(self):
-        self.json = {}
+        self.result = {}
 
     def insert(self, data):
         client = MongoClient(mongo.ip, mongo.port)
@@ -102,7 +112,7 @@ class IngredientRecipe(object):
         query = db.insert_one(data)
         result = db.find_one({"_id": ObjectId(query.inserted_id)})
         client.close()
-        self.json = mongo.format_json(result)
+        self.result = mongo.format_json(result)
         return self
 
     def select_all_by_id_recipe(self, _id_recipe):
@@ -110,7 +120,7 @@ class IngredientRecipe(object):
         db = client[mongo.name][mongo.collection_ingredient_recipe]
         cursor = db.find({"_id_recipe": ObjectId(_id_recipe)})
         client.close()
-        self.json = mongo.format_json([ingredient for ingredient in cursor])
+        self.result = mongo.format_json([ingredient for ingredient in cursor])
         return self
 
     def select_all_by_id_ingredient(self, _id_ingredient):
@@ -118,7 +128,7 @@ class IngredientRecipe(object):
         db = client[mongo.name][mongo.collection_ingredient_recipe]
         cursor = db.find({"_id_ingredient": ObjectId(_id_ingredient)})
         client.close()
-        self.json = mongo.format_json([recipe for recipe in cursor])
+        self.result = mongo.format_json([recipe for recipe in cursor])
         return self
 
     def update(self, _id, data):
@@ -127,7 +137,7 @@ class IngredientRecipe(object):
         db.update_one({"_id": ObjectId(_id)}, {'$set': data})
         result = db.find_one({"_id": ObjectId(_id)})
         client.close()
-        self.json = mongo.format_json(result)
+        self.result = mongo.format_json(result)
         return self
 
     @staticmethod
@@ -165,11 +175,11 @@ class IngredientRecipe(object):
         return result
 
     def add_enrichment_name_for_all(self):
-        for link in self.json:
+        for link in self.result:
             link["name"] = Ingredient().get_name_by_id(_id=link["_id_ingredient"])
         return self
 
     def add_enrichment_title_for_all(self):
-        for link in self.json:
+        for link in self.result:
             link["title"] = recipe_model.RecipeModel.get_title_by_id(_id=link["_id_recipe"])
         return self

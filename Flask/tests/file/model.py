@@ -29,6 +29,9 @@ class FileTest(object):
     def get_id(self):
         return str(self._id)
 
+    def get_is_main(self):
+        return self.metadata["is_main"]
+
     def get_data(self):
         return copy.deepcopy(self.data[0].decode("utf-8"))
 
@@ -91,7 +94,7 @@ class FileTest(object):
         client = MongoClient(mongo.ip, mongo.port)
         """ select file testfile """
         db = client[mongo.name][mongo.collection_fs_files]
-        files_to_clean = db.find({"filename": rgx})
+        files_to_clean = db.find({"filename": {"$regex": rgx}})
         """ delete gridfs """
         fs = gridfs.GridFS(client[mongo.name])
         for test_file in files_to_clean:

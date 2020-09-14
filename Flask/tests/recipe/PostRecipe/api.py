@@ -1,3 +1,4 @@
+import jsonschema
 import copy
 
 import utils
@@ -18,26 +19,67 @@ class PostRecipe(object):
         self.param_categories = "categories"
         self.param_steps = "steps"
         self.param_ingredients = "ingredients"
-        self.rep_code_status = 'codeStatus'
-        self.rep_code_msg = 'codeMsg'
-        self.rep_data = 'data'
-        self.rep_detail = 'detail'
         self.rep_code_msg_created = utils.Server.rep_code_msg_created.replace("xxx", "recipe")
         self.rep_code_msg_error_400 = utils.Server.rep_code_msg_error_400.replace("xxx", "recipe")
         self.rep_code_msg_error_404 = utils.Server.rep_code_msg_error_404.replace("xxx", "recipe")
         self.rep_code_msg_error_404_url = utils.Server.rep_code_msg_error_404.replace("xxx", "cookbook")
-        self.detail_param = "param"
-        self.detail_msg = "msg"
-        self.detail_value = "value"
-
-    def create_detail(self, param, msg, value):
-        detail = {self.detail_param: param, self.detail_msg: msg}
-        if value != "missing":
-            detail[self.detail_value] = value
-        return detail
 
     @staticmethod
-    def format_response(data):
-        format_data = copy.deepcopy(data)
-        format_data.pop("_id")
-        return format_data
+    def create_detail(param, msg, **kwargs):
+        detail = {"param": param, "msg": msg}
+        if "value" in kwargs:
+            detail["value"] = kwargs["value"]
+        return detail
+
+    def default_value(self, body):
+        default_value = copy.deepcopy(body)
+        if self.param_categories not in default_value.keys():
+            default_value["categories"] = []
+        if self.param_cooking_time not in default_value.keys():
+            default_value["cooking_time"] = 0
+        if self.param_level not in default_value.keys():
+            default_value["level"] = 0
+        if self.param_nb_people not in default_value.keys():
+            default_value["nb_people"] = 0
+        if self.param_note not in default_value.keys():
+            default_value["note"] = ""
+        if self.param_preparation_time not in default_value.keys():
+            default_value["preparation_time"] = 0
+        if self.param_resume not in default_value.keys():
+            default_value["resume"] = ""
+        if self.param_steps not in default_value.keys():
+            default_value["steps"] = []
+        return default_value
+
+    @staticmethod
+    def create_schema(recipe):
+        return {"type": "object",
+                "properties": {
+                    "_id": {"type": "string"},
+                    "categories": {"enum": [recipe.categories]},
+                    "cooking_time": {"enum": [recipe.cooking_time]},
+                    "level": {"enum": [recipe.level]},
+                    "nb_people": {"enum": [recipe.nb_people]},
+                    "note": {"enum": [recipe.note]},
+                    "preparation_time": {"enum": [recipe.preparation_time]},
+                    "resume": {"enum": [recipe.resume]},
+                    "slug": {"enum": [recipe.slug]},
+                    "steps": {"enum": [recipe.steps]},
+                    "title": {"enum": [recipe.title]}},
+                "required": ["_id", "categories", "cooking_time", "level", "nb_people", "note", "preparation_time",
+                             "resume", "slug", "steps", "title"],
+                "additionalProperties": False}
+
+    def json_check(self, data, data_expected):
+        try:
+            jsonschema.validate(instance=data, schema=self.create_schema(recipe=data_expected))
+            return {"result": True, "error": None}
+        except jsonschema.exceptions.ValidationError as err:
+            return {"result": False, "error": err}
+
+    @staticmethod
+    def check_not_present(value, rep):
+        if value in rep.keys():
+            return False
+        else:
+            return True

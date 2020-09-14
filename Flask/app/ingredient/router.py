@@ -115,7 +115,7 @@ def get_all_ingredient():
     if with_files:
         data.add_enrichment_file_for_all()
     """ return response """
-    return utils.Server.return_response(data=data.json, api=api.name, code=200)
+    return utils.Server.return_response(data=data.result, api=api.name, code=200)
 
 
 @api.route('/<_id>', methods=['GET'])
@@ -157,7 +157,49 @@ def get_ingredient(_id):
     if with_files:
         data.add_enrichment_file_for_one()
     """ return response """
-    return utils.Server.return_response(data=data.json, api=api.name, code=200)
+    return utils.Server.return_response(data=data.result, api=api.name, code=200)
+
+
+@api.route('/search', methods=['GET'])
+def search_ingredient():
+    """
+    @api {get} /ingredient/search SearchIngredient
+    @apiGroup Ingredient
+    @apiDescription Search an ingredient by key/value
+
+    @apiParam (Query param) {String} name ingredient's name
+    @apiParam (Query param) {String} [with_files] if "true", add ingredient's files
+
+    @apiExample {json} Example usage:
+    GET http://127.0.0.1:5000/ingredient/search?name=<ingredient_name>
+
+    @apiSuccessExample {json} Success response:
+    HTTPS 200
+    {
+        'codeMsg': 'cookbook.ingredient.success.ok',
+        'codeStatus': 200,
+        'data': [{'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr'}]
+    }
+
+    @apiErrorExample {json} Error response:
+    HTTPS 400
+    {
+        'codeMsg': 'cookbook.ingredient.error.bad_request',
+        'codeStatus': 400,
+        'detail': {'msg': 'Must be a string', 'param': 'name', 'value': ''}
+    }
+    """
+    """ check param enrichment """
+    with_files = validator.ValidatorSearchIngredient.is_string_boolean(with_files=request.args.get('with_files'))[1]
+    """ check param name """
+    validator.ValidatorSearchIngredient.is_name_valid(name=request.args.get('name'))
+    """ search ingredient """
+    data = ingredient.search(key=request.args.get('name'))
+    """ add enrichment if needed """
+    if with_files:
+        data.add_enrichment_file_for_all()
+    """ return response """
+    return utils.Server.return_response(data=data.result, api=api.name, code=200)
 
 
 @api.route('/<_id>/recipe', methods=['GET'])
@@ -203,7 +245,7 @@ def get_recipe_for_ingredient(_id):
     if with_title:
         data.add_enrichment_title_for_all()
     """ return response """
-    return utils.Server.return_response(data=data.json, api=api.name, code=200)
+    return utils.Server.return_response(data=data.result, api=api.name, code=200)
 
 
 @api.route('', methods=['POST'])
@@ -243,7 +285,7 @@ def post_ingredient():
     """ add ingredient """
     data = ingredient.insert(data=body)
     """ return response """
-    return utils.Server.return_response(data=data.json, api=api.name, code=201)
+    return utils.Server.return_response(data=data.result, api=api.name, code=201)
 
 
 @api.route('/recipe', methods=['POST'])
@@ -290,7 +332,7 @@ def post_ingredient_recipe():
     """ add link """
     data = ingredient_recipe.insert(data=body)
     """ return response """
-    return utils.Server.return_response(data=data.json, api=api.name, code=201)
+    return utils.Server.return_response(data=data.result, api=api.name, code=201)
 
 
 @api.route('/<_id>', methods=['PUT'])
@@ -339,7 +381,7 @@ def put_ingredient(_id):
     if with_files:
         data.add_enrichment_file_for_one()
     """ return response """
-    return utils.Server.return_response(data=data.json, api=api.name, code=200)
+    return utils.Server.return_response(data=data.result, api=api.name, code=200)
 
 
 @api.route('/recipe/<_id>', methods=['PUT'])
@@ -385,7 +427,7 @@ def put_ingredient_recipe(_id):
     """ update link """
     data = ingredient_recipe.update(_id=_id, data=body)
     """ return response """
-    return utils.Server.return_response(data=data.json, api=api.name, code=200)
+    return utils.Server.return_response(data=data.result, api=api.name, code=200)
 
 
 @api.errorhandler(400)
@@ -394,7 +436,8 @@ def validator_failed(error):
     return utils.Server.return_response(data=error.description, api=api.name, code=400)
 
 
-@api.errorhandler(404)
-def not_found(error):
-    """" abort 404 """
-    return utils.Server.return_response(data=error.description, api=api.name, code=404)
+# @api.errorhandler(404)
+# def not_found(error):
+#     """" abort 404 """
+#     print("router ingredient")
+#     return utils.Server.return_response(data=error.description, api=api.name, code=404)
