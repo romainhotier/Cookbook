@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from bson import ObjectId
+import re
 
 import utils
 import app.file as file_model
@@ -27,6 +28,15 @@ class Ingredient(object):
         result = db.find_one({"_id": ObjectId(_id)})
         client.close()
         self.result = mongo.format_json(result)
+        return self
+
+    def search(self, key):
+        rgx = re.compile('.*{0}.*'.format(key), re.IGNORECASE)
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_ingredient]
+        cursor = db.find({"name": {"$regex": rgx}})
+        client.close()
+        self.result = mongo.format_json([ingredient for ingredient in cursor])
         return self
 
     @staticmethod

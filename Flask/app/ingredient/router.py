@@ -167,7 +167,7 @@ def search_ingredient():
     @apiGroup Ingredient
     @apiDescription Search an ingredient by key/value
 
-    @apiParam (Query param) {String} [name] ingredient's name
+    @apiParam (Query param) {String} name ingredient's name
     @apiParam (Query param) {String} [with_files] if "true", add ingredient's files
 
     @apiExample {json} Example usage:
@@ -178,7 +178,7 @@ def search_ingredient():
     {
         'codeMsg': 'cookbook.ingredient.success.ok',
         'codeStatus': 200,
-        'data': {'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr'}
+        'data': [{'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr'}]
     }
 
     @apiErrorExample {json} Error response:
@@ -190,17 +190,16 @@ def search_ingredient():
     }
     """
     """ check param enrichment """
-    #with_files = validator.ValidatorGetIngredient.is_string_boolean(with_files=request.args.get('with_files'))[1]
-    """ check param _id """
+    with_files = validator.ValidatorSearchIngredient.is_string_boolean(with_files=request.args.get('with_files'))[1]
+    """ check param name """
     validator.ValidatorSearchIngredient.is_name_valid(name=request.args.get('name'))
-    """ get ingredient """
-    #data = ingredient.select_one(_id=_id)
+    """ search ingredient """
+    data = ingredient.search(key=request.args.get('name'))
     """ add enrichment if needed """
-    # if with_files:
-    #     data.add_enrichment_file_for_one()
+    if with_files:
+        data.add_enrichment_file_for_all()
     """ return response """
-    #return utils.Server.return_response(data=data.result, api=api.name, code=200)
-    return utils.Server.return_response(data={"tata": "titi"}, api=api.name, code=200)
+    return utils.Server.return_response(data=data.result, api=api.name, code=200)
 
 
 @api.route('/<_id>/recipe', methods=['GET'])

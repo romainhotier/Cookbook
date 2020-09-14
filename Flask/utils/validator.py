@@ -116,10 +116,17 @@ class Validator(object):
 
     @staticmethod
     def is_mandatory(param, data):
-        """ check param is string """
+        """ check param is mantadory """
         if param in data.keys():
             return True
         else:
+            detail = {"param": param, "msg": server.detail_is_required}
+            return abort(400, description=detail)
+
+    @staticmethod
+    def is_mandatory_query(param, value):
+        """ check param is mantadory """
+        if value is None:
             detail = {"param": param, "msg": server.detail_is_required}
             return abort(400, description=detail)
 

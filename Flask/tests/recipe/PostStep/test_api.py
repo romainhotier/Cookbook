@@ -49,7 +49,7 @@ class PostStep(unittest.TestCase):
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 405)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
+        self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 405)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_405)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
@@ -63,7 +63,7 @@ class PostStep(unittest.TestCase):
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
+        self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
@@ -78,7 +78,7 @@ class PostStep(unittest.TestCase):
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
+        self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
@@ -93,7 +93,7 @@ class PostStep(unittest.TestCase):
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
+        self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))

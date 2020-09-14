@@ -108,7 +108,7 @@ class IngredientTest(object):
         rgx = re.compile('.*qa_rhr.*', re.IGNORECASE)
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient]
-        db.delete_many({"name": rgx})
+        db.delete_many({"name": {"$regex": rgx}})
         client.close()
         return
 
@@ -219,8 +219,8 @@ class IngredientRecipeTest(object):
         rgx2 = re.compile('.*invalid.*', re.IGNORECASE)
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient_recipe]
-        db.delete_many({"unit": rgx})
-        db.delete_many({"unit": rgx2})
+        db.delete_many({"unit": {"$regex": rgx}})
+        db.delete_many({"unit": {"$regex": rgx2}})
         client.close()
 
     def add_name(self):

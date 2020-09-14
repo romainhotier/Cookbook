@@ -113,7 +113,7 @@ class UserTest(object):
         rgx = re.compile('.*qa_rhr.*', re.IGNORECASE)
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_user]
-        db.delete_many({"email": rgx})
-        db.delete_many({"display_name": rgx})
+        db.delete_many({"email": {"$regex": rgx}})
+        db.delete_many({"display_name": {"$regex": rgx}})
         client.close()
         return

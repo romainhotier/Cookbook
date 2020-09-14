@@ -123,7 +123,7 @@ class RecipeTest(object):
         rgx = re.compile('.*qa_rhr.*', re.IGNORECASE)
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
-        db.delete_many({"title": rgx})
+        db.delete_many({"title": {"$regex": rgx}})
         client.close()
         return
 

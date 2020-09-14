@@ -27,7 +27,7 @@ class GetAllIngredient(unittest.TestCase):
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response.headers["Content-Type"],  "application/json")
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertIn(api.data_expected(ingredient=tc_ingredient1), response_body["data"])
@@ -43,7 +43,7 @@ class GetAllIngredient(unittest.TestCase):
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response.headers["Content-Type"],  "application/json")
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertIn(api.data_expected(ingredient=tc_ingredient1), response_body["data"])
@@ -59,7 +59,7 @@ class GetAllIngredient(unittest.TestCase):
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.headers["Content-Type"], 'application/json', )
+        self.assertEqual(response.headers["Content-Type"],  "application/json")
         self.assertEqual(response_body["codeStatus"], 404)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
@@ -74,7 +74,7 @@ class GetAllIngredient(unittest.TestCase):
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response.headers["Content-Type"],  "application/json")
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertIn(api.data_expected(ingredient=tc_ingredient1), response_body["data"])
@@ -91,7 +91,7 @@ class GetAllIngredient(unittest.TestCase):
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response.headers["Content-Type"],  "application/json")
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
@@ -109,7 +109,7 @@ class GetAllIngredient(unittest.TestCase):
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response.headers["Content-Type"],  "application/json")
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
@@ -130,7 +130,7 @@ class GetAllIngredient(unittest.TestCase):
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response.headers["Content-Type"],  "application/json")
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertIn(api.data_expected(ingredient=tc_ingredient1), response_body["data"])
@@ -150,7 +150,7 @@ class GetAllIngredient(unittest.TestCase):
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response.headers["Content-Type"],  "application/json")
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertIn(api.data_expected(ingredient=tc_ingredient1, files=[tc_file1, tc_file2]), response_body["data"])
