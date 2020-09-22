@@ -17,8 +17,11 @@ class Server(object):
         self.rep_code_msg_ok = "cookbook.xxx.success.ok"
         self.rep_code_msg_created = "cookbook.xxx.success.created"
         self.rep_code_msg_error_400 = "cookbook.xxx.error.bad_request"
+        self.rep_code_msg_error_401 = "cookbook.xxx.error.unauthorized"
         self.rep_code_msg_error_404 = "cookbook.xxx.error.not_found"
         self.rep_code_msg_error_405 = "cookbook.xxx.error.method_not_allowed"
+        self.detail_has_expired = "Has expired"
+        self.detail_was_wrong = "Was wrong"
         self.detail_is_required = "Is required"
         self.detail_must_be_an_object_id = "Must be an ObjectId"
         self.detail_must_be_a_string = "Must be a string"
@@ -38,8 +41,11 @@ class Server(object):
 
     def return_response(self, data, api, code, **optional):
         """ return an HTTPResponse """
-        if code in [400, 401, 404, 405, 500]:
+        if code in [400, 404, 405, 500]:
             body = self.format_body(api=api, http_code=code, data=None, detail=data)
+            return self.format_response(body=body, code=code)
+        elif code in [401]:
+            body = self.format_body(api=api, http_code=code, data=None, detail=self.format_detail_token(t=data))
             return self.format_response(body=body, code=code)
         elif code == 204:
             body = ""
@@ -87,3 +93,11 @@ class Server(object):
             return "cookbook.{}.error.method_not_allowed".format(api_category)
         elif http_code == 500:
             return "cookbook.{}.error.internal_error".format(api_category)
+
+    def format_detail_token(self, t):
+        if t == "expired":
+            return {'msg': self.detail_has_expired, 'param': 'token'}
+        elif t == "invalid":
+            return {'msg': self.detail_was_wrong, 'param': 'token'}
+        elif t == "missing":
+            return {'msg': self.detail_is_required, 'param': 'token'}

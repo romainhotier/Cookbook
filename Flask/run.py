@@ -25,6 +25,24 @@ backend.register_blueprint(app.recipe.router.api)
 backend.register_blueprint(app.user.router.api)
 
 
+@jwt.unauthorized_loader
+def missing_handler(e):
+    body = utils.Server.return_response(data="missing", api="cookbook", code=401)
+    return make_response(body, 401)
+
+
+@jwt.expired_token_loader
+def expired_handler():
+    body = utils.Server.return_response(data="expired", api="cookbook", code=401)
+    return make_response(body, 401)
+
+
+@jwt.invalid_token_loader
+def invalid_handler(e):
+    body = utils.Server.return_response(data="invalid", api="cookbook", code=401)
+    return make_response(body, 401)
+
+
 @backend.errorhandler(404)
 def not_found(error):
     """" abort 404 """

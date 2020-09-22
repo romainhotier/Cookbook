@@ -2,11 +2,12 @@ from pymongo import MongoClient
 from bson import ObjectId
 import copy
 import re
+import requests
 
 import utils
 import app.user as user_model
 
-
+server = utils.Server
 mongo = utils.Mongo
 
 
@@ -16,6 +17,8 @@ class UserTest(object):
         self.display_name = "qa_rhr_display_name"
         self.email = "qa@rhr.com"
         self.password = "pwd"
+        self.status = []
+        self.token = ""
 
     def display(self):
         print(self.__dict__)
@@ -117,3 +120,10 @@ class UserTest(object):
         db.delete_many({"display_name": {"$regex": rgx}})
         client.close()
         return
+
+    def get_token(self):
+        response = requests.post(url=server.main_url + "/user/login",
+                                 json={"email": self.email, "password": self.password}, verify=False)
+        if response.status_code == 200:
+            self.token = response.json()["data"]["token"]
+        return self

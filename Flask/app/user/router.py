@@ -1,6 +1,5 @@
-from flask import Blueprint, make_response, request, jsonify
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, \
-    get_raw_jwt
+from flask import Blueprint, request
+from flask_jwt_extended import create_access_token, get_jwt_identity
 
 from flask import current_app as app
 import datetime
@@ -9,6 +8,9 @@ import utils
 import app.user.factory as factory
 import app.user.validator as validator
 import app.user as user_model
+
+auth = utils.Auth
+user = user_model.UserModel
 
 api = Blueprint('user', __name__, url_prefix='/user')
 
@@ -96,11 +98,45 @@ def login():
     """ check password """
     user_id = factory.FactoryPostUserLogin.check_password(data=body)[1]
     """ create token """
-    expires = datetime.timedelta(hours=app.config["EXPIRATION_TOKEN"])
+    expires = datetime.timedelta(seconds=app.config["EXPIRATION_TOKEN"])
     access_token = create_access_token(identity=str(user_id), expires_delta=expires)
     data = factory.FactoryPostUserLogin.data_information(token=access_token)
     """ return response """
     return utils.Server.return_response(data=data, api=api.name, code=200)
+
+
+@api.route('/me', methods=['GET'])
+@auth.login_required
+def get_me():
+    """
+    @api {get} /user/me  GetMyUser
+    @apiGroup User
+    @apiDescription Get my user
+
+    @apiExample {json} Example usage:
+    GET http://127.0.0.1:5000/user/me
+
+    @apiSuccessExample {json} Success response:
+    HTTPS 200
+    {
+        'codeMsg': 'cookbook.user.success.ok',
+        'codeStatus': 200,
+        'data': {'_id': '5f6a0327e9fea33b5861445c', 'display_name': 'qa_rhr_display_name', 'email': 'qa@rhr.com',
+                 'status': []}
+    }
+
+    @apiErrorExample {json} Error response:
+    HTTPS 401
+    {
+        'codeMsg': 'cookbook.user.error.bad_request',
+        'codeStatus': 401,
+        'detail': {'msg': 'Is required', 'param': 'token'}}
+    }
+    """
+    """ get user """
+    data = user.select_me(identifier=get_jwt_identity())
+    """ return response """
+    return utils.Server.return_response(data=data.result, api=api.name, code=200)
 
 
 @api.errorhandler(400)

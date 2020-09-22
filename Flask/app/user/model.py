@@ -30,6 +30,14 @@ class User(object):
         self.result = mongo.format_json(result)
         return self
 
+    def select_me(self, identifier):
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_user]
+        result = db.find_one({"_id": ObjectId(identifier)}, {"_id": 1, "display_name": 1, "email": 1, "status": 1})
+        client.close()
+        self.result = mongo.format_json(result)
+        return self
+
     def select_one_by_email(self, email):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_user]
