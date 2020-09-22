@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from bson import ObjectId
+import re
 
 import utils
 import app.file as file_model
@@ -26,6 +27,22 @@ class Recipe(object):
         result = db.find_one({"_id": ObjectId(_id)})
         client.close()
         self.result = mongo.format_json(result)
+        return self
+
+    def search(self, data):
+        search = {}
+        for i, j in data.items():
+            if i == "categories":
+                search[i] = {"$in": [re.compile('.*{0}.*'.format(j), re.IGNORECASE)]}
+            elif i in ["level", "cooking_time", "preparation_time", "nb_people"]:
+                search[i] = int(j)
+            else:
+                search[i] = {"$regex": re.compile('.*{0}.*'.format(j), re.IGNORECASE)}
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        cursor = db.find(search)
+        client.close()
+        self.result = mongo.format_json([recipe for recipe in cursor])
         return self
 
     @staticmethod
