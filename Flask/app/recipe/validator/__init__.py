@@ -1,5 +1,5 @@
 from app.recipe.validator import DeleteRecipe, DeleteRecipeStep, GetAllRecipe, GetRecipe, GetIngredientForRecipe, \
-    PostRecipe, PostRecipeStep, PostStep, PutRecipe, PutRecipeStep
+    PostRecipe, PostRecipeStep, PostStep, PutRecipe, PutRecipeStep, SearchRecipe
 
 ValidatorDeleteRecipe = DeleteRecipe.Validator()
 ValidatorDeleteRecipeStep = DeleteRecipeStep.Validator()
@@ -11,3 +11,4 @@ ValidatorPostRecipeStep = PostRecipeStep.Validator()
 ValidatorPostStep = PostStep.Validator()
 ValidatorPutRecipe = PutRecipe.Validator()
 ValidatorPutRecipeStep = PutRecipeStep.Validator()
+ValidatorSearchRecipe = SearchRecipe.Validator()
