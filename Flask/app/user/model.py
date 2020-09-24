@@ -1,8 +1,13 @@
 from pymongo import MongoClient
 from bson import ObjectId
 from flask_bcrypt import generate_password_hash, check_password_hash
+from functools import wraps
+from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
+
+
 import utils
 
+server = utils.Server
 mongo = utils.Mongo
 
 
@@ -53,3 +58,37 @@ class User(object):
         result = db.count_documents({"email": email})
         client.close()
         return result
+
+    @staticmethod
+    def get_user_status(identifier):
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_user]
+        result = db.find_one({"_id": ObjectId(identifier)}, {"status": 1})
+        client.close()
+        try:
+            return result["status"]
+        except TypeError:
+            return []
+
+
+class Auth(object):
+
+    @staticmethod
+    def login_required(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            verify_jwt_in_request()
+            return f(*args, **kwargs)
+        return wrapper
+
+    @staticmethod
+    def admin_only(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            verify_jwt_in_request()
+            if "admin" not in User().get_user_status(get_jwt_identity()):
+                return utils.Server.return_response(data=None, api="cookbook", code=403)
+            else:
+                pass
+            return f(*args, **kwargs)
+        return wrapper

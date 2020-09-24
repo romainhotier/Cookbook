@@ -11,18 +11,21 @@ class Server(object):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         self.secure = 'http'
-        self.ip = '127.0.0.1'
+        self.ip = 'localhost'
         self.port = '5000'
         self.main_url = "{0}://{1}:{2}".format(self.secure, self.ip, self.port)
         self.rep_code_msg_ok = "cookbook.xxx.success.ok"
         self.rep_code_msg_created = "cookbook.xxx.success.created"
         self.rep_code_msg_error_400 = "cookbook.xxx.error.bad_request"
         self.rep_code_msg_error_401 = "cookbook.xxx.error.unauthorized"
+        self.rep_code_msg_error_403 = "cookbook.xxx.error.forbidden"
         self.rep_code_msg_error_404 = "cookbook.xxx.error.not_found"
         self.rep_code_msg_error_405 = "cookbook.xxx.error.method_not_allowed"
+        self.rep_code_msg_error_500 = "cookbook.xxx.error.internal"
         self.detail_has_expired = "Has expired"
         self.detail_was_wrong = "Was wrong"
         self.detail_is_required = "Is required"
+        self.detail_forbidden = "Forbidden action - Admin only"
         self.detail_must_be_an_object_id = "Must be an ObjectId"
         self.detail_must_be_a_string = "Must be a string"
         self.detail_must_be_an_integer = "Must be an integer"
@@ -46,6 +49,9 @@ class Server(object):
             return self.format_response(body=body, code=code)
         elif code in [401]:
             body = self.format_body(api=api, http_code=code, data=None, detail=self.format_detail_token(t=data))
+            return self.format_response(body=body, code=code)
+        elif code in [403]:
+            body = self.format_body(api=api, http_code=code, data=None, detail=self.detail_forbidden)
             return self.format_response(body=body, code=code)
         elif code == 204:
             body = ""
@@ -76,23 +82,24 @@ class Server(object):
             body["detail"] = detail
         return body
 
-    @staticmethod
-    def select_code_msg(http_code, api_category):
+    def select_code_msg(self, http_code, api_category):
         """ return correct code msg linked with a htttp_code """
         if http_code == 200:
-            return "cookbook.{}.success.ok".format(api_category)
+            return self.rep_code_msg_ok.replace("xxx", api_category)
         elif http_code == 201:
-            return "cookbook.{}.success.created".format(api_category)
+            return self.rep_code_msg_created.replace("xxx", api_category)
         elif http_code == 400:
-            return "cookbook.{}.error.bad_request".format(api_category)
+            return self.rep_code_msg_error_400.replace("xxx", api_category)
         elif http_code == 401:
-            return "cookbook.{}.error.unauthorized".format(api_category)
+            return self.rep_code_msg_error_401.replace("xxx", api_category)
+        elif http_code == 403:
+            return self.rep_code_msg_error_403.replace("xxx", api_category)
         elif http_code == 404:
-            return "cookbook.{}.error.not_found".format(api_category)
+            return self.rep_code_msg_error_404.replace("xxx", api_category)
         elif http_code == 405:
-            return "cookbook.{}.error.method_not_allowed".format(api_category)
+            return self.rep_code_msg_error_405.replace("xxx", api_category)
         elif http_code == 500:
-            return "cookbook.{}.error.internal_error".format(api_category)
+            return self.rep_code_msg_error_500.replace("xxx", api_category)
 
     def format_detail_token(self, t):
         if t == "expired":
@@ -101,3 +108,16 @@ class Server(object):
             return {'msg': self.detail_was_wrong, 'param': 'token'}
         elif t == "missing":
             return {'msg': self.detail_is_required, 'param': 'token'}
+
+    @staticmethod
+    def get_backend_options(args):
+        for arg in args:
+            if arg in ["test", "dev", "prod"]:
+                if arg == "test":
+                    return {"env": "development", "debug": True, "testing": True}
+                elif arg == "dev":
+                    return {"env": "development", "debug": True, "testing": False}
+                elif arg == "prod":
+                    return {"env": "production", "debug": False, "testing": False}
+                else:
+                    return {"env": "production", "debug": False, "testing": False}

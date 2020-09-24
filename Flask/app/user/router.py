@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from flask_jwt_extended import create_access_token, get_jwt_identity
 
-from flask import current_app as app
+from flask import current_app as backend
 import datetime
 
 import utils
@@ -9,7 +9,7 @@ import app.user.factory as factory
 import app.user.validator as validator
 import app.user as user_model
 
-auth = utils.Auth
+auth = user_model.Auth
 user = user_model.UserModel
 
 api = Blueprint('user', __name__, url_prefix='/user')
@@ -98,7 +98,7 @@ def login():
     """ check password """
     user_id = factory.FactoryPostUserLogin.check_password(data=body)[1]
     """ create token """
-    expires = datetime.timedelta(seconds=app.config["EXPIRATION_TOKEN"])
+    expires = datetime.timedelta(seconds=backend.config["EXPIRATION_TOKEN"])
     access_token = create_access_token(identity=str(user_id), expires_delta=expires)
     data = factory.FactoryPostUserLogin.data_information(token=access_token)
     """ return response """

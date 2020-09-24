@@ -1,6 +1,7 @@
 from flask import Flask, make_response
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
+import sys
 
 import utils
 import app.file.router
@@ -10,9 +11,7 @@ import app.user.router
 
 backend = Flask(__name__)
 
-""" backend.config.from_envvar('COOKBOOK_ENV') """
-backend.config["ENV"] = "testing"
-#backend.config["ENV"] = "production"
+backend.config["ENV"] = "production"
 backend.config["JWT_SECRET_KEY"] = "super-secret-cookbook"
 backend.config["EXPIRATION_TOKEN"] = 5
 
@@ -60,5 +59,12 @@ def method_not_allowed(error):
 if __name__ == "__main__":
     """ check mongo up """
     utils.Mongo.check_mongodb_up()
+    """ set backend config """
+    options = utils.Server.get_backend_options(args=sys.argv)
+    backend.config.update(ENV=options["env"], TESTING=options["testing"], DEBUG=options["debug"])
     """ launch server """
-    backend.run(host='0.0.0.0', port=5000, debug=(backend.config["ENV"] in ["testing", "development"]))
+    if options["env"] == "development":
+        backend.run(host='0.0.0.0', port=utils.Server.port)
+    else:
+        from waitress import serve
+        serve(backend, host="0.0.0.0", port=utils.Server.port)
