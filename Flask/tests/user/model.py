@@ -2,8 +2,11 @@ from pymongo import MongoClient
 from bson import ObjectId
 import copy
 import re
-import requests
+import datetime
+from functools import wraps
+from flask_jwt_extended import create_access_token
 
+import run as app
 import utils
 import app.user as user_model
 
@@ -121,9 +124,13 @@ class UserTest(object):
         client.close()
         return
 
-    def get_token(self):
-        response = requests.post(url=server.main_url + "/user/login",
-                                 json={"email": self.email, "password": self.password}, verify=False)
-        if response.status_code == 200:
-            self.token = response.json()["data"]["token"]
-        return self
+    def login(self, f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            self.insert()
+            with app.backend.app_context():
+                expires = datetime.timedelta(seconds=app.backend.config["EXPIRATION_TOKEN"])
+                access_token = create_access_token(identity=str(self._id), expires_delta=expires)
+            f(*args, **kwargs, headers={"Authorization": "Bearer " + access_token}, user=self)
+            return self
+        return wrapper

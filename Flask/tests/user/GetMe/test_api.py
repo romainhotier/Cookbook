@@ -13,29 +13,40 @@ user = user_model.UserTest()
 
 class GetMe(unittest.TestCase):
 
-    def setUp(self):
-        user.clean()
+    @user.login
+    def setUp(self, **kwargs):
+        self.user = kwargs["user"]
+        self.headers = kwargs["headers"]
 
-    def test_0_api_ok(self):
-        tc_user = user_model.UserTest().insert().get_token()
-        """ call api """
+    def test_0_api_test_wrap(self):
         url = server.main_url + "/" + api.url
-        response = requests.get(url, headers={"Authorization": "Bearer " + tc_user.token}, verify=False)
+        response = requests.get(url, headers=self.headers, verify=False)
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertEqual(response_body["data"], api.data_expected(user=tc_user))
+        self.assertEqual(response_body["data"], api.data_expected(user=self.user))
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+
+    def test_0_api_ok(self):
+        """ call api """
+        url = server.main_url + "/" + api.url
+        response = requests.get(url, headers=self.headers, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertEqual(response_body["data"], api.data_expected(user=self.user))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_0_api_header_deprecated(self):
-        tc_user = user_model.UserTest().insert().get_token()
-        """ call api """
         time.sleep(6)
         url = server.main_url + "/" + api.url
-        response = requests.get(url, headers={"Authorization": "Bearer " + tc_user.token}, verify=False)
+        response = requests.get(url, headers=self.headers, verify=False)
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 401)
@@ -47,8 +58,6 @@ class GetMe(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
 
     def test_0_api_header_nok(self):
-        user_model.UserTest().insert().get_token()
-        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.get(url, headers={"Authorization": "aaa"}, verify=False)
         response_body = response.json()
@@ -62,8 +71,6 @@ class GetMe(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
 
     def test_0_api_without_header(self):
-        user_model.UserTest().insert().get_token()
-        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.get(url, verify=False)
         response_body = response.json()
@@ -76,9 +83,12 @@ class GetMe(unittest.TestCase):
         detail = api.create_detail(param="token", msg=server.detail_is_required)
         self.assertEqual(response_body["detail"], detail)
 
+    def tearDown(self):
+        user.clean()
+
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(GetMe())
+        user.clean()
 
 
 if __name__ == '__main__':
