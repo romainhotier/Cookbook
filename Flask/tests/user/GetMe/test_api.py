@@ -18,20 +18,7 @@ class GetMe(unittest.TestCase):
         self.user = kwargs["user"]
         self.headers = kwargs["headers"]
 
-    def test_0_api_test_wrap(self):
-        url = server.main_url + "/" + api.url
-        response = requests.get(url, headers=self.headers, verify=False)
-        response_body = response.json()
-        """ assert """
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.headers["Content-Type"], "application/json")
-        self.assertEqual(response_body["codeStatus"], 200)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertEqual(response_body["data"], api.data_expected(user=self.user))
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
-
     def test_0_api_ok(self):
-        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.get(url, headers=self.headers, verify=False)
         response_body = response.json()
