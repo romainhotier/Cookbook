@@ -3,37 +3,28 @@ import React, { Component } from 'react'
 import { Row, Col } from 'antd'
 
 import { fetchAllRecipe } from '../../thunks'
-
-// import './_RecipeList.scss'
+import RecipeSingleElement from '../../components/RecipeSingleElement'
 
 class RecipePageList extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      loading: true,
-    }
-  }
-
   componentDidMount() {
     this.props.fetchAllRecipe()
   }
 
   render() {
     const { loadingFetchRecipes, recipes } = this.props
-    // if (fetchRecipes === true || Object.entries(recipes).length === 0) {
-    //   return 'Patientez'
-    // }
-    console.log(recipes)
+    if (loadingFetchRecipes === true || Object.entries(recipes).length === 0) {
+      return 'Patientez'
+    }
+
     return (
       <>
-      coucou
-        {/* <Row>
+        <Row>
           {Object.values(recipes).map((singleRecipe, key) => (
-            <Col key={key}>
-              <RecipeSingleElement recipe={singleRecipe} whenDisplay="list"/>
+            <Col key={key} span={6}>
+              <RecipeSingleElement recipe={singleRecipe} />
             </Col>
           ))}
-        </Row> */}
+        </Row>
       </>
     )
   }

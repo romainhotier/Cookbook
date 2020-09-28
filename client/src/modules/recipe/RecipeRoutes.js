@@ -10,7 +10,7 @@ export class Routes extends AppRoutes {
   }
 
   static recipeDetails(param) {
-    return super.build(':id', Routes.recipe(), param)
+    return super.build(':slug', Routes.recipe(), param)
   }
 
   static recipeEdit(param) {

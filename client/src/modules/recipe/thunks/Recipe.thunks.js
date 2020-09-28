@@ -6,13 +6,13 @@ import {
 } from '../actions'
 
 import {
-    AllRecipeURL
+    AllRecipesURL
 } from '../api/Recipe.api'
 
 export const fetchAllRecipe = () => (dispatch => {
     dispatch(getAllRecipesRequest());
 
-    fetch(`${AllRecipeURL}`)
+    fetch(AllRecipesURL)
     .then(res => res.json())
     .then(res => {
         if(res.error) {

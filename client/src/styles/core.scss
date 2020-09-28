@@ -37,3 +37,13 @@ body {
     }
   }
 }
+
+@import "./fontAwesome/scss/fontawesome.scss";
+@import "./fontAwesome/scss/solid.scss";
+@import "./fontAwesome/scss/brands.scss";
+@import "./fontAwesome/scss/regular.scss";
+
+
+a {
+  color: inherit;
+}
