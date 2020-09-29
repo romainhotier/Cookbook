@@ -30,20 +30,25 @@ class Ingredient(object):
         self.result = mongo.format_json(result)
         return self
 
-    def search(self, key):
-        rgx = re.compile('.*{0}.*'.format(key), re.IGNORECASE)
+    def search(self, data):
+        search = {}
+        for i, j in data.items():
+            if i == "categories":
+                search[i] = {"$in": [re.compile('.*{0}.*'.format(j), re.IGNORECASE)]}
+            else:
+                search[i] = {"$regex": re.compile('.*{0}.*'.format(j), re.IGNORECASE)}
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient]
-        cursor = db.find({"name": {"$regex": rgx}})
+        cursor = db.find(search)
         client.close()
         self.result = mongo.format_json([ingredient for ingredient in cursor])
         return self
 
     @staticmethod
-    def check_ingredient_is_unique(name):
+    def check_ingredient_is_unique(key, value):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient]
-        result = db.count_documents({"name": name})
+        result = db.count_documents({key: value})
         client.close()
         return result
 

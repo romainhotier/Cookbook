@@ -18,28 +18,12 @@ class SearchIngredient(unittest.TestCase):
         ingredient.clean()
         file.clean()
 
-    def test_0_api_ok_exact(self):
-        tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
-        ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
-        tc_name = tc_ingredient1.name
-        """ call api """
-        url = server.main_url + "/" + api.url + "?" + api.param_name + "=" + tc_name
-        response = requests.get(url, verify=False)
-        response_body = response.json()
-        """ assert """
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.headers["Content-Type"], "application/json")
-        self.assertEqual(response_body["codeStatus"], 200)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertCountEqual(response_body["data"], [api.data_expected(ingredient=tc_ingredient1)])
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
-
-    def test_0_api_ok_partial(self):
+    def test_0_no_param(self):
+        """ go to getIngredient """
         tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
         tc_ingredient2 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
-        tc_name = "qa_rhr"
         """ call api """
-        url = server.main_url + "/" + api.url + "?" + api.param_name + "=" + tc_name
+        url = server.main_url + "/" + api.url + "?"
         response = requests.get(url, verify=False)
         response_body = response.json()
         """ assert """
@@ -47,16 +31,15 @@ class SearchIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertCountEqual(response_body["data"], [api.data_expected(ingredient=tc_ingredient1),
-                                                      api.data_expected(ingredient=tc_ingredient2)])
+        self.assertIn(api.data_expected(ingredient=tc_ingredient1), response_body["data"])
+        self.assertIn(api.data_expected(ingredient=tc_ingredient2), response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
-    def test_0_api_ok_more_param(self):
-        tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
-        ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
-        tc_name = tc_ingredient1.name
+    def test_2_name_more_param(self):
+        tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a", "invalid": "invalid"}).insert()
+        tc_ingredient2 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a", "aaa": "bbb"}).insert()
         """ call api """
-        url = server.main_url + "/" + api.url + "?" + api.param_name + "=" + tc_name + "&invalid=invalid"
+        url = server.main_url + "/" + api.url + "?" + "invalid=invalid"
         response = requests.get(url, verify=False)
         response_body = response.json()
         """ assert """
@@ -64,11 +47,11 @@ class SearchIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertCountEqual(response_body["data"], [api.data_expected(ingredient=tc_ingredient1)])
+        self.assertIn(api.data_expected(ingredient=tc_ingredient1), response_body["data"])
+        self.assertIn(api.data_expected(ingredient=tc_ingredient2), response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
-    
+
     def test_1_url_not_found(self):
-        """ go to getIngredient """
         ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
         tc_name = "qa"
         """ call api """
@@ -82,21 +65,6 @@ class SearchIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param="_id", msg=server.detail_must_be_an_object_id, value="searchx")
-        self.assertEqual(response_body["detail"], detail)
-
-    def test_2_name_without(self):
-        ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
-        """ call api """
-        url = server.main_url + "/" + api.url + "?"
-        response = requests.get(url, verify=False)
-        response_body = response.json()
-        """ assert """
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], "application/json")
-        self.assertEqual(response_body["codeStatus"], 400)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_name, msg=server.detail_is_required)
         self.assertEqual(response_body["detail"], detail)
 
     def test_2_name_empty(self):
@@ -129,8 +97,169 @@ class SearchIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertCountEqual(response_body["data"], [])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
-    
-    def test_3_with_files_without(self):
+
+    def test_2_name_exact(self):
+        tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
+        ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
+        tc_name = tc_ingredient1.name
+        """ call api """
+        url = server.main_url + "/" + api.url + "?" + api.param_name + "=" + tc_name
+        response = requests.get(url, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertCountEqual(response_body["data"], [api.data_expected(ingredient=tc_ingredient1)])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+
+    def test_2_name_partial(self):
+        tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
+        tc_ingredient2 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
+        tc_name = "qa_rhr"
+        """ call api """
+        url = server.main_url + "/" + api.url + "?" + api.param_name + "=" + tc_name
+        response = requests.get(url, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertCountEqual(response_body["data"], [api.data_expected(ingredient=tc_ingredient1),
+                                                      api.data_expected(ingredient=tc_ingredient2)])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        
+    def test_3_slug_empty(self):
+        ingredient_model.IngredientTest().custom({"slug": "qa_rhr_a"}).insert()
+        tc_slug = ""
+        """ call api """
+        url = server.main_url + "/" + api.url + "?" + api.param_slug + "=" + tc_slug
+        response = requests.get(url, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_slug, msg=server.detail_must_be_not_empty, value=tc_slug)
+        self.assertEqual(response_body["detail"], detail)
+
+    def test_3_slug_invalid(self):
+        ingredient_model.IngredientTest().custom({"slug": "qa_rhr_a"}).insert()
+        tc_slug = "invalid"
+        """ call api """
+        url = server.main_url + "/" + api.url + "?" + api.param_slug + "=" + tc_slug
+        response = requests.get(url, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertCountEqual(response_body["data"], [])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+
+    def test_3_slug_exact(self):
+        tc_ingredient1 = ingredient_model.IngredientTest().custom({"slug": "qa_rhr_a"}).insert()
+        ingredient_model.IngredientTest().custom({"slug": "qa_rhr_b"}).insert()
+        tc_slug = tc_ingredient1.slug
+        """ call api """
+        url = server.main_url + "/" + api.url + "?" + api.param_slug + "=" + tc_slug
+        response = requests.get(url, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertCountEqual(response_body["data"], [api.data_expected(ingredient=tc_ingredient1)])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+
+    def test_3_slug_partial(self):
+        tc_ingredient1 = ingredient_model.IngredientTest().custom({"slug": "qa_rhr_a"}).insert()
+        tc_ingredient2 = ingredient_model.IngredientTest().custom({"slug": "qa_rhr_b"}).insert()
+        tc_slug = "qa_rhr"
+        """ call api """
+        url = server.main_url + "/" + api.url + "?" + api.param_slug + "=" + tc_slug
+        response = requests.get(url, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertCountEqual(response_body["data"], [api.data_expected(ingredient=tc_ingredient1),
+                                                      api.data_expected(ingredient=tc_ingredient2)])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        
+    def test_4_categories_empty(self):
+        ingredient_model.IngredientTest().custom({"categories": ["qa_rhr_a"]}).insert()
+        tc_categories = ""
+        """ call api """
+        url = server.main_url + "/" + api.url + "?" + api.param_categories + "=" + tc_categories
+        response = requests.get(url, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_categories, msg=server.detail_must_be_not_empty, value=tc_categories)
+        self.assertEqual(response_body["detail"], detail)
+
+    def test_4_categories_invalid(self):
+        ingredient_model.IngredientTest().custom({"categories": ["qa_rhr_a"]}).insert()
+        tc_categories = "invalid"
+        """ call api """
+        url = server.main_url + "/" + api.url + "?" + api.param_categories + "=" + tc_categories
+        response = requests.get(url, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertCountEqual(response_body["data"], [])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+
+    def test_4_categories_exact(self):
+        tc_ingredient1 = ingredient_model.IngredientTest().custom({"categories": ["qa_rhr_a"]}).insert()
+        ingredient_model.IngredientTest().custom({"categories": ["qa_rhr_b"]}).insert()
+        tc_categories = tc_ingredient1.categories[0]
+        """ call api """
+        url = server.main_url + "/" + api.url + "?" + api.param_categories + "=" + tc_categories
+        response = requests.get(url, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertCountEqual(response_body["data"], [api.data_expected(ingredient=tc_ingredient1)])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+
+    def test_4_categories_partial(self):
+        tc_ingredient1 = ingredient_model.IngredientTest().custom({"categories": ["qa_rhr_a"]}).insert()
+        tc_ingredient2 = ingredient_model.IngredientTest().custom({"categories": ["qa_rhr_b"]}).insert()
+        tc_categories = "qa_rhr"
+        """ call api """
+        url = server.main_url + "/" + api.url + "?" + api.param_categories + "=" + tc_categories
+        response = requests.get(url, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertCountEqual(response_body["data"], [api.data_expected(ingredient=tc_ingredient1),
+                                                      api.data_expected(ingredient=tc_ingredient2)])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+
+    def test_5_with_files_without(self):
         tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
         tc_ingredient2 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
         tc_name = "qa_rhr"
@@ -148,7 +277,7 @@ class SearchIngredient(unittest.TestCase):
         self.assertIn(api.data_expected(ingredient=tc_ingredient2), response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
-    def test_3_with_files_empty(self):
+    def test_5_with_files_empty(self):
         tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
         ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
         tc_name = tc_ingredient1.name
@@ -168,7 +297,7 @@ class SearchIngredient(unittest.TestCase):
                                    value=tc_with_files)
         self.assertEqual(response_body["detail"], detail)
 
-    def test_3_with_files_string(self):
+    def test_5_with_files_string(self):
         tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
         ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
         tc_name = tc_ingredient1.name
@@ -188,7 +317,7 @@ class SearchIngredient(unittest.TestCase):
                                    value=tc_with_files)
         self.assertEqual(response_body["detail"], detail)
 
-    def test_3_with_files_string_false(self):
+    def test_5_with_files_string_false(self):
         tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
         tc_ingredient2 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
         tc_ingredient1.add_file(filename="qa_rhr_1", is_main=False)
@@ -210,7 +339,7 @@ class SearchIngredient(unittest.TestCase):
                                                       api.data_expected(ingredient=tc_ingredient2)])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
-    def test_3_with_files_string_true(self):
+    def test_5_with_files_string_true(self):
         tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
         tc_ingredient2 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
         tc_file1 = tc_ingredient1.add_file(filename="qa_rhr_1", is_main=False)

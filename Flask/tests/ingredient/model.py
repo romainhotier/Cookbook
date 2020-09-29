@@ -17,6 +17,8 @@ class IngredientTest(object):
     def __init__(self):
         self._id = ObjectId()
         self.name = "qa_rhr_name"
+        self.slug = "qa_rhr_slug"
+        self.categories = ["qa_rhr_category"]
 
     def display(self):
         print(self.__dict__)
