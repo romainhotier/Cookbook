@@ -7,19 +7,10 @@ import app.ingredient as ingredient_model
 import app.file as file_model
 
 api = Blueprint('ingredient', __name__, url_prefix='/ingredient')
-#auth = utils.Auth
 
 ingredient = ingredient_model.IngredientModel
 ingredient_recipe = ingredient_model.IngredientRecipeModel
 file = file_model.FileModel
-
-#@api.before_request
-#@auth.login_required
-#def protect():
-#    pass
-
-# print(get_jwt_identity())
-# headers={"Authorization": "Bearer " + token}
 
 
 @api.route('/<_id>', methods=['DELETE'])

@@ -2,11 +2,15 @@ from pymongo import MongoClient
 from bson import ObjectId
 import copy
 import re
+import datetime
+from functools import wraps
+from flask_jwt_extended import create_access_token
 
+import run as app
 import utils
 import app.user as user_model
 
-
+server = utils.Server
 mongo = utils.Mongo
 
 
@@ -16,6 +20,8 @@ class UserTest(object):
         self.display_name = "qa_rhr_display_name"
         self.email = "qa@rhr.com"
         self.password = "pwd"
+        self.status = []
+        self.token = ""
 
     def display(self):
         print(self.__dict__)
@@ -117,3 +123,14 @@ class UserTest(object):
         db.delete_many({"display_name": {"$regex": rgx}})
         client.close()
         return
+
+    def login(self, f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            self.insert()
+            with app.backend.app_context():
+                expires = datetime.timedelta(seconds=app.backend.config["EXPIRATION_TOKEN"])
+                access_token = create_access_token(identity=str(self._id), expires_delta=expires)
+            f(*args, **kwargs, headers={"Authorization": "Bearer " + access_token}, user=self)
+            return self
+        return wrapper
