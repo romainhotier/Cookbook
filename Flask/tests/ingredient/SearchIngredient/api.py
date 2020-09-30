@@ -6,6 +6,8 @@ class SearchIngredient(object):
     def __init__(self):
         self.url = 'ingredient/search'
         self.param_name = "name"
+        self.param_slug = "slug"
+        self.param_categories = "categories"
         self.param_with_files = "with_files"
         self.rep_code_msg_ok = utils.Server.rep_code_msg_ok.replace("xxx", "ingredient")
         self.rep_code_msg_error_400 = utils.Server.rep_code_msg_error_400.replace("xxx", "ingredient")

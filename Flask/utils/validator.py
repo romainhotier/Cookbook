@@ -34,6 +34,19 @@ class Validator(object):
             return True
 
     @staticmethod
+    def is_slug_in_collection(param, value, collection):
+        """ check slug is present in a collection """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][collection]
+        result = db.count_documents({"slug": value})
+        client.close()
+        if result == 0:
+            detail = {"param": param, "msg": server.detail_doesnot_exist, "value": value}
+            return abort(400, description=detail)
+        else:
+            return True
+
+    @staticmethod
     def is_object_id_in_collection_special_step(param, _id_recipe, _id_step):
         """ check objectId is present in a recipe steps """
         client = MongoClient(mongo.ip, mongo.port)

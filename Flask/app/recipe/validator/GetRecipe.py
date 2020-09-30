@@ -4,9 +4,9 @@ import utils
 class Validator(object):
 
     @staticmethod
-    def is_object_id_valid(_id):
-        utils.Validator.is_object_id(param="_id", value=_id)
-        utils.Validator.is_object_id_in_collection(param="_id", value=_id, collection=utils.Mongo.collection_recipe)
+    def is_slug_valid(slug):
+        utils.Validator.is_string_non_empty(param="slug", value=slug)
+        utils.Validator.is_slug_in_collection(param="slug", value=slug, collection=utils.Mongo.collection_recipe)
         return True
 
     @staticmethod

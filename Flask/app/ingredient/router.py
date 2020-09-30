@@ -151,48 +151,6 @@ def get_ingredient(_id):
     return utils.Server.return_response(data=data.result, api=api.name, code=200)
 
 
-@api.route('/search', methods=['GET'])
-def search_ingredient():
-    """
-    @api {get} /ingredient/search SearchIngredient
-    @apiGroup Ingredient
-    @apiDescription Search an ingredient by key/value
-
-    @apiParam (Query param) {String} name ingredient's name
-    @apiParam (Query param) {String} [with_files] if "true", add ingredient's files
-
-    @apiExample {json} Example usage:
-    GET http://127.0.0.1:5000/ingredient/search?name=<ingredient_name>
-
-    @apiSuccessExample {json} Success response:
-    HTTPS 200
-    {
-        'codeMsg': 'cookbook.ingredient.success.ok',
-        'codeStatus': 200,
-        'data': [{'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr'}]
-    }
-
-    @apiErrorExample {json} Error response:
-    HTTPS 400
-    {
-        'codeMsg': 'cookbook.ingredient.error.bad_request',
-        'codeStatus': 400,
-        'detail': {'msg': 'Must be a string', 'param': 'name', 'value': ''}
-    }
-    """
-    """ check param enrichment """
-    with_files = validator.ValidatorSearchIngredient.is_string_boolean(with_files=request.args.get('with_files'))[1]
-    """ check param name """
-    validator.ValidatorSearchIngredient.is_name_valid(name=request.args.get('name'))
-    """ search ingredient """
-    data = ingredient.search(key=request.args.get('name'))
-    """ add enrichment if needed """
-    if with_files:
-        data.add_enrichment_file_for_all()
-    """ return response """
-    return utils.Server.return_response(data=data.result, api=api.name, code=200)
-
-
 @api.route('/<_id>/recipe', methods=['GET'])
 def get_recipe_for_ingredient(_id):
     """
@@ -247,11 +205,14 @@ def post_ingredient():
     @apiDescription Create an ingredient
 
     @apiParam (Body param) {String} name Ingredient's name
+    @apiParam (Body param) {String} slug Ingredient's slug
+    @apiParam (Body param) {String} [categories] Ingredient's categories
 
     @apiExample {json} Example usage:
     POST http://127.0.0.1:5000/ingredient
     {
         'name': <name>
+        'slug': <categories>
     }
 
     @apiSuccessExample {json} Success response:
@@ -259,7 +220,8 @@ def post_ingredient():
     {
         'codeMsg': 'cookbook.ingredient.success.created',
         'codeStatus': 201,
-        'data': {'_id': '5e5840e63ed55d9119064649', 'name': 'qa_rhr_name'}
+        'data': {'_id': '5e5840e63ed55d9119064649', 'name': 'qa_rhr_name', 'slug': 'qa_rhr_slug',
+                 'categories': ['qa_rhr_category']}
     }
 
     @apiErrorExample {json} Error response:
@@ -335,7 +297,9 @@ def put_ingredient(_id):
 
     @apiParam (Query param) {String} _id Ingredient's ObjectId
     @apiParam (Query param) {String} [with_files] if "true", add ingredient's files
-    @apiParam (Body Param) {String} name Ingredient's name
+    @apiParam (Body Param) {String} [name] Ingredient's name
+    @apiParam (Body Param) {String} [slug] Ingredient's slug
+    @apiParam (Body Param) {String} [categories] Ingredient's categories
 
     @apiExample {json} Example usage:
     PUT http://127.0.0.1:5000/ingredient/<_id_ingredient>
@@ -421,14 +385,59 @@ def put_ingredient_recipe(_id):
     return utils.Server.return_response(data=data.result, api=api.name, code=200)
 
 
+@api.route('/search', methods=['GET'])
+def search_ingredient():
+    """
+    @api {get} /ingredient/search SearchIngredient
+    @apiGroup Ingredient
+    @apiDescription Search an ingredient by key/value
+
+    @apiParam (Query param) {String} [name] ingredient's name
+    @apiParam (Query param) {String} [slug] ingredient's slug
+    @apiParam (Query param) {String} [categories] ingredient's categories
+    @apiParam (Query param) {String} [with_files] if "true", add ingredient's files
+
+    @apiExample {json} Example usage:
+    GET http://127.0.0.1:5000/ingredient/search?name=<ingredient_name>
+
+    @apiSuccessExample {json} Success response:
+    HTTPS 200
+    {
+        'codeMsg': 'cookbook.ingredient.success.ok',
+        'codeStatus': 200,
+        'data': [{'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr'}]
+    }
+
+    @apiErrorExample {json} Error response:
+    HTTPS 400
+    {
+        'codeMsg': 'cookbook.ingredient.error.bad_request',
+        'codeStatus': 400,
+        'detail': {'msg': 'Must be a string', 'param': 'name', 'value': ''}
+    }
+    """
+    """ check param enrichment """
+    with_files = validator.ValidatorSearchIngredient.is_string_boolean(with_files=request.args.get('with_files'))[1]
+    """ clean search parameter """
+    search = factory.FactorySearchIngredient.clean_query(data=request.args)
+    """ check search """
+    validator.ValidatorSearchIngredient.is_search_valid(data=search)
+    """ get all recipe """
+    data = ingredient.search(data=search)
+    """ add enrichment if needed """
+    if with_files:
+        data.add_enrichment_file_for_all()
+    """ return response """
+    return utils.Server.return_response(data=data.result, api=api.name, code=200)
+
+
 @api.errorhandler(400)
 def validator_failed(error):
     """" abort 400 """
     return utils.Server.return_response(data=error.description, api=api.name, code=400)
 
 
-# @api.errorhandler(404)
-# def not_found(error):
-#     """" abort 404 """
-#     print("router ingredient")
-#     return utils.Server.return_response(data=error.description, api=api.name, code=404)
+@api.errorhandler(404)
+def not_found(error):
+    """" abort 404 """
+    return utils.Server.return_response(data=error.description, api=api.name, code=404)

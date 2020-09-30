@@ -142,7 +142,7 @@ class PutIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_name, msg=server.detail_is_required)
+        detail = api.create_detail(param="body", msg=server.detail_must_contain_at_least_one_key, value=body)
         self.assertEqual(response_body["detail"], detail)
         tc_ingredient.select_ok()
 
@@ -201,8 +201,233 @@ class PutIngredient(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ refacto """
         tc_ingredient.select_ok()
+        
+    def test_3_name_already_exist(self):
+        tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
+        tc_ingredient2 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
+        tc_id = tc_ingredient1.get_id()
+        body = {api.param_name: tc_ingredient2.name}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        detail = api.create_detail(param=api.param_name, msg=server.detail_already_exist, value=body[api.param_name])
+        self.assertEqual(response_body["detail"], detail)
+        tc_ingredient1.select_ok()
+        tc_ingredient2.select_ok()
 
-    def test_4_with_file_without(self):
+    def test_4_slug_without(self):
+        tc_ingredient = ingredient_model.IngredientTest().insert()
+        tc_id = tc_ingredient.get_id()
+        body = {}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param="body", msg=server.detail_must_contain_at_least_one_key, value=body)
+        self.assertEqual(response_body["detail"], detail)
+        tc_ingredient.select_ok()
+
+    def test_4_slug_none(self):
+        tc_ingredient = ingredient_model.IngredientTest().insert()
+        tc_id = tc_ingredient.get_id()
+        body = {api.param_slug: None}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_slug, msg=server.detail_must_be_a_string, value=body[api.param_slug])
+        self.assertEqual(response_body["detail"], detail)
+        tc_ingredient.select_ok()
+
+    def test_4_slug_empty(self):
+        tc_ingredient = ingredient_model.IngredientTest().insert()
+        tc_id = tc_ingredient.get_id()
+        body = {api.param_slug: ""}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_slug, msg=server.detail_must_be_not_empty,
+                                   value=body[api.param_slug])
+        self.assertEqual(response_body["detail"], detail)
+        tc_ingredient.select_ok()
+
+    def test_4_slug_string(self):
+        tc_ingredient = ingredient_model.IngredientTest().custom({"slug": "qa_rhr_slug"}).insert()
+        tc_id = tc_ingredient.get_id()
+        body = {api.param_slug: "qa_rhr_slug_update"}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        tc_ingredient.custom(body)
+        """ assert """
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertEqual(response_body["data"], api.data_expected(ingredient=tc_ingredient))
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ refacto """
+        tc_ingredient.select_ok()
+
+    def test_4_slug_already_exist(self):
+        tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a", "slug": "qa_rhr_sa"}).insert()
+        tc_ingredient2 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_b", "slug": "qa_rhr_sb"}).insert()
+        tc_id = tc_ingredient1.get_id()
+        body = {api.param_slug: tc_ingredient2.slug}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        detail = api.create_detail(param=api.param_slug, msg=server.detail_already_exist, value=body[api.param_slug])
+        self.assertEqual(response_body["detail"], detail)
+        tc_ingredient1.select_ok()
+        tc_ingredient2.select_ok()
+
+    def test_5_categories_without(self):
+        tc_ingredient = ingredient_model.IngredientTest().insert()
+        tc_id = tc_ingredient.get_id()
+        body = {}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param="body", msg=server.detail_must_contain_at_least_one_key, value=body)
+        self.assertEqual(response_body["detail"], detail)
+        tc_ingredient.select_ok()
+
+    def test_5_categories_none(self):
+        tc_ingredient = ingredient_model.IngredientTest().insert()
+        tc_id = tc_ingredient.get_id()
+        body = {api.param_categories: None}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_categories, msg=server.detail_must_be_an_array,
+                                   value=body[api.param_categories])
+        self.assertEqual(response_body["detail"], detail)
+        tc_ingredient.select_ok()
+
+    def test_5_categories_empty(self):
+        tc_ingredient = ingredient_model.IngredientTest().insert()
+        tc_id = tc_ingredient.get_id()
+        body = {api.param_categories: ""}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_categories, msg=server.detail_must_be_an_array,
+                                   value=body[api.param_categories])
+        self.assertEqual(response_body["detail"], detail)
+        tc_ingredient.select_ok()
+
+    def test_5_categories_string(self):
+        tc_ingredient = ingredient_model.IngredientTest().insert()
+        tc_id = tc_ingredient.get_id()
+        body = {api.param_categories: "invalid"}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_categories, msg=server.detail_must_be_an_array,
+                                   value=body[api.param_categories])
+        self.assertEqual(response_body["detail"], detail)
+        tc_ingredient.select_ok()
+
+    def test_5_categories_tab(self):
+        tc_ingredient = ingredient_model.IngredientTest().custom({"categories": ["qa_rhr_category"]}).insert()
+        tc_id = tc_ingredient.get_id()
+        body = {api.param_categories: []}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        tc_ingredient.custom(body)
+        """ assert """
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertEqual(response_body["data"], api.data_expected(ingredient=tc_ingredient))
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ refacto """
+        tc_ingredient.select_ok()
+
+    def test_5_categories_tab_2(self):
+        tc_ingredient = ingredient_model.IngredientTest().custom({"categories": ["qa_rhr_category"]}).insert()
+        tc_id = tc_ingredient.get_id()
+        body = {api.param_categories: [None, "", "invalid"]}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        tc_ingredient.custom(body)
+        """ assert """
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertEqual(response_body["data"], api.data_expected(ingredient=tc_ingredient))
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ refacto """
+        tc_ingredient.select_ok()
+
+    def test_6_with_file_without(self):
         tc_ingredient = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
         tc_id = tc_ingredient.get_id()
         body = {api.param_name: "qa_rhr_name_update"}
@@ -221,7 +446,7 @@ class PutIngredient(unittest.TestCase):
         """ refacto """
         tc_ingredient.select_ok()
 
-    def test_4_with_file_empty(self):
+    def test_6_with_file_empty(self):
         tc_ingredient = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
         tc_id = tc_ingredient.get_id()
         tc_with_files = ""
@@ -241,7 +466,7 @@ class PutIngredient(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
         tc_ingredient.select_ok()
 
-    def test_4_with_file_string(self):
+    def test_6_with_file_string(self):
         tc_ingredient = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
         tc_id = tc_ingredient.get_id()
         tc_with_files = "invalid"
@@ -261,7 +486,7 @@ class PutIngredient(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
         tc_ingredient.select_ok()
 
-    def test_4_with_file_string_false(self):
+    def test_6_with_file_string_false(self):
         tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
         tc_id = tc_ingredient1.get_id()
         tc_ingredient1.add_file(filename="qa_rhr_1", is_main=True)
@@ -283,7 +508,7 @@ class PutIngredient(unittest.TestCase):
         """ refacto """
         tc_ingredient1.select_ok()
 
-    def test_4_with_file_string_true(self):
+    def test_6_with_file_string_true(self):
         tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
         tc_id = tc_ingredient1.get_id()
         tc_file1 = tc_ingredient1.add_file(filename="qa_rhr_1", is_main=True)
@@ -304,25 +529,6 @@ class PutIngredient(unittest.TestCase):
                                                                   files=[tc_file1, tc_file2]))
         """ refacto """
         tc_ingredient1.select_ok()
-
-    def test_5_name_already_exist(self):
-        tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
-        tc_ingredient2 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
-        tc_id = tc_ingredient1.get_id()
-        body = {api.param_name: tc_ingredient2.name}
-        """ call api """
-        url = server.main_url + "/" + api.url + "/" + tc_id
-        response = requests.put(url, json=body, verify=False)
-        response_body = response.json()
-        """ assert """
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body["codeStatus"], 400)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        detail = api.create_detail(param=api.param_name, msg=server.detail_already_exist, value=body[api.param_name])
-        self.assertEqual(response_body["detail"], detail)
-        tc_ingredient1.select_ok()
-        tc_ingredient2.select_ok()
 
     @classmethod
     def tearDownClass(cls):

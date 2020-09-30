@@ -1,7 +1,7 @@
 class Factory(object):
 
     def __init__(self):
-        self.list_param = ["name"]
+        self.list_param = ["name", "slug", "categories"]
 
     def clean_body(self, data):
         clean_body = {}

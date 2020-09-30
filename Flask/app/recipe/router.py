@@ -134,59 +134,6 @@ def get_all_recipe():
     return utils.Server.return_response(data=data.result, api=api.name, code=200)
 
 
-@api.route('/search', methods=['GET'])
-def search_recipe():
-    """
-    @api {get} /recipe/search  SearchRecipe
-    @apiGroup Recipe
-    @apiDescription Search an recipe by unique or multiple key/value ($and in query)
-
-    @apiParam (Query param) {String} [title] search by title
-    @apiParam (Query param) {String} [slug] search by slug
-    @apiParam (Query param) {String} [level] search by level
-    @apiParam (Query param) {String} [cooking_time] search by cooking_time
-    @apiParam (Query param) {String} [preparation_time] search by preparation_time
-    @apiParam (Query param) {String} [nb_people] search by nb_people
-    @apiParam (Query param) {String} [categories] search by categories
-    @apiParam (Query param) {String} [with_files] if "true", add recipe's files
-
-    @apiExample {json} Example usage:
-    GET http://127.0.0.1:5000/recipe/search?title=<recipe_title>
-
-    @apiSuccessExample {json} Success response:
-    HTTPS 200
-    {
-        'codeMsg': 'cookbook.recipe.success.ok',
-        'codeStatus': 200,
-        'data': [{'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,
-                  'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'qa_rhr_1'},
-                 {'_id': '5e71eb8f39358991f2ea19f7', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,
-                  'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr_2'}]
-    }
-
-    @apiErrorExample {json} Error response:
-    HTTPS 400
-    {
-        'codeMsg': 'cookbook.recipe.error.bad_request',
-        'codeStatus': 400,
-        'detail': {'msg': 'Must be not empty', 'param': 'title', 'value': ''}
-    }
-    """
-    """ check param enrichment """
-    with_files = validator.ValidatorSearchRecipe.is_string_boolean(with_files=request.args.get('with_files'))[1]
-    """ clean search parameter """
-    search = factory.FactorySearchRecipe.clean_query(data=request.args)
-    """ check search """
-    validator.ValidatorSearchRecipe.is_search_valid(data=search)
-    """ get all recipe """
-    data = recipe.search(data=search)
-    """ add enrichment if needed """
-    if with_files:
-        data.add_enrichment_file_for_all()
-    """ return response """
-    return utils.Server.return_response(data=data.result, api=api.name, code=200)
-
-
 @api.route('/<_id_recipe>/ingredient', methods=['GET'])
 def get_ingredient_for_recipe(_id_recipe):
     """
@@ -232,18 +179,18 @@ def get_ingredient_for_recipe(_id_recipe):
     return utils.Server.return_response(data=data.result, api=api.name, code=200)
 
 
-@api.route('/<_id>', methods=['GET'])
-def get_recipe(_id):
+@api.route('/<slug>', methods=['GET'])
+def get_recipe(slug):
     """
-    @api {get} /recipe/<_id_recipe>  GetRecipe
+    @api {get} /recipe/<slug>  GetRecipe
     @apiGroup Recipe
-    @apiDescription Get a recipe by it's ObjectId
+    @apiDescription Get a recipe by it's slug
 
-    @apiParam (Query param) {String} _id Recipe's ObjectId
+    @apiParam (Query param) {String} slug Recipe's slug
     @apiParam (Query param) {String} [with_files] if "true", add recipe's files
 
     @apiExample {json} Example usage:
-    GET http://127.0.0.1:5000/recipe/<_id_recipe>
+    GET http://127.0.0.1:5000/recipe/<slug>
 
     @apiSuccessExample {json} Success response:
     HTTPS 200
@@ -259,15 +206,15 @@ def get_recipe(_id):
     {
         'codeMsg': 'cookbook.recipe.error.bad_request',
         'codeStatus': 400,
-        'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
+        'detail': {'msg': 'Must be not empty', 'param': 'slug', 'value': ''}
     }
     """
     """ check param enrichment """
     with_files = validator.ValidatorGetRecipe.is_string_boolean(with_files=request.args.get('with_files'))[1]
     """ check param _id """
-    validator.ValidatorGetRecipe.is_object_id_valid(_id=_id)
+    validator.ValidatorGetRecipe.is_slug_valid(slug=slug)
     """ get recipe """
-    data = recipe.select_one(_id=_id)
+    data = recipe.select_one_by_slug(slug=slug)
     """ add enrichment if needed """
     if with_files:
         data.add_enrichment_file_for_one()
@@ -526,6 +473,59 @@ def put_recipe_step(_id_recipe, _id_step):
     """ add enrichment if needed """
     if with_files:
         data.add_enrichment_file_for_one()
+    """ return response """
+    return utils.Server.return_response(data=data.result, api=api.name, code=200)
+
+
+@api.route('/search', methods=['GET'])
+def search_recipe():
+    """
+    @api {get} /recipe/search  SearchRecipe
+    @apiGroup Recipe
+    @apiDescription Search an recipe by unique or multiple key/value ($and in query)
+
+    @apiParam (Query param) {String} [title] search by title
+    @apiParam (Query param) {String} [slug] search by slug
+    @apiParam (Query param) {String} [level] search by level
+    @apiParam (Query param) {String} [cooking_time] search by cooking_time
+    @apiParam (Query param) {String} [preparation_time] search by preparation_time
+    @apiParam (Query param) {String} [nb_people] search by nb_people
+    @apiParam (Query param) {String} [categories] search by categories
+    @apiParam (Query param) {String} [with_files] if "true", add recipe's files
+
+    @apiExample {json} Example usage:
+    GET http://127.0.0.1:5000/recipe/search?title=<recipe_title>
+
+    @apiSuccessExample {json} Success response:
+    HTTPS 200
+    {
+        'codeMsg': 'cookbook.recipe.success.ok',
+        'codeStatus': 200,
+        'data': [{'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,
+                  'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'qa_rhr_1'},
+                 {'_id': '5e71eb8f39358991f2ea19f7', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,
+                  'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr_2'}]
+    }
+
+    @apiErrorExample {json} Error response:
+    HTTPS 400
+    {
+        'codeMsg': 'cookbook.recipe.error.bad_request',
+        'codeStatus': 400,
+        'detail': {'msg': 'Must be not empty', 'param': 'title', 'value': ''}
+    }
+    """
+    """ check param enrichment """
+    with_files = validator.ValidatorSearchRecipe.is_string_boolean(with_files=request.args.get('with_files'))[1]
+    """ clean search parameter """
+    search = factory.FactorySearchRecipe.clean_query(data=request.args)
+    """ check search """
+    validator.ValidatorSearchRecipe.is_search_valid(data=search)
+    """ get all recipe """
+    data = recipe.search(data=search)
+    """ add enrichment if needed """
+    if with_files:
+        data.add_enrichment_file_for_all()
     """ return response """
     return utils.Server.return_response(data=data.result, api=api.name, code=200)
 

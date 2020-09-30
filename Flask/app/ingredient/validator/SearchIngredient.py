@@ -16,8 +16,8 @@ class Validator(object):
                 return True, False
 
     @staticmethod
-    def is_name_valid(name):
-        utils.Validator.is_mandatory_query(param="name", value=name)
-        utils.Validator.is_string(param="name", value=name)
-        utils.Validator.is_string_non_empty(param="name", value=name)
+    def is_search_valid(data):
+        for i, j in data.items():
+            if i in ["name", "slug", "categories"]:
+                utils.Validator.is_string_non_empty(param=i, value=j)
         return True
