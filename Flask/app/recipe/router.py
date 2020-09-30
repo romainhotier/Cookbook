@@ -179,18 +179,18 @@ def get_ingredient_for_recipe(_id_recipe):
     return utils.Server.return_response(data=data.result, api=api.name, code=200)
 
 
-@api.route('/<_id>', methods=['GET'])
-def get_recipe(_id):
+@api.route('/<slug>', methods=['GET'])
+def get_recipe(slug):
     """
-    @api {get} /recipe/<_id_recipe>  GetRecipe
+    @api {get} /recipe/<slug>  GetRecipe
     @apiGroup Recipe
-    @apiDescription Get a recipe by it's ObjectId
+    @apiDescription Get a recipe by it's slug
 
-    @apiParam (Query param) {String} _id Recipe's ObjectId
+    @apiParam (Query param) {String} slug Recipe's slug
     @apiParam (Query param) {String} [with_files] if "true", add recipe's files
 
     @apiExample {json} Example usage:
-    GET http://127.0.0.1:5000/recipe/<_id_recipe>
+    GET http://127.0.0.1:5000/recipe/<slug>
 
     @apiSuccessExample {json} Success response:
     HTTPS 200
@@ -206,15 +206,15 @@ def get_recipe(_id):
     {
         'codeMsg': 'cookbook.recipe.error.bad_request',
         'codeStatus': 400,
-        'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
+        'detail': {'msg': 'Must be not empty', 'param': 'slug', 'value': ''}
     }
     """
     """ check param enrichment """
     with_files = validator.ValidatorGetRecipe.is_string_boolean(with_files=request.args.get('with_files'))[1]
     """ check param _id """
-    validator.ValidatorGetRecipe.is_object_id_valid(_id=_id)
+    validator.ValidatorGetRecipe.is_slug_valid(slug=slug)
     """ get recipe """
-    data = recipe.select_one(_id=_id)
+    data = recipe.select_one_by_slug(slug=slug)
     """ add enrichment if needed """
     if with_files:
         data.add_enrichment_file_for_one()

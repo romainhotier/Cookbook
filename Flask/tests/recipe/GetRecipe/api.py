@@ -5,7 +5,7 @@ class GetRecipe(object):
 
     def __init__(self):
         self.url = 'recipe'
-        self.param_id = "_id"
+        self.param_slug = "slug"
         self.param_with_files = "with_files"
         self.rep_code_msg_ok = utils.Server.rep_code_msg_ok.replace("xxx", "recipe")
         self.rep_code_msg_error_400 = utils.Server.rep_code_msg_error_400.replace("xxx", "recipe")

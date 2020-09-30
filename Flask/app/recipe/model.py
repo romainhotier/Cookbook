@@ -29,6 +29,14 @@ class Recipe(object):
         self.result = mongo.format_json(result)
         return self
 
+    def select_one_by_slug(self, slug):
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        result = db.find_one({"slug": slug})
+        client.close()
+        self.result = mongo.format_json(result)
+        return self
+
     def search(self, data):
         search = {}
         for i, j in data.items():
