@@ -1,11 +1,11 @@
 import React from 'react'
 import {Row, Col} from 'antd'
+import { NavLink } from 'react-router-dom'
 
 import RecipeRouter from 'modules/recipe/RecipeRouter'
 // import CategoryRouter from 'redux/category/components/CategoryRouter'
 // import NavigationItem from '../navigation/NavigationItem'
-
-// import {Routes as RecettesRoute} from 'redux/recipe/components/RecipeRoutes'
+import {Routes as RecipeRoutes} from 'modules/recipe/RecipeRoutes'
 // import {Routes as CategoriesRoute} from 'redux/category/components/CategoryRoutes'
 
 import './_Layout.scss'
@@ -13,17 +13,23 @@ import './_Layout.scss'
 const Layout = () => {
   return (
     <Row>
-      <Col span={16} offset={4}>
+      <Col 
+        xs={{ span: 24, offset: 0 }} 
+        sm={{ span: 24, offset: 0 }} 
+        md={{ span: 20, offset: 2 }} 
+        lg={{ span: 20, offset: 2 }} 
+        xl={{ span: 20, offset: 2 }}
+      >
         <div className="layout">
           <nav className="layout_menu">
             <div className="layout_logo">
               <h1>Cook</h1>
             </div>
             <div className="layout_menu_items">
-              {/* <NavigationItem
-                name="Liste des recettes"
-                url={RecettesRoute.recipe()}
-              />
+              <NavLink to={RecipeRoutes.recipe()} exact>
+                Liste des recettes
+              </NavLink>
+              {/* 
               <NavigationItem
                 name="Ajouter une recette"
                 url={RecettesRoute.recipeAdd()}

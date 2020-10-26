@@ -1,21 +1,32 @@
 import { connect } from 'react-redux'
 import React, { Component } from 'react'
-import { Row, Col } from 'antd'
 
-import { fetchAllRecipe } from '../../thunks'
+import { fetchRecipe } from '../../thunks'
 
 class RecipePageDetails extends Component {
+    componentDidMount() {
+        const {recipes, match, fetchRecipe} = this.props
+        const {slug} = match.params
+
+        if(recipes[slug] === undefined) {
+          fetchRecipe(slug)
+        }
+    }
+
+      
   render() {
+    console.log('this.props', this.props)
+
     return (
       <>
-        wsh
+        wsh tata
       </>
     )
   }
 }
 
 const mapDispatchToProps = {
-  fetchAllRecipe,
+    fetchRecipe,
 }
 
 const mapStateToProps = ({recipes : {content, loadingFetchRecipes}}) => ({recipes: content, loadingFetchRecipes})

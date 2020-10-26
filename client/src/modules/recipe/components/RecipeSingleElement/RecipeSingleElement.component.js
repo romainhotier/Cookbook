@@ -20,7 +20,7 @@ const RecipeSingleElement = ({recipe}) => {
     <article className="recipeSingleElement">
       <div className="recipeSingleElement_image">
         <div className="recipeSingleElement_mainCategorie">
-          <a href="">{categories[0]}</a>
+          <a href="/">{categories[0]}</a>
         </div>
       </div>
       <h3>

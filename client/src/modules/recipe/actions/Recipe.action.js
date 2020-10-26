@@ -9,3 +9,13 @@ export const getAllRecipesSuccess = createAction(
 export const getAllRecipesFailed = createAction(
   'GET_ALL_RECIPES_FAILED'
 )
+
+export const getRecipeRequest = createAction(
+  'GET_RECIPE_REQUEST'
+)
+export const getRecipeSuccess = createAction(
+  'GET_RECIPE_SUCCESS'
+)
+export const getRecipeFailed = createAction(
+  'GET_RECIPE_FAILED'
+)

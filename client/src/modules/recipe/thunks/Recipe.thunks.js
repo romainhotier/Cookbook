@@ -2,17 +2,21 @@
 import {
     getAllRecipesRequest,
     getAllRecipesSuccess,
-    getAllRecipesFailed
+    getAllRecipesFailed,
+    getRecipeRequest,
+    getRecipeSuccess,
+    getRecipeFailed,
 } from '../actions'
 
 import {
-    AllRecipesURL
+    fetchAllRecipesURL,
+    fetchRecipeURL
 } from '../api/Recipe.api'
 
 export const fetchAllRecipe = () => (dispatch => {
     dispatch(getAllRecipesRequest());
 
-    fetch(AllRecipesURL)
+    fetch(fetchAllRecipesURL())
     .then(res => res.json())
     .then(res => {
         if(res.error) {
@@ -23,5 +27,22 @@ export const fetchAllRecipe = () => (dispatch => {
     })
     .catch(error => {
         dispatch(getAllRecipesFailed(error));
+    })
+})
+
+export const fetchRecipe = (id) => (dispatch => {
+    dispatch(getRecipeRequest());
+
+    fetch(fetchRecipeURL(id))
+    .then(res => res.json())
+    .then(res => {
+        if(res.error) {
+        throw(res.error);
+        }
+        dispatch(getRecipeSuccess(res.data));
+        return res.recipe;
+    })
+    .catch(error => {
+        dispatch(getRecipeFailed(error));
     })
 })

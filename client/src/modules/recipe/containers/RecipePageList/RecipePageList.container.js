@@ -20,7 +20,14 @@ class RecipePageList extends Component {
       <>
         <Row>
           {Object.values(recipes).map((singleRecipe, key) => (
-            <Col key={key} span={6}>
+            <Col 
+              key={key} 
+              xs={{ span: 24 }} 
+              sm={{ span: 12 }} 
+              md={{ span: 12}} 
+              lg={{ span: 8}} 
+              xl={{ span: 6}}
+            >
               <RecipeSingleElement recipe={singleRecipe} />
             </Col>
           ))}

@@ -4,6 +4,9 @@ import {
   getAllRecipesRequest,
   getAllRecipesSuccess,
   getAllRecipesFailed,
+  getRecipeRequest,
+  getRecipeSuccess,
+  getRecipeFailed,
 } from './../actions'
 
 const defaultState = {
@@ -41,6 +44,40 @@ const RecipeReducer = handleActions(
     },
 
     [getAllRecipesFailed](state, action) {
+      return {
+        ...state,
+        loadingFetchRecipes: false,
+        error: true,
+      }
+    },
+
+     /*
+     ** GET RECIPE
+     */
+    [getRecipeRequest](state, action) {
+      return {
+        ...state,
+        loadingFetchRecipes: true,
+        error: null,
+      }
+    },
+
+    [getRecipeSuccess](state, action) {
+      let data = {}
+      action.payload.forEach((recipe) => {
+        data[recipe.slug] = {
+          ...recipe,
+        }
+      })
+
+      return {
+        ...state,
+        content: data,
+        loadingFetchRecipes: false,
+      }
+    },
+
+    [getRecipeFailed](state, action) {
       return {
         ...state,
         loadingFetchRecipes: false,
