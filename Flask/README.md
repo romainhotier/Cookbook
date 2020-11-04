@@ -23,7 +23,7 @@ in the same console where virtual-env is activated
 make sure all requirements are installed and virtual-env is activated
 ```
 > cd Flask
-> python run.py
+> python run.py test (sys arg : test/dev/prod)
 ```
 ```
  * Serving Flask app "run" (lazy loading)
@@ -78,4 +78,18 @@ Open it with index.html
 - conf
 ``` 
 export COOKBOOK_ENV="path/to/config.cfg"
+```
+```
+# Vous démarrez une nouvelle fonctionnalité
+git checkout -b new-feature master
+# Vous éditez certains fichiers
+git add <file>
+git commit -m "Start a feature"
+# Vous éditez certains fichiers
+git add <file>
+git commit -m "Finish a feature"
+# Vous mergez la branche « new-feature »
+git checkout master
+git merge new-feature
+git branch -d new-feature
 ```

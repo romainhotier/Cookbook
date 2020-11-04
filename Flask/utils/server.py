@@ -119,5 +119,5 @@ class Server(object):
                     return {"env": "development", "debug": True, "testing": False}
                 elif arg == "prod":
                     return {"env": "production", "debug": False, "testing": False}
-                else:
-                    return {"env": "production", "debug": False, "testing": False}
+            else:
+                return {"env": "production", "debug": False, "testing": False}
