@@ -3,7 +3,9 @@
     "baseUrl": "src",
     "paths": {
       "src/*": ["*"],
-      "styles/*": ["src/styles/*"]
+      "styles/*": ["src/styles/*"],
+      "modules/*": ["src/modules/*"],
+      "components/*": ["src/components/*"]
     }
   }
 }
