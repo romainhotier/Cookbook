@@ -1,5 +1,3 @@
-const cookServerUrl = 'http://192.168.1.84:5000'
+export const fetchAllRecipesURL = () => `${process.env.REACT_APP_API_URL}/recipe?with_files=true`
 
-export const fetchAllRecipesURL = () => `${cookServerUrl}/recipe?with_files=true`
-
-export const fetchRecipeURL = (slug) => `${cookServerUrl}/recipe/${slug}?with_files=true`
+export const fetchRecipeURL = (slug) => `${process.env.REACT_APP_API_URL}/recipe/${slug}?with_files=true`
