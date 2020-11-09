@@ -1,9 +1,11 @@
 export const categories = [
   {
     title: 'Salée',
+    icon: 'fas fa-pepper-hot'
   },
   {
     title: 'Sucrée',
+    icon: 'fas fa-apple-alt'
   },
   {
     title: 'Apéritifs',
@@ -27,6 +29,7 @@ export const categories = [
   },
   {
     title: 'Cookies / Biscuits',
+    icon: 'fas fa-cookie'
   },
   {
     title: 'Gâteaux',
