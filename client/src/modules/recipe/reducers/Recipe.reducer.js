@@ -64,11 +64,11 @@ const RecipeReducer = handleActions(
 
     [getRecipeSuccess](state, action) {
       let data = {}
-      action.payload.forEach((recipe) => {
-        data[recipe.slug] = {
-          ...recipe,
-        }
-      })
+      const recipe = action.payload
+
+      data[recipe.slug] = {
+        ...recipe,
+      }
 
       return {
         ...state,

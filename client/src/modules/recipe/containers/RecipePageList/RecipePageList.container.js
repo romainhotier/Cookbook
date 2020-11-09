@@ -5,6 +5,8 @@ import { Row, Col } from 'antd'
 import { fetchAllRecipe } from '../../thunks'
 import RecipeSingleElement from '../../components/RecipeSingleElement'
 
+import './_RecipePageList.scss'
+
 class RecipePageList extends Component {
   componentDidMount() {
     this.props.fetchAllRecipe()
@@ -20,13 +22,13 @@ class RecipePageList extends Component {
       <>
         <Row>
           {Object.values(recipes).map((singleRecipe, key) => (
-            <Col 
-              key={key} 
-              xs={{ span: 24 }} 
-              sm={{ span: 12 }} 
-              md={{ span: 12}} 
-              lg={{ span: 8}} 
-              xl={{ span: 6}}
+            <Col
+              key={key}
+              xs={{ span: 24 }}
+              sm={{ span: 12 }}
+              md={{ span: 12}}
+              lg={{ span: 6}}
+              xl={{ span: 4}}
             >
               <RecipeSingleElement recipe={singleRecipe} />
             </Col>

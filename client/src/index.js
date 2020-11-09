@@ -8,6 +8,9 @@ import * as serviceWorker from './serviceWorker.js'
 import Layout from './components/Layout'
 import store from './store.js'
 
+import 'antd/dist/antd.less';
+import './styles/core.scss';
+
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>

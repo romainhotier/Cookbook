@@ -1,20 +1,27 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
-import Routes from '../../RecipeRoutes.js'
+import React from "react";
+import { NavLink } from "react-router-dom";
+import Routes from "../../RecipeRoutes.js";
 
-import './_RecipeSingleElement.scss'
+import "./_RecipeSingleElement.scss";
 
 const convertMinutes = (value) => {
-  const hourExiste = Math.round(value/60, 0)
-  if(hourExiste > 1) {
-    const minutes = value%60
-    return `${hourExiste} h ${minutes} min`
+  const hourExiste = Math.round(value / 60, 0);
+  if (hourExiste > 1) {
+    const minutes = value % 60;
+    return `${hourExiste} h ${minutes} min`;
   }
-  return `${value} minutes`
-}
+  return `${value} minutes`;
+};
 
-const RecipeSingleElement = ({recipe}) => {
-  const {title, categories, preparation_time, cooking_time, nb_people, slug} = recipe
+const RecipeSingleElement = ({ recipe }) => {
+  const {
+    title,
+    categories,
+    preparation_time,
+    cooking_time,
+    nb_people,
+    slug,
+  } = recipe;
 
   return (
     <article className="recipeSingleElement">
@@ -25,15 +32,21 @@ const RecipeSingleElement = ({recipe}) => {
       </div>
       <h3>
         <NavLink to={Routes.recipeDetails(slug)} exact>
-            {title}
+          {title}
         </NavLink>
       </h3>
       <div className="recipeSingleElement_details">
-        <span><i className="far fa-clock"></i> {convertMinutes(preparation_time + cooking_time)}</span> |
-        <span><i className="far fa-user"></i> {nb_people}</span>
+        <span>
+          <i className="far fa-clock"></i>{" "}
+          {convertMinutes(preparation_time + cooking_time)}
+        </span>{" "}
+        |
+        <span>
+          <i className="far fa-user"></i> {nb_people}
+        </span>
       </div>
     </article>
-  )
-}
+  );
+};
 
-export default RecipeSingleElement
+export default RecipeSingleElement;

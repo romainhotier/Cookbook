@@ -1,5 +1,3 @@
-@import 'styles/core.scss';
-
 .recipeSingleElement {
   padding: 5px;
   &_image {
@@ -15,7 +13,7 @@
     left: 0;
     right: 0;
     text-align: center;
-    
+
     a {
       display: inline-block;
       font-size: 14px;
