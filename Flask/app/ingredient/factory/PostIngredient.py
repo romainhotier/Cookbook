@@ -1,23 +1,59 @@
 class Factory(object):
 
     def __init__(self):
-        self.list_param = ["name", "slug", "categories"]
+        """ Class to work around PostIngredient's Body.
+        """
+        self.name = "name"
+        self.slug = "slug"
+        self.categories = "categories"
+        self.nutriments = "nutriments"
+
+    def get_param(self):
+        """ Get PostIngredient's parameters.
+        """
+        return [param for param in dir(self) if not callable(getattr(self, param)) and not param.startswith("__")]
 
     def clean_body(self, data):
-        cleaned = self.remove_foreign_key(data)
-        filled = self.fill_body_with_missing_key(cleaned)
+        """ Cleaned and filled dict for PostIngredient.
+
+        Parameters
+        ----------
+        data : dict
+            Dict to be cleaned and filled with default value.
+        """
+        cleaned = self.remove_foreign_key(data=data)
+        filled = self.fill_body_with_missing_key(data=cleaned)
         return filled
 
+    # use in clean body
     def remove_foreign_key(self, data):
-        clean_data = {}
-        for i, j in data.items():
-            if i in self.list_param:
-                clean_data[i] = j
-        return clean_data
+        """ Remove keys that are not in PostIngredient's parameters.
 
+        Parameters
+        ----------
+        data : dict
+            Dict to be cleaned
+        """
+        for i, j in data.items():
+            if i not in self.get_param():
+                del data[i]
+        return data
+
+    # use in clean body
     def fill_body_with_missing_key(self, data):
-        for key in self.list_param:
+        """ Fill keys that are not mandatory with default value for PostIngredient. \n
+        categories -> []\n
+        nutriments -> {}
+
+        Parameters
+        ----------
+        data : dict
+            Dict to be filled with default value
+        """
+        for key in self.get_param():
             if key not in data.keys():
-                if key in ["categories"]:
+                if key == self.categories:
                     data[key] = []
+                if key == self.nutriments:
+                    data[key] = {}
         return data

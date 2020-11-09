@@ -5,9 +5,8 @@ class GetMe(object):
 
     def __init__(self):
         self.url = 'user/me'
-        self.rep_code_msg_ok = utils.Server.rep_code_msg_ok.replace("xxx", "user")
-        self.rep_code_msg_error_401 = utils.Server.rep_code_msg_error_401.replace("xxx", "cookbook")
-        #self.rep_code_msg_error_404_url = utils.Server.rep_code_msg_error_404.replace("xxx", "cookbook")
+        self.rep_code_msg_ok = utils.Server().rep_code_msg_ok.replace("xxx", "user")
+        self.rep_code_msg_error_401 = utils.Server().rep_code_msg_error_401.replace("xxx", "cookbook")
 
     @staticmethod
     def create_detail(param, msg, **kwargs):

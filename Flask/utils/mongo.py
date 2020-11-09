@@ -6,9 +6,13 @@ from pymongo import MongoClient, errors
 
 import utils
 
+server = utils.Server()
+
 
 class JSONEncoder(json.JSONEncoder):
-    """ fonction to jsonify ObjectId """
+    """ Return the same dict with stringify ObjectId.
+    """
+
     def default(self, o):
         if isinstance(o, ObjectId):
             return str(o)
@@ -16,8 +20,10 @@ class JSONEncoder(json.JSONEncoder):
 
 
 class Mongo(object):
-    """ MongoDb information """
+
     def __init__(self):
+        """ MongoDb information.
+        """
         self.ip = '127.0.0.1'
         self.port = 27017
         self.login = 'rhr'
@@ -31,21 +37,51 @@ class Mongo(object):
         self.collection_fs_chunks = 'fs.chunks'
 
     def select_collection(self, kind):
+        """ Return a collection's name for given type.
+
+        Parameters
+        ----------
+        kind : str
+            Can be in ["ingredient", "recipe"].
+
+        Returns
+        -------
+        str
+            Collection's name.
+        """
         if kind == "ingredient":
             return self.collection_ingredient
         elif kind == "recipe":
             return self.collection_recipe
 
     @staticmethod
-    def format_json(data):
+    def to_json(data):
+        """ Format data in a json without ObjectId.
+
+        Parameters
+        ----------
+        data : dict
+            Mongodb result.
+
+        Returns
+        -------
+        dict
+            Json.
+        """
         return json.loads(JSONEncoder().encode(data))
 
     def check_mongodb_up(self):
+        """ Check if mongoDb is UP.
+
+        Returns
+        -------
+        Any
+            Close app if there is no connection.
+        """
         try:
             client = MongoClient(self.ip, self.port, serverSelectionTimeoutMS=2000)
             client.server_info()
             client.close()
         except errors.ServerSelectionTimeoutError:
-            utils.Server.logger.critical("Connexion to MongoDB Failed !!!")
+            server.logger.critical("Connexion to MongoDB Failed !!!")
             sys.exit()
-

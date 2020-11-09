@@ -19,6 +19,10 @@ class IngredientTest(object):
         self.name = "qa_rhr_name"
         self.slug = "qa_rhr_slug"
         self.categories = ["qa_rhr_category"]
+        self.nutriments = {"calories_per_100g": {"quantity": 60, "unit": "g"},
+                           "carbohydrates_per_100g": {"quantity": 20, "unit": "g"},
+                           "fats_per_100g": {"quantity": 10, "unit": "g"},
+                           "proteins_per_100g": {"quantity": 30, "unit": "g"}}
 
     def display(self):
         print(self.__dict__)

@@ -1,34 +1,72 @@
-from flask import abort
-
-import app.user as user_model
+import app.user.model as user_model
 
 
 class Factory(object):
 
     def __init__(self):
-        self.list_param = ["email", "password"]
+        """ Class to work around PostUserLogin's body.
+        """
+        self.param_email = "email"
+        self.param_password = "password"
 
-    def clean_body(self, data):
+    def get_param(self):
+        """ Get PostUserLogin's parameters.
+
+        Returns
+        -------
+        list
+            Body parameters.
+        """
+        return [param for param in dir(self) if not callable(getattr(self, param)) and not param.startswith("__")]
+
+    def format_body(self, data):
+        """ Format body for PostUserLogin.
+
+        Parameters
+        ----------
+        data : dict
+            To be cleaned.
+
+        Returns
+        -------
+        dict
+            Correct body.
+        """
         cleaned = self.remove_foreign_key(data)
         return cleaned
 
+    # use in format_body
     def remove_foreign_key(self, data):
-        clean_data = {}
+        """ Remove keys that are not in PostUserLogin's parameters.
+
+        Parameters
+        ----------
+        data : dict
+            To be cleaned
+
+        Returns
+        -------
+        dict
+            Cleaned dict.
+        """
         for i, j in data.items():
-            if i in self.list_param:
-                clean_data[i] = j
-        return clean_data
+            if i not in self.get_param():
+                del data[i]
+        return data
 
     @staticmethod
     def check_password(data):
-        user = user_model.UserModel.select_one_by_email(email=data["email"]).result
-        authorized = user_model.UserModel.check_password(true_password=user["password"],
-                                                         password_attempt=data["password"])
-        if not authorized:
-            detail = "Invalid email/password"
-            return abort(401, description=detail)
-        return True, user["_id"]
+        """ Check access for the user.
 
-    @staticmethod
-    def data_information(token):
-        return {"token": token}
+        Parameters
+        ----------
+        data : dict
+            PostUserLogin's body.
+
+        Returns
+        -------
+        bool
+            True if the password is correct.
+        """
+        user = user_model.User().select_one_by_email(email=data["email"]).result
+        return user_model.User().check_password(password=user["password"], password_attempt=data["password"])

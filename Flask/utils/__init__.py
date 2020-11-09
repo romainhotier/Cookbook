@@ -1,5 +1,3 @@
-from utils import mongo, server, validator
-
-Mongo = mongo.Mongo()
-Server = server.Server()
-Validator = validator.Validator()
+from utils.server import Server
+from utils.mongo import Mongo
+from utils.validator import Validator

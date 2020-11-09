@@ -208,11 +208,12 @@ def post_ingredient():
     @apiParam (Body param) {String} slug Ingredient's slug
     @apiParam (Body param) {String} [categories] Ingredient's categories
 
+
     @apiExample {json} Example usage:
     POST http://127.0.0.1:5000/ingredient
     {
         'name': <name>
-        'slug': <categories>
+        'slug': <slug>
     }
 
     @apiSuccessExample {json} Success response:
@@ -232,10 +233,11 @@ def post_ingredient():
         'detail': {'msg': 'Is required', 'param': 'name'}}
     }
     """
+    """ clean body """
+    body = factory.PostIngredient.Factory().clean_body(data=request.json)
     """ check body """
-    body = factory.FactoryPostIngredient.clean_body(data=request.json)
-    validator.ValidatorPostIngredient.is_body_valid(data=body)
-    """ add ingredient """
+    validator.PostIngredient.Validator().is_body_valid(data=body)
+    """ add ingredient in bdd """
     data = ingredient.insert(data=body)
     """ return response """
     return utils.Server.return_response(data=data.result, api=api.name, code=201)

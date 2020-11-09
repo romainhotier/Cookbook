@@ -1,21 +1,31 @@
+from functools import wraps
+from flask_jwt_extended import create_access_token
 from pymongo import MongoClient
 from bson import ObjectId
 import copy
 import re
 import datetime
-from functools import wraps
-from flask_jwt_extended import create_access_token
+
 
 import run as app
 import utils
-import app.user as user_model
+import app.user.model as user
 
-server = utils.Server
-mongo = utils.Mongo
+mongo = utils.Mongo()
 
 
 class UserTest(object):
+
     def __init__(self):
+        """ UserTest model.
+
+        - _id = ObjectId in mongo
+        - display_name = User's name
+        - email = User's email (Unique)
+        - password = Encrypted user's password
+        - status = List of user's status
+        - token = User's current token
+        """
         self._id = ObjectId()
         self.display_name = "qa_rhr_display_name"
         self.email = "qa@rhr.com"
@@ -24,26 +34,80 @@ class UserTest(object):
         self.token = ""
 
     def display(self):
+        """ Print UserTest model.
+
+        Returns
+        -------
+        Any
+            Display UserTest
+        """
         print(self.__dict__)
 
     def get_param(self):
+        """ Get UserTest parameters.
+
+        Returns
+        -------
+        list
+            UserTest parameters.
+        """
         return [attr for attr in dir(self) if not callable(getattr(self, attr)) and not attr.startswith("__")]
 
     def get_id(self):
+        """ Get _id of UserTest.
+
+        Returns
+        -------
+        str
+            UserTest's _id.
+        """
         return str(self._id)
 
     def get(self):
+        """ Get UserTest.
+
+        Returns
+        -------
+        dict
+            Copy of UserTest.
+        """
         return copy.deepcopy(self.__dict__)
 
     def get_without_id(self):
+        """ Get UserTest without _id attribute.
+
+        Returns
+        -------
+        dict
+            Copy of UserTest without _id.
+        """
         data = self.get()
         data.pop("_id")
         return data
 
     def get_stringify(self):
-        return mongo.format_json(self.get())
+        """ Get UserTest with ObjectId stringify.
+
+        Returns
+        -------
+        dict
+            Copy of UserTest with ObjectId stringify.
+        """
+        return mongo.to_json(self.get())
 
     def custom(self, data):
+        """ Update UserTest.
+
+        Parameters
+        ----------
+        data : dict
+            Data to be updated for UserTest.
+
+        Returns
+        -------
+        Any
+            self.
+        """
         for i, j in data.items():
             if i in self.get_param():
                 if i == '_id':
@@ -53,16 +117,22 @@ class UserTest(object):
         return self
 
     def select_ok(self):
+        """ Check if UserTest is correct.
+
+        Returns
+        -------
+        Any
+            self.
+        """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_user]
-        user = db.find_one({"_id": ObjectId(self.get_id())})
+        usr = db.find_one({"_id": ObjectId(self.get_id())})
         client.close()
         assert user is not None
-        assert user_model.UserModel.check_password(true_password=user["password"],
-                                                   password_attempt=self.password)
-        for value in user:
+        assert user.User().check_password(password=usr["password"], password_attempt=self.password)
+        for value in usr:
             if value not in ["_id", "password"]:
-                assert user[value] == self.__getattribute__(value)
+                assert usr[value] == self.__getattribute__(value)
 
     def select_ok_by_email(self):
         client = MongoClient(mongo.ip, mongo.port)
@@ -70,8 +140,7 @@ class UserTest(object):
         user = db.find_one({"email": self.email})
         client.close()
         assert user is not None
-        assert user_model.UserModel.check_password(true_password=user["password"],
-                                                   password_attempt=self.password)
+        assert user.User().check_password(password=user["password"], password_attempt=self.password)
         for value in user:
             if value not in ["_id", "password"]:
                 assert user[value] == self.__getattribute__(value)
@@ -101,7 +170,7 @@ class UserTest(object):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_user]
         data = self.get_without_id()
-        data["password"] = user_model.UserModel.hash_password(password=self.password)
+        data["password"] = user.User().hash_password(password=self.password)
         query = db.insert_one(data)
         client.close()
         self.__setattr__("_id", query.inserted_id)

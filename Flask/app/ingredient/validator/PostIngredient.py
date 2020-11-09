@@ -7,9 +7,17 @@ import app.ingredient as ingredient_model
 class Validator(object):
 
     def is_body_valid(self, data):
+        """ Class to validate PostIngredient's Body.
+
+        Parameters
+        ----------
+        data : dict
+            Body to be validated
+        """
         self.is_name_valid(data)
         self.is_slug_valid(data)
         self.is_categories_valid(data)
+        self.is_nutriments_valid(data)
 
     def is_name_valid(self, data):
         utils.Validator.is_mandatory(param="name", data=data)
@@ -54,6 +62,10 @@ class Validator(object):
             return True
         return True
 
-
-
-
+    @staticmethod
+    def is_nutriments_valid(data):
+        if "nutriment" in data.keys():
+            utils.Validator.is_object(param="nutriments", value=data["nutriments"])
+            utils.Validator.is_nutriment(value=data["nutriments"])
+            return True
+        return True

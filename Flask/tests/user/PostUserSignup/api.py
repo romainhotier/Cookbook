@@ -10,9 +10,9 @@ class PostUserSignup(object):
         self.param_display_name = "display_name"
         self.param_email = "email"
         self.param_password = "password"
-        self.rep_code_msg_created = utils.Server.rep_code_msg_created.replace("xxx", "user")
-        self.rep_code_msg_error_400 = utils.Server.rep_code_msg_error_400.replace("xxx", "user")
-        self.rep_code_msg_error_404_url = utils.Server.rep_code_msg_error_404.replace("xxx", "cookbook")
+        self.rep_code_msg_created = utils.Server().rep_code_msg_created.replace("xxx", "user")
+        self.rep_code_msg_error_400 = utils.Server().rep_code_msg_error_400.replace("xxx", "user")
+        self.rep_code_msg_error_404_url = utils.Server().rep_code_msg_error_404.replace("xxx", "cookbook")
 
     @staticmethod
     def create_detail(param, msg, **kwargs):
