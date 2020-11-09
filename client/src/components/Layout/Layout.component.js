@@ -26,6 +26,9 @@ const Layout = () => {
               <NavLink to={RecipeRoutes.recipe()} exact>
                 Liste des recettes
               </NavLink>
+              <NavLink to={RecipeRoutes.recipeAdd()} exact>
+                Ajouter une recette
+              </NavLink>
             </div>
           </nav>
           <main className='layout_content'>

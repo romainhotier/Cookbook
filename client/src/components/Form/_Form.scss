@@ -1,0 +1,32 @@
+.ant-checkbox-wrapper {
+  &.iconCheckbox {
+    display: inline-block;
+    border: 1px solid grey;
+    width: 100%;
+    padding: 10px 0;
+    margin-bottom: 15px;
+    border-radius: 50px;
+    text-align: center;
+    .ant-checkbox {
+      display: none;
+    }
+
+    span {
+      line-height: 16px;
+      vertical-align: middle;
+      font-size: 12px;
+      i {
+        font-size: 16px;
+        padding-right: 5px;
+      }
+    }
+
+    &.ant-checkbox-wrapper-checked {
+      background-color: rgba($primary, 0.7);
+      span {
+        // color: $primary;
+      }
+    }
+  }
+
+}
