@@ -1,0 +1,44 @@
+.recipeSingleElement {
+  padding: 5px;
+  &_image {
+    position: relative;
+    background-color: grey;
+    height: 300px;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  &_mainCategorie {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+
+    a {
+      display: inline-block;
+      font-size: 14px;
+      padding: 0px 30px;
+      background-color: rgba(255, 255, 255, 0.8);
+      line-height: 35px;
+      &::first-letter {
+        text-transform: uppercase;
+      }
+    }
+  }
+
+  h3 {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 10px;
+    &::first-letter {
+      text-transform: uppercase;
+    }
+  }
+
+  &_details {
+    text-align: center;
+    i {
+      margin: 0 5px 0 10px;
+    }
+  }
+}
