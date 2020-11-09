@@ -12,13 +12,11 @@ import 'antd/dist/antd.less';
 import './styles/core.scss';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <Router>
-        <Layout />
-      </Router>
-    </Provider>,
-  </React.StrictMode>,
+  <Provider store={store}>
+    <Router>
+      <Layout />
+    </Router>
+  </Provider>,
   document.getElementById('root')
 );
 

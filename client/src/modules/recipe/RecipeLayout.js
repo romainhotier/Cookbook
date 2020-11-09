@@ -1,7 +1,6 @@
 import React from 'react'
 import {Switch, Route} from 'react-router-dom'
 
-// import ContentPage from 'components/contentPage/ContentPage'
 import RecipePageList from './containers/RecipePageList'
 import RecipePageAdd from './containers/RecipePageAdd'
 import RecipePageDetails from './containers/RecipePageDetails'

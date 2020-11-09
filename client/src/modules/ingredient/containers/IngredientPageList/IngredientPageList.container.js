@@ -1,43 +1,40 @@
 import { connect } from 'react-redux'
 import React, { Component } from 'react'
-import { Row, Col } from 'antd'
 
-import { fetchAllRecipe } from 'modules/recipe/thunks/Recipe.thunks'
+import IngredientsList from '../../components/IngredientsList'
+import IngredientPageAdd from '../IngredientPageAdd'
+import { fetchAllIngredients } from '../../thunks'
 
+import "./_IngredientPageList.scss";
 
 class IngredientPageList extends Component {
   componentDidMount() {
-    this.props.fetchAllRecipe()
+    this.props.fetchAllIngredients()
   }
 
   render() {
-    const { loadingFetchRecipes, recipes } = this.props
-    if (loadingFetchRecipes === true || Object.entries(recipes).length === 0) {
+    const { loadingFetchIngredients, ingredients } = this.props
+    if (loadingFetchIngredients === true || Object.entries(ingredients).length === 0) {
       return 'Patientez'
     }
 
     return (
       <>
-        <Row>
-          {Object.values(recipes).map((singleRecipe, key) => (
-            <Col
-              key={key}
-              span={24}
-            >
-              coucou
-            </Col>
-          ))}
-        </Row>
+        <div className="ingredientsList_header">
+          <h1>Liste des ingrédients</h1>
+          <IngredientPageAdd />
+        </div>
+        <IngredientsList data={Object.values(ingredients)} />
       </>
     )
   }
 }
 
 const mapDispatchToProps = {
-  fetchAllRecipe,
+  fetchAllIngredients,
 }
 
-const mapStateToProps = ({recipes : {content, loadingFetchRecipes}}) => ({recipes: content, loadingFetchRecipes})
+const mapStateToProps = ({ingredients : {content, loadingFetchIngredients}}) => ({ingredients: content, loadingFetchIngredients})
 
 export default connect(
   mapStateToProps,
