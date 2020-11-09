@@ -41,8 +41,7 @@ class Server(object):
         self.detail_must_contain_at_least_one_key = "Must contain at least one key"
         self.detail_already_exist = "Already exist"
         self.detail_doesnot_exist = "Doesn't exist"
-        self.detail_url_not_found = "The requested URL was not found on the server. " \
-                                    "If you entered the URL manually please check your spelling and try again."
+        self.detail_url_not_found = "The requested URL was not found on the server"
         self.detail_method_not_allowed = "The method is not allowed for the requested URL."
 
     def return_response(self, data, api, http_code, **kwargs):
@@ -91,8 +90,10 @@ class Server(object):
             Server body response.
         """
         body = {"codeStatus": http_code, "codeMsg": self.format_code_msg(http_code=http_code, api=api)}
-        if http_code in [400, 404, 405, 500]:
+        if http_code in [400, 405, 500]:
             body["detail"] = data
+        elif http_code in [404]:
+            body["detail"] = self.detail_url_not_found
         elif http_code in [401]:
             if isinstance(data, dict):
                 body["detail"] = {'msg': self.detail_has_expired, 'param': 'token'}

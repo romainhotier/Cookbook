@@ -32,7 +32,7 @@ class Validator(object):
         """
         if value is None or len(value) != 24:
             detail = server.format_detail(param=param, msg=server.detail_must_be_an_object_id, value=value)
-            return abort(status=400, detail=detail)
+            return abort(status=400, description=detail)
         else:
             return True
 
@@ -60,7 +60,7 @@ class Validator(object):
         client.close()
         if result == 0:
             detail = server.format_detail(param=param, msg=server.detail_doesnot_exist, value=value)
-            return abort(status=400, detail=detail)
+            return abort(status=400, description=detail)
         else:
             return True
 
@@ -88,7 +88,7 @@ class Validator(object):
         client.close()
         if result == 0:
             detail = server.format_detail(param=param, msg=server.detail_doesnot_exist, value=value)
-            return abort(status=400, detail=detail)
+            return abort(status=400, description=detail)
         else:
             return True
 
@@ -117,7 +117,7 @@ class Validator(object):
         client.close()
         if result == 0:
             detail = server.format_detail(param=param, msg=server.detail_doesnot_exist, value=id_step)
-            return abort(status=400, detail=detail)
+            return abort(status=400, description=detail)
         else:
             return True
 
@@ -141,7 +141,7 @@ class Validator(object):
             return True
         else:
             detail = server.format_detail(param=param, msg=server.detail_must_be_a_string, value=value)
-            return abort(status=400, detail=detail)
+            return abort(status=400, description=detail)
 
     @staticmethod
     def is_int(param, value):
@@ -167,7 +167,7 @@ class Validator(object):
                 return True
             except (ValueError, TypeError):
                 detail = server.format_detail(param=param, msg=server.detail_must_be_an_integer, value=value)
-                return abort(status=400, detail=detail)
+                return abort(status=400, description=detail)
 
     @staticmethod
     def is_array(param, value):
@@ -189,7 +189,7 @@ class Validator(object):
             return True
         else:
             detail = server.format_detail(param=param, msg=server.detail_must_be_an_array, value=value)
-            return abort(status=400, detail=detail)
+            return abort(status=400, description=detail)
 
     @staticmethod
     def is_object(param, value):
@@ -211,7 +211,7 @@ class Validator(object):
             return True
         else:
             detail = server.format_detail(param=param, msg=server.detail_must_be_an_object, value=value)
-            return abort(status=400, detail=detail)
+            return abort(status=400, description=detail)
 
     @staticmethod
     def has_at_least_one_key(data):
@@ -231,7 +231,7 @@ class Validator(object):
             return True
         else:
             detail = server.format_detail(param="body", msg=server.detail_must_contain_at_least_one_key, value=data)
-            return abort(status=400, detail=detail)
+            return abort(status=400, description=detail)
 
     @staticmethod
     def is_boolean(param, value):
@@ -253,7 +253,7 @@ class Validator(object):
             return True
         else:
             detail = server.format_detail(param=param, msg=server.detail_must_be_a_boolean, value=value)
-            return abort(status=400, detail=detail)
+            return abort(status=400, description=detail)
 
     @staticmethod
     def is_string_non_empty(param, value):
@@ -273,7 +273,7 @@ class Validator(object):
         """
         if value.strip() == "":
             detail = server.format_detail(param=param, msg=server.detail_must_be_not_empty, value=value)
-            return abort(status=400, detail=detail)
+            return abort(status=400, description=detail)
         else:
             return True
 
@@ -297,7 +297,7 @@ class Validator(object):
             return True
         else:
             detail = server.format_detail(param=param, msg=server.detail_is_required)
-            return abort(status=400, detail=detail)
+            return abort(status=400, description=detail)
 
     @staticmethod
     def is_mandatory_query(param, value):
@@ -317,7 +317,7 @@ class Validator(object):
         """
         if value is None:
             detail = server.format_detail(param=param, msg=server.detail_is_required)
-            return abort(status=400, detail=detail)
+            return abort(status=400, description=detail)
 
     @staticmethod
     def is_between_x_y(param, value, x, y):
@@ -344,7 +344,7 @@ class Validator(object):
         else:
             detail = server.format_detail(param=param, msg=server.detail_must_be_between + " {0} and {1}".format(x, y),
                                           value=value)
-            return abort(status=400, detail=detail)
+            return abort(status=400, description=detail)
 
     @staticmethod
     def is_in(param, value, values):
@@ -369,7 +369,7 @@ class Validator(object):
         else:
             detail = server.format_detail(param=param, msg=server.detail_must_be_in + " [" + ', '.join(values) + "]",
                                           value=value)
-            return abort(status=400, detail=detail)
+            return abort(status=400, description=detail)
 
     @staticmethod
     def is_path_exist(param, value):
@@ -391,7 +391,7 @@ class Validator(object):
             return True
         else:
             detail = server.format_detail(param=param, msg=server.detail_doesnot_exist, value=value)
-            return abort(status=400, detail=detail)
+            return abort(status=400, description=detail)
 
     @staticmethod
     def is_nutriment(data):
@@ -412,7 +412,7 @@ class Validator(object):
             return True
         except jsonschema.exceptions.ValidationError as err:
             detail = Schema().format_detail_from_err(err=err)
-            return abort(status=400, detail=detail)
+            return abort(status=400, description=detail)
 
 
 class Schema(object):

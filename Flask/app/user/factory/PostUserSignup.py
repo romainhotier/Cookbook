@@ -15,7 +15,8 @@ class Factory(object):
         list
             Body parameters.
         """
-        return [param for param in dir(self) if not callable(getattr(self, param)) and not param.startswith("__")]
+        return [getattr(self, param) for param in dir(self) if not callable(getattr(self, param)) and
+                not param.startswith("__")]
 
     def format_body(self, data):
         """ Format body for PostUserSignup.
@@ -47,7 +48,7 @@ class Factory(object):
         dict
             Cleaned dict.
         """
-        for i, j in data.items():
+        for i in list(data):
             if i not in self.get_param():
                 del data[i]
         return data

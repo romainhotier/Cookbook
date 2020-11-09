@@ -5,7 +5,7 @@ import utils
 import tests.user.PostUserLogin.api as api
 import tests.user.model as user_model
 
-server = utils.Server
+server = utils.Server()
 api = api.PostUserLogin()
 user = user_model.UserTest()
 

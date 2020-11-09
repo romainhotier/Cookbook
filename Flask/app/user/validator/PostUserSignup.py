@@ -92,7 +92,7 @@ class Validator(object):
         else:
             detail = utils.Server().format_detail(param=api.param_email, msg=utils.Server().detail_already_exist,
                                                   value=email)
-            return abort(status=400, detail=detail)
+            return abort(status=400, description=detail)
 
     # use in is_body_valid
     @staticmethod

@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 from bson import ObjectId
 from functools import wraps
+from flask import abort
 from flask_bcrypt import generate_password_hash, check_password_hash
 from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
 
@@ -219,7 +220,7 @@ class Auth(object):
         def wrapper(*args, **kwargs):
             verify_jwt_in_request()
             if "admin" not in User().get_user_status(get_jwt_identity()):
-                return utils.Server().return_response(data=None, api="cookbook", http_code=403)
+                return abort(status=403)
             else:
                 pass
             return f(*args, **kwargs)

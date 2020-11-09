@@ -156,7 +156,24 @@ def validator_failed(err):
     Any
         Server response.
     """
-    return utils.Server().return_response(data=err.detail, api=apis.name, http_code=400)
+    return utils.Server().return_response(data=err.description, api=apis.name, http_code=400)
+
+
+@apis.errorhandler(403)
+def forbidden(err):
+    """ Return a response for forbidden access.
+
+    Parameters
+    ----------
+    err
+        Error from Flask.
+
+    Returns
+    -------
+    Any
+        Server response.
+    """
+    return utils.Server().return_response(data=err, api=apis.name, http_code=403)
 
 
 @apis.errorhandler(404)
@@ -173,4 +190,4 @@ def not_found(err):
     Any
         Server response.
     """
-    return utils.Server().return_response(data=err.detail, api=apis.name, http_code=404)
+    return utils.Server().return_response(data=err, api=apis.name, http_code=404)
