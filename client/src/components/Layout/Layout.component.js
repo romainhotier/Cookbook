@@ -4,6 +4,8 @@ import { NavLink } from 'react-router-dom'
 
 import RecipeRouter from 'modules/recipe/RecipeRouter'
 import {Routes as RecipeRoutes} from 'modules/recipe/RecipeRoutes'
+import IngredientRouter from 'modules/ingredient/IngredientRouter'
+import {Routes as IngredientRoutes} from 'modules/ingredient/IngredientRoutes'
 
 import './_Layout.scss'
 
@@ -29,10 +31,14 @@ const Layout = () => {
               <NavLink to={RecipeRoutes.recipeAdd()} exact>
                 Ajouter une recette
               </NavLink>
+              <NavLink to={IngredientRoutes.ingredient()} exact>
+                Liste des ingrédients
+              </NavLink>
             </div>
           </nav>
           <main className='layout_content'>
             { RecipeRouter }
+            { IngredientRouter }
           </main>
         </div>
       </Col>
