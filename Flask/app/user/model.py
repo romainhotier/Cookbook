@@ -47,7 +47,7 @@ class User(object):
         Parameters
         ----------
         password : str
-            Correct user password.
+            Correct User password.
         password_attempt: str
             Attempt password.
 
@@ -64,12 +64,12 @@ class User(object):
         Parameters
         ----------
         data : dict
-            Information of the user.
+            Information of the User.
 
         Returns
         -------
         Any
-            Inserted user.
+            Inserted User.
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_user]
@@ -84,12 +84,12 @@ class User(object):
         return self
 
     def select_me(self, identifier):
-        """ Select an user by it's _id.
+        """ Select an User by it's _id.
 
         Parameters
         ----------
         identifier : ObjectId
-            ObjectId of the user.
+            ObjectId of the User.
 
         Returns
         -------
@@ -104,12 +104,12 @@ class User(object):
         return self
 
     def select_one_by_email(self, email):
-        """ Select an user by it's email.
+        """ Select an User by it's email.
 
         Parameters
         ----------
         email : str
-            Email of the user.
+            Email of the User.
 
         Returns
         -------
@@ -125,12 +125,12 @@ class User(object):
 
     @staticmethod
     def check_user_is_unique(email):
-        """ Select an user by it's email.
+        """ Check if an email already exist.
 
         Parameters
         ----------
         email : str
-            Email of the user.
+            Email of the User.
 
         Returns
         -------
@@ -148,17 +148,17 @@ class User(object):
 
     @staticmethod
     def get_user_status(identifier):
-        """ Select status of a user by it's _id.
+        """ Select status of a User by it's _id.
 
         Parameters
         ----------
         identifier : str
-            ObjectId of the user.
+            ObjectId of the User.
 
         Returns
         -------
         list
-            Status of the user.
+            Status of the User.
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_user]
@@ -176,12 +176,12 @@ class User(object):
         Parameters
         ----------
         email : str
-            Email of the user.
+            Email of the User.
 
         Returns
         -------
         str
-            ObjectId of the user stringify.
+            ObjectId of the User stringify.
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_user]
@@ -209,7 +209,7 @@ class Auth(object):
 
     @staticmethod
     def admin_only(f):
-        """ Wrapper to check if user is an admin
+        """ Wrapper to check if User is an admin
 
         Returns
         -------

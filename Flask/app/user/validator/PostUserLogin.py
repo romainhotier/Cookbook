@@ -1,12 +1,12 @@
 import utils
-
 import app.user.factory.PostUserLogin as Factory
 
+validator = utils.Validator()
 api = Factory.Factory()
 
 
 class Validator(object):
-    """ Class to validate PostUserLogin's body.
+    """ Class to validate PostUserLogin.
     """
 
     def is_body_valid(self, data):
@@ -22,8 +22,8 @@ class Validator(object):
         Any
             Response server if validation failed, True otherwise.
         """
-        self.is_email_valid(data)
-        self.is_password_valid(data)
+        self.is_email_valid(data=data)
+        self.is_password_valid(data=data)
         return True
 
     # use in is_body_valid
@@ -41,9 +41,9 @@ class Validator(object):
         Any
             Response server if validation failed, True otherwise.
         """
-        utils.Validator.is_mandatory(param=api.param_email, data=data)
-        utils.Validator.is_string(param=api.param_email, value=data[api.param_email])
-        utils.Validator.is_string_non_empty(param=api.param_email, value=data[api.param_email])
+        validator.is_mandatory(param=api.param_body_email, data=data)
+        validator.is_string(param=api.param_body_email, value=data[api.param_body_email])
+        validator.is_string_non_empty(param=api.param_body_email, value=data[api.param_body_email])
         return True
 
     # use in is_body_valid
@@ -61,7 +61,7 @@ class Validator(object):
         Any
             Response server if validation failed, True otherwise.
         """
-        utils.Validator.is_mandatory(param=api.param_password, data=data)
-        utils.Validator.is_string(param=api.param_password, value=data[api.param_password])
-        utils.Validator.is_string_non_empty(param=api.param_password, value=data[api.param_password])
+        validator.is_mandatory(param=api.param_body_password, data=data)
+        validator.is_string(param=api.param_body_password, value=data[api.param_body_password])
+        validator.is_string_non_empty(param=api.param_body_password, value=data[api.param_body_password])
         return True

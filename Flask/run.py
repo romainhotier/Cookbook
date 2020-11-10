@@ -1,15 +1,17 @@
 from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 import sys
 
 import utils
-import app.file.router
-import app.ingredient.router
-import app.recipe.router
+#import app.file.router
+import app.ingredient.router as ingredient_routes
+#import app.recipe.router
 import app.user.router as user_routes
 
 backend = Flask(__name__)
+CORS(backend)
 
 backend.config["ENV"] = "production"
 backend.config["JWT_SECRET_KEY"] = "super-secret-cookbook"
@@ -19,7 +21,7 @@ bcrypt = Bcrypt(backend)
 jwt = JWTManager(backend)
 
 # backend.register_blueprint(app.file.router.api)
-# backend.register_blueprint(app.ingredient.router.api)
+backend.register_blueprint(ingredient_routes.apis)
 # backend.register_blueprint(app.recipe.router.api)
 backend.register_blueprint(user_routes.apis)
 

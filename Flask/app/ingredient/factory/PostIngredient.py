@@ -1,59 +1,80 @@
 class Factory(object):
 
     def __init__(self):
-        """ Class to work around PostIngredient's Body.
+        """ Class to work around PostIngredient.
         """
-        self.name = "name"
-        self.slug = "slug"
-        self.categories = "categories"
-        self.nutriments = "nutriments"
+        self.param_body_name = "name"
+        self.param_body_slug = "slug"
+        self.param_body_categories = "categories"
+        self.param_body_nutriments = "nutriments"
 
-    def get_param(self):
-        """ Get PostIngredient's parameters.
+    def get_body_param(self):
+        """ Get PostIngredient's body parameters.
+
+        Returns
+        -------
+        list
+            Body parameters.
         """
-        return [param for param in dir(self) if not callable(getattr(self, param)) and not param.startswith("__")]
+        return [getattr(self, param) for param in dir(self) if not callable(getattr(self, param)) and
+                not param.startswith("__")]
 
-    def clean_body(self, data):
-        """ Cleaned and filled dict for PostIngredient.
+    def format_body(self, data):
+        """ Format body for PostIngredient.
 
         Parameters
         ----------
         data : dict
-            Dict to be cleaned and filled with default value.
+            To be cleaned.
+
+        Returns
+        -------
+        dict
+            Correct body.
         """
         cleaned = self.remove_foreign_key(data=data)
         filled = self.fill_body_with_missing_key(data=cleaned)
         return filled
 
-    # use in clean body
+    # use in format_body
     def remove_foreign_key(self, data):
         """ Remove keys that are not in PostIngredient's parameters.
 
         Parameters
         ----------
         data : dict
-            Dict to be cleaned
+            To be cleaned
+
+        Returns
+        -------
+        dict
+            Cleaned dict.
         """
-        for i, j in data.items():
-            if i not in self.get_param():
+        for i in list(data):
+            if i not in self.get_body_param():
                 del data[i]
         return data
 
-    # use in clean body
+    # use in format_body
     def fill_body_with_missing_key(self, data):
-        """ Fill keys that are not mandatory with default value for PostIngredient. \n
-        categories -> []\n
-        nutriments -> {}
+        """ Fill keys that are not mandatory with default value for PostIngredient.
+         - categories -> []
+         - nutriments -> {}
 
         Parameters
         ----------
         data : dict
             Dict to be filled with default value
+
+        Returns
+        -------
+        dict
+            Filled dict.
         """
-        for key in self.get_param():
-            if key not in data.keys():
-                if key == self.categories:
+        for key in self.get_body_param():
+            if key not in data:
+                if key == self.param_body_categories:
                     data[key] = []
-                if key == self.nutriments:
+                if key == self.param_body_nutriments:
                     data[key] = {}
         return data

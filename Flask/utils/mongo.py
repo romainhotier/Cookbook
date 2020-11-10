@@ -60,7 +60,7 @@ class Mongo(object):
 
         Parameters
         ----------
-        data : dict
+        data : Any
             Mongodb result.
 
         Returns

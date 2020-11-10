@@ -98,7 +98,7 @@ def login():
     """ check password """
     if api.check_password(data=body):
         """ create token """
-        user_id = user.User().get_user_id_by_email(email=body[api.param_email])
+        user_id = user.User().get_user_id_by_email(email=body[api.param_body_email])
         expires = datetime.timedelta(seconds=backend.config["EXPIRATION_TOKEN"])
         access_token = create_access_token(identity=user_id, expires_delta=expires)
         """ return response """

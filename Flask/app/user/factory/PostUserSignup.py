@@ -1,14 +1,14 @@
 class Factory(object):
 
     def __init__(self):
-        """ Class to work around PostUserSignup's body.
+        """ Class to work around PostUserSignup.
         """
-        self.param_display_name = "display_name"
-        self.param_email = "email"
-        self.param_password = "password"
+        self.param_body_display_name = "display_name"
+        self.param_body_email = "email"
+        self.param_body_password = "password"
 
-    def get_param(self):
-        """ Get PostUserSignup's parameters.
+    def get_body_param(self):
+        """ Get PostUserSignup's body parameters.
 
         Returns
         -------
@@ -49,6 +49,6 @@ class Factory(object):
             Cleaned dict.
         """
         for i in list(data):
-            if i not in self.get_param():
+            if i not in self.get_body_param():
                 del data[i]
         return data

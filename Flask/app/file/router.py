@@ -4,13 +4,13 @@ import utils
 import app.file as file_model
 import app.file.factory as factory
 import app.file.validator as validator
-import app.ingredient as ingredient_model
+import app.ingredient.model as ingredient_model
 import app.recipe as recipe_model
 
 api = Blueprint('file', __name__, url_prefix='/file')
 
 file = file_model.FileModel
-ingredient = ingredient_model.IngredientModel
+ingredient = ingredient_model.Ingredient()
 recipe = recipe_model.RecipeModel
 
 

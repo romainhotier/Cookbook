@@ -4,13 +4,13 @@ import app.user.model as user_model
 class Factory(object):
 
     def __init__(self):
-        """ Class to work around PostUserLogin's body.
+        """ Class to work around PostUserLogin.
         """
-        self.param_email = "email"
-        self.param_password = "password"
+        self.param_body_email = "email"
+        self.param_body_password = "password"
 
-    def get_param(self):
-        """ Get PostUserLogin's parameters.
+    def get_body_param(self):
+        """ Get PostUserLogin's body parameters.
 
         Returns
         -------
@@ -51,12 +51,11 @@ class Factory(object):
             Cleaned dict.
         """
         for i in list(data):
-            if i not in self.get_param():
+            if i not in self.get_body_param():
                 del data[i]
         return data
 
-    @staticmethod
-    def check_password(data):
+    def check_password(self, data):
         """ Check access for the user.
 
         Parameters
@@ -69,5 +68,6 @@ class Factory(object):
         bool
             True if the password is correct.
         """
-        user = user_model.User().select_one_by_email(email=data["email"]).result
-        return user_model.User().check_password(password=user["password"], password_attempt=data["password"])
+        user = user_model.User().select_one_by_email(email=data[self.param_body_email]).result
+        return user_model.User().check_password(password=user["password"],
+                                                password_attempt=data[self.param_body_password])

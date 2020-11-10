@@ -1,10 +1,10 @@
-# from app.ingredient.factory import PostIngredient, PostIngredientRecipe, PutIngredient, PutIngredientRecipe, \
-#     SearchIngredient
-
-#FactoryPostIngredient = PostIngredient.Factory()
-# FactoryPostIngredientRecipe = PostIngredientRecipe.Factory()
-# FactoryPutIngredient = PutIngredient.Factory()
-# FactoryPutIngredientRecipe = PutIngredientRecipe.Factory()
-# FactorySearchIngredient = SearchIngredient.Factory()
-
+import app.ingredient.factory.DeleteIngredient
+import app.ingredient.factory.DeleteIngredientRecipe
+import app.ingredient.factory.GetAllIngredient
+import app.ingredient.factory.GetIngredient
+import app.ingredient.factory.GetRecipeForIngredient
 import app.ingredient.factory.PostIngredient
+import app.ingredient.factory.PostIngredientRecipe
+import app.ingredient.factory.PutIngredient
+import app.ingredient.factory.PutIngredientRecipe
+import app.ingredient.factory.SearchIngredient

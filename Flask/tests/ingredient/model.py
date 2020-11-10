@@ -4,12 +4,12 @@ import copy
 import re
 
 import utils
-import app.ingredient as ingredient_model
-import app.recipe as recipe_model
+import app.ingredient.model as ingredient_model
+import app.recipe.model as recipe_model
 
 import tests.file.model as file_model
 
-mongo = utils.Mongo
+mongo = utils.Mongo()
 
 
 class IngredientTest(object):
@@ -42,14 +42,14 @@ class IngredientTest(object):
         return data
 
     def get_stringify(self):
-        return mongo.format_json(self.get())
+        return mongo.to_json(self.get())
 
     def get_stringify_with_files(self, files):
-        data = mongo.format_json(self.get())
+        data = mongo.to_json(self.get())
         data["files"] = []
         for file in files:
             data["files"].append(file.get_for_enrichment())
-        return mongo.format_json(data)
+        return mongo.to_json(data)
 
     def custom(self, data):
         for i, j in data.items():
@@ -161,7 +161,7 @@ class IngredientRecipeTest(object):
         return data
 
     def get_stringify(self):
-        return mongo.format_json(self.get())
+        return mongo.to_json(self.get())
 
     def custom(self, data):
         for i, j in data.items():
@@ -229,10 +229,10 @@ class IngredientRecipeTest(object):
         db.delete_many({"unit": {"$regex": rgx2}})
         client.close()
 
-    def add_name(self):
-        self.__setattr__("name", ingredient_model.IngredientModel.get_name_by_id(self._id_ingredient))
-        return self
+    # def add_name(self):
+    #     self.__setattr__("name", ingredient_model.Ingredient().get_name_by_id(self._id_ingredient))
+    #     return self
 
     def add_title(self):
-        self.__setattr__("title", recipe_model.RecipeModel.get_title_by_id(self._id_recipe))
+        self.__setattr__("title", recipe_model.Recipe().get_title_by_id(self._id_recipe))
         return self

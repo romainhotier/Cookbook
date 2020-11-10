@@ -5,9 +5,16 @@ from os import path
 import jsonschema
 
 import utils
+import app.ingredient.model as ingredient_model
+import app.recipe.model as recipe_model
+import app.user.model as user_model
 
 server = utils.Server()
 mongo = utils.Mongo()
+ingredient = ingredient_model.Ingredient()
+ingredient_recipe = ingredient_model.IngredientRecipe()
+recipe = recipe_model.Recipe()
+user = user_model.User()
 
 
 class Validator(object):
@@ -44,7 +51,7 @@ class Validator(object):
         ----------
         param : str
             Name of the tested parameter.
-        value : ObjectId
+        value : str
             Value of the tested parameter.
         collection : str
             Name of the mongodb collection to be checked in.
@@ -277,6 +284,28 @@ class Validator(object):
         else:
             return True
 
+    def is_string_boolean_or_none(self, param, value):
+        """ Check if the value is a boolean string or None.
+
+        Parameters
+        ----------
+        param : str
+            Name of the tested parameter.
+        value : str
+            Value of the tested parameter.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        if value is None:
+            return True
+        else:
+            self.is_string(param=param, value=value)
+            self.is_in(param=param, value=value, values=["true", "false"])
+            return True
+
     @staticmethod
     def is_mandatory(param, data):
         """ Check if the param is present in body.
@@ -293,10 +322,42 @@ class Validator(object):
         Any
             Raise an "abort 400" if validation failed.
         """
-        if param in data.keys():
+        if param in data:
             return True
         else:
             detail = server.format_detail(param=param, msg=server.detail_is_required)
+            return abort(status=400, description=detail)
+
+    @staticmethod
+    def is_unique(kind, **kwargs):
+        """ Check if the key/value is unique.
+
+        Parameters
+        ----------
+        kind : str
+            Type to be checked.
+        kwargs : Any
+            Param and values to be tested.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        check = bool
+        detail = {}
+        if kind == "ingredient":
+            check = ingredient.check_ingredient_is_unique(key=kwargs["param"], value=kwargs["value"])
+            detail = server.format_detail(param=kwargs["param"], msg=server.detail_already_exist, value=kwargs["value"])
+        elif kind == "ingredient_recipe":
+            check = ingredient_recipe.check_link_is_unique(_id_ingredient=kwargs["_id_ingredient"],
+                                                           _id_recipe=kwargs["_id_recipe"])
+            detail = "link between {} and {} ".format(kwargs["_id_ingredient"], kwargs["_id_recipe"]) + \
+                     server.detail_already_exist.lower()
+        elif kind == "user":
+            check = user.check_user_is_unique(email=kwargs["value"])
+            detail = server.format_detail(param=kwargs["param"], msg=server.detail_already_exist, value=kwargs["value"])
+        if not check:
             return abort(status=400, description=detail)
 
     @staticmethod

@@ -1,71 +1,112 @@
-from flask import abort
-
 import utils
-import app.ingredient as ingredient_model
+import app.ingredient.factory.PostIngredient as Factory
+
+validator = utils.Validator()
+api = Factory.Factory()
 
 
 class Validator(object):
+    """ Class to validate PostIngredient.
+    """
 
     def is_body_valid(self, data):
-        """ Class to validate PostIngredient's Body.
+        """ Check if body is correct.
 
         Parameters
         ----------
         data : dict
-            Body to be validated
+            Body of PostIngredient.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
         """
-        self.is_name_valid(data)
-        self.is_slug_valid(data)
-        self.is_categories_valid(data)
-        self.is_nutriments_valid(data)
-
-    def is_name_valid(self, data):
-        utils.Validator.is_mandatory(param="name", data=data)
-        utils.Validator.is_string(param="name", value=data["name"])
-        utils.Validator.is_string_non_empty(param="name", value=data["name"])
-        self.is_name_already_exist(data)
+        self.is_name_valid(data=data)
+        self.is_slug_valid(data=data)
+        self.is_categories_valid(data=data)
+        self.is_nutriments_valid(data=data)
         return True
 
+    # use in is_body_valid
     @staticmethod
-    def is_name_already_exist(data):
-        """ check name already exist """
-        name = data["name"]
-        result = ingredient_model.IngredientModel.check_ingredient_is_unique(key="name", value=name)
-        if result == 0:
-            return False
-        else:
-            detail = {"param": "name", "msg": utils.Server.detail_already_exist, "value": name}
-            return abort(400, description=detail)
+    def is_name_valid(data):
+        """ Check if name is correct.
 
-    def is_slug_valid(self, data):
-        utils.Validator.is_mandatory(param="slug", data=data)
-        utils.Validator.is_string(param="slug", value=data["slug"])
-        utils.Validator.is_string_non_empty(param="slug", value=data["slug"])
-        self.is_slug_already_exist(data)
+        Parameters
+        ----------
+        data : dict
+            Body of PostIngredient.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        validator.is_mandatory(param=api.param_body_name, data=data)
+        validator.is_string(param=api.param_body_name, value=data[api.param_body_name])
+        validator.is_string_non_empty(param=api.param_body_name, value=data[api.param_body_name])
+        validator.is_unique(kind="ingredient", param=api.param_body_name, value=data[api.param_body_name])
         return True
 
+    # use in is_body_valid
     @staticmethod
-    def is_slug_already_exist(data):
-        """ check slug already exist """
-        slug = data["slug"]
-        result = ingredient_model.IngredientModel.check_ingredient_is_unique(key="slug", value=slug)
-        if result == 0:
-            return False
-        else:
-            detail = {"param": "slug", "msg": utils.Server.detail_already_exist, "value": slug}
-            return abort(400, description=detail)
+    def is_slug_valid(data):
+        """ Check if slug is correct.
 
+        Parameters
+        ----------
+        data : dict
+            Body of PostIngredient.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        validator.is_mandatory(param=api.param_body_slug, data=data)
+        validator.is_string(param=api.param_body_slug, value=data[api.param_body_slug])
+        validator.is_string_non_empty(param=api.param_body_slug, value=data[api.param_body_slug])
+        validator.is_unique(kind="ingredient", param=api.param_body_slug, value=data[api.param_body_slug])
+        return True
+
+    # use in is_body_valid
     @staticmethod
     def is_categories_valid(data):
-        if "categories" in data.keys():
-            utils.Validator.is_array(param="categories", value=data["categories"])
-            return True
-        return True
+        """ Check if categories is correct if specified.
 
+        Parameters
+        ----------
+        data : dict
+            Body of PostIngredient.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        if api.param_body_categories in data:
+            validator.is_array(param=api.param_body_categories, value=data[api.param_body_categories])
+            return True
+        return False
+
+    # use in is_body_valid
     @staticmethod
     def is_nutriments_valid(data):
-        if "nutriment" in data.keys():
-            utils.Validator.is_object(param="nutriments", value=data["nutriments"])
-            utils.Validator.is_nutriment(value=data["nutriments"])
+        """ Check if nutriments is correct if specified.
+
+        Parameters
+        ----------
+        data : dict
+            Body of PostIngredient.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        if api.param_body_nutriments in data:
+            validator.is_object(param=api.param_body_nutriments, value=data[api.param_body_nutriments])
+            validator.is_nutriment(data=data[api.param_body_nutriments])
             return True
-        return True
+        return False

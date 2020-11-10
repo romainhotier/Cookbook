@@ -1,15 +1,10 @@
-# from app.ingredient.validator import DeleteIngredient, DeleteIngredientRecipe, GetAllIngredient, GetIngredient, \
-#     GetRecipeForIngredient, PostIngredient, PostIngredientRecipe, PutIngredient, PutIngredientRecipe, SearchIngredient
-
+import app.ingredient.validator.DeleteIngredient
+import app.ingredient.validator.DeleteIngredientRecipe
+import app.ingredient.validator.GetAllIngredient
+import app.ingredient.validator.GetIngredient
+import app.ingredient.validator.GetRecipeForIngredient
 import app.ingredient.validator.PostIngredient
-
-# ValidatorDeleteIngredient = DeleteIngredient.Validator()
-# ValidatorDeleteIngredientRecipe = DeleteIngredientRecipe.Validator()
-# ValidatorGetAllIngredient = GetAllIngredient.Validator()
-# ValidatorGetIngredient = GetIngredient.Validator()
-# ValidatorGetRecipeForIngredient = GetRecipeForIngredient.Validator()
-# ValidatorPostIngredient = PostIngredient.Validator()
-# ValidatorPostIngredientRecipe = PostIngredientRecipe.Validator()
-# ValidatorPutIngredient = PutIngredient.Validator()
-# ValidatorPutIngredientRecipe = PutIngredientRecipe.Validator()
-# ValidatorSearchIngredient = SearchIngredient.Validator()
+import app.ingredient.validator.PostIngredientRecipe
+import app.ingredient.validator.PutIngredient
+import app.ingredient.validator.PutIngredientRecipe
+import app.ingredient.validator.SearchIngredient
