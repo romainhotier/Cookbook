@@ -1,6 +1,7 @@
 from flask import Flask, make_response
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 import sys
 
 import utils
@@ -10,6 +11,7 @@ import app.recipe.router
 import app.user.router
 
 backend = Flask(__name__)
+CORS(backend)
 
 backend.config["ENV"] = "production"
 backend.config["JWT_SECRET_KEY"] = "super-secret-cookbook"
