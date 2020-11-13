@@ -1,15 +1,80 @@
 class Factory(object):
 
     def __init__(self):
-        self.list_param = ["title", "slug", "level", "cooking_time", "preparation_time", "nb_people", "categories"]
+        """ Class to work around SearchRecipe.
+        """
+        self.param_title = "title"
+        self.param_slug = "slug"
+        self.param_level = "level"
+        self.param_cooking_time = "cooking_time"
+        self.param_preparation_time = "preparation_time"
+        self.param_nb_people = "nb_people"
+        self.param_categories = "categories"
+        self.param_with_files = "with_files"
 
-    def clean_query(self, data):
-        cleaned = self.remove_foreign_key(data)
+    def get_search_param(self):
+        """ Get SearchRecipe's parameters.
+
+        Returns
+        -------
+        list
+            Body parameters.
+        """
+        return [self.param_title, self.param_slug, self.param_level, self.param_cooking_time,
+                self.param_preparation_time, self.param_nb_people, self.param_categories]
+
+    def format_body(self, data):
+        """ Format body for SearchRecipe.
+
+        Parameters
+        ----------
+        data : dict
+            To be cleaned.
+
+        Returns
+        -------
+        dict
+            Correct body.
+        """
+        converted = self.convert_immutable_dict(data)
+        cleaned = self.remove_foreign_key(converted)
         return cleaned
 
-    def remove_foreign_key(self, data):
-        clean_data = {}
+    # use in format_body
+    @staticmethod
+    def convert_immutable_dict(data):
+        """ Convert ImmutableMultiDict to classic dict.
+
+        Parameters
+        ----------
+        data : dict
+            To be converted.
+
+        Returns
+        -------
+        dict
+            Converted dict.
+        """
+        converted = {}
         for i, j in data.items():
-            if i in self.list_param:
-                clean_data[i] = j
-        return clean_data
+            converted[i] = j
+        return converted
+
+    # use in format_body
+    def remove_foreign_key(self, data):
+        """ Remove keys that are not in SearchRecipe's parameters.
+
+        Parameters
+        ----------
+        data : dict
+            To be cleaned
+
+        Returns
+        -------
+        dict
+            Cleaned dict.
+        """
+        for i in list(data):
+            if i not in self.get_search_param():
+                del data[i]
+        return data

@@ -7,15 +7,16 @@ import datetime
 import utils
 import app.user.factory as factory
 import app.user.validator as validator
-import app.user as user_model
+import app.user.model as user_model
 
-auth = user_model.Auth
-user = user_model.UserModel
+auth = user_model.Auth()
+server = utils.Server()
+user = user_model.User()
 
-api = Blueprint('user', __name__, url_prefix='/user')
+apis = Blueprint('user', __name__, url_prefix='/user')
 
 
-@api.route('/signup', methods=['POST'])
+@apis.route('/signup', methods=['POST'])
 def signup():
     """
     @api {post} /user/signup  PostUserSignup
@@ -50,16 +51,18 @@ def signup():
         'detail': {'msg': 'Is required', 'param': 'display_name'}}
     }
     """
+    api = factory.PostUserSignup.Factory()
+    validation = validator.PostUserSignup.Validator()
     """ check body """
-    body = factory.FactoryPostUserSignup.clean_body(data=request.json)
-    validator.ValidatorPostUserSignup.is_body_valid(data=body)
+    body = api.format_body(data=request.json)
+    validation.is_body_valid(data=body)
     """ add user """
-    data = user_model.UserModel.insert(data=body)
+    data = user.insert(data=body)
     """ return response """
-    return utils.Server.return_response(data=data.result, api=api.name, code=201)
+    return server.return_response(data=data.result, api=apis.name, http_code=201)
 
 
-@api.route('/login', methods=['POST'])
+@apis.route('/login', methods=['POST'])
 def login():
     """
     @api {post} /user/login  PostUserLogin
@@ -92,20 +95,25 @@ def login():
         'detail': {'msg': 'Is required', 'param': 'email'}}
     }
     """
+    api = factory.PostUserLogin.Factory()
+    validation = validator.PostUserLogin.Validator()
     """ check body """
-    body = factory.FactoryPostUserLogin.clean_body(data=request.json)
-    validator.ValidatorPostUserLogin.is_body_valid(data=body)
+    body = api.format_body(data=request.json)
+    validation.is_body_valid(data=body)
     """ check password """
-    user_id = factory.FactoryPostUserLogin.check_password(data=body)[1]
-    """ create token """
-    expires = datetime.timedelta(seconds=backend.config["EXPIRATION_TOKEN"])
-    access_token = create_access_token(identity=str(user_id), expires_delta=expires)
-    data = factory.FactoryPostUserLogin.data_information(token=access_token)
-    """ return response """
-    return utils.Server.return_response(data=data, api=api.name, code=200)
+    if api.check_password(data=body):
+        """ create token """
+        user_id = user.get_user_id_by_email(email=body[api.param_email])
+        expires = datetime.timedelta(seconds=backend.config["EXPIRATION_TOKEN"])
+        access_token = create_access_token(identity=user_id, expires_delta=expires)
+        """ return response """
+        return server.return_response(data={"token": access_token}, api=apis.name, http_code=200)
+    else:
+        """ return response """
+        return server.return_response(data="Invalid email/password", api=apis.name, http_code=401)
 
 
-@api.route('/me', methods=['GET'])
+@apis.route('/me', methods=['GET'])
 @auth.login_required
 def get_me():
     """
@@ -136,22 +144,55 @@ def get_me():
     """ get user """
     data = user.select_me(identifier=get_jwt_identity())
     """ return response """
-    return utils.Server.return_response(data=data.result, api=api.name, code=200)
+    return server.return_response(data=data.result, api=apis.name, http_code=200)
 
 
-@api.errorhandler(400)
-def validator_failed(error):
-    """" abort 400 """
-    return utils.Server.return_response(data=error.description, api=api.name, code=400)
+@apis.errorhandler(400)
+def validator_failed(err):
+    """ Return a response for bad request.
+
+    Parameters
+    ----------
+    err
+        Error from Flask.
+
+    Returns
+    -------
+    Any
+        Server response.
+    """
+    return server.return_response(data=err.description, api=apis.name, http_code=400)
 
 
-@api.errorhandler(401)
-def unauthorized(error):
-    """" abort 401 """
-    return utils.Server.return_response(data=error.description, api=api.name, code=401)
+@apis.errorhandler(403)
+def forbidden(err):
+    """ Return a response for forbidden access.
+
+    Parameters
+    ----------
+    err
+        Error from Flask.
+
+    Returns
+    -------
+    Any
+        Server response.
+    """
+    return server.return_response(data=err, api=apis.name, http_code=403)
 
 
-@api.errorhandler(404)
-def not_found(error):
-    """" abort 404 """
-    return utils.Server.return_response(data=error.description, api=api.name, code=404)
+@apis.errorhandler(404)
+def not_found(err):
+    """ Return a response for url not found.
+
+    Parameters
+    ----------
+    err
+        Error from Flask.
+
+    Returns
+    -------
+    Any
+        Server response.
+    """
+    return server.return_response(data=err, api=apis.name, http_code=404)

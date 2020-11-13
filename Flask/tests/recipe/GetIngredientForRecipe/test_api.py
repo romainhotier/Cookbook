@@ -6,7 +6,7 @@ import tests.recipe.GetIngredientForRecipe.api as api
 import tests.ingredient.model as ingredient_model
 import tests.recipe.model as recipe_model
 
-server = utils.Server
+server = utils.Server()
 api = api.GetIngredientForRecipe()
 ingredient = ingredient_model.IngredientTest()
 recipe = recipe_model.RecipeTest()
@@ -85,6 +85,7 @@ class GetIngredientForRecipe(unittest.TestCase):
         self.assertEqual(response_body["detail"], server.detail_url_not_found)
 
     def test_2_id_recipe_without(self):
+        """ go to GetRecipe """
         tc_recipe = recipe_model.RecipeTest().insert()
         tc_ingredient = ingredient_model.IngredientTest().insert()
         ingredient_model.IngredientRecipeTest().custom({"_id_recipe": tc_recipe._id,
@@ -100,7 +101,7 @@ class GetIngredientForRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param="_id", msg=server.detail_must_be_an_object_id, value=api.url2)
+        detail = api.create_detail(param="slug", msg=server.detail_doesnot_exist, value=api.url2)
         self.assertEqual(response_body["detail"], detail)
 
     def test_2_id_recipe_string(self):
@@ -119,7 +120,7 @@ class GetIngredientForRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_id_recipe, msg=server.detail_must_be_an_object_id,
+        detail = api.create_detail(param=api.param_id, msg=server.detail_must_be_an_object_id,
                                    value=tc_id_recipe)
         self.assertEqual(response_body["detail"], detail)
 
@@ -139,7 +140,7 @@ class GetIngredientForRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_id_recipe, msg=server.detail_doesnot_exist, value=tc_id_recipe)
+        detail = api.create_detail(param=api.param_id, msg=server.detail_doesnot_exist, value=tc_id_recipe)
         self.assertEqual(response_body["detail"], detail)
 
     def test_3_with_name_without(self):

@@ -1,16 +1,27 @@
 import utils
+import app.recipe.factory.GetAllRecipe as Factory
+
+validator = utils.Validator()
+api = Factory.Factory()
 
 
 class Validator(object):
+    """ Class to validate GetAllRecipe.
+    """
 
     @staticmethod
-    def is_string_boolean(with_files):
-        if with_files is None:
-            return True, False
-        else:
-            utils.Validator.is_string(param="with_files", value=with_files)
-            utils.Validator.is_in(param="with_files", value=with_files, values=["true", "false"])
-            if with_files == "true":
-                return True, True
-            elif with_files == "false":
-                return True, False
+    def is_with_files_valid(value):
+        """ Check if with_files is correct if specified.
+
+        Parameters
+        ----------
+        value : str
+            With_files's value.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        validator.is_string_boolean_or_none(param=api.param_with_files, value=value)
+        return True

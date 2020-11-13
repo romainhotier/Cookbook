@@ -2,6 +2,8 @@ import jsonschema
 
 import utils
 
+server = utils.Server()
+
 
 class PostIngredientRecipe(object):
 
@@ -11,9 +13,9 @@ class PostIngredientRecipe(object):
         self.param_id_ingredient = "_id_ingredient"
         self.param_quantity = "quantity"
         self.param_unit = "unit"
-        self.rep_code_msg_created = utils.Server.rep_code_msg_created.replace("xxx", "ingredient")
-        self.rep_code_msg_error_400 = utils.Server.rep_code_msg_error_400.replace("xxx", "ingredient")
-        self.rep_code_msg_error_404_url = utils.Server.rep_code_msg_error_404.replace("xxx", "cookbook")
+        self.rep_code_msg_created = server.rep_code_msg_created.replace("xxx", "ingredient")
+        self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "ingredient")
+        self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
 
     @staticmethod
     def create_detail(param, msg, **kwargs):

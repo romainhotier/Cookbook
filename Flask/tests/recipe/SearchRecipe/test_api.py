@@ -6,7 +6,7 @@ import tests.recipe.SearchRecipe.api as api
 import tests.recipe.model as recipe_model
 import tests.file.model as file_model
 
-server = utils.Server
+server = utils.Server()
 api = api.SearchRecipe()
 recipe = recipe_model.RecipeTest()
 file = file_model.FileTest()
@@ -103,7 +103,7 @@ class SearchRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        detail = api.create_detail(param="_id", msg=server.detail_must_be_an_object_id, value="searchx")
+        detail = api.create_detail(param="slug", msg=server.detail_doesnot_exist, value="searchx")
         self.assertEqual(response_body["detail"], detail)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
 
@@ -512,9 +512,9 @@ class SearchRecipe(unittest.TestCase):
     def test_2_with_files_string_false(self):
         tc_recipe1 = recipe_model.RecipeTest().custom({"title": "qa_rhr_a"})
         tc_recipe2 = recipe_model.RecipeTest().custom({"title": "qa_rhr_b"})
-        tc_recipe1.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe1.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
-        tc_recipe2.add_step(_id_step="333333333333333333333333", step="step recipe 2 - 1st")
+        tc_recipe1.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe1.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
+        tc_recipe2.add_step(_id_step="333333333333333333333333", description="step recipe 2 - 1st")
         tc_recipe1.insert()
         tc_recipe2.insert()
         tc_recipe1.add_file_recipe(filename="qa_rhr_1", is_main=True)
@@ -542,9 +542,9 @@ class SearchRecipe(unittest.TestCase):
     def test_2_with_files_string_true(self):
         tc_recipe1 = recipe_model.RecipeTest().custom({"title": "qa_rhr_a"})
         tc_recipe2 = recipe_model.RecipeTest().custom({"title": "qa_rhr_b"})
-        tc_recipe1.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe1.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
-        tc_recipe2.add_step(_id_step="333333333333333333333333", step="step recipe 2 - 1st")
+        tc_recipe1.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe1.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
+        tc_recipe2.add_step(_id_step="333333333333333333333333", description="step recipe 2 - 1st")
         tc_recipe1.insert()
         tc_recipe2.insert()
         tc_file_recipe11 = tc_recipe1.add_file_recipe(filename="qa_rhr_1", is_main=True)

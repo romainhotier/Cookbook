@@ -1,8 +1,10 @@
-from app.recipe.factory import PostRecipe, PostRecipeStep, PostStep, PutRecipe, PutRecipeStep, SearchRecipe
-
-FactoryPostRecipe = PostRecipe.Factory()
-FactoryPostRecipeStep = PostRecipeStep.Factory()
-FactoryPostStep = PostStep.Factory()
-FactoryPutRecipe = PutRecipe.Factory()
-FactoryPutRecipeStep = PutRecipeStep.Factory()
-FactorySearchRecipe = SearchRecipe.Factory()
+import app.recipe.factory.DeleteRecipe
+import app.recipe.factory.DeleteRecipeStep
+import app.recipe.factory.GetAllRecipe
+import app.recipe.factory.GetIngredientForRecipe
+import app.recipe.factory.GetRecipe
+import app.recipe.factory.PostRecipe
+import app.recipe.factory.PostRecipeStep
+import app.recipe.factory.PutRecipe
+import app.recipe.factory.PutRecipeStep
+import app.recipe.factory.SearchRecipe

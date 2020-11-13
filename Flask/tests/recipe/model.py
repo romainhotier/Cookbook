@@ -8,7 +8,7 @@ import utils
 
 import tests.file.model as file_model
 
-mongo = utils.Mongo
+mongo = utils.Mongo()
 
 
 class RecipeTest(object):
@@ -44,10 +44,10 @@ class RecipeTest(object):
         return data
 
     def get_stringify(self):
-        return mongo.format_json(self.get())
+        return mongo.to_json(self.get())
 
     def get_stringify_with_file(self, files_recipe, files_steps):
-        data = mongo.format_json(self.get())
+        data = mongo.to_json(self.get())
         data["files"] = []
         for recipe_file in files_recipe:
             data["files"].append(recipe_file.get_for_enrichment())
@@ -58,7 +58,7 @@ class RecipeTest(object):
                         step["files"] = []
                         for step_file in j:
                             step["files"].append(step_file.get_for_enrichment())
-        return mongo.format_json(data)
+        return mongo.to_json(data)
 
     def custom(self, data):
         for i, j in data.items():
@@ -124,14 +124,15 @@ class RecipeTest(object):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
         db.delete_many({"title": {"$regex": rgx}})
+        db.delete_many({"slug": {"$regex": rgx}})
         client.close()
         return
 
-    def add_step(self, _id_step, step):
-        self.steps.append({"_id": ObjectId(_id_step), "step": step})
+    def add_step(self, _id_step, description):
+        self.steps.append({"_id": ObjectId(_id_step), "description": description})
 
     def custom_step(self, position, data):
-        self.steps[position]["step"] = data
+        self.steps[position]["description"] = data
 
     def remove_step(self, position):
         del self.steps[position]
@@ -139,7 +140,7 @@ class RecipeTest(object):
     def add_file_recipe(self, filename, is_main, **kwargs):
         file = file_model.FileTest().custom({"filename": filename,
                                              "metadata": {"kind": "recipe",
-                                                          "_id": ObjectId(self._id),
+                                                          "_id_parent": ObjectId(self._id),
                                                           "is_main": is_main}}).insert()
         if "identifier" in kwargs.keys():
             file.custom({"_id": kwargs["identifier"]})
@@ -149,7 +150,7 @@ class RecipeTest(object):
     def add_file_step(_id_step, filename, is_main, **kwargs):
         file = file_model.FileTest().custom({"filename": filename,
                                              "metadata": {"kind": "step",
-                                                          "_id": ObjectId(_id_step),
+                                                          "_id_parent": ObjectId(_id_step),
                                                           "is_main": is_main}}).insert()
         if "identifier" in kwargs.keys():
             file.custom({"_id": kwargs["identifier"]})

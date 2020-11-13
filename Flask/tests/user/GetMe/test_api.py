@@ -6,7 +6,7 @@ import utils
 import tests.user.GetMe.api as api
 import tests.user.model as user_model
 
-server = utils.Server
+server = utils.Server()
 api = api.GetMe()
 user = user_model.UserTest()
 

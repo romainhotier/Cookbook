@@ -1,23 +1,46 @@
 import utils
+import app.ingredient.factory.GetRecipeForIngredient as Factory
+
+mongo = utils.Mongo()
+validator = utils.Validator()
+api = Factory.Factory()
 
 
 class Validator(object):
+    """ Class to validate GetRecipeForIngredient.
+    """
 
     @staticmethod
-    def is_object_id_valid(_id):
-        utils.Validator.is_object_id(param="_id_ingredient", value=_id)
-        utils.Validator.is_object_id_in_collection(param="_id_ingredient", value=_id,
-                                                   collection=utils.Mongo.collection_ingredient)
+    def is_object_id_valid(value):
+        """ Check if _id is correct.
+
+        Parameters
+        ----------
+        value : str
+            Ingredient's ObjectId.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        validator.is_object_id(param=api.param_id, value=value)
+        validator.is_object_id_in_collection(param=api.param_id, value=value, collection=mongo.collection_ingredient)
         return True
 
     @staticmethod
-    def is_string_boolean(with_title):
-        if with_title is None:
-            return True, False
-        else:
-            utils.Validator.is_string(param="with_title", value=with_title)
-            utils.Validator.is_in(param="with_title", value=with_title, values=["true", "false"])
-            if with_title == "true":
-                return True, True
-            elif with_title == "false":
-                return True, False
+    def is_with_titles_valid(value):
+        """ Check if with_titles is correct if specified.
+
+        Parameters
+        ----------
+        value : str
+            VWith_titles's value.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        validator.is_string_boolean_or_none(param=api.param_with_titles, value=value)
+        return True

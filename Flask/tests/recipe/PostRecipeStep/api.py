@@ -1,21 +1,22 @@
-import jsonschema
 import copy
 from bson import ObjectId
 
 import utils
+
+server = utils.Server()
 
 
 class PostRecipeStep(object):
 
     def __init__(self):
         self.url = 'recipe/step'
-        self.param_id = "_id"
+        self.param_id_recipe = "_id_recipe"
         self.param_with_files = "with_files"
-        self.param_step = "step"
+        self.param_description = "description"
         self.param_position = "position"
-        self.rep_code_msg_created = utils.Server.rep_code_msg_created.replace("xxx", "recipe")
-        self.rep_code_msg_error_400 = utils.Server.rep_code_msg_error_400.replace("xxx", "recipe")
-        self.rep_code_msg_error_404_url = utils.Server.rep_code_msg_error_404.replace("xxx", "cookbook")
+        self.rep_code_msg_created = server.rep_code_msg_created.replace("xxx", "recipe")
+        self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "recipe")
+        self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
 
     @staticmethod
     def create_detail(param, msg, **kwargs):
@@ -35,10 +36,10 @@ class PostRecipeStep(object):
         steps = copy.deepcopy(recipe.steps)
         if self.param_position in body.keys():
             new_id = self.get_new_id(data=rep["data"], position=body[self.param_position])
-            steps.insert(body[self.param_position], {"_id": ObjectId(new_id), "step": body[self.param_step]})
+            steps.insert(body[self.param_position], {"_id": ObjectId(new_id), "description": body[self.param_description]})
         else:
             new_id = rep["data"]["steps"][-1]["_id"]
-            steps.append({"_id": ObjectId(new_id), "step": body[self.param_step]})
+            steps.append({"_id": ObjectId(new_id), "description": body[self.param_description]})
         return {"steps": steps}
 
     @staticmethod

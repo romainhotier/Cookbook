@@ -1,7 +1,7 @@
-import copy
 
 import utils
 
+server = utils.Server()
 
 class PutRecipe(object):
 
@@ -20,9 +20,9 @@ class PutRecipe(object):
         self.param_categories = "categories"
         self.param_steps = "steps"
         self.param_ingredients = "ingredients"
-        self.rep_code_msg_ok = utils.Server.rep_code_msg_ok.replace("xxx", "recipe")
-        self.rep_code_msg_error_400 = utils.Server.rep_code_msg_error_400.replace("xxx", "recipe")
-        self.rep_code_msg_error_404_url = utils.Server.rep_code_msg_error_404.replace("xxx", "cookbook")
+        self.rep_code_msg_ok = server.rep_code_msg_ok.replace("xxx", "recipe")
+        self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "recipe")
+        self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
         self.detail_param = "param"
         self.detail_msg = "msg"
         self.detail_value = "value"

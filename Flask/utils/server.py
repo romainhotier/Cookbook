@@ -1,4 +1,5 @@
 from flask import make_response
+import re
 
 import logging
 
@@ -9,6 +10,8 @@ logging.basicConfig(format=logFormatter, level=logging.INFO)
 class Server(object):
 
     def __init__(self):
+        """ All server settings, message, etc...
+        """
         self.logger = logging.getLogger(__name__)
         self.secure = 'http'
         self.ip = 'localhost'
@@ -38,86 +41,162 @@ class Server(object):
         self.detail_must_contain_at_least_one_key = "Must contain at least one key"
         self.detail_already_exist = "Already exist"
         self.detail_doesnot_exist = "Doesn't exist"
-        self.detail_url_not_found = "The requested URL was not found on the server. " \
-                                    "If you entered the URL manually please check your spelling and try again."
+        self.detail_url_not_found = "The requested URL was not found on the server"
         self.detail_method_not_allowed = "The method is not allowed for the requested URL."
 
-    def return_response(self, data, api, code, **optional):
-        """ return an HTTPResponse """
-        if code in [400, 404, 405, 500]:
-            body = self.format_body(api=api, http_code=code, data=None, detail=data)
-            return self.format_response(body=body, code=code)
-        elif code in [401]:
-            body = self.format_body(api=api, http_code=code, data=None, detail=self.format_detail_token(t=data))
-            return self.format_response(body=body, code=code)
-        elif code in [403]:
-            body = self.format_body(api=api, http_code=code, data=None, detail=self.detail_forbidden)
-            return self.format_response(body=body, code=code)
-        elif code == 204:
-            body = ""
-            return self.format_response(body=body, code=code)
-        elif code in [200, 201]:
-            if "detail" in optional.keys():
-                body = self.format_body(api=api, http_code=code, data=data, detail=optional["detail"])
-                return self.format_response(body=body, code=code)
-            else:
-                body = self.format_body(api=api, http_code=code, data=data, detail=None)
-                return self.format_response(body=body, code=code)
+    def return_response(self, data, api, http_code, **kwargs):
+        """ Return a Server response.
 
-    def format_response(self, body, code):
-        response = self.format_headers(make_response(body, code))
-        return response
+        Parameters
+        ----------
+        data:
+            Information asked, errors, etc.
+        api: str
+            Name of the api category ("ingredient", "recipe", etc).
+        http_code: int
+            Http_code for the response.
+        kwargs: optional
+            Detail: If an optional detail is needed.
 
-    @staticmethod
-    def format_headers(response):
-        response.headers['Content-Type'] = 'application/json'
+        Returns
+        -------
+        Any
+            Server response.
+        """
+        if "file" in kwargs:
+            response = make_response(data.read(), http_code)
+            response.mimetype = data.content_type
+        else:
+            body = self.format_body(data, api, http_code, **kwargs)
+            response = make_response(body, http_code)
+            response.headers['Content-Type'] = 'application/json'
         response.headers['Access-Control-Allow-Origin'] = '*'
         return response
 
-    def format_body(self, api, http_code, data, detail):
-        body = {"codeStatus": http_code, "codeMsg": self.select_code_msg(http_code=http_code, api_category=api)}
-        if data is not None:
+    # use in return response
+    def format_body(self, data, api, http_code, **kwargs):
+        """ Make a json response.
+
+        Parameters
+        ----------
+        data
+            Information asked, errors, etc.
+        api: str
+            Name of the api category ("ingredient", "recipe", etc).
+        http_code: int
+            Http_code for the response.
+        kwargs: optional
+            Detail: If a optional detail is needed.
+
+        Returns
+        -------
+        Dict
+            Server body response.
+        """
+        body = {"codeStatus": http_code, "codeMsg": self.format_code_msg(http_code=http_code, api=api)}
+        if http_code in [400, 500]:
+            body["detail"] = data
+        elif http_code in [405]:
+            body["detail"] = self.detail_method_not_allowed
+        elif http_code in [404]:
+            body["detail"] = self.detail_url_not_found
+        elif http_code in [401]:
+            if isinstance(data, dict):
+                body["detail"] = {'msg': self.detail_has_expired, 'param': 'token'}
+            elif re.compile("Bad Authorization header", re.IGNORECASE).search(data) is not None:
+                body["detail"] = {'msg': self.detail_was_wrong, 'param': 'token'}
+            elif re.compile("Missing Authorization Header", re.IGNORECASE).search(data) is not None:
+                body["detail"] = {'msg': self.detail_is_required, 'param': 'token'}
+        elif http_code in [403]:
+            body["detail"] = self.detail_forbidden
+        elif http_code == 204:
+            body = ""
+        elif http_code in [200, 201]:
             body["data"] = data
-        if detail is not None:
-            body["detail"] = detail
+            if "detail" in kwargs:
+                body["detail"] = kwargs["detail"]
         return body
 
-    def select_code_msg(self, http_code, api_category):
-        """ return correct code msg linked with a htttp_code """
-        if http_code == 200:
-            return self.rep_code_msg_ok.replace("xxx", api_category)
-        elif http_code == 201:
-            return self.rep_code_msg_created.replace("xxx", api_category)
-        elif http_code == 400:
-            return self.rep_code_msg_error_400.replace("xxx", api_category)
-        elif http_code == 401:
-            return self.rep_code_msg_error_401.replace("xxx", api_category)
-        elif http_code == 403:
-            return self.rep_code_msg_error_403.replace("xxx", api_category)
-        elif http_code == 404:
-            return self.rep_code_msg_error_404.replace("xxx", api_category)
-        elif http_code == 405:
-            return self.rep_code_msg_error_405.replace("xxx", api_category)
-        elif http_code == 500:
-            return self.rep_code_msg_error_500.replace("xxx", api_category)
+    # use in format_body
+    def format_code_msg(self, http_code, api):
+        """ Return a code message linked with http code and api category.
 
-    def format_detail_token(self, t):
-        if t == "expired":
-            return {'msg': self.detail_has_expired, 'param': 'token'}
-        elif t == "invalid":
-            return {'msg': self.detail_was_wrong, 'param': 'token'}
-        elif t == "missing":
-            return {'msg': self.detail_is_required, 'param': 'token'}
+        Parameters
+        ----------
+        http_code: int
+            Http code of the response.
+        api: str
+            Name of the api category ("ingredient", "recipe", etc).
+
+        Returns
+        -------
+        str
+            A correct code_msg.
+        """
+        if http_code == 200:
+            return self.rep_code_msg_ok.replace("xxx", api)
+        elif http_code == 201:
+            return self.rep_code_msg_created.replace("xxx", api)
+        elif http_code == 400:
+            return self.rep_code_msg_error_400.replace("xxx", api)
+        elif http_code == 401:
+            return self.rep_code_msg_error_401.replace("xxx", api)
+        elif http_code == 403:
+            return self.rep_code_msg_error_403.replace("xxx", api)
+        elif http_code == 404:
+            return self.rep_code_msg_error_404.replace("xxx", api)
+        elif http_code == 405:
+            return self.rep_code_msg_error_405.replace("xxx", api)
+        elif http_code == 500:
+            return self.rep_code_msg_error_500.replace("xxx", api)
+
+    @staticmethod
+    def format_detail(param, msg, **kwargs):
+        """ Return detail object.
+
+        Parameters
+        ----------
+        param: str
+            Name of the parameter.
+        msg: str
+            Message to explain the issue.
+        kwargs: optional
+            Value: Actual defect value.
+
+        Returns
+        -------
+        dict
+            All information about an issue.
+        """
+        detail = {"param": param, "msg": msg}
+        if "value" in kwargs:
+            detail["value"] = kwargs["value"]
+        return detail
 
     @staticmethod
     def get_backend_options(args):
-        for arg in args:
-            if arg in ["test", "dev", "prod"]:
-                if arg == "test":
-                    return {"env": "development", "debug": True, "testing": True}
-                elif arg == "dev":
-                    return {"env": "development", "debug": True, "testing": False}
-                elif arg == "prod":
-                    return {"env": "production", "debug": False, "testing": False}
+        """ Catch command line options.
+
+        Parameters
+        ----------
+        args: list
+            All arguments in the command line.
+            1st can be ["test", "dev", "prod"].
+
+        Returns
+        -------
+        dict
+            Set env / debug / testing to update server config.
+        """
+        try:
+            mode = args[1]
+            if mode == "test":
+                return {"env": "development", "debug": True, "testing": True}
+            elif mode == "dev":
+                return {"env": "development", "debug": True, "testing": False}
+            elif mode == "prod":
+                return {"env": "production", "debug": False, "testing": False}
             else:
                 return {"env": "production", "debug": False, "testing": False}
+        except IndexError:
+            return {"env": "production", "debug": False, "testing": False}

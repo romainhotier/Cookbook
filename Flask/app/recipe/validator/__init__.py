@@ -1,14 +1,10 @@
-from app.recipe.validator import DeleteRecipe, DeleteRecipeStep, GetAllRecipe, GetRecipe, GetIngredientForRecipe, \
-    PostRecipe, PostRecipeStep, PostStep, PutRecipe, PutRecipeStep, SearchRecipe
-
-ValidatorDeleteRecipe = DeleteRecipe.Validator()
-ValidatorDeleteRecipeStep = DeleteRecipeStep.Validator()
-ValidatorGetAllRecipe = GetAllRecipe.Validator()
-ValidatorGetIngredientForRecipe = GetIngredientForRecipe.Validator()
-ValidatorGetRecipe = GetRecipe.Validator()
-ValidatorPostRecipe = PostRecipe.Validator()
-ValidatorPostRecipeStep = PostRecipeStep.Validator()
-ValidatorPostStep = PostStep.Validator()
-ValidatorPutRecipe = PutRecipe.Validator()
-ValidatorPutRecipeStep = PutRecipeStep.Validator()
-ValidatorSearchRecipe = SearchRecipe.Validator()
+import app.recipe.validator.DeleteRecipe
+import app.recipe.validator.DeleteRecipeStep
+import app.recipe.validator.GetAllRecipe
+import app.recipe.validator.GetIngredientForRecipe
+import app.recipe.validator.GetRecipe
+import app.recipe.validator.PostRecipe
+import app.recipe.validator.PostRecipeStep
+import app.recipe.validator.PutRecipe
+import app.recipe.validator.PutRecipeStep
+import app.recipe.validator.SearchRecipe

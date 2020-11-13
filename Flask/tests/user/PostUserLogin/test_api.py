@@ -5,7 +5,7 @@ import utils
 import tests.user.PostUserLogin.api as api
 import tests.user.model as user_model
 
-server = utils.Server
+server = utils.Server()
 api = api.PostUserLogin()
 user = user_model.UserTest()
 
@@ -168,9 +168,12 @@ class PostUserLogin(unittest.TestCase):
                                    value=body[api.param_password])
         self.assertEqual(response_body["detail"], detail)
 
+    def tearDown(self):
+        user.clean()
+
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(PostUserLogin())
+        user.clean()
 
 
 if __name__ == '__main__':

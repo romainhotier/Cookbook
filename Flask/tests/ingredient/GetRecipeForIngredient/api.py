@@ -1,5 +1,7 @@
 import utils
 
+server = utils.Server()
+
 
 class GetRecipeForIngredient(object):
 
@@ -7,10 +9,10 @@ class GetRecipeForIngredient(object):
         self.url1 = 'ingredient'
         self.url2 = 'recipe'
         self.param_id_ingredient = "_id_ingredient"
-        self.param_with_title = "with_title"
-        self.rep_code_msg_ok = utils.Server.rep_code_msg_ok.replace("xxx", "ingredient")
-        self.rep_code_msg_error_400 = utils.Server.rep_code_msg_error_400.replace("xxx", "ingredient")
-        self.rep_code_msg_error_404_url = utils.Server.rep_code_msg_error_404.replace("xxx", "cookbook")
+        self.param_with_titles = "with_titles"
+        self.rep_code_msg_ok = server.rep_code_msg_ok.replace("xxx", "ingredient")
+        self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "ingredient")
+        self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
 
     @staticmethod
     def create_detail(param, msg, **kwargs):

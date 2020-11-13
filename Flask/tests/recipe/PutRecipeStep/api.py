@@ -1,5 +1,6 @@
 import utils
 
+server = utils.Server()
 
 class PutRecipeStep(object):
 
@@ -9,12 +10,12 @@ class PutRecipeStep(object):
         self.param_id_recipe = "_id_recipe"
         self.param_id_step = "_id_step"
         self.param_with_files = "with_files"
-        self.param_step = "step"
+        self.param_description = "description"
         self.param_position = "position"
-        self.rep_code_msg_ok = utils.Server.rep_code_msg_ok.replace("xxx", "recipe")
-        self.rep_code_msg_error_400 = utils.Server.rep_code_msg_error_400.replace("xxx", "recipe")
-        self.rep_code_msg_error_404_url = utils.Server.rep_code_msg_error_404.replace("xxx", "cookbook")
-        self.rep_code_msg_error_405 = utils.Server.rep_code_msg_error_405.replace("xxx", "cookbook")
+        self.rep_code_msg_ok = server.rep_code_msg_ok.replace("xxx", "recipe")
+        self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "recipe")
+        self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
+        self.rep_code_msg_error_405 = server.rep_code_msg_error_405.replace("xxx", "cookbook")
 
     @staticmethod
     def create_detail(param, msg, **kwargs):

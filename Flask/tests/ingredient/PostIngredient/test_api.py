@@ -6,7 +6,7 @@ import tests.ingredient.PostIngredient.api as api
 import tests.ingredient.model as ingredient_model
 import tests.file.model as file_model
 
-server = utils.Server
+server = utils.Server()
 api = api.PostIngredient()
 ingredient = ingredient_model.IngredientTest()
 file = file_model.FileTest()
@@ -355,6 +355,26 @@ class PostIngredient(unittest.TestCase):
         tc_ingredient.custom({"_id": response_body["data"]["_id"]}).select_ok()
 
     def test_5_categories_tab_2(self):
+        body = {api.param_name: "qa_rhr_name",
+                api.param_slug: "qa_rhr_slug",
+                api.param_categories: [None, "", "invalid"]}
+        """ call api """
+        url = server.main_url + "/" + api.url
+        response = requests.post(url, json=body, verify=False)
+        response_body = response.json()
+        tc_ingredient = ingredient_model.IngredientTest().custom(api.custom_body(body=body))
+        """ assert """
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 201)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
+        data_check = api.json_check(data=response_body["data"], data_expected=tc_ingredient)
+        self.assertTrue(data_check["result"], data_check["error"])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ refacto """
+        tc_ingredient.custom({"_id": response_body["data"]["_id"]}).select_ok()
+
+    def test_6_nutriments(self):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
                 api.param_categories: [None, "", "invalid"]}

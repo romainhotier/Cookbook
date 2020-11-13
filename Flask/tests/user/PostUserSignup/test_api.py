@@ -5,7 +5,7 @@ import utils
 import tests.user.PostUserSignup.api as api
 import tests.user.model as user_model
 
-server = utils.Server
+server = utils.Server()
 api = api.PostUserSignup()
 user = user_model.UserTest()
 
@@ -267,9 +267,13 @@ class PostUserSignup(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
         tc_user.select_ok()
 
+    def tearDown(self):
+        user.clean()
+
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(PostUserSignup())
+        user.clean()
+
 
 
 if __name__ == '__main__':

@@ -1,44 +1,89 @@
-from flask import abort
-
 import utils
-import app.user as user_model
+import app.user.factory.PostUserSignup as Factory
+
+validator = utils.Validator()
+api = Factory.Factory()
 
 
 class Validator(object):
+    """ Class to validate PostUserSignup.
+    """
 
     def is_body_valid(self, data):
-        self.is_display_name_valid(data)
-        self.is_email_valid(data)
-        self.is_password_valid(data)
+        """ Check if body is correct.
 
+        Parameters
+        ----------
+        data : dict
+            PostUserSignup's body.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        self.is_display_name_valid(data=data)
+        self.is_email_valid(data=data)
+        self.is_password_valid(data=data)
+        return True
+
+    # use in is_body_valid
     @staticmethod
     def is_display_name_valid(data):
-        utils.Validator.is_mandatory(param="display_name", data=data)
-        utils.Validator.is_string(param="display_name", value=data["display_name"])
-        utils.Validator.is_string_non_empty(param="display_name", value=data["display_name"])
+        """ Check if display_name is correct.
+
+        Parameters
+        ----------
+        data : dict
+            PostUserSignup's body.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        validator.is_mandatory(param=api.param_display_name, data=data)
+        validator.is_string(param=api.param_display_name, value=data[api.param_display_name])
+        validator.is_string_non_empty(param=api.param_display_name, value=data[api.param_display_name])
         return True
 
-    def is_email_valid(self, data):
-        utils.Validator.is_mandatory(param="email", data=data)
-        utils.Validator.is_string(param="email", value=data["email"])
-        utils.Validator.is_string_non_empty(param="email", value=data["email"])
-        self.is_email_already_exist(data)
+    # use in is_body_valid
+    @staticmethod
+    def is_email_valid(data):
+        """ Check if email is correct.
+
+        Parameters
+        ----------
+        data : dict
+            PostUserSignup's body.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        validator.is_mandatory(param=api.param_email, data=data)
+        validator.is_string(param=api.param_email, value=data[api.param_email])
+        validator.is_string_non_empty(param=api.param_email, value=data[api.param_email])
+        validator.is_unique_user(param=api.param_email, value=data[api.param_email])
         return True
 
+    # use in is_body_valid
     @staticmethod
     def is_password_valid(data):
-        utils.Validator.is_mandatory(param="password", data=data)
-        utils.Validator.is_string(param="password", value=data["password"])
-        utils.Validator.is_string_non_empty(param="password", value=data["password"])
-        return True
+        """ Check if password is correct.
 
-    @staticmethod
-    def is_email_already_exist(data):
-        """ check name already exist """
-        email = data["email"]
-        result = user_model.UserModel.check_user_is_unique(email=email)
-        if result == 0:
-            return False
-        else:
-            detail = {"param": "email", "msg": utils.Server.detail_already_exist, "value": email}
-            return abort(400, description=detail)
+        Parameters
+        ----------
+        data : dict
+            PostUserSignup's body.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        validator.is_mandatory(param=api.param_password, data=data)
+        validator.is_string(param=api.param_password, value=data[api.param_password])
+        validator.is_string_non_empty(param=api.param_password, value=data[api.param_password])
+        return True
