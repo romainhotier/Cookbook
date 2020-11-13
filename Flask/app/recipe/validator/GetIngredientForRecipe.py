@@ -1,23 +1,34 @@
 import utils
+import app.recipe.factory.GetIngredientForRecipe as Factory
+
+mongo = utils.Mongo()
+validator = utils.Validator()
+api = Factory.Factory()
 
 
 class Validator(object):
+    """ Class to validate GetIngredientForRecipe.
+    """
 
     @staticmethod
-    def is_object_id_valid(_id):
-        utils.Validator.is_object_id(param="_id_recipe", value=_id)
-        utils.Validator.is_object_id_in_collection(param="_id_recipe", value=_id,
-                                                   collection=utils.Mongo.collection_recipe)
+    def is_object_id_valid(value):
+        validator.is_object_id(param=api.param_id, value=value)
+        validator.is_object_id_in_collection(param=api.param_id, value=value, collection=mongo.collection_recipe)
         return True
 
     @staticmethod
-    def is_string_boolean(with_name):
-        if with_name is None:
-            return True, False
-        else:
-            utils.Validator.is_string(param="with_name", value=with_name)
-            utils.Validator.is_in(param="with_name", value=with_name, values=["true", "false"])
-            if with_name == "true":
-                return True, True
-            elif with_name == "false":
-                return True, False
+    def is_with_names_valid(value):
+        """ Check if with_names is correct if specified.
+
+        Parameters
+        ----------
+        value : str
+            With_names's value.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        validator.is_string_boolean_or_none(param=api.param_with_names, value=value)
+        return True

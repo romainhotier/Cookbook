@@ -7,7 +7,7 @@ import tests.ingredient.model as ingredient_model
 import tests.recipe.model as recipe_model
 import tests.file.model as file_model
 
-server = utils.Server
+server = utils.Server()
 api = api.DeleteRecipe()
 ingredient = ingredient_model.IngredientTest()
 recipe = recipe_model.RecipeTest()
@@ -111,9 +111,9 @@ class DeleteRecipe(unittest.TestCase):
     def test_3_clean_file(self):
         tc_recipe1 = recipe_model.RecipeTest().custom({"title": "qa_rhr_a"})
         tc_recipe2 = recipe_model.RecipeTest().custom({"title": "qa_rhr_b"})
-        tc_recipe1.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe1.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
-        tc_recipe2.add_step(_id_step="333333333333333333333333", step="step recipe 2 - 1st")
+        tc_recipe1.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe1.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
+        tc_recipe2.add_step(_id_step="333333333333333333333333", description="step recipe 2 - 1st")
         tc_recipe1.insert()
         tc_recipe2.insert()
         tc_file_recipe11 = tc_recipe1.add_file_recipe(filename="qa_rhr_1", is_main=True)

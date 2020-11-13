@@ -4,13 +4,14 @@ import utils
 import app.ingredient.factory as factory
 import app.ingredient.validator as validator
 import app.ingredient.model as ingredient_model
-import app.file as file_model
+import app.file.model as file_model
 
 apis = Blueprint('ingredient', __name__, url_prefix='/ingredient')
 
+server = utils.Server()
 ingredient = ingredient_model.Ingredient()
 ingredient_recipe = ingredient_model.IngredientRecipe()
-file = file_model.FileModel
+file = file_model.File()
 
 
 @apis.route('/<_id>', methods=['DELETE'])
@@ -37,14 +38,15 @@ def delete_ingredient(_id):
     }
     """
     validation = validator.DeleteIngredient.Validator()
-    """ check param _id """
+    """ check param """
     validation.is_object_id_valid(value=_id)
     """ clean files and link """
     file.clean_file_by_id_parent(_id_parent=_id)
     ingredient_recipe.clean_link_by_id_ingredient(_id_ingredient=_id)
     """ delete ingredient """
     ingredient.delete(_id=_id)
-    return utils.Server().return_response(data=None, api=apis.name, http_code=204)
+    """ return response """
+    return server.return_response(data=None, api=apis.name, http_code=204)
 
 
 @apis.route('/recipe/<_id>', methods=['DELETE'])
@@ -70,12 +72,13 @@ def delete_ingredient_recipe(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
-    """ check id """
-    validator.DeleteIngredientRecipe.Validator().is_object_id_valid(value=_id)
+    validation = validator.DeleteIngredientRecipe.Validator()
+    """ check param """
+    validation.is_object_id_valid(value=_id)
     """ delete link """
     ingredient_recipe.delete(_id=_id)
     """ return response """
-    return utils.Server().return_response(data=None, api=apis.name, http_code=204)
+    return server.return_response(data=None, api=apis.name, http_code=204)
 
 
 @apis.route('', methods=['GET'])
@@ -100,15 +103,17 @@ def get_all_ingredient():
     }
     """
     api = factory.GetAllIngredient.Factory()
-    """ check param enrichment """
-    with_files = validator.GetAllIngredient.Validator().is_with_files_valid(value=request.args.get(api.param_query_with_files))
+    validation = validator.GetAllIngredient.Validator()
+    with_files = request.args.get(api.param_with_files)
+    """ check param """
+    validation.is_with_files_valid(value=with_files)
     """ get all ingredient """
     data = ingredient.select_all()
     """ add enrichment if needed """
-    if with_files[1]:
+    if with_files == "true":
         data.add_enrichment_file_for_all()
     """ return response """
-    return utils.Server().return_response(data=data.result, api=apis.name, http_code=200)
+    return server.return_response(data=data.result, api=apis.name, http_code=200)
 
 
 @apis.route('/<_id>', methods=['GET'])
@@ -141,17 +146,18 @@ def get_ingredient(_id):
     }
     """
     api = factory.GetIngredient.Factory()
-    """ check param enrichment """
-    with_files = validator.GetIngredient.Validator().is_with_files_valid(value=request.args.get(api.param_query_with_files))[1]
-    """ check param _id """
-    validator.GetIngredient.Validator().is_object_id_valid(value=_id)
+    validation = validator.GetIngredient.Validator()
+    with_files = request.args.get(api.param_with_files)
+    """ check param """
+    validation.is_with_files_valid(value=with_files)
+    validation.is_object_id_valid(value=_id)
     """ get ingredient """
     data = ingredient.select_one(_id=_id)
     """ add enrichment if needed """
-    if with_files:
+    if with_files == "true":
         data.add_enrichment_file_for_one()
     """ return response """
-    return utils.Server().return_response(data=data.result, api=apis.name, http_code=200)
+    return server.return_response(data=data.result, api=apis.name, http_code=200)
 
 
 @apis.route('/<_id>/recipe', methods=['GET'])
@@ -187,17 +193,18 @@ def get_recipe_for_ingredient(_id):
     }
     """
     api = factory.GetRecipeForIngredient.Factory()
-    """ check param enrichment """
-    with_title = validator.GetRecipeForIngredient.Validator().is_with_titles_valid(value=request.args.get(api.param_query_with_titles))[1]
-    """ check param _id """
-    validator.GetRecipeForIngredient.Validator().is_object_id_valid(value=_id)
+    validation = validator.GetRecipeForIngredient.Validator()
+    with_titles = request.args.get(api.param_with_titles)
+    """ check param """
+    validation.is_with_titles_valid(value=with_titles)
+    validation.is_object_id_valid(value=_id)
     """ get all """
     data = ingredient_recipe.select_all_by_id_ingredient(_id_ingredient=_id)
     """ add enrichment if needed """
-    if with_title:
+    if with_titles == "true":
         data.add_enrichment_title_for_all()
     """ return response """
-    return utils.Server().return_response(data=data.result, api=apis.name, http_code=200)
+    return server.return_response(data=data.result, api=apis.name, http_code=200)
 
 
 @apis.route('', methods=['POST'])
@@ -236,14 +243,15 @@ def post_ingredient():
         'detail': {'msg': 'Is required', 'param': 'name'}}
     }
     """
-    """ clean body """
-    body = factory.PostIngredient.Factory().format_body(data=request.json)
+    api = factory.PostIngredient.Factory()
+    validation = validator.PostIngredient.Validator()
     """ check body """
-    validator.PostIngredient.Validator().is_body_valid(data=body)
+    body = api.format_body(data=request.json)
+    validation.is_body_valid(data=body)
     """ add ingredient in bdd """
     data = ingredient.insert(data=body)
     """ return response """
-    return utils.Server().return_response(data=data.result, api=apis.name, http_code=201)
+    return server.return_response(data=data.result, api=apis.name, http_code=201)
 
 
 @apis.route('/recipe', methods=['POST'])
@@ -284,13 +292,15 @@ def post_ingredient_recipe():
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id_ingredient', 'value': 'invalid'}
     }
     """
+    api = factory.PostIngredientRecipe.Factory()
+    validation = validator.PostIngredientRecipe.Validator()
     """ check body """
-    body = factory.PostIngredientRecipe.Factory().format_body(data=request.json)
-    validator.PostIngredientRecipe.Validator().is_body_valid(data=body)
+    body = api.format_body(data=request.json)
+    validation.is_body_valid(data=body)
     """ add link """
     data = ingredient_recipe.insert(data=body)
     """ return response """
-    return utils.Server().return_response(data=data.result, api=apis.name, http_code=201)
+    return server.return_response(data=data.result, api=apis.name, http_code=201)
 
 
 @apis.route('/<_id>', methods=['PUT'])
@@ -330,9 +340,8 @@ def put_ingredient(_id):
     """
     api = factory.PutIngredient.Factory()
     validation = validator.PutIngredient.Validator()
-    """ get params """
     with_files = request.args.get(api.param_with_files)
-    """ check query params """
+    """ check params """
     validation.is_object_id_valid(value=_id)
     validation.is_with_files_valid(value=with_files)
     """ check body """
@@ -344,7 +353,7 @@ def put_ingredient(_id):
     if with_files == "true":
         data.add_enrichment_file_for_one()
     """ return response """
-    return utils.Server().return_response(data=data.result, api=apis.name, http_code=200)
+    return server.return_response(data=data.result, api=apis.name, http_code=200)
 
 
 @apis.route('/recipe/<_id>', methods=['PUT'])
@@ -382,15 +391,17 @@ def put_ingredient_recipe(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
-    """ check id """
-    validator.PutIngredientRecipe.Validator().is_object_id_valid(value=_id)
+    api = factory.PutIngredientRecipe.Factory()
+    validation = validator.PutIngredientRecipe.Validator()
+    """ check param """
+    validation.is_object_id_valid(value=_id)
     """ check body """
-    body = factory.PutIngredientRecipe.Factory().format_body(data=request.json)
-    validator.PutIngredientRecipe.Validator().is_body_valid(data=body)
+    body = api.format_body(data=request.json)
+    validation.is_body_valid(data=body)
     """ update link """
     data = ingredient_recipe.update(_id=_id, data=body)
     """ return response """
-    return utils.Server().return_response(data=data.result, api=apis.name, http_code=200)
+    return server.return_response(data=data.result, api=apis.name, http_code=200)
 
 
 @apis.route('/search', methods=['GET'])
@@ -426,23 +437,23 @@ def search_ingredient():
     """
     api = factory.SearchIngredient.Factory()
     validation = validator.SearchIngredient.Validator()
-    """ check param enrichment """
-    with_files = validation.is_with_files_valid(value=request.args.get(api.param_query_with_files))[1]
-    """ clean search parameter """
-    search = api.format_body(data=request.args)
+    with_files = request.args.get(api.param_with_files)
+    """ check param """
+    validation.is_with_files_valid(value=request.args.get(api.param_with_files))
     """ check search """
+    search = api.format_body(data=request.args)
     validation.is_search_valid(data=search)
     """ get all recipe """
     data = ingredient.search(data=search)
     """ add enrichment if needed """
-    if with_files:
+    if with_files == "true":
         data.add_enrichment_file_for_all()
     """ return response """
-    return utils.Server().return_response(data=data.result, api=apis.name, http_code=200)
+    return server.return_response(data=data.result, api=apis.name, http_code=200)
 
 
 @apis.errorhandler(400)
-def validator_failed(err):
+def api_handler_validator_failed(err):
     """ Return a response for bad request.
 
     Parameters
@@ -455,11 +466,11 @@ def validator_failed(err):
     Any
         Server response.
     """
-    return utils.Server().return_response(data=err.description, api=apis.name, http_code=400)
+    return server.return_response(data=err.description, api=apis.name, http_code=400)
 
 
 @apis.errorhandler(404)
-def not_found(err):
+def api_handler_url_not_found(err):
     """ Return a response for url not found.
 
     Parameters
@@ -472,4 +483,4 @@ def not_found(err):
     Any
         Server response.
     """
-    return utils.Server().return_response(data=err, api=apis.name, http_code=404)
+    return server.return_response(data=err, api=apis.name, http_code=404)

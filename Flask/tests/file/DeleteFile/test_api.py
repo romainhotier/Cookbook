@@ -5,7 +5,7 @@ import utils
 import tests.file.DeleteFile.api as api
 import tests.file.model as file_model
 
-server = utils.Server
+server = utils.Server()
 api = api.DeleteFile()
 file = file_model.FileTest()
 
@@ -88,9 +88,12 @@ class DeleteFile(unittest.TestCase):
         detail = api.create_detail(param=api.param_id, msg=server.detail_doesnot_exist, value=tc_id)
         self.assertEqual(response_body["detail"], detail)
 
+    def tearDown(self):
+        file.clean()
+
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(DeleteFile())
+        file.clean()
 
 
 if __name__ == '__main__':

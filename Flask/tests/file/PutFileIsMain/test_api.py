@@ -6,7 +6,7 @@ import utils
 import tests.file.PutFileIsMain.api as api
 import tests.file.model as file_model
 
-server = utils.Server
+server = utils.Server()
 api = api.PutFileIsMain()
 file = file_model.FileTest()
 
@@ -18,16 +18,16 @@ class PutFileIsMain(unittest.TestCase):
 
     def test_0_api_ok(self):
         tc_file1 = file_model.FileTest().custom({"metadata": {"kind": "kind_file",
-                                                              "_id": ObjectId("111111111111111111111111"),
+                                                              "_id_parent": ObjectId("111111111111111111111111"),
                                                               "is_main": True}}).insert()
         tc_file2 = file_model.FileTest().custom({"metadata": {"kind": "kind_file",
-                                                              "_id": ObjectId("111111111111111111111111"),
+                                                              "_id_parent": ObjectId("111111111111111111111111"),
                                                               "is_main": False}}).insert()
         tc_file3 = file_model.FileTest().custom({"metadata": {"kind": "kind_file",
-                                                              "_id": ObjectId("111111111111111111111111"),
+                                                              "_id_parent": ObjectId("111111111111111111111111"),
                                                               "is_main": False}}).insert()
         tc_file4 = file_model.FileTest().custom({"metadata": {"kind": "kind_file",
-                                                              "_id": ObjectId("222222222222222222222222"),
+                                                              "_id_parent": ObjectId("222222222222222222222222"),
                                                               "is_main": True}}).insert()
         tc_id = tc_file3.get_id()
         """ call api """

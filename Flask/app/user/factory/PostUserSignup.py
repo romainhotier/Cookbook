@@ -3,9 +3,9 @@ class Factory(object):
     def __init__(self):
         """ Class to work around PostUserSignup.
         """
-        self.param_body_display_name = "display_name"
-        self.param_body_email = "email"
-        self.param_body_password = "password"
+        self.param_display_name = "display_name"
+        self.param_email = "email"
+        self.param_password = "password"
 
     def get_body_param(self):
         """ Get PostUserSignup's body parameters.
@@ -15,8 +15,7 @@ class Factory(object):
         list
             Body parameters.
         """
-        return [getattr(self, param) for param in dir(self) if not callable(getattr(self, param)) and
-                not param.startswith("__")]
+        return [self.param_display_name, self.param_email, self.param_password]
 
     def format_body(self, data):
         """ Format body for PostUserSignup.
@@ -41,7 +40,7 @@ class Factory(object):
         Parameters
         ----------
         data : dict
-            To be cleaned
+            To be cleaned.
 
         Returns
         -------

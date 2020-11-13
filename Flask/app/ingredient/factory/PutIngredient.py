@@ -4,7 +4,7 @@ class Factory(object):
         """ Class to work around PutIngredient.
         """
         self.param_id = "_id"
-        self.param_with_files = "_id"
+        self.param_with_files = "with_files"
         self.param_name = "name"
         self.param_slug = "slug"
         self.param_categories = "categories"
@@ -42,7 +42,7 @@ class Factory(object):
         Parameters
         ----------
         data : dict
-            To be cleaned
+            To be cleaned.
 
         Returns
         -------

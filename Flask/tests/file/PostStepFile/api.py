@@ -15,9 +15,9 @@ class PostStepFile(object):
         self.param_path = "path"
         self.param_filename = "filename"
         self.param_is_main = "is_main"
-        self.rep_code_msg_created = utils.Server.rep_code_msg_created.replace("xxx", "file")
-        self.rep_code_msg_error_400 = utils.Server.rep_code_msg_error_400.replace("xxx", "file")
-        self.rep_code_msg_error_404_url = utils.Server.rep_code_msg_error_404.replace("xxx", "cookbook")
+        self.rep_code_msg_created = utils.Server().rep_code_msg_created.replace("xxx", "file")
+        self.rep_code_msg_error_400 = utils.Server().rep_code_msg_error_400.replace("xxx", "file")
+        self.rep_code_msg_error_404_url = utils.Server().rep_code_msg_error_404.replace("xxx", "cookbook")
 
     @staticmethod
     def create_detail(param, msg, **kwargs):

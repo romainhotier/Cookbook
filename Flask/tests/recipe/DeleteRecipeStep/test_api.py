@@ -6,7 +6,7 @@ import tests.recipe.DeleteRecipeStep.api as api
 import tests.recipe.model as recipe_model
 import tests.file.model as file_model
 
-server = utils.Server
+server = utils.Server()
 api = api.DeleteRecipeStep()
 recipe = recipe_model.RecipeTest()
 file = file_model.FileTest()
@@ -20,8 +20,8 @@ class DeleteRecipeStep(unittest.TestCase):
 
     def test_0_api_ok(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -41,8 +41,8 @@ class DeleteRecipeStep(unittest.TestCase):
 
     def test_0_api_ok_more_param(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -63,8 +63,8 @@ class DeleteRecipeStep(unittest.TestCase):
 
     def test_1_url_not_found_1(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -83,8 +83,8 @@ class DeleteRecipeStep(unittest.TestCase):
 
     def test_1_url_not_found_2(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -103,8 +103,8 @@ class DeleteRecipeStep(unittest.TestCase):
 
     def test_2_id_recipe_without(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = ""
         tc_id_step = "111111111111111111111111"
@@ -123,8 +123,8 @@ class DeleteRecipeStep(unittest.TestCase):
 
     def test_2_id_recipe_string(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = "invalid"
         tc_id_step = "111111111111111111111111"
@@ -145,8 +145,8 @@ class DeleteRecipeStep(unittest.TestCase):
 
     def test_2_id_recipe_object_id_invalid(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = "aaaaaaaaaaaaaaaaaaaaaaaa"
         tc_id_step = "111111111111111111111111"
@@ -166,8 +166,8 @@ class DeleteRecipeStep(unittest.TestCase):
 
     def test_3_id_step_without(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = ""
@@ -186,8 +186,8 @@ class DeleteRecipeStep(unittest.TestCase):
 
     def test_3_id_step_string(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "invalid"
@@ -207,8 +207,8 @@ class DeleteRecipeStep(unittest.TestCase):
 
     def test_3_id_step_object_id_invalid(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "aaaaaaaaaaaaaaaaaaaaaaaa"
@@ -228,8 +228,8 @@ class DeleteRecipeStep(unittest.TestCase):
 
     def test_4_with_files_without(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -249,8 +249,8 @@ class DeleteRecipeStep(unittest.TestCase):
 
     def test_4_with_files_empty(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -273,8 +273,8 @@ class DeleteRecipeStep(unittest.TestCase):
 
     def test_4_with_files_string(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -297,8 +297,8 @@ class DeleteRecipeStep(unittest.TestCase):
 
     def test_4_with_files_string_false(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_recipe.add_file_recipe(filename="qa_rhr_1", is_main=True)
         tc_recipe.add_file_recipe(filename="qa_rhr_2", is_main=False)
@@ -325,8 +325,8 @@ class DeleteRecipeStep(unittest.TestCase):
 
     def test_4_with_files_string_true(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_file_recipe11 = tc_recipe.add_file_recipe(filename="qa_rhr_1", is_main=True)
         tc_file_recipe12 = tc_recipe.add_file_recipe(filename="qa_rhr_2", is_main=False)
@@ -358,8 +358,8 @@ class DeleteRecipeStep(unittest.TestCase):
 
     def test_5_clean_file(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_file_step111 = tc_recipe.add_file_step(_id_step="111111111111111111111111", filename="qa_rhr_1",
                                                   is_main=False)

@@ -5,9 +5,9 @@ from flask_cors import CORS
 import sys
 
 import utils
-#import app.file.router
+import app.file.router as file_routes
 import app.ingredient.router as ingredient_routes
-#import app.recipe.router
+import app.recipe.router as recipe_routes
 import app.user.router as user_routes
 
 backend = Flask(__name__)
@@ -20,9 +20,9 @@ backend.config["EXPIRATION_TOKEN"] = 5
 bcrypt = Bcrypt(backend)
 jwt = JWTManager(backend)
 
-# backend.register_blueprint(app.file.router.api)
+backend.register_blueprint(file_routes.apis)
 backend.register_blueprint(ingredient_routes.apis)
-# backend.register_blueprint(app.recipe.router.api)
+backend.register_blueprint(recipe_routes.apis)
 backend.register_blueprint(user_routes.apis)
 
 
@@ -78,7 +78,7 @@ def auth_handler_invalid(err):
 
 
 @backend.errorhandler(404)
-def back_handler_not_found(err):
+def back_handler_url_not_found(err):
     """ Return a response for url not found.
 
     Parameters
@@ -92,6 +92,23 @@ def back_handler_not_found(err):
         Server response.
     """
     return utils.Server().return_response(data=err.description, api="cookbook", http_code=404)
+
+
+@backend.errorhandler(405)
+def back_handler_not_allowed(err):
+    """ Return a response for request not allowed.
+
+    Parameters
+    ----------
+    err
+        Error from Flask.
+
+    Returns
+    -------
+    Any
+        Server response.
+    """
+    return utils.Server().return_response(data=err, api="cookbook", http_code=405)
 
 
 if __name__ == "__main__":

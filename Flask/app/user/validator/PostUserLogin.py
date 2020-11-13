@@ -15,7 +15,7 @@ class Validator(object):
         Parameters
         ----------
         data : dict
-            Body of PostUserLogin.
+            PostUserLogin's body.
 
         Returns
         -------
@@ -34,16 +34,16 @@ class Validator(object):
         Parameters
         ----------
         data : dict
-            Body of PostUserLogin.
+            PostUserLogin's body.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_mandatory(param=api.param_body_email, data=data)
-        validator.is_string(param=api.param_body_email, value=data[api.param_body_email])
-        validator.is_string_non_empty(param=api.param_body_email, value=data[api.param_body_email])
+        validator.is_mandatory(param=api.param_email, data=data)
+        validator.is_string(param=api.param_email, value=data[api.param_email])
+        validator.is_string_non_empty(param=api.param_email, value=data[api.param_email])
         return True
 
     # use in is_body_valid
@@ -54,14 +54,14 @@ class Validator(object):
         Parameters
         ----------
         data : dict
-            Body of PostUserLogin.
+            PostUserLogin's body.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_mandatory(param=api.param_body_password, data=data)
-        validator.is_string(param=api.param_body_password, value=data[api.param_body_password])
-        validator.is_string_non_empty(param=api.param_body_password, value=data[api.param_body_password])
+        validator.is_mandatory(param=api.param_password, data=data)
+        validator.is_string(param=api.param_password, value=data[api.param_password])
+        validator.is_string_non_empty(param=api.param_password, value=data[api.param_password])
         return True

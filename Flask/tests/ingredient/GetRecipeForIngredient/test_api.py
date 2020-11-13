@@ -6,7 +6,7 @@ import tests.ingredient.GetRecipeForIngredient.api as api
 import tests.ingredient.model as ingredient_model
 import tests.recipe.model as recipe_model
 
-server = utils.Server
+server = utils.Server()
 api = api.GetRecipeForIngredient()
 ingredient = ingredient_model.IngredientTest()
 recipe = recipe_model.RecipeTest()
@@ -177,7 +177,7 @@ class GetRecipeForIngredient(unittest.TestCase):
         tc_with_name = ""
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_ingredient + "/" + api.url2 + "?" + \
-            api.param_with_title + "=" + tc_with_name
+            api.param_with_titles + "=" + tc_with_name
         response = requests.get(url, verify=False)
         response_body = response.json()
         """ assert """
@@ -186,7 +186,7 @@ class GetRecipeForIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_with_title, msg=server.detail_must_be_in + " [true, false]",
+        detail = api.create_detail(param=api.param_with_titles, msg=server.detail_must_be_in + " [true, false]",
                                    value=tc_with_name)
         self.assertEqual(response_body["detail"], detail)
 
@@ -202,7 +202,7 @@ class GetRecipeForIngredient(unittest.TestCase):
         tc_with_name = "invalid"
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_ingredient + "/" + api.url2 + "?" + \
-            api.param_with_title + "=" + tc_with_name
+            api.param_with_titles + "=" + tc_with_name
         response = requests.get(url, verify=False)
         response_body = response.json()
         """ assert """
@@ -211,7 +211,7 @@ class GetRecipeForIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_with_title, msg=server.detail_must_be_in + " [true, false]",
+        detail = api.create_detail(param=api.param_with_titles, msg=server.detail_must_be_in + " [true, false]",
                                    value=tc_with_name)
         self.assertEqual(response_body["detail"], detail)
 
@@ -227,7 +227,7 @@ class GetRecipeForIngredient(unittest.TestCase):
         tc_with_name = "false"
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_ingredient + "/" + api.url2 + "?" + \
-            api.param_with_title + "=" + tc_with_name
+            api.param_with_titles + "=" + tc_with_name
         response = requests.get(url, verify=False)
         response_body = response.json()
         """ assert """
@@ -251,7 +251,7 @@ class GetRecipeForIngredient(unittest.TestCase):
         tc_with_name = "true"
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_ingredient + "/" + api.url2 + "?" + \
-            api.param_with_title + "=" + tc_with_name
+            api.param_with_titles + "=" + tc_with_name
         response = requests.get(url, verify=False)
         response_body = response.json()
         """ assert """

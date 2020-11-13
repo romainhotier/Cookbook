@@ -12,6 +12,7 @@ import utils
 import app.user.model as user
 
 mongo = utils.Mongo()
+user = user.User()
 
 
 class UserTest(object):
@@ -106,7 +107,7 @@ class UserTest(object):
         Returns
         -------
         Any
-            self.
+            Self
         """
         for i, j in data.items():
             if i in self.get_param():
@@ -118,34 +119,33 @@ class UserTest(object):
 
     def select_ok(self):
         """ Check if UserTest is correct.
-
-        Returns
-        -------
-        Any
-            self.
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_user]
-        usr = db.find_one({"_id": ObjectId(self.get_id())})
+        result = db.find_one({"_id": ObjectId(self.get_id())})
         client.close()
-        assert user is not None
-        assert user.User().check_password(password=usr["password"], password_attempt=self.password)
-        for value in usr:
+        assert result is not None
+        assert user.check_password(password=result["password"], password_attempt=self.password)
+        for value in result:
             if value not in ["_id", "password"]:
-                assert usr[value] == self.__getattribute__(value)
+                assert result[value] == self.__getattribute__(value)
 
     def select_ok_by_email(self):
+        """ Check if UserTest is correct by email.
+        """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_user]
-        user = db.find_one({"email": self.email})
+        result = db.find_one({"email": self.email})
         client.close()
-        assert user is not None
-        assert user.User().check_password(password=user["password"], password_attempt=self.password)
-        for value in user:
+        assert result is not None
+        assert user.check_password(password=result["password"], password_attempt=self.password)
+        for value in result:
             if value not in ["_id", "password"]:
-                assert user[value] == self.__getattribute__(value)
+                assert result[value] == self.__getattribute__(value)
 
     def select_nok(self):
+        """ Check if UserTest doesn't exist.
+        """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_user]
         result = db.count_documents({"_id": ObjectId(self.get_id())})
@@ -153,6 +153,8 @@ class UserTest(object):
         assert result == 0
 
     def select_nok_by_email(self):
+        """ Check if UserTest doesn't exist by email.
+        """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_user]
         result = db.count_documents({"email": self.email})
@@ -160,6 +162,8 @@ class UserTest(object):
         assert result == 0
 
     def select_nok_by_display_name(self):
+        """ Check if UserTest doesn't exist by display_name.
+        """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_user]
         result = db.count_documents({"display_name": self.display_name})
@@ -167,16 +171,25 @@ class UserTest(object):
         assert result == 0
 
     def insert(self):
+        """ Insert UserTest.
+        
+        Returns
+        -------
+        Any
+            Self
+        """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_user]
         data = self.get_without_id()
-        data["password"] = user.User().hash_password(password=self.password)
+        data["password"] = user.hash_password(password=self.password)
         query = db.insert_one(data)
         client.close()
         self.__setattr__("_id", query.inserted_id)
         return self
 
     def delete(self):
+        """ Delete UserTest.
+        """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_user]
         db.delete_one({"_id": ObjectId(self.get_id())})
@@ -185,6 +198,8 @@ class UserTest(object):
 
     @staticmethod
     def clean():
+        """ Clean UserTest by email and display_name.
+        """
         rgx = re.compile('.*qa_rhr.*', re.IGNORECASE)
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_user]
@@ -194,6 +209,8 @@ class UserTest(object):
         return
 
     def login(self, f):
+        """ Wrapper to login.
+        """
         @wraps(f)
         def wrapper(*args, **kwargs):
             self.insert()

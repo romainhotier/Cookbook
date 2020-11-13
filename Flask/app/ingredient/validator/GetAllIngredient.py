@@ -16,11 +16,12 @@ class Validator(object):
         Parameters
         ----------
         value : str
-            Value of parameter with_files.
+            With_files's value.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        return validator.is_string_boolean(param=api.param_query_with_files, value=value)
+        validator.is_string_boolean_or_none(param=api.param_with_files, value=value)
+        return True

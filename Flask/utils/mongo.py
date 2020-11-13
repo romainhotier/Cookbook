@@ -1,6 +1,5 @@
 import json
 import sys
-
 from bson import ObjectId
 from pymongo import MongoClient, errors
 
@@ -22,7 +21,7 @@ class JSONEncoder(json.JSONEncoder):
 class Mongo(object):
 
     def __init__(self):
-        """ MongoDb information.
+        """ MongoDB information.
         """
         self.ip = '127.0.0.1'
         self.port = 27017
@@ -33,6 +32,7 @@ class Mongo(object):
         self.collection_ingredient = 'ingredient'
         self.collection_ingredient_recipe = "ingredient_recipe"
         self.collection_recipe = 'recipe'
+        self.collection_step = 'step'
         self.collection_fs_files = 'fs.files'
         self.collection_fs_chunks = 'fs.chunks'
 
@@ -61,7 +61,7 @@ class Mongo(object):
         Parameters
         ----------
         data : Any
-            Mongodb result.
+            MongoDB result.
 
         Returns
         -------
@@ -71,7 +71,7 @@ class Mongo(object):
         return json.loads(JSONEncoder().encode(data))
 
     def check_mongodb_up(self):
-        """ Check if mongoDb is UP.
+        """ Check if MongoDB is UP.
 
         Returns
         -------

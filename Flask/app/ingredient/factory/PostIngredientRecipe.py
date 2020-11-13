@@ -3,10 +3,10 @@ class Factory(object):
     def __init__(self):
         """ Class to work around PostIngredientRecipe.
         """
-        self.param_body_id_ingredient = "_id_ingredient"
-        self.param_body_id_recipe = "_id_recipe"
-        self.param_body_quantity = "quantity"
-        self.param_body_unit = "unit"
+        self.param_id_ingredient = "_id_ingredient"
+        self.param_id_recipe = "_id_recipe"
+        self.param_quantity = "quantity"
+        self.param_unit = "unit"
 
     def get_body_param(self):
         """ Get PostIngredientRecipe's body parameters.
@@ -16,8 +16,7 @@ class Factory(object):
         list
             Body parameters.
         """
-        return [getattr(self, param) for param in dir(self) if not callable(getattr(self, param)) and
-                not param.startswith("__")]
+        return [self.param_id_recipe, self.param_id_ingredient, self.param_quantity, self.param_unit]
 
     def format_body(self, data):
         """ Format body for PostIngredientRecipe.
@@ -42,7 +41,7 @@ class Factory(object):
         Parameters
         ----------
         data : dict
-            To be cleaned
+            To be cleaned.
 
         Returns
         -------

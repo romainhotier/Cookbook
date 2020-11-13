@@ -6,7 +6,7 @@ import tests.file.PostRecipeFile.api as api
 import tests.recipe.model as recipe_model
 import tests.file.model as file_model
 
-server = utils.Server
+server = utils.Server()
 api = api.PostRecipeFile()
 recipe = recipe_model.RecipeTest()
 file = file_model.FileTest()
@@ -541,9 +541,14 @@ class PostRecipeFile(unittest.TestCase):
         tc_file2.select_ok()
         tc_file1.select_ok()
 
+    def tearDown(self):
+        recipe.clean()
+        file.clean()
+
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(PostRecipeFile())
+        recipe.clean()
+        file.clean()
 
 
 if __name__ == '__main__':

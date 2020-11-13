@@ -3,9 +3,9 @@ class Factory(object):
     def __init__(self):
         """ Class to work around PutIngredientRecipe.
         """
-        self.param_query_id = "_id"
-        self.param_body_quantity = "quantity"
-        self.param_body_unit = "unit"
+        self.param_id = "_id"
+        self.param_quantity = "quantity"
+        self.param_unit = "unit"
 
     def get_body_param(self):
         """ Get PutIngredientRecipe's body parameters.
@@ -15,8 +15,7 @@ class Factory(object):
         list
             Body parameters.
         """
-        return [getattr(self, param) for param in dir(self) if not callable(getattr(self, param)) and
-                not param.startswith("__") and not param.startswith("param_query")]
+        return [self.param_quantity, self.param_unit]
 
     def format_body(self, data):
         """ Format body for PutIngredientRecipe.
@@ -41,7 +40,7 @@ class Factory(object):
         Parameters
         ----------
         data : dict
-            To be cleaned
+            To be cleaned.
 
         Returns
         -------

@@ -100,16 +100,16 @@ class Validator(object):
             return True
 
     @staticmethod
-    def is_object_id_in_collection_special_step(param, id_recipe, id_step):
+    def is_object_id_in_recipe_steps(param, _id_recipe, _id_step):
         """ Check if the ObjectId is present in a recipe steps.
 
         Parameters
         ----------
         param : str
             Name of the tested parameter.
-        id_recipe : ObjectId
+        _id_recipe : str
             ObjectId of the recipe.
-        id_step : ObjectId
+        _id_step : str
             ObjectId of the step.
 
         Returns
@@ -119,11 +119,11 @@ class Validator(object):
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
-        result = db.count_documents({"$and": [{"_id": ObjectId(id_recipe)},
-                                              {"steps": {"$elemMatch": {"_id": ObjectId(id_step)}}}]})
+        result = db.count_documents({"$and": [{"_id": ObjectId(_id_recipe)},
+                                              {"steps": {"$elemMatch": {"_id": ObjectId(_id_step)}}}]})
         client.close()
         if result == 0:
-            detail = server.format_detail(param=param, msg=server.detail_doesnot_exist, value=id_step)
+            detail = server.format_detail(param=param, msg=server.detail_doesnot_exist, value=_id_step)
             return abort(status=400, description=detail)
         else:
             return True
@@ -329,36 +329,88 @@ class Validator(object):
             return abort(status=400, description=detail)
 
     @staticmethod
-    def is_unique(kind, **kwargs):
-        """ Check if the key/value is unique.
+    def is_unique_user(param, value):
+        """ Check if User already exist.
 
         Parameters
         ----------
-        kind : str
-            Type to be checked.
-        kwargs : Any
-            Param and values to be tested.
+        param : str
+            Email to be checked.
+        value : str
+            Value to be checked.
 
         Returns
         -------
         Any
             Raise an "abort 400" if validation failed.
         """
-        check = bool
-        detail = {}
-        if kind == "ingredient":
-            check = ingredient.check_ingredient_is_unique(key=kwargs["param"], value=kwargs["value"])
-            detail = server.format_detail(param=kwargs["param"], msg=server.detail_already_exist, value=kwargs["value"])
-        elif kind == "ingredient_recipe":
-            check = ingredient_recipe.check_link_is_unique(_id_ingredient=kwargs["_id_ingredient"],
-                                                           _id_recipe=kwargs["_id_recipe"])
-            detail = "link between {} and {} ".format(kwargs["_id_ingredient"], kwargs["_id_recipe"]) + \
-                     server.detail_already_exist.lower()
-        elif kind == "user":
-            check = user.check_user_is_unique(email=kwargs["value"])
-            detail = server.format_detail(param=kwargs["param"], msg=server.detail_already_exist, value=kwargs["value"])
-        if not check:
+        if not user.check_user_is_unique(email=value):
+            detail = server.format_detail(param=param, msg=server.detail_already_exist, value=value)
             return abort(status=400, description=detail)
+        return True
+
+    @staticmethod
+    def is_unique_ingredient(param, value):
+        """ Check if Ingredient already exist.
+
+        Parameters
+        ----------
+        param : str
+            Key to be checked.
+        value : str
+            Value to be checked.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        if not ingredient.check_ingredient_is_unique(key=param, value=value):
+            detail = server.format_detail(param=param, msg=server.detail_already_exist, value=value)
+            return abort(status=400, description=detail)
+        return True
+
+    @staticmethod
+    def is_unique_ingredient_recipe(_id_ingredient, _id_recipe):
+        """ Check if the key/value is unique.
+
+        Parameters
+        ----------
+        _id_ingredient : str
+            ObjectId of Ingredient.
+        _id_recipe : str
+            ObjectId of Recipe.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        if not ingredient_recipe.check_link_is_unique(_id_ingredient=_id_ingredient, _id_recipe=_id_recipe):
+            detail = "link between {} and {} ".format(_id_ingredient, _id_recipe) + server.detail_already_exist.lower()
+            return abort(status=400, description=detail)
+        return True
+
+    @staticmethod
+    def is_unique_recipe(param, value):
+        """ Check if the key/value is unique.
+
+        Parameters
+        ----------
+        param : str
+            Key to be checked.
+        value : str
+            Value to be checked.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        if not recipe.check_recipe_is_unique(key=param, value=value):
+            detail = server.format_detail(param=param, msg=server.detail_already_exist, value=value)
+            return abort(status=400, description=detail)
+        return True
 
     @staticmethod
     def is_mandatory_query(param, value):

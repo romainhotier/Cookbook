@@ -16,7 +16,7 @@ class Validator(object):
         Parameters
         ----------
         data : dict
-            Body of PostIngredientRecipe.
+            PostIngredientRecipe's body.
 
         Returns
         -------
@@ -25,9 +25,10 @@ class Validator(object):
         """
         self.is_id_ingredient_valid(data=data)
         self.is_id_recipe_valid(data=data)
+        validator.is_unique_ingredient_recipe(_id_ingredient=data[api.param_id_ingredient],
+                                              _id_recipe=data[api.param_id_recipe])
         self.is_quantity_valid(data=data)
         self.is_unit_valid(data=data)
-        self.is_link_already_exist(data=data)
 
     # use in is_body_valid
     @staticmethod
@@ -37,17 +38,16 @@ class Validator(object):
         Parameters
         ----------
         data : dict
-            Body of PostIngredientRecipe.
+            PostIngredientRecipe's body.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_mandatory(param=api.param_body_id_ingredient, data=data)
-        validator.is_object_id(param=api.param_body_id_ingredient, value=data[api.param_body_id_ingredient])
-        validator.is_object_id_in_collection(param=api.param_body_id_ingredient,
-                                             value=data[api.param_body_id_ingredient],
+        validator.is_mandatory(param=api.param_id_ingredient, data=data)
+        validator.is_object_id(param=api.param_id_ingredient, value=data[api.param_id_ingredient])
+        validator.is_object_id_in_collection(param=api.param_id_ingredient, value=data[api.param_id_ingredient],
                                              collection=mongo.collection_ingredient)
         return True
 
@@ -59,16 +59,16 @@ class Validator(object):
         Parameters
         ----------
         data : dict
-            Body of PostIngredientRecipe.
+            PostIngredientRecipe's body.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_mandatory(param=api.param_body_id_recipe, data=data)
-        validator.is_object_id(param=api.param_body_id_recipe, value=data[api.param_body_id_recipe])
-        validator.is_object_id_in_collection(param=api.param_body_id_recipe, value=data[api.param_body_id_recipe],
+        validator.is_mandatory(param=api.param_id_recipe, data=data)
+        validator.is_object_id(param=api.param_id_recipe, value=data[api.param_id_recipe])
+        validator.is_object_id_in_collection(param=api.param_id_recipe, value=data[api.param_id_recipe],
                                              collection=mongo.collection_recipe)
         return True
 
@@ -80,15 +80,15 @@ class Validator(object):
         Parameters
         ----------
         data : dict
-            Body of PostIngredientRecipe.
+            PostIngredientRecipe's body.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_mandatory(param=api.param_body_quantity, data=data)
-        validator.is_int(param=api.param_body_quantity, value=data[api.param_body_quantity])
+        validator.is_mandatory(param=api.param_quantity, data=data)
+        validator.is_int(param=api.param_quantity, value=data[api.param_quantity])
         return True
 
     # use in is_body_valid
@@ -99,32 +99,13 @@ class Validator(object):
         Parameters
         ----------
         data : dict
-            Body of PostIngredientRecipe.
+            PostIngredientRecipe's body.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_mandatory(param=api.param_body_unit, data=data)
-        validator.is_string(param=api.param_body_unit, value=data[api.param_body_unit])
-        return True
-
-    # use in is_body_valid
-    @staticmethod
-    def is_link_already_exist(data):
-        """ Check if IngredientRecipe already exist.
-
-        Parameters
-        ----------
-        data : dict
-            Body of PostIngredientRecipe.
-
-        Returns
-        -------
-        Any
-            Response server if validation failed, True otherwise.
-        """
-        validator.is_unique(kind="ingredient_recipe", _id_ingredient=data[api.param_body_id_ingredient],
-                            _id_recipe=data[api.param_body_id_recipe])
+        validator.is_mandatory(param=api.param_unit, data=data)
+        validator.is_string(param=api.param_unit, value=data[api.param_unit])
         return True

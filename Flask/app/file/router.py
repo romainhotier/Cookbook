@@ -1,20 +1,22 @@
-from flask import Blueprint, make_response, request
+from flask import Blueprint, request
 
 import utils
-import app.file as file_model
+
+import app.file.model as file_model
 import app.file.factory as factory
 import app.file.validator as validator
 import app.ingredient.model as ingredient_model
-import app.recipe as recipe_model
+import app.recipe.model as recipe_model
 
-api = Blueprint('file', __name__, url_prefix='/file')
+apis = Blueprint('file', __name__, url_prefix='/file')
 
-file = file_model.FileModel
+server = utils.Server()
+file = file_model.File()
 ingredient = ingredient_model.Ingredient()
-recipe = recipe_model.RecipeModel
+recipe = recipe_model.Recipe()
 
 
-@api.route('/<_id>', methods=['DELETE'])
+@apis.route('/<_id>', methods=['DELETE'])
 def delete_file(_id):
     """
     @api {delete} /file/<_id_file>  DeleteFile
@@ -37,15 +39,16 @@ def delete_file(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
-    """ check param _id """
-    validator.ValidatorDeleteFile.is_object_id_valid(_id=_id)
+    validation = validator.DeleteFile.Validator()
+    """ check param """
+    validation.is_object_id_valid(value=_id)
     """ delete file """
     file.delete(_id=_id)
     """ return response """
-    return utils.Server.return_response(data=None, api=api.name, code=204)
+    return server.return_response(data=None, api=apis.name, http_code=204)
 
 
-@api.route('/<_id>', methods=['GET'])
+@apis.route('/<_id>', methods=['GET'])
 def get_file(_id):
     """
     @api {get} /file/<_id_file>  DownloadFile
@@ -70,17 +73,16 @@ def get_file(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
-    """ check param _id """
-    validator.ValidatorGetFile.is_object_id_valid(_id=_id)
+    validation = validator.GetFile.Validator()
+    """ check param """
+    validation.is_object_id_valid(value=_id)
     """ get file """
     data = file.select_one(_id=_id)
     """ return response """
-    response = make_response(data.read(), 200)
-    response.mimetype = data.content_type
-    return response
+    return server.return_response(data=data, api=apis.name, http_code=200, file=True)
 
 
-@api.route('/ingredient/<_id>', methods=['POST'])
+@apis.route('/ingredient/<_id>', methods=['POST'])
 def post_ingredient_file(_id):
     """
     @api {post} /file/ingredient/<_id_ingredient>  PostIngredientFile
@@ -119,20 +121,22 @@ def post_ingredient_file(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
-    """ check param _id """
-    validator.ValidatorPostFile.is_object_id_valid(kind="ingredient", _id=_id)
+    api = factory.PostFile.Factory()
+    validation = validator.PostFile.Validator()
+    """ check param """
+    validation.is_object_id_valid(kind="ingredient", value=_id)
     """ check body """
-    body = factory.FactoryPostFile.clean_body(data=request.json)
-    validator.ValidatorPostFile.is_body_valid(data=body)
+    body = api.format_body(data=request.json)
+    validation.is_body_valid(data=body)
     """ insert file """
     inserted_id = file.insert(kind="ingredient", _id_parent=_id, metadata=body)
     """ return response """
     data = ingredient.select_one(_id=_id).add_enrichment_file_for_one()
-    detail = factory.FactoryPostFile.detail_information(_id_file=inserted_id)
-    return utils.Server.return_response(data=data.result, api=api.name, code=201, detail=detail)
+    detail = api.detail_information(_id_file=inserted_id)
+    return server.return_response(data=data.result, api=apis.name, http_code=201, detail=detail)
 
 
-@api.route('/recipe/<_id>', methods=['POST'])
+@apis.route('/recipe/<_id>', methods=['POST'])
 def post_recipe_file(_id):
     """
     @api {post} /file/recipe/<_id_recipe>  PostRecipeFile
@@ -172,20 +176,22 @@ def post_recipe_file(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
-    """ check param _id """
-    validator.ValidatorPostFile.is_object_id_valid(kind="recipe", _id=_id)
+    api = factory.PostFile.Factory()
+    validation = validator.PostFile.Validator()
+    """ check param """
+    validation.is_object_id_valid(kind="recipe", value=_id)
     """ check body """
-    body = factory.FactoryPostFile.clean_body(data=request.json)
-    validator.ValidatorPostFile.is_body_valid(data=body)
+    body = api.format_body(data=request.json)
+    validation.is_body_valid(data=body)
     """ insert file """
     inserted_id = file.insert(kind="recipe", _id_parent=_id, metadata=body)
     """ return response """
     data = recipe.select_one(_id=_id).add_enrichment_file_for_one()
-    detail = factory.FactoryPostFile.detail_information(_id_file=inserted_id)
-    return utils.Server.return_response(data=data.result, api=api.name, code=201, detail=detail)
+    detail = api.detail_information(_id_file=inserted_id)
+    return server.return_response(data=data.result, api=apis.name, http_code=201, detail=detail)
 
 
-@api.route('/recipe/<_id_recipe>/step/<_id_step>', methods=['POST'])
+@apis.route('/recipe/<_id_recipe>/step/<_id_step>', methods=['POST'])
 def post_step_file(_id_recipe, _id_step):
     """
     @api {post} /file/recipe/<_id_recipe>/step/<_id_step> PostStepFile
@@ -214,8 +220,8 @@ def post_step_file(_id_recipe, _id_step):
         'data': {'_id': '5e6a4223e664b60da7cd8626', 'cooking_time': 0, 'files': [], 'level': 0, 'nb_people': 0,
                  'note': '', 'preparation_time': 0, 'resume': '',
                  'steps': [{'_id': '111111111111111111111111', 'files': [{'_id': '5e6a42237e59e8439a883d99',
-                 'is_main': False}], 'step': 'a'}, {'_id': '222222222222222222222222', 'files': [], 'step': 'b'}],
-                 'title': 'qa_rhr', 'slug': 'x', 'categories': []},
+                 'is_main': False}], 'description': 'a'}, {'_id': '222222222222222222222222', 'files': [],
+                 'description': 'b'}], 'title': 'qa_rhr', 'slug': 'x', 'categories': []},
         'detail': 'added file ObjectId: 5e6a42237e59e8439a883d99'
     }
 
@@ -227,21 +233,23 @@ def post_step_file(_id_recipe, _id_step):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
-    """ check param _id """
-    validator.ValidatorPostFile.is_object_id_valid_special_step(kind="recipe", _id_recipe=_id_recipe)
-    validator.ValidatorPostFile.is_object_id_valid_special_step(kind="step", _id_recipe=_id_recipe, _id_step=_id_step)
+    api = factory.PostFile.Factory()
+    validation = validator.PostFile.Validator()
+    """ check param """
+    validation.is_object_id_valid_special_step(kind="recipe", _id_recipe=_id_recipe)
+    validation.is_object_id_valid_special_step(kind="step", _id_recipe=_id_recipe, _id_step=_id_step)
     """ check body """
-    body = factory.FactoryPostFile.clean_body(data=request.json)
-    validator.ValidatorPostFile.is_body_valid(data=body)
+    body = api.format_body(data=request.json)
+    validation.is_body_valid(data=body)
     """ insert file """
     inserted_id = file.insert(kind="step", _id_parent=_id_step, metadata=body)
     """ return response """
     data = recipe.select_one(_id=_id_recipe).add_enrichment_file_for_one()
-    detail = factory.FactoryPostFile.detail_information(_id_file=inserted_id)
-    return utils.Server.return_response(data=data.result, api=api.name, code=201, detail=detail)
+    detail = api.detail_information(_id_file=inserted_id)
+    return server.return_response(data=data.result, api=apis.name, http_code=201, detail=detail)
 
 
-@api.route('/is_main/<_id>', methods=['PUT'])
+@apis.route('/is_main/<_id>', methods=['PUT'])
 def put_file_is_main(_id):
     """
     @api {put} /file/<_id_file>  PutFileIsMain
@@ -268,22 +276,46 @@ def put_file_is_main(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
-    """ check param _id """
-    validator.ValidatorPutFile.is_object_id_valid(_id=_id)
+    api = factory.PutFile.Factory()
+    validation = validator.PutFile.Validator()
+    """ check param """
+    validation.is_object_id_valid(value=_id)
     """ update file """
     _id_parent = file.set_is_main_true(_id=_id)
     """ return response """
-    data = factory.FactoryPutFile.data_information(_id_file=_id, _id_parent=_id_parent)
-    return utils.Server.return_response(data=data, api=api.name, code=200)
+    data = api.data_information(_id_file=_id, _id_parent=_id_parent)
+    return server.return_response(data=data, api=apis.name, http_code=200)
 
 
-@api.errorhandler(400)
-def validator_failed(error):
-    """" abort 400 """
-    return utils.Server.return_response(data=error.description, api=api.name, code=400)
+@apis.errorhandler(400)
+def api_handler_validator_failed(err):
+    """ Return a response for bad request.
+
+    Parameters
+    ----------
+    err
+        Error from Flask.
+
+    Returns
+    -------
+    Any
+        Server response.
+    """
+    return server.return_response(data=err.description, api=apis.name, http_code=400)
 
 
-@api.errorhandler(404)
-def not_found(error):
-    """" abort 404 """
-    return utils.Server.return_response(data=error.description, api=api.name, code=404)
+@apis.errorhandler(404)
+def api_handler_url_not_found(err):
+    """ Return a response for url not found.
+
+    Parameters
+    ----------
+    err
+        Error from Flask.
+
+    Returns
+    -------
+    Any
+        Server response.
+    """
+    return server.return_response(data=err, api=apis.name, http_code=404)

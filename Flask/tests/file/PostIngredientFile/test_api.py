@@ -6,7 +6,7 @@ import tests.file.PostIngredientFile.api as api
 import tests.ingredient.model as ingredient_model
 import tests.file.model as file_model
 
-server = utils.Server
+server = utils.Server()
 api = api.PostIngredientFile()
 ingredient = ingredient_model.IngredientTest()
 file = file_model.FileTest()
@@ -542,9 +542,14 @@ class PostIngredientFile(unittest.TestCase):
         tc_file2.select_ok()
         tc_file1.select_ok()
 
+    def tearDown(self):
+        ingredient.clean()
+        file.clean()
+
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(PostIngredientFile())
+        ingredient.clean()
+        file.clean()
 
 
 if __name__ == '__main__':

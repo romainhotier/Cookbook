@@ -23,12 +23,12 @@ class Ingredient(object):
         self.result = {}
 
     def select_all(self):
-        """ Get all existing ingredient.
+        """ Get all existing Ingredients.
 
         Returns
         -------
         Any
-            List of all ingredients.
+            List of all Ingredients.
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient]
@@ -38,17 +38,17 @@ class Ingredient(object):
         return self
 
     def select_one(self, _id):
-        """ Get one ingredient by it's ObjectId.
+        """ Get one Ingredient by it's ObjectId.
 
         Parameters
         ----------
         _id : str
-            ObjectId of the ingredient.
+            Ingredient's ObjectId.
 
         Returns
         -------
         Any
-            One ingredient
+            One Ingredient
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient]
@@ -58,7 +58,7 @@ class Ingredient(object):
         return self
 
     def search(self, data):
-        """ Search ingredients with matching keys.
+        """ Search Ingredients with matching keys.
 
         Parameters
         ----------
@@ -68,7 +68,7 @@ class Ingredient(object):
         Returns
         -------
         Any
-            List of matched ingredients.
+            List of matched Ingredients.
         """
         search = {}
         for i, j in data.items():
@@ -85,7 +85,7 @@ class Ingredient(object):
 
     @staticmethod
     def check_ingredient_is_unique(key, value):
-        """ Check if an ingredient already exist with a specific key.
+        """ Check if an Ingredient already exist with a specific key.
 
         Parameters
         ----------
@@ -114,12 +114,12 @@ class Ingredient(object):
         Parameters
         ----------
         data : dict
-            Information of the ingredient.
+            Ingredient's data.
 
         Returns
         -------
         Any
-            Inserted ingredient.
+            Inserted Ingredient.
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient]
@@ -135,14 +135,14 @@ class Ingredient(object):
         Parameters
         ----------
         _id : str
-            ObjectId of the ingredient.
+            Ingredient's ObjectId.
         data : dict
-            Information of the ingredient.
+            Ingredient's data.
 
         Returns
         -------
         Any
-            Updated ingredient.
+            Updated Ingredient.
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient]
@@ -159,7 +159,7 @@ class Ingredient(object):
         Parameters
         ----------
         _id : str
-            ObjectId of the ingredient.
+            Ingredient ObjectId.
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient]
@@ -168,12 +168,12 @@ class Ingredient(object):
         return
 
     def add_enrichment_file_for_all(self):
-        """ Add files informations for all ingredient.
+        """ Add files information for all Ingredients.
 
         Returns
         -------
         Any
-            List of ingredient with files informations.
+            List of Ingredients with Files information.
         """
         for ingredient in self.result:
             ingredient["files"] = []
@@ -185,12 +185,12 @@ class Ingredient(object):
         return self
 
     def add_enrichment_file_for_one(self):
-        """ Add files informations for one ingredient.
+        """ Add Files information for one Ingredient.
 
         Returns
         -------
         Any
-            One ingredient with files informations.
+            One Ingredient with Files information.
         """
         self.result["files"] = []
         """ get files """
@@ -202,17 +202,17 @@ class Ingredient(object):
 
     @staticmethod
     def get_name_by_id(_id):
-        """ Get ingredient's name associated with a ObjectId.
+        """ Get Ingredient's name associated with a ObjectId.
 
         Parameters
         ----------
         _id : str
-            ObjectId of the ingredient.
+            Ingredient's ObjectId.
 
         Returns
         -------
         str
-            Name of the ingredient.
+            Ingredient's name.
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient]
@@ -228,7 +228,7 @@ class IngredientRecipe(object):
 
         - _id_ingredient = Ingredient's ObjectId in mongo (Unique)
         - _id_recipe = Recipe's ObjectId in mongo (Unique)
-        - quantity = Quantity of the ingredient for this recipe
+        - quantity = Quantity of the Ingredient for this Recipe
         - unit = Unit of the quantity
         """
         self.result = {}
@@ -239,7 +239,7 @@ class IngredientRecipe(object):
         Parameters
         ----------
         data : dict
-            Information of the link.
+            Link's data.
 
         Returns
         -------
@@ -260,7 +260,7 @@ class IngredientRecipe(object):
         Parameters
         ----------
         _id_recipe : str
-            ObjectId of the recipe.
+            Recipe's ObjectId.
 
         Returns
         -------
@@ -275,17 +275,17 @@ class IngredientRecipe(object):
         return self
 
     def select_all_by_id_ingredient(self, _id_ingredient):
-        """ Get all Recipe associated to an Ingredient.
+        """ Get all Recipes associated to an Ingredient.
 
         Parameters
         ----------
         _id_ingredient : str
-            ObjectId of the ingredient.
+            Ingredient's ObjectId.
 
         Returns
         -------
         Any
-            List of Recipe's with this Ingredient.
+            List of Recipes with this Ingredient.
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient_recipe]
@@ -300,14 +300,14 @@ class IngredientRecipe(object):
         Parameters
         ----------
         _id : str
-            ObjectId of the association.
+            Link's ObjectId.
         data : dict
-            Information of the association.
+            Link's data.
 
         Returns
         -------
         Any
-            Updated association.
+            Updated link.
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient_recipe]
@@ -324,7 +324,7 @@ class IngredientRecipe(object):
         Parameters
         ----------
         _id : str
-            ObjectId of the association.
+            Link's ObjectId.
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient_recipe]
@@ -339,7 +339,7 @@ class IngredientRecipe(object):
         Parameters
         ----------
         _id_ingredient : str
-            ObjectId of the Ingredient.
+            Ingredient's ObjectId.
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient_recipe]
@@ -354,7 +354,7 @@ class IngredientRecipe(object):
         Parameters
         ----------
         _id_recipe : str
-            ObjectId of the Recipe.
+            Recipe's ObjectId.
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient_recipe]
@@ -369,14 +369,14 @@ class IngredientRecipe(object):
         Parameters
         ----------
         _id_ingredient : str
-            ObjectId of the Ingredient.
+            Ingredient's ObjectId.
         _id_recipe : str
-            ObjectId of the Recipe.
+            Recipe's ObjectId.
 
         Returns
         -------
         bool
-            True if assocaition doesn't exist in mongo.
+            True if link doesn't exist in mongo.
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient_recipe]

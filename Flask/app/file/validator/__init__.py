@@ -1,6 +1,4 @@
-from app.file.validator import DeleteFile, GetFile, PostFile, PutFile
-
-ValidatorDeleteFile = DeleteFile.Validator()
-ValidatorGetFile = GetFile.Validator()
-ValidatorPostFile = PostFile.Validator()
-ValidatorPutFile = PutFile.Validator()
+import app.file.validator.DeleteFile
+import app.file.validator.GetFile
+import app.file.validator.PostFile
+import app.file.validator.PutFile

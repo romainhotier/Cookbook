@@ -1,50 +1,140 @@
 import utils
+import app.file.factory.PostFile as Factory
+
+mongo = utils.Mongo()
+validator = utils.Validator()
+api = Factory.Factory()
 
 
 class Validator(object):
+    """ Class to validate PostFile.
+    """
 
     @staticmethod
-    def is_object_id_valid(kind, _id):
-        utils.Validator.is_object_id(param="_id", value=_id)
-        utils.Validator.is_object_id_in_collection(param="_id", value=_id, 
-                                                   collection=utils.Mongo.select_collection(kind=kind))
+    def is_object_id_valid(kind, value):
+        """ Check if _id is correct.
+
+        Parameters
+        ----------
+        kind : str
+            Type of the parent.
+        value : str
+            ObjectId of the parent.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        validator.is_object_id(param=api.param_id, value=value)
+        validator.is_object_id_in_collection(param=api.param_id, value=value,
+                                             collection=mongo.select_collection(kind=kind))
         return True
 
     @staticmethod
-    def is_object_id_valid_special_step(kind, _id_recipe, **optional):
+    def is_object_id_valid_special_step(kind, _id_recipe, **kwargs):
+        """ Check if _id is correct for both recipe and step.
+
+        Parameters
+        ----------
+        kind : str
+            Type of the parent.
+        _id_recipe : str
+            Recipe's ObjectId.
+        kwargs : Any
+            _id_step : Step's ObjectId.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
         if kind in ["recipe"]:
-            utils.Validator.is_object_id(param="_id_recipe", value=_id_recipe)
-            utils.Validator.is_object_id_in_collection(param="_id_recipe", value=_id_recipe,
-                                                       collection=utils.Mongo.select_collection(kind=kind))
+            validator.is_object_id(param=api.param_id_recipe, value=_id_recipe)
+            validator.is_object_id_in_collection(param=api.param_id_recipe, value=_id_recipe,
+                                                 collection=mongo.select_collection(kind=kind))
             return True
         if kind in ["step"]:
-            utils.Validator.is_object_id(param="_id_step", value=optional["_id_step"])
-            utils.Validator.is_object_id_in_collection_special_step(param="_id_step", _id_recipe=_id_recipe,
-                                                                    _id_step=optional["_id_step"])
+            validator.is_object_id(param=api.param_id_step, value=kwargs[api.param_id_step])
+            validator.is_object_id_in_recipe_steps(param=api.param_id_step, _id_recipe=_id_recipe,
+                                                   _id_step=kwargs[api.param_id_step])
             return True
+        return True
 
     def is_body_valid(self, data):
-        self.is_path_valid(data)
-        self.is_filename_valid(data)
-        self.is_is_main_valid(data)
+        """ Check if body is correct.
 
+        Parameters
+        ----------
+        data : dict
+            PostFile's body.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        self.is_path_valid(data=data)
+        self.is_filename_valid(data=data)
+        self.is_is_main_valid(data=data)
+
+    # use in is_body_valid
     @staticmethod
     def is_path_valid(data):
-        utils.Validator.is_mandatory(param="path", data=data)
-        utils.Validator.is_string(param="path", value=data["path"])
-        utils.Validator.is_string_non_empty(param="path", value=data["path"])
-        utils.Validator.is_path_exist(param="path", value=data["path"])
+        """ Check if path is correct.
+
+        Parameters
+        ----------
+        data : dict
+            PostFile's body.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        utils.Validator.is_mandatory(param=api.param_path, data=data)
+        utils.Validator.is_string(param=api.param_path, value=data[api.param_path])
+        utils.Validator.is_string_non_empty(param=api.param_path, value=data[api.param_path])
+        utils.Validator.is_path_exist(param=api.param_path, value=data[api.param_path])
         return True
 
+    # use in is_body_valid
     @staticmethod
     def is_filename_valid(data):
-        utils.Validator.is_mandatory(param="filename", data=data)
-        utils.Validator.is_string(param="filename", value=data["filename"])
-        utils.Validator.is_string_non_empty(param="filename", value=data["filename"])
+        """ Check if filename is correct.
+
+        Parameters
+        ----------
+        data : dict
+            PostFile's body.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        utils.Validator.is_mandatory(param=api.param_filename, data=data)
+        utils.Validator.is_string(param=api.param_filename, value=data[api.param_filename])
+        utils.Validator.is_string_non_empty(param=api.param_filename, value=data[api.param_filename])
         return True
 
+    # use in is_body_valid
     @staticmethod
     def is_is_main_valid(data):
-        if "is_main" in data.keys():
-            utils.Validator.is_boolean(param="is_main", value=data["is_main"])
+        """ Check if is_main is correct if specified.
+
+        Parameters
+        ----------
+        data : dict
+            PostFile's body.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        if api.param_is_main in data:
+            utils.Validator.is_boolean(param=api.param_is_main, value=data[api.param_is_main])
             return True
+        return True

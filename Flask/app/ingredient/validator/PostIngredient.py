@@ -15,7 +15,7 @@ class Validator(object):
         Parameters
         ----------
         data : dict
-            Body of PostIngredient.
+            PostIngredient's body.
 
         Returns
         -------
@@ -25,7 +25,7 @@ class Validator(object):
         self.is_name_valid(data=data)
         self.is_slug_valid(data=data)
         self.is_categories_valid(data=data)
-        self.is_nutriments_valid(data=data)
+        #self.is_nutriments_valid(data=data)
         return True
 
     # use in is_body_valid
@@ -36,17 +36,17 @@ class Validator(object):
         Parameters
         ----------
         data : dict
-            Body of PostIngredient.
+            PostIngredient's body.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_mandatory(param=api.param_body_name, data=data)
-        validator.is_string(param=api.param_body_name, value=data[api.param_body_name])
-        validator.is_string_non_empty(param=api.param_body_name, value=data[api.param_body_name])
-        validator.is_unique(kind="ingredient", param=api.param_body_name, value=data[api.param_body_name])
+        validator.is_mandatory(param=api.param_name, data=data)
+        validator.is_string(param=api.param_name, value=data[api.param_name])
+        validator.is_string_non_empty(param=api.param_name, value=data[api.param_name])
+        validator.is_unique_ingredient(param=api.param_name, value=data[api.param_name])
         return True
 
     # use in is_body_valid
@@ -57,17 +57,17 @@ class Validator(object):
         Parameters
         ----------
         data : dict
-            Body of PostIngredient.
+            PostIngredient's body.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_mandatory(param=api.param_body_slug, data=data)
-        validator.is_string(param=api.param_body_slug, value=data[api.param_body_slug])
-        validator.is_string_non_empty(param=api.param_body_slug, value=data[api.param_body_slug])
-        validator.is_unique(kind="ingredient", param=api.param_body_slug, value=data[api.param_body_slug])
+        validator.is_mandatory(param=api.param_slug, data=data)
+        validator.is_string(param=api.param_slug, value=data[api.param_slug])
+        validator.is_string_non_empty(param=api.param_slug, value=data[api.param_slug])
+        validator.is_unique_ingredient(param=api.param_slug, value=data[api.param_slug])
         return True
 
     # use in is_body_valid
@@ -78,17 +78,17 @@ class Validator(object):
         Parameters
         ----------
         data : dict
-            Body of PostIngredient.
+            PostIngredient's body.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        if api.param_body_categories in data:
-            validator.is_array(param=api.param_body_categories, value=data[api.param_body_categories])
+        if api.param_categories in data:
+            validator.is_array(param=api.param_categories, value=data[api.param_categories])
             return True
-        return False
+        return True
 
     # use in is_body_valid
     @staticmethod
@@ -98,15 +98,15 @@ class Validator(object):
         Parameters
         ----------
         data : dict
-            Body of PostIngredient.
+            PostIngredient's body.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        if api.param_body_nutriments in data:
-            validator.is_object(param=api.param_body_nutriments, value=data[api.param_body_nutriments])
-            validator.is_nutriment(data=data[api.param_body_nutriments])
+        if api.param_nutriments in data:
+            validator.is_object(param=api.param_nutriments, value=data[api.param_nutriments])
+            validator.is_nutriment(data=data[api.param_nutriments])
             return True
-        return False
+        return True

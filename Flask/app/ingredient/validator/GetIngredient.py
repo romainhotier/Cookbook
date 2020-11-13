@@ -17,16 +17,15 @@ class Validator(object):
         Parameters
         ----------
         value : str
-            ObjectId of Ingredient.
+            Ingredient's ObjectId.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_object_id(param=api.param_query_id, value=value)
-        validator.is_object_id_in_collection(param=api.param_query_id, value=value,
-                                             collection=mongo.collection_ingredient)
+        validator.is_object_id(param=api.param_id, value=value)
+        validator.is_object_id_in_collection(param=api.param_id, value=value, collection=mongo.collection_ingredient)
         return True
 
     @staticmethod
@@ -36,12 +35,12 @@ class Validator(object):
         Parameters
         ----------
         value : str
-            Value of parameter with_files.
+            With_files's value.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_string_boolean(param=api.param_query_with_files, value=value)
+        validator.is_string_boolean_or_none(param=api.param_with_files, value=value)
         return True

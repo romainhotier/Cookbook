@@ -17,15 +17,15 @@ class Validator(object):
         Parameters
         ----------
         value : str
-            ObjectId of IngredientRecipe.
+            IngredientRecipe's ObjectId.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        utils.Validator.is_object_id(param=api.param_query_id, value=value)
-        utils.Validator.is_object_id_in_collection(param=api.param_query_id, value=value,
+        utils.Validator.is_object_id(param=api.param_id, value=value)
+        utils.Validator.is_object_id_in_collection(param=api.param_id, value=value,
                                                    collection=mongo.collection_ingredient_recipe)
         return True
 
@@ -35,7 +35,7 @@ class Validator(object):
         Parameters
         ----------
         data : dict
-            Body of PutIngredientRecipe.
+            PutIngredientRecipe's body.
 
         Returns
         -------
@@ -55,15 +55,15 @@ class Validator(object):
         Parameters
         ----------
         data : dict
-            Body of PostIngredientRecipe.
+            PutIngredientRecipe's body.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        if api.param_body_quantity in data:
-            utils.Validator.is_int(param=api.param_body_quantity, value=data[api.param_body_quantity])
+        if api.param_quantity in data:
+            utils.Validator.is_int(param=api.param_quantity, value=data[api.param_quantity])
             return True
 
     # use in is_body_valid
@@ -74,13 +74,13 @@ class Validator(object):
         Parameters
         ----------
         data : dict
-            Body of PostIngredientRecipe.
+            PutIngredientRecipe's body.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        if api.param_body_unit in data:
-            utils.Validator.is_string(param=api.param_body_unit, value=data[api.param_body_unit])
+        if api.param_unit in data:
+            utils.Validator.is_string(param=api.param_unit, value=data[api.param_unit])
             return True

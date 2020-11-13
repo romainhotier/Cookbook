@@ -6,7 +6,7 @@ import tests.recipe.PutRecipe.api as api
 import tests.recipe.model as recipe_model
 import tests.file.model as file_model
 
-server = utils.Server
+server = utils.Server()
 api = api.PutRecipe()
 recipe = recipe_model.RecipeTest()
 file = file_model.FileTest()
@@ -1471,8 +1471,8 @@ class PutRecipe(unittest.TestCase):
 
     def test_13_with_files_string_false(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_recipe.add_file_recipe(filename="qa_rhr_1", is_main=True)
         tc_recipe.add_file_recipe(filename="qa_rhr_2", is_main=False)
@@ -1498,8 +1498,8 @@ class PutRecipe(unittest.TestCase):
 
     def test_13_with_files_string_true(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_file_recipe11 = tc_recipe.add_file_recipe(filename="qa_rhr_1", is_main=True)
         tc_file_recipe12 = tc_recipe.add_file_recipe(filename="qa_rhr_2", is_main=False)

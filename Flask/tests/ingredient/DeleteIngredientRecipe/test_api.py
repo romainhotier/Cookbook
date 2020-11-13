@@ -5,7 +5,7 @@ import utils
 import tests.ingredient.DeleteIngredientRecipe.api as api
 import tests.ingredient.model as ingredient_model
 
-server = utils.Server
+server = utils.Server()
 api = api.DeleteIngredientRecipe()
 link = ingredient_model.IngredientRecipeTest()
 

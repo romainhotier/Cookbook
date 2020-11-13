@@ -45,7 +45,7 @@ class Server(object):
         self.detail_method_not_allowed = "The method is not allowed for the requested URL."
 
     def return_response(self, data, api, http_code, **kwargs):
-        """ Return a server response.
+        """ Return a Server response.
 
         Parameters
         ----------
@@ -56,16 +56,20 @@ class Server(object):
         http_code: int
             Http_code for the response.
         kwargs: optional
-            detail: If a optional detail is needed.
+            Detail: If an optional detail is needed.
 
         Returns
         -------
         Any
             Server response.
         """
-        body = self.format_body(data, api, http_code, **kwargs)
-        response = make_response(body, body["codeStatus"])
-        response.headers['Content-Type'] = 'application/json'
+        if "file" in kwargs:
+            response = make_response(data.read(), http_code)
+            response.mimetype = data.content_type
+        else:
+            body = self.format_body(data, api, http_code, **kwargs)
+            response = make_response(body, http_code)
+            response.headers['Content-Type'] = 'application/json'
         response.headers['Access-Control-Allow-Origin'] = '*'
         return response
 
@@ -82,7 +86,7 @@ class Server(object):
         http_code: int
             Http_code for the response.
         kwargs: optional
-            detail: If a optional detail is needed.
+            Detail: If a optional detail is needed.
 
         Returns
         -------
@@ -90,8 +94,10 @@ class Server(object):
             Server body response.
         """
         body = {"codeStatus": http_code, "codeMsg": self.format_code_msg(http_code=http_code, api=api)}
-        if http_code in [400, 405, 500]:
+        if http_code in [400, 500]:
             body["detail"] = data
+        elif http_code in [405]:
+            body["detail"] = self.detail_method_not_allowed
         elif http_code in [404]:
             body["detail"] = self.detail_url_not_found
         elif http_code in [401]:

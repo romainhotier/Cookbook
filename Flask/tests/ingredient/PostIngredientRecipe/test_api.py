@@ -7,7 +7,7 @@ import tests.ingredient.PostIngredientRecipe.api as api
 import tests.ingredient.model as ingredient_model
 import tests.recipe.model as recipe_model
 
-server = utils.Server
+server = utils.Server()
 api = api.PostIngredientRecipe()
 recipe = recipe_model.RecipeTest()
 link = ingredient_model.IngredientRecipeTest()

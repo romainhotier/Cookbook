@@ -1,113 +1,243 @@
-from flask import abort
-
 import utils
-import app.recipe as recipe_model
+import app.recipe.factory.PutRecipe as Factory
+
+mongo = utils.Mongo()
+validator = utils.Validator()
+api = Factory.Factory()
 
 
 class Validator(object):
+    """ Class to validate PutRecipe.
+    """
 
     @staticmethod
-    def is_object_id_valid(_id):
-        utils.Validator.is_object_id(param="_id", value=_id)
-        utils.Validator.is_object_id_in_collection(param="_id", value=_id, collection=utils.Mongo.collection_recipe)
+    def is_object_id_valid(value):
+        """ Check if _id is correct.
+
+        Parameters
+        ----------
+        value : str
+            Recipe's ObjectId.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        validator.is_object_id(param=api.param_id, value=value)
+        validator.is_object_id_in_collection(param=api.param_id, value=value, collection=mongo.collection_recipe)
         return True
 
     @staticmethod
-    def is_string_boolean(with_files):
-        if with_files is None:
-            return True, False
-        else:
-            utils.Validator.is_string(param="with_files", value=with_files)
-            utils.Validator.is_in(param="with_files", value=with_files, values=["true", "false"])
-            if with_files == "true":
-                return True, True
-            elif with_files == "false":
-                return True, False
+    def is_with_files_valid(value):
+        """ Check if with_files is correct if specified.
+
+        Parameters
+        ----------
+        value : str
+            With_files's value.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        validator.is_string_boolean_or_none(param=api.param_with_files, value=value)
+        return True
 
     def is_body_valid(self, data):
-        utils.Validator.has_at_least_one_key(data)
-        self.is_title_valid(data)
-        self.is_slug_valid(data)
-        self.is_level_valid(data)
-        self.is_resume_valid(data)
-        self.is_cooking_time_valid(data)
-        self.is_preparation_time_valid(data)
-        self.is_nb_people_valid(data)
-        self.is_note_valid(data)
-        self.is_categories_valid(data)
+        validator.has_at_least_one_key(data=data)
+        self.is_title_valid(data=data)
+        self.is_slug_valid(data=data)
+        self.is_level_valid(data=data)
+        self.is_resume_valid(data=data)
+        self.is_cooking_time_valid(data=data)
+        self.is_preparation_time_valid(data=data)
+        self.is_nb_people_valid(data=data)
+        self.is_note_valid(data=data)
+        self.is_categories_valid(data=data)
 
-    def is_title_valid(self, data):
-        if "title" in data.keys():
-            utils.Validator.is_string(param="title", value=data["title"])
-            utils.Validator.is_string_non_empty(param="title", value=data["title"])
-            self.is_title_already_exist(value=data["title"])
+# use in is_body_valid
+    @staticmethod
+    def is_title_valid(data):
+        """ Check if title is correct.
+
+        Parameters
+        ----------
+        data : dict
+            PutRecipe's body.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        if api.param_title in data:
+            validator.is_string(param=api.param_title, value=data[api.param_title])
+            validator.is_string_non_empty(param=api.param_title, value=data[api.param_title])
+            validator.is_unique_recipe(param=api.param_title, value=data[api.param_title])
             return True
         return True
 
+    # use in is_body_valid
     @staticmethod
     def is_slug_valid(data):
-        if "slug" in data.keys():
-            utils.Validator.is_string(param="slug", value=data["slug"])
-            utils.Validator.is_string_non_empty(param="slug", value=data["slug"])
+        """ Check if slug is correct.
+
+        Parameters
+        ----------
+        data : dict
+            PutRecipe's body.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        if api.param_slug in data:
+            validator.is_string(param=api.param_slug, value=data[api.param_slug])
+            validator.is_string_non_empty(param=api.param_slug, value=data[api.param_slug])
+            validator.is_unique_recipe(param=api.param_slug, value=data[api.param_slug])
             return True
         return True
 
+    # use in is_body_valid
     @staticmethod
     def is_level_valid(data):
-        if "level" in data.keys():
-            utils.Validator.is_int(param="level", value=data["level"])
-            utils.Validator.is_between_x_y(param="level", value=data["level"], x=0, y=3)
+        """ Check if level is correct if specified.
+
+        Parameters
+        ----------
+        data : dict
+            PutRecipe's body.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        if api.param_level in data:
+            validator.is_int(param=api.param_level, value=data[api.param_level])
+            validator.is_between_x_y(param=api.param_level, value=data[api.param_level], x=0, y=3)
             return True
         return True
 
+    # use in is_body_valid
     @staticmethod
     def is_resume_valid(data):
-        if "resume" in data.keys():
-            utils.Validator.is_string(param="resume", value=data["resume"])
+        """ Check if resume is correct if specified.
+
+        Parameters
+        ----------
+        data : dict
+            PutRecipe's body.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        if api.param_resume in data:
+            validator.is_string(param=api.param_resume, value=data[api.param_resume])
             return True
         return True
 
+    # use in is_body_valid
     @staticmethod
     def is_cooking_time_valid(data):
-        if "cooking_time" in data.keys():
-            utils.Validator.is_int(param="cooking_time", value=data["cooking_time"])
+        """ Check if cooking_time is correct if specified.
+
+        Parameters
+        ----------
+        data : dict
+            PutRecipe's body.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        if api.param_cooking_time in data:
+            validator.is_int(param=api.param_cooking_time, value=data[api.param_cooking_time])
             return True
         return True
 
+    # use in is_body_valid
     @staticmethod
     def is_preparation_time_valid(data):
-        if "preparation_time" in data.keys():
-            utils.Validator.is_int(param="preparation_time", value=data["preparation_time"])
+        """ Check if preparation_time is correct if specified.
+
+        Parameters
+        ----------
+        data : dict
+            PutRecipe's body.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        if api.param_preparation_time in data:
+            validator.is_int(param=api.param_preparation_time, value=data[api.param_preparation_time])
             return True
         return True
 
+    # use in is_body_valid
     @staticmethod
     def is_nb_people_valid(data):
-        if "nb_people" in data.keys():
-            utils.Validator.is_int(param="nb_people", value=data["nb_people"])
+        """ Check if nb_people is correct if specified.
+
+        Parameters
+        ----------
+        data : dict
+            PutRecipe's body.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        if api.param_nb_people in data:
+            validator.is_int(param=api.param_nb_people, value=data[api.param_nb_people])
             return True
         return True
 
+    # use in is_body_valid
     @staticmethod
     def is_note_valid(data):
-        if "note" in data.keys():
-            utils.Validator.is_string(param="note", value=data["note"])
+        """ Check if note is correct if specified.
+
+        Parameters
+        ----------
+        data : dict
+            PutRecipe's body.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        if api.param_note in data:
+            validator.is_string(param=api.param_note, value=data[api.param_note])
             return True
         return True
 
+    # use in is_body_valid
     @staticmethod
     def is_categories_valid(data):
-        if "categories" in data.keys():
-            utils.Validator.is_array(param="categories", value=data["categories"])
+        """ Check if categories is correct if specified.
+
+        Parameters
+        ----------
+        data : dict
+            PutRecipe's body.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        if api.param_categories in data:
+            validator.is_array(param=api.param_categories, value=data[api.param_categories])
             return True
         return True
-
-    @staticmethod
-    def is_title_already_exist(value):
-        """ check title already exist """
-        result = recipe_model.RecipeModel.check_recipe_is_unique(title=value)
-        if result == 0:
-            return False
-        else:
-            detail = {"param": "title", "msg": utils.Server.detail_already_exist, "value": value}
-            return abort(400, description=detail)

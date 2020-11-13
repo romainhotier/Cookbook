@@ -6,27 +6,56 @@ import re
 
 import utils
 
-mongo = utils.Mongo
+mongo = utils.Mongo()
 
 
 class FileTest(object):
 
     def __init__(self):
+        """ FileTest model.
+
+        - _id = ObjectId in mongo
+        - filename = File's name
+        - content_type = File's content_type
+        - data = File's raw data
+        - metadata = File's information
+        """
         self._id = ""
         self.filename = "qa_rhr_filename"
         self.content_type = 'text/plain'
         self.data = b'test file qa rhr',
         self.metadata = {"kind": "kind_file",
-                         "_id": ObjectId(),
+                         "_id_parent": ObjectId(),
                          "is_main": False}
 
     def display(self):
+        """ Print UserTest model.
+
+        Returns
+        -------
+        Any
+            Display UserTest
+        """
         print(self.__dict__)
 
     def get_param(self):
+        """ Get UserTest parameters.
+
+        Returns
+        -------
+        list
+            UserTest parameters.
+        """
         return [attr for attr in dir(self) if not callable(getattr(self, attr)) and not attr.startswith("__")]
 
     def get_id(self):
+        """ Get _id of UserTest.
+
+        Returns
+        -------
+        str
+            UserTest's _id.
+        """
         return str(self._id)
 
     def get_is_main(self):
@@ -39,6 +68,18 @@ class FileTest(object):
         return copy.deepcopy({"_id": self._id, "is_main": self.metadata["is_main"]})
 
     def custom(self, data):
+        """ Update UserTest.
+
+        Parameters
+        ----------
+        data : dict
+            Data to be updated for UserTest.
+
+        Returns
+        -------
+        Any
+            Self
+        """
         for i, j in data.items():
             if i in self.get_param():
                 if i == '_id':
@@ -52,6 +93,13 @@ class FileTest(object):
         return self
 
     def insert(self):
+        """ Insert UserTest.
+
+        Returns
+        -------
+        Any
+            Self
+        """
         client = MongoClient(mongo.ip, mongo.port)
         fs = gridfs.GridFS(client[mongo.name])
         _id = fs.put(self.data[0], content_type=self.content_type, filename=self.filename, metadata=self.metadata)
@@ -60,12 +108,16 @@ class FileTest(object):
         return self
 
     def select_if_present_by_id(self):
+        """ Check if UserTest exist by ObjectId.
+        """
         client = MongoClient(mongo.ip, mongo.port)
         fs = gridfs.GridFS(client[mongo.name])
         client.close()
         assert fs.exists(_id=ObjectId(self._id))
 
     def select_ok(self):
+        """ Check if UserTest.
+        """
         client = MongoClient(mongo.ip, mongo.port)
         """ check file file exist """
         self.select_if_present_by_id()
@@ -77,12 +129,16 @@ class FileTest(object):
         assert file["metadata"] == self.metadata
 
     def select_nok(self):
+        """ Check if UserTest doesn't exist.
+        """
         client = MongoClient(mongo.ip, mongo.port)
         fs = gridfs.GridFS(client[mongo.name])
         client.close()
         assert not fs.exists({"_id": ObjectId(self.get_id())})
 
     def select_nok_by_filename(self):
+        """ Check if UserTest doesn't exist by filename.
+        """
         client = MongoClient(mongo.ip, mongo.port)
         fs = gridfs.GridFS(client[mongo.name])
         client.close()
@@ -90,6 +146,8 @@ class FileTest(object):
 
     @staticmethod
     def clean():
+        """ Clean UserTest by filename.
+        """
         rgx = re.compile('.*qa_rhr.*', re.IGNORECASE)
         client = MongoClient(mongo.ip, mongo.port)
         """ select file testfile """

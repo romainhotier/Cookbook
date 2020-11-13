@@ -17,7 +17,7 @@ class Validator(object):
         Parameters
         ----------
         value : str
-            ObjectId of Ingredient.
+            Ingredient's ObjectId.
 
         Returns
         -------
@@ -34,7 +34,7 @@ class Validator(object):
         Parameters
         ----------
         data : dict
-            Body of PutIngredient.
+            PutIngredient's body.
 
         Returns
         -------
@@ -55,7 +55,7 @@ class Validator(object):
         Parameters
         ----------
         data : dict
-            Body of PostIngredient.
+            PutIngredient's body.
 
         Returns
         -------
@@ -65,7 +65,7 @@ class Validator(object):
         if api.param_name in data:
             validator.is_string(param=api.param_name, value=data[api.param_name])
             validator.is_string_non_empty(param=api.param_name, value=data[api.param_name])
-            validator.is_unique(kind="ingredient", param=api.param_name, value=data[api.param_name])
+            validator.is_unique_ingredient(param=api.param_name, value=data[api.param_name])
             return True
 
     # use in is_body_valid
@@ -76,7 +76,7 @@ class Validator(object):
         Parameters
         ----------
         data : dict
-            Body of PostIngredient.
+            PutIngredient's body.
 
         Returns
         -------
@@ -86,7 +86,7 @@ class Validator(object):
         if api.param_slug in data:
             validator.is_string(param=api.param_slug, value=data[api.param_slug])
             validator.is_string_non_empty(param=api.param_slug, value=data[api.param_slug])
-            validator.is_unique(kind="ingredient", param=api.param_slug, value=data[api.param_slug])
+            validator.is_unique_ingredient(param=api.param_slug, value=data[api.param_slug])
         return True
 
     # use in is_body_valid
@@ -97,7 +97,7 @@ class Validator(object):
         Parameters
         ----------
         data : dict
-            Body of PostIngredient.
+            PutIngredient's body.
 
         Returns
         -------
@@ -116,12 +116,12 @@ class Validator(object):
         Parameters
         ----------
         value : str
-            Value of parameter with_files.
+            With_files value.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_string_boolean(param=api.param_with_files, value=value)
+        validator.is_string_boolean_or_none(param=api.param_with_files, value=value)
         return True

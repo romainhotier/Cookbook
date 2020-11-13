@@ -36,7 +36,7 @@ class User(object):
         Returns
         -------
         str
-            Encrypted password
+            Encrypted password.
         """
         return generate_password_hash(password).decode('utf8')
 
@@ -47,7 +47,7 @@ class User(object):
         Parameters
         ----------
         password : str
-            Correct User password.
+            Correct User's password.
         password_attempt: str
             Attempt password.
 
@@ -64,7 +64,7 @@ class User(object):
         Parameters
         ----------
         data : dict
-            Information of the User.
+            User's data.
 
         Returns
         -------
@@ -89,7 +89,7 @@ class User(object):
         Parameters
         ----------
         identifier : ObjectId
-            ObjectId of the User.
+            User's ObjectId.
 
         Returns
         -------
@@ -109,7 +109,7 @@ class User(object):
         Parameters
         ----------
         email : str
-            Email of the User.
+            User's email.
 
         Returns
         -------
@@ -130,7 +130,7 @@ class User(object):
         Parameters
         ----------
         email : str
-            Email of the User.
+            User's email.
 
         Returns
         -------
@@ -153,12 +153,12 @@ class User(object):
         Parameters
         ----------
         identifier : str
-            ObjectId of the User.
+            User's ObjectId.
 
         Returns
         -------
         list
-            Status of the User.
+            User's status.
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_user]
@@ -176,12 +176,12 @@ class User(object):
         Parameters
         ----------
         email : str
-            Email of the User.
+            User's email.
 
         Returns
         -------
         str
-            ObjectId of the User stringify.
+            User's ObjectId stringify.
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_user]
@@ -194,12 +194,12 @@ class Auth(object):
 
     @staticmethod
     def login_required(f):
-        """ Wrapper to check auth
+        """ Wrapper to check auth.
 
         Returns
         -------
         Any
-           auth_handler if authentification failed
+           Auth_handler if authentification failed.
         """
         @wraps(f)
         def wrapper(*args, **kwargs):
@@ -209,12 +209,12 @@ class Auth(object):
 
     @staticmethod
     def admin_only(f):
-        """ Wrapper to check if User is an admin
+        """ Wrapper to check if User is an admin.
 
         Returns
         -------
         Any
-           Server response
+           Server response.
         """
         @wraps(f)
         def wrapper(*args, **kwargs):

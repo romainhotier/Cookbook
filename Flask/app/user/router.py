@@ -7,9 +7,11 @@ import datetime
 import utils
 import app.user.factory as factory
 import app.user.validator as validator
-import app.user.model as user
+import app.user.model as user_model
 
-auth = user.Auth()
+auth = user_model.Auth()
+server = utils.Server()
+user = user_model.User()
 
 apis = Blueprint('user', __name__, url_prefix='/user')
 
@@ -49,13 +51,15 @@ def signup():
         'detail': {'msg': 'Is required', 'param': 'display_name'}}
     }
     """
+    api = factory.PostUserSignup.Factory()
+    validation = validator.PostUserSignup.Validator()
     """ check body """
-    body = factory.PostUserSignup.Factory().format_body(data=request.json)
-    validator.PostUserSignup.Validator().is_body_valid(data=body)
+    body = api.format_body(data=request.json)
+    validation.is_body_valid(data=body)
     """ add user """
-    data = user.User().insert(data=body)
+    data = user.insert(data=body)
     """ return response """
-    return utils.Server().return_response(data=data.result, api=apis.name, http_code=201)
+    return server.return_response(data=data.result, api=apis.name, http_code=201)
 
 
 @apis.route('/login', methods=['POST'])
@@ -92,20 +96,21 @@ def login():
     }
     """
     api = factory.PostUserLogin.Factory()
+    validation = validator.PostUserLogin.Validator()
     """ check body """
     body = api.format_body(data=request.json)
-    validator.PostUserLogin.Validator().is_body_valid(data=body)
+    validation.is_body_valid(data=body)
     """ check password """
     if api.check_password(data=body):
         """ create token """
-        user_id = user.User().get_user_id_by_email(email=body[api.param_body_email])
+        user_id = user.get_user_id_by_email(email=body[api.param_email])
         expires = datetime.timedelta(seconds=backend.config["EXPIRATION_TOKEN"])
         access_token = create_access_token(identity=user_id, expires_delta=expires)
         """ return response """
-        return utils.Server().return_response(data={"token": access_token}, api=apis.name, http_code=200)
+        return server.return_response(data={"token": access_token}, api=apis.name, http_code=200)
     else:
         """ return response """
-        return utils.Server().return_response(data="Invalid email/password", api=apis.name, http_code=401)
+        return server.return_response(data="Invalid email/password", api=apis.name, http_code=401)
 
 
 @apis.route('/me', methods=['GET'])
@@ -137,9 +142,9 @@ def get_me():
     }
     """
     """ get user """
-    data = user.User().select_me(identifier=get_jwt_identity())
+    data = user.select_me(identifier=get_jwt_identity())
     """ return response """
-    return utils.Server().return_response(data=data.result, api=apis.name, http_code=200)
+    return server.return_response(data=data.result, api=apis.name, http_code=200)
 
 
 @apis.errorhandler(400)
@@ -156,7 +161,7 @@ def validator_failed(err):
     Any
         Server response.
     """
-    return utils.Server().return_response(data=err.description, api=apis.name, http_code=400)
+    return server.return_response(data=err.description, api=apis.name, http_code=400)
 
 
 @apis.errorhandler(403)
@@ -173,7 +178,7 @@ def forbidden(err):
     Any
         Server response.
     """
-    return utils.Server().return_response(data=err, api=apis.name, http_code=403)
+    return server.return_response(data=err, api=apis.name, http_code=403)
 
 
 @apis.errorhandler(404)
@@ -190,4 +195,4 @@ def not_found(err):
     Any
         Server response.
     """
-    return utils.Server().return_response(data=err, api=apis.name, http_code=404)
+    return server.return_response(data=err, api=apis.name, http_code=404)

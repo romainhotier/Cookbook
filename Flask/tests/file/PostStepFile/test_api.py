@@ -6,7 +6,7 @@ import tests.file.PostStepFile.api as api
 import tests.recipe.model as recipe_model
 import tests.file.model as file_model
 
-server = utils.Server
+server = utils.Server()
 api = api.PostStepFile()
 recipe = recipe_model.RecipeTest()
 file = file_model.FileTest()
@@ -22,8 +22,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_0_api_ok(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -53,8 +53,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_0_api_ok_more_param(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -85,8 +85,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_1_url_not_found_1(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -111,8 +111,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_1_url_not_found_2(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -137,8 +137,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_2_id_recipe_without(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = ""
         tc_id_step = "111111111111111111111111"
@@ -163,8 +163,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_2_id_recipe_string(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = "invalid"
         tc_id_step = "111111111111111111111111"
@@ -191,8 +191,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_2_id_recipe_object_id_invalid(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = "aaaaaaaaaaaaaaaaaaaaaaaa"
         tc_id_step = "111111111111111111111111"
@@ -218,8 +218,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_3_id_step_without(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = ""
@@ -244,8 +244,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_3_id_step_string(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "invalid"
@@ -271,8 +271,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_3_id_step_object_id_invalid(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "aaaaaaaaaaaaaaaaaaaaaaaa"
@@ -298,8 +298,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_4_path_without(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -324,8 +324,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_4_path_null(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -351,8 +351,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_4_path_empty(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -379,8 +379,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_4_path_string(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -406,8 +406,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_5_filename_without(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -430,8 +430,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_5_filename_null(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -458,8 +458,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_5_filename_empty(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -486,8 +486,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_5_filename_string(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -517,8 +517,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_6_is_main_without(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -548,8 +548,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_6_is_main_null(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -576,8 +576,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_6_is_main_empty(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -604,8 +604,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_6_is_main_string(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -632,8 +632,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_6_is_main_false(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -663,8 +663,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_6_is_main_true(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -694,8 +694,8 @@ class PostStepFile(unittest.TestCase):
 
     def test_6_is_main_true_already_exist(self):
         tc_recipe = recipe_model.RecipeTest().custom({"title": "a"})
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step a")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step b")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step a")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step b")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"

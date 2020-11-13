@@ -3,6 +3,8 @@ import copy
 
 import utils
 
+server = utils.Server()
+
 
 class PostRecipe(object):
 
@@ -19,10 +21,10 @@ class PostRecipe(object):
         self.param_categories = "categories"
         self.param_steps = "steps"
         self.param_ingredients = "ingredients"
-        self.rep_code_msg_created = utils.Server.rep_code_msg_created.replace("xxx", "recipe")
-        self.rep_code_msg_error_400 = utils.Server.rep_code_msg_error_400.replace("xxx", "recipe")
-        self.rep_code_msg_error_404 = utils.Server.rep_code_msg_error_404.replace("xxx", "recipe")
-        self.rep_code_msg_error_404_url = utils.Server.rep_code_msg_error_404.replace("xxx", "cookbook")
+        self.rep_code_msg_created = server.rep_code_msg_created.replace("xxx", "recipe")
+        self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "recipe")
+        self.rep_code_msg_error_404 = server.rep_code_msg_error_404.replace("xxx", "recipe")
+        self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
 
     @staticmethod
     def create_detail(param, msg, **kwargs):
@@ -47,8 +49,7 @@ class PostRecipe(object):
             default_value["preparation_time"] = 0
         if self.param_resume not in default_value.keys():
             default_value["resume"] = ""
-        if self.param_steps not in default_value.keys():
-            default_value["steps"] = []
+        default_value["steps"] = []
         return default_value
 
     @staticmethod
@@ -64,7 +65,7 @@ class PostRecipe(object):
                     "preparation_time": {"enum": [recipe.preparation_time]},
                     "resume": {"enum": [recipe.resume]},
                     "slug": {"enum": [recipe.slug]},
-                    "steps": {"enum": [recipe.steps]},
+                    "steps": {"enum": [[]]},
                     "title": {"enum": [recipe.title]}},
                 "required": ["_id", "categories", "cooking_time", "level", "nb_people", "note", "preparation_time",
                              "resume", "slug", "steps", "title"],

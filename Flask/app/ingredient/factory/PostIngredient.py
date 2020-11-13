@@ -3,10 +3,10 @@ class Factory(object):
     def __init__(self):
         """ Class to work around PostIngredient.
         """
-        self.param_body_name = "name"
-        self.param_body_slug = "slug"
-        self.param_body_categories = "categories"
-        self.param_body_nutriments = "nutriments"
+        self.param_name = "name"
+        self.param_slug = "slug"
+        self.param_categories = "categories"
+        self.param_nutriments = "nutriments"
 
     def get_body_param(self):
         """ Get PostIngredient's body parameters.
@@ -16,8 +16,7 @@ class Factory(object):
         list
             Body parameters.
         """
-        return [getattr(self, param) for param in dir(self) if not callable(getattr(self, param)) and
-                not param.startswith("__")]
+        return [self.param_name, self.param_slug, self.param_categories, self.param_nutriments]
 
     def format_body(self, data):
         """ Format body for PostIngredient.
@@ -43,7 +42,7 @@ class Factory(object):
         Parameters
         ----------
         data : dict
-            To be cleaned
+            To be cleaned.
 
         Returns
         -------
@@ -64,7 +63,7 @@ class Factory(object):
         Parameters
         ----------
         data : dict
-            Dict to be filled with default value
+            Dict to be filled with default value.
 
         Returns
         -------
@@ -73,8 +72,8 @@ class Factory(object):
         """
         for key in self.get_body_param():
             if key not in data:
-                if key == self.param_body_categories:
+                if key == self.param_categories:
                     data[key] = []
-                if key == self.param_body_nutriments:
+                if key == self.param_nutriments:
                     data[key] = {}
         return data

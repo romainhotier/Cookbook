@@ -1,14 +1,16 @@
 import utils
 
+server = utils.Server()
+
 
 class PutFileIsMain(object):
 
     def __init__(self):
         self.url = 'file/is_main'
         self.param_id = "_id"
-        self.rep_code_msg_ok = utils.Server.rep_code_msg_ok.replace("xxx", "file")
-        self.rep_code_msg_error_400 = utils.Server.rep_code_msg_error_400.replace("xxx", "file")
-        self.rep_code_msg_error_404_url = utils.Server.rep_code_msg_error_404.replace("xxx", "cookbook")
+        self.rep_code_msg_ok = server.rep_code_msg_ok.replace("xxx", "file")
+        self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "file")
+        self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
 
     @staticmethod
     def create_detail(param, msg, **kwargs):

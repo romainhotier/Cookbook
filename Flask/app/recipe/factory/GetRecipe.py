@@ -1,7 +1,7 @@
 class Factory(object):
 
     def __init__(self):
-        """ Class to work around GetIngredient.
+        """ Class to work around GetRecipe.
         """
-        self.param_id = "_id"
+        self.param_slug = "slug"
         self.param_with_files = "with_files"

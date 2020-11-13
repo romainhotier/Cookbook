@@ -3,6 +3,8 @@ import copy
 
 import utils
 
+server = utils.Server()
+
 
 class PostIngredient(object):
 
@@ -16,9 +18,9 @@ class PostIngredient(object):
         self.param_carbohydrates_per_100g = "carbohydrates_per_100g"
         self.param_fats_per_100g = "fats_per_100g"
         self.param_proteins_per_100g = "proteins_per_100g"
-        self.rep_code_msg_created = utils.Server.rep_code_msg_created.replace("xxx", "ingredient")
-        self.rep_code_msg_error_400 = utils.Server.rep_code_msg_error_400.replace("xxx", "ingredient")
-        self.rep_code_msg_error_404_url = utils.Server.rep_code_msg_error_404.replace("xxx", "cookbook")
+        self.rep_code_msg_created = server.rep_code_msg_created.replace("xxx", "ingredient")
+        self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "ingredient")
+        self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
 
     @staticmethod
     def create_detail(param, msg, **kwargs):

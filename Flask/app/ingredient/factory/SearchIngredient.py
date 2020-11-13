@@ -3,10 +3,10 @@ class Factory(object):
     def __init__(self):
         """ Class to work around SearchIngredient.
         """
-        self.param_query_name = "name"
-        self.param_query_slug = "slug"
-        self.param_query_categories = "categories"
-        self.param_query_with_files = "with_files"
+        self.param_name = "name"
+        self.param_slug = "slug"
+        self.param_categories = "categories"
+        self.param_with_files = "with_files"
 
     def get_search_param(self):
         """ Get SearchIngredient's parameters.
@@ -16,10 +16,7 @@ class Factory(object):
         list
             Body parameters.
         """
-        params = [getattr(self, param) for param in dir(self) if not callable(getattr(self, param)) and
-                      not param.startswith("__")]
-        params.remove(self.param_query_with_files)
-        return params
+        return [self.param_name, self.param_slug, self.param_categories]
 
     def format_body(self, data):
         """ Format body for SearchIngredient.
@@ -34,8 +31,29 @@ class Factory(object):
         dict
             Correct body.
         """
-        cleaned = self.remove_foreign_key(data)
+        converted = self.convert_immutable_dict(data)
+        cleaned = self.remove_foreign_key(converted)
         return cleaned
+
+    # use in format_body
+    @staticmethod
+    def convert_immutable_dict(data):
+        """ Convert ImmutableMultiDict to classic dict.
+
+        Parameters
+        ----------
+        data : dict
+            To be converted
+
+        Returns
+        -------
+        dict
+            Converted dict.
+        """
+        converted = {}
+        for i, j in data.items():
+            converted[i] = j
+        return converted
 
     # use in format_body
     def remove_foreign_key(self, data):

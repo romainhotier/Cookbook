@@ -267,9 +267,13 @@ class PostUserSignup(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
         tc_user.select_ok()
 
+    def tearDown(self):
+        user.clean()
+
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(PostUserSignup())
+        user.clean()
+
 
 
 if __name__ == '__main__':

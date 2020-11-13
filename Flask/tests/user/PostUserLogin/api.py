@@ -1,5 +1,7 @@
 import utils
 
+server = utils.Server()
+
 
 class PostUserLogin(object):
 
@@ -7,9 +9,9 @@ class PostUserLogin(object):
         self.url = 'user/login'
         self.param_email = "email"
         self.param_password = "password"
-        self.rep_code_msg_ok = utils.Server().rep_code_msg_ok.replace("xxx", "user")
-        self.rep_code_msg_error_400 = utils.Server().rep_code_msg_error_400.replace("xxx", "user")
-        self.rep_code_msg_error_404_url = utils.Server().rep_code_msg_error_404.replace("xxx", "cookbook")
+        self.rep_code_msg_ok = server.rep_code_msg_ok.replace("xxx", "user")
+        self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "user")
+        self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
         self.data_regex = "[A-Za-z0-9\-\._~\+\/]+=*"
 
     @staticmethod

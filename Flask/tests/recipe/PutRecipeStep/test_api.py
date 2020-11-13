@@ -6,7 +6,7 @@ import tests.recipe.PutRecipeStep.api as api
 import tests.recipe.model as recipe_model
 import tests.file.model as file_model
 
-server = utils.Server
+server = utils.Server()
 api = api.PutRecipeStep()
 recipe = recipe_model.RecipeTest()
 file = file_model.FileTest()
@@ -20,17 +20,17 @@ class PutRecipeStep(unittest.TestCase):
 
     def test_0_api_ok(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
-        body = {api.param_step: "update"}
+        body = {api.param_description: "update"}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
-        tc_recipe.custom_step(position=0, data=body[api.param_step])
+        tc_recipe.custom_step(position=0, data=body[api.param_description])
         """ assert """
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], "application/json")
@@ -42,19 +42,19 @@ class PutRecipeStep(unittest.TestCase):
 
     def test_0_api_ok_more_param(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
-        body = {api.param_step: "update",
+        body = {api.param_description: "update",
                 "invalid": "invalid"}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step \
             + "?invalid=invalid"
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
-        tc_recipe.custom_step(position=0, data=body[api.param_step])
+        tc_recipe.custom_step(position=0, data=body[api.param_description])
         """ assert """
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], "application/json")
@@ -66,12 +66,12 @@ class PutRecipeStep(unittest.TestCase):
 
     def test_1_url_not_found_1(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
-        body = {api.param_step: "update"}
+        body = {api.param_description: "update"}
         """ call api """
         url = server.main_url + "/" + api.url1 + "x/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.put(url, json=body, verify=False)
@@ -87,12 +87,12 @@ class PutRecipeStep(unittest.TestCase):
 
     def test_1_url_not_found_2(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
-        body = {api.param_step: "update"}
+        body = {api.param_description: "update"}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/x" + api.url2 + "/" + tc_id_step
         response = requests.put(url, json=body, verify=False)
@@ -108,12 +108,12 @@ class PutRecipeStep(unittest.TestCase):
 
     def test_2_id_recipe_without(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = ""
         tc_id_step = "111111111111111111111111"
-        body = {api.param_step: "update"}
+        body = {api.param_description: "update"}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.put(url, json=body, verify=False)
@@ -129,12 +129,12 @@ class PutRecipeStep(unittest.TestCase):
 
     def test_2_id_recipe_string(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = "invalid"
         tc_id_step = "111111111111111111111111"
-        body = {api.param_step: "update"}
+        body = {api.param_description: "update"}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.put(url, json=body, verify=False)
@@ -152,12 +152,12 @@ class PutRecipeStep(unittest.TestCase):
 
     def test_2_id_recipe_object_id_invalid(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = "aaaaaaaaaaaaaaaaaaaaaaaa"
         tc_id_step = "111111111111111111111111"
-        body = {api.param_step: "update"}
+        body = {api.param_description: "update"}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.put(url, json=body, verify=False)
@@ -174,12 +174,12 @@ class PutRecipeStep(unittest.TestCase):
 
     def test_3_id_step_without(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = ""
-        body = {api.param_step: "update"}
+        body = {api.param_description: "update"}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.put(url, json=body, verify=False)
@@ -195,12 +195,12 @@ class PutRecipeStep(unittest.TestCase):
 
     def test_3_id_step_string(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "invalid"
-        body = {api.param_step: "update"}
+        body = {api.param_description: "update"}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.put(url, json=body, verify=False)
@@ -217,12 +217,12 @@ class PutRecipeStep(unittest.TestCase):
 
     def test_3_id_step_object_id_invalid(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "aaaaaaaaaaaaaaaaaaaaaaaa"
-        body = {api.param_step: "update"}
+        body = {api.param_description: "update"}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.put(url, json=body, verify=False)
@@ -239,8 +239,8 @@ class PutRecipeStep(unittest.TestCase):
 
     def test_4_step_without(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
@@ -255,18 +255,18 @@ class PutRecipeStep(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_step, msg=server.detail_is_required)
+        detail = api.create_detail(param=api.param_description, msg=server.detail_is_required)
         self.assertEqual(response_body["detail"], detail)
         tc_recipe.select_ok()
 
     def test_4_step_null(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
-        body = {api.param_step: None}
+        body = {api.param_description: None}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.put(url, json=body, verify=False)
@@ -277,18 +277,18 @@ class PutRecipeStep(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_step, msg=server.detail_must_be_a_string, value=body[api.param_step])
+        detail = api.create_detail(param=api.param_description, msg=server.detail_must_be_a_string, value=body[api.param_description])
         self.assertEqual(response_body["detail"], detail)
         tc_recipe.select_ok()
 
     def test_4_step_empty(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
-        body = {api.param_step: ""}
+        body = {api.param_description: ""}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.put(url, json=body, verify=False)
@@ -299,24 +299,24 @@ class PutRecipeStep(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_step, msg=server.detail_must_be_not_empty,
-                                   value=body[api.param_step])
+        detail = api.create_detail(param=api.param_description, msg=server.detail_must_be_not_empty,
+                                   value=body[api.param_description])
         self.assertEqual(response_body["detail"], detail)
         tc_recipe.select_ok()
 
     def test_4_step_string(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
-        body = {api.param_step: "update"}
+        body = {api.param_description: "update"}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
-        tc_recipe.custom_step(position=0, data=body[api.param_step])
+        tc_recipe.custom_step(position=0, data=body[api.param_description])
         """ assert """
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], "application/json")
@@ -328,17 +328,17 @@ class PutRecipeStep(unittest.TestCase):
 
     def test_5_with_files_without(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
-        body = {api.param_step: "update"}
+        body = {api.param_description: "update"}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
-        tc_recipe.custom_step(position=0, data=body[api.param_step])
+        tc_recipe.custom_step(position=0, data=body[api.param_description])
         """ assert """
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], "application/json")
@@ -350,19 +350,19 @@ class PutRecipeStep(unittest.TestCase):
 
     def test_5_with_files_empty(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
         tc_with_files = ""
-        body = {api.param_step: "update"}
+        body = {api.param_description: "update"}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step + "?"\
             + api.param_with_files + "=" + tc_with_files
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
-        tc_recipe.custom_step(position=0, data=body[api.param_step])
+        tc_recipe.custom_step(position=0, data=body[api.param_description])
         """ assert """
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.headers["Content-Type"], "application/json")
@@ -375,19 +375,19 @@ class PutRecipeStep(unittest.TestCase):
 
     def test_5_with_files_string(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
         tc_with_files = "invalid"
-        body = {api.param_step: "update"}
+        body = {api.param_description: "update"}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step + "?"\
             + api.param_with_files + "=" + tc_with_files
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
-        tc_recipe.custom_step(position=0, data=body[api.param_step])
+        tc_recipe.custom_step(position=0, data=body[api.param_description])
         """ assert """
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.headers["Content-Type"], "application/json")
@@ -400,8 +400,8 @@ class PutRecipeStep(unittest.TestCase):
 
     def test_5_with_files_string_false(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_recipe.add_file_recipe(filename="qa_rhr_1", is_main=True)
         tc_recipe.add_file_recipe(filename="qa_rhr_2", is_main=False)
@@ -411,13 +411,13 @@ class PutRecipeStep(unittest.TestCase):
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
         tc_with_files = "false"
-        body = {api.param_step: "update"}
+        body = {api.param_description: "update"}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step + "?" \
             + api.param_with_files + "=" + tc_with_files
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
-        tc_recipe.custom_step(position=0, data=body[api.param_step])
+        tc_recipe.custom_step(position=0, data=body[api.param_description])
         """ assert """
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], "application/json")
@@ -429,8 +429,8 @@ class PutRecipeStep(unittest.TestCase):
 
     def test_5_with_files_string_true(self):
         tc_recipe = recipe_model.RecipeTest()
-        tc_recipe.add_step(_id_step="111111111111111111111111", step="step recipe 1 - 1st")
-        tc_recipe.add_step(_id_step="222222222222222222222222", step="step recipe 1 - 2nd")
+        tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
+        tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
         tc_file_recipe11 = tc_recipe.add_file_recipe(filename="qa_rhr_1", is_main=True)
         tc_file_recipe12 = tc_recipe.add_file_recipe(filename="qa_rhr_2", is_main=False)
@@ -443,13 +443,13 @@ class PutRecipeStep(unittest.TestCase):
         tc_id_recipe = tc_recipe.get_id()
         tc_id_step = "111111111111111111111111"
         tc_with_files = "true"
-        body = {api.param_step: "update"}
+        body = {api.param_description: "update"}
         """ call api """
         url = server.main_url + "/" + api.url1 + "/" + tc_id_recipe + "/" + api.url2 + "/" + tc_id_step + "?" \
             + api.param_with_files + "=" + tc_with_files
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
-        tc_recipe.custom_step(position=0, data=body[api.param_step])
+        tc_recipe.custom_step(position=0, data=body[api.param_description])
         """ assert """
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], "application/json")

@@ -7,7 +7,7 @@ import tests.ingredient.model as ingredient_model
 import tests.file.model as file_model
 import tests.recipe.model as recipe_model
 
-server = utils.Server
+server = utils.Server()
 api = api.DeleteIngredient()
 ingredient = ingredient_model.IngredientTest()
 ingredient_recipe = ingredient_model.IngredientRecipeTest()
