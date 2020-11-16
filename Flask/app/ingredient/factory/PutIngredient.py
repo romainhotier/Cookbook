@@ -8,6 +8,12 @@ class Factory(object):
         self.param_name = "name"
         self.param_slug = "slug"
         self.param_categories = "categories"
+        self.param_nutriments = "nutriments"
+        self.param_calories = "calories"
+        self.param_carbohydrates = "carbohydrates"
+        self.param_fats = "fats"
+        self.param_proteins = "proteins"
+        self.param_info = "info"
 
     def get_body_param(self):
         """ Get PutIngredient's body parameters.
@@ -17,7 +23,7 @@ class Factory(object):
         list
             Body parameters.
         """
-        return [self.param_name, self.param_slug, self.param_categories]
+        return [self.param_name, self.param_slug, self.param_categories, self.param_nutriments]
 
     def format_body(self, data):
         """ Format body for PutIngredient.

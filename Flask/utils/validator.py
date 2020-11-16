@@ -2,7 +2,6 @@ from flask import abort
 from pymongo import MongoClient
 from bson import ObjectId
 from os import path
-import jsonschema
 
 import utils
 import app.ingredient.model as ingredient_model
@@ -221,11 +220,13 @@ class Validator(object):
             return abort(status=400, description=detail)
 
     @staticmethod
-    def has_at_least_one_key(data):
+    def has_at_least_one_key(param, data):
         """ Check if the body have at least one key.
 
         Parameters
         ----------
+        param : str
+            Param to be tested.
         data : dict
             Dict to be tested.
 
@@ -237,7 +238,7 @@ class Validator(object):
         if len(data) != 0:
             return True
         else:
-            detail = server.format_detail(param="body", msg=server.detail_must_contain_at_least_one_key, value=data)
+            detail = server.format_detail(param=param, msg=server.detail_must_contain_at_least_one_key, value=data)
             return abort(status=400, description=detail)
 
     @staticmethod
@@ -505,94 +506,3 @@ class Validator(object):
         else:
             detail = server.format_detail(param=param, msg=server.detail_doesnot_exist, value=value)
             return abort(status=400, description=detail)
-
-    @staticmethod
-    def is_nutriment(data):
-        """ Check if the value validate nutriment schema.
-
-        Parameters
-        ----------
-        data : dict
-            Dict to be tested.
-
-        Returns
-        -------
-        Any
-            Raise an "abort 400" if validation failed.
-        """
-        try:
-            jsonschema.validate(instance=data, schema=Schema().nutriment())
-            return True
-        except jsonschema.exceptions.ValidationError as err:
-            detail = Schema().format_detail_from_err(err=err)
-            return abort(status=400, description=detail)
-
-
-class Schema(object):
-
-    def __init__(self):
-        """ Schema for validation.
-        """
-        self.schema = {}
-
-    def nutriment(self):
-        """ Set nutriment schema for validation.
-
-        Returns
-        -------
-        dict
-            Nutriment schema.
-        """
-        schema = {"definitions": {"measurement": {
-            "type": "object",
-            "properties": {
-                "quantity": {"type": "number"},
-                "unit": {"type": "string"}},
-            "required": ["quantity", "unit"],
-            "additionalProperties": False}},
-
-            "type": "object",
-            "properties": {
-                "calories_per_100g": {"$ref": "#/definitions/measurement"},
-                "carbohydrates_per_100g": {"$ref": "#/definitions/measurement"},
-                "fats_per_100g": {"$ref": "#/definitions/measurement"},
-                "proteins_per_100g": {"$ref": "#/definitions/measurement"}},
-            "required": ["calories_per_100g", "carbohydrates_per_100g", "fats_per_100g", "proteins_per_100g"],
-            "additionalProperties": False}
-        self.__setattr__("schema", schema)
-
-    def format_detail_from_err(self, err):
-        """ Format detail from a jsonschema error.
-
-        Parameters
-        ----------
-        err
-            Error raised by jsonschema validation.
-
-        Returns
-        -------
-        dict
-            Detail object.
-        """
-        param = err.message.split("'")[1]
-        msg = self.format_msg(err.message.split("'")[2])
-        value = err.instance
-        return server.format_detail(param=param, msg=msg, value=value)
-
-    # use in format_detail_from_err
-    @staticmethod
-    def format_msg(msg):
-        """ Format jsonschema message with our own server message.
-
-        Parameters
-        ----------
-        msg : str
-            Message from jsonschema exception.
-
-        Returns
-        -------
-        str
-            Server message.
-        """
-        if msg == 'is a required property':
-            return server.detail_is_required

@@ -98,8 +98,12 @@ def get_all_ingredient():
     {
         'codeMsg': 'cookbook.ingredient.success.ok',
         'codeStatus': 200,
-        'data': [{'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr'},
-                 {'_id': '5e583de9b0fcef0a922a7bc2', 'name': 'bqa_rhr'}]
+        'data': [{'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr', 'categories': [],
+                  'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'proteins': '0',
+                                 'info': 'per 100g'}},
+                 {'_id': '5e583de9b0fcef0a922a7bc2', 'name': 'bqa_rhr', 'categories': [],
+                  'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'proteins': '0',
+                                 'info': 'per 100g'}}]
     }
     """
     api = factory.GetAllIngredient.Factory()
@@ -134,7 +138,9 @@ def get_ingredient(_id):
     {
         'codeMsg': 'cookbook.ingredient.success.ok',
         'codeStatus': 200,
-        'data': {'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr'}
+        'data': {'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr', 'categories': [],
+                 'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'proteins': '0',
+                                'info': 'per 100g'}}
     }
 
     @apiErrorExample {json} Error response:
@@ -232,7 +238,8 @@ def post_ingredient():
         'codeMsg': 'cookbook.ingredient.success.created',
         'codeStatus': 201,
         'data': {'_id': '5e5840e63ed55d9119064649', 'name': 'qa_rhr_name', 'slug': 'qa_rhr_slug',
-                 'categories': ['qa_rhr_category']}
+                 'categories': ['qa_rhr_category'], 'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0',
+                                                                   'proteins': '0', 'info': 'per 100g'}}
     }
 
     @apiErrorExample {json} Error response:

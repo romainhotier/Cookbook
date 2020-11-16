@@ -7,6 +7,11 @@ class Factory(object):
         self.param_slug = "slug"
         self.param_categories = "categories"
         self.param_nutriments = "nutriments"
+        self.param_calories = "calories"
+        self.param_carbohydrates = "carbohydrates"
+        self.param_fats = "fats"
+        self.param_proteins = "proteins"
+        self.param_info = "info"
 
     def get_body_param(self):
         """ Get PostIngredient's body parameters.
@@ -58,7 +63,7 @@ class Factory(object):
     def fill_body_with_missing_key(self, data):
         """ Fill keys that are not mandatory with default value for PostIngredient.
          - categories -> []
-         - nutriments -> {}
+         - nutriments -> {"calories": "0", "carbohydrates": "0","fats": "0","proteins": "0","info": "per 100g"}
 
         Parameters
         ----------
@@ -75,5 +80,9 @@ class Factory(object):
                 if key == self.param_categories:
                     data[key] = []
                 if key == self.param_nutriments:
-                    data[key] = {}
+                    data[key] = {self.param_calories: "0",
+                                 self.param_carbohydrates: "0",
+                                 self.param_fats: "0",
+                                 self.param_proteins: "0",
+                                 self.param_info: "per 100g"}
         return data

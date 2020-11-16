@@ -24,9 +24,9 @@ class Validator(object):
         Any
             Response server if validation failed, True otherwise.
         """
-        utils.Validator.is_object_id(param=api.param_id, value=value)
-        utils.Validator.is_object_id_in_collection(param=api.param_id, value=value,
-                                                   collection=mongo.collection_ingredient_recipe)
+        validator.is_object_id(param=api.param_id, value=value)
+        validator.is_object_id_in_collection(param=api.param_id, value=value,
+                                             collection=mongo.collection_ingredient_recipe)
         return True
 
     def is_body_valid(self, data):
@@ -42,7 +42,7 @@ class Validator(object):
         Any
             Response server if validation failed, True otherwise.
         """
-        utils.Validator.has_at_least_one_key(data=data)
+        validator.has_at_least_one_key(param="body", data=data)
         self.is_quantity_valid(data=data)
         self.is_unit_valid(data=data)
         return True
@@ -63,7 +63,7 @@ class Validator(object):
             Response server if validation failed, True otherwise.
         """
         if api.param_quantity in data:
-            utils.Validator.is_int(param=api.param_quantity, value=data[api.param_quantity])
+            validator.is_int(param=api.param_quantity, value=data[api.param_quantity])
             return True
 
     # use in is_body_valid
@@ -82,5 +82,5 @@ class Validator(object):
             Response server if validation failed, True otherwise.
         """
         if api.param_unit in data:
-            utils.Validator.is_string(param=api.param_unit, value=data[api.param_unit])
+            validator.is_string(param=api.param_unit, value=data[api.param_unit])
             return True

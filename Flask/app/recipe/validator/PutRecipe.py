@@ -46,7 +46,7 @@ class Validator(object):
         return True
 
     def is_body_valid(self, data):
-        validator.has_at_least_one_key(data=data)
+        validator.has_at_least_one_key(param="body", data=data)
         self.is_title_valid(data=data)
         self.is_slug_valid(data=data)
         self.is_level_valid(data=data)

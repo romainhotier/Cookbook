@@ -14,10 +14,11 @@ class PostIngredient(object):
         self.param_slug = "slug"
         self.param_categories = "categories"
         self.param_nutriments = "nutriments"
-        self.param_calories_per_100g = "calories_per_100g"
-        self.param_carbohydrates_per_100g = "carbohydrates_per_100g"
-        self.param_fats_per_100g = "fats_per_100g"
-        self.param_proteins_per_100g = "proteins_per_100g"
+        self.param_calories = "calories"
+        self.param_carbohydrates = "carbohydrates"
+        self.param_fats = "fats"
+        self.param_proteins = "proteins"
+        self.param_info = "info"
         self.rep_code_msg_created = server.rep_code_msg_created.replace("xxx", "ingredient")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "ingredient")
         self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
@@ -34,7 +35,11 @@ class PostIngredient(object):
         if self.param_categories not in body.keys():
             data["categories"] = []
         if self.param_nutriments not in body.keys():
-            data["nutriments"] = {}
+            data["nutriments"] = {self.param_calories: "0",
+                                  self.param_carbohydrates: "0",
+                                  self.param_fats: "0",
+                                  self.param_proteins: "0",
+                                  self.param_info: "per 100g"}
         return data
 
     @staticmethod
