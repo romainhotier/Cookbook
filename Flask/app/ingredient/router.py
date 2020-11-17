@@ -222,7 +222,13 @@ def post_ingredient():
 
     @apiParam (Body param) {String} name Ingredient's name
     @apiParam (Body param) {String} slug Ingredient's slug
-    @apiParam (Body param) {String} [categories] Ingredient's categories
+    @apiParam (Body param) {String[]} [categories=[]] Ingredient's categories
+    @apiParam (Body param) {Object} [nutriments] Ingredient's nutriments
+    @apiParam (Body param) {Number} nutriments[calories=0] Ingredient's nutriments
+    @apiParam (Body param) {Number} nutriments[carbohydrates=0] Ingredient's nutriments
+    @apiParam (Body param) {Number} nutriments[fats=0] Ingredient's nutriments
+    @apiParam (Body param) {Number} nutriments[proteins=0] Ingredient's nutriments
+    @apiParam (Body param) {String} [nutriments[info="per 100g"]] Ingredient's nutriments
 
 
     @apiExample {json} Example usage:
@@ -230,6 +236,8 @@ def post_ingredient():
     {
         'name': <name>
         'slug': <slug>
+        'categories': [<category1>, <category2>],
+        'nutriments': {'calories': 10, 'carbohydrates': 20, 'fats': 30, 'proteins': 40, 'info': 'peer 100g'}
     }
 
     @apiSuccessExample {json} Success response:
@@ -238,8 +246,9 @@ def post_ingredient():
         'codeMsg': 'cookbook.ingredient.success.created',
         'codeStatus': 201,
         'data': {'_id': '5e5840e63ed55d9119064649', 'name': 'qa_rhr_name', 'slug': 'qa_rhr_slug',
-                 'categories': ['qa_rhr_category'], 'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0',
-                                                                   'proteins': '0', 'info': 'per 100g'}}
+                 'categories': ['qa_rhr_category'],
+                 'nutriments': {'calories': '10', 'carbohydrates': '20', 'fats': '30', 'proteins': '40',
+                                'info': 'per 100g'}}
     }
 
     @apiErrorExample {json} Error response:
@@ -253,8 +262,9 @@ def post_ingredient():
     api = factory.PostIngredient.Factory()
     validation = validator.PostIngredient.Validator()
     """ check body """
-    body = api.format_body(data=request.json)
-    validation.is_body_valid(data=body)
+    req_body = api.clean_body(data=request.json)
+    validation.is_body_valid(data=req_body)
+    body = api.fill_body(req_body)
     """ add ingredient in bdd """
     data = ingredient.insert(data=body)
     """ return response """
@@ -321,7 +331,13 @@ def put_ingredient(_id):
     @apiParam (Query param) {String} [with_files] if "true", add ingredient's files
     @apiParam (Body Param) {String} [name] Ingredient's name
     @apiParam (Body Param) {String} [slug] Ingredient's slug
-    @apiParam (Body Param) {String} [categories] Ingredient's categories
+    @apiParam (Body param) {String[]} [categories=[]] Ingredient's categories
+    @apiParam (Body param) {Object} [nutriments] Ingredient's nutriments
+    @apiParam (Body param) {Number} nutriments[calories=0] Ingredient's nutriments
+    @apiParam (Body param) {Number} nutriments[carbohydrates=0] Ingredient's nutriments
+    @apiParam (Body param) {Number} nutriments[fats=0] Ingredient's nutriments
+    @apiParam (Body param) {Number} nutriments[proteins=0] Ingredient's nutriments
+    @apiParam (Body param) {String} [nutriments[info="per 100g"]] Ingredient's nutriments
 
     @apiExample {json} Example usage:
     PUT http://127.0.0.1:5000/ingredient/<_id_ingredient>
@@ -352,7 +368,7 @@ def put_ingredient(_id):
     validation.is_object_id_valid(value=_id)
     validation.is_with_files_valid(value=with_files)
     """ check body """
-    body = api.format_body(data=request.json)
+    body = api.clean_body(data=request.json)
     validation.is_body_valid(data=body)
     """ update ingredient """
     data = ingredient.update(_id=_id, data=body)

@@ -131,20 +131,16 @@ class Validator(object):
             nutriments = data[api.param_nutriments]
             """ calories """
             if api.param_calories in nutriments:
-                validator.is_string(param=api.param_calories, value=nutriments[api.param_calories])
-                validator.is_string_non_empty(param=api.param_calories, value=nutriments[api.param_calories])
+                validator.is_float(param=api.param_calories, value=nutriments[api.param_calories])
             """ carbohydrates """
             if api.param_carbohydrates in nutriments:
-                validator.is_string(param=api.param_carbohydrates, value=nutriments[api.param_carbohydrates])
-                validator.is_string_non_empty(param=api.param_carbohydrates, value=nutriments[api.param_carbohydrates])
+                validator.is_float(param=api.param_carbohydrates, value=nutriments[api.param_carbohydrates])
             """ fats """
             if api.param_fats in nutriments:
-                validator.is_string(param=api.param_fats, value=nutriments[api.param_fats])
-                validator.is_string_non_empty(param=api.param_fats, value=nutriments[api.param_fats])
+                validator.is_float(param=api.param_fats, value=nutriments[api.param_fats])
             """ proteins """
             if api.param_proteins in nutriments:
-                validator.is_string(param=api.param_proteins, value=nutriments[api.param_proteins])
-                validator.is_string_non_empty(param=api.param_proteins, value=nutriments[api.param_proteins])
+                validator.is_float(param=api.param_proteins, value=nutriments[api.param_proteins])
             """ info """
             if api.param_info in nutriments:
                 validator.is_string(param=api.param_info, value=nutriments[api.param_info])

@@ -35,10 +35,10 @@ class PostIngredient(object):
         if self.param_categories not in body.keys():
             data["categories"] = []
         if self.param_nutriments not in body.keys():
-            data["nutriments"] = {self.param_calories: "0",
-                                  self.param_carbohydrates: "0",
-                                  self.param_fats: "0",
-                                  self.param_proteins: "0",
+            data["nutriments"] = {self.param_calories: 0,
+                                  self.param_carbohydrates: 0,
+                                  self.param_fats: 0,
+                                  self.param_proteins: 0,
                                   self.param_info: "per 100g"}
         return data
 

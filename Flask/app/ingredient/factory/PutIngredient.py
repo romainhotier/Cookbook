@@ -14,6 +14,7 @@ class Factory(object):
         self.param_fats = "fats"
         self.param_proteins = "proteins"
         self.param_info = "info"
+        self.body = {}
 
     def get_body_param(self):
         """ Get PutIngredient's body parameters.
@@ -25,24 +26,17 @@ class Factory(object):
         """
         return [self.param_name, self.param_slug, self.param_categories, self.param_nutriments]
 
-    def format_body(self, data):
-        """ Format body for PutIngredient.
-
-        Parameters
-        ----------
-        data : dict
-            To be cleaned.
+    def get_nutriments_param(self):
+        """ Get PutIngredient's nutriments parameters.
 
         Returns
         -------
-        dict
-            Correct body.
+        list
+            Nutriments parameters.
         """
-        cleaned = self.remove_foreign_key(data)
-        return cleaned
+        return [self.param_calories, self.param_carbohydrates, self.param_fats, self.param_proteins, self.param_info]
 
-    # use in format_body
-    def remove_foreign_key(self, data):
+    def clean_body(self, data):
         """ Remove keys that are not in PutIngredient's parameters.
 
         Parameters
@@ -55,7 +49,27 @@ class Factory(object):
         dict
             Cleaned dict.
         """
-        for i in list(data):
+        """ body keys """
+        self.__setattr__("body", data)
+        self.remove_foreign_key()
+        self.remove_foreign_key_nutriments()
+        return self.body
+
+    # use in clean_body
+    def remove_foreign_key(self):
+        """ Remove keys that are not in PostIngredient's body parameters.
+        """
+        for i in list(self.body):
             if i not in self.get_body_param():
-                del data[i]
-        return data
+                del self.body[i]
+
+    # use in clean_body
+    def remove_foreign_key_nutriments(self):
+        """ Remove keys that are not in PostIngredient's nutriments parameters.
+        """
+        try:
+            for i in list(self.body[self.param_nutriments]):
+                if i not in self.get_nutriments_param():
+                    del self.body[self.param_nutriments][i]
+        except (KeyError, TypeError):
+            pass

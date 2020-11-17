@@ -39,7 +39,14 @@ class PostIngredient(unittest.TestCase):
     def test_0_api_ok_more_param(self):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
-                "invalid": "invalid"}
+                "invalid": "invalid",
+                api.param_nutriments: {api.param_calories: 0,
+                                       api.param_carbohydrates: 0,
+                                       api.param_fats: 0,
+                                       api.param_proteins: 0,
+                                       api.param_info: "per 100g",
+                                       "invalid": "invalid"}
+                }
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -495,9 +502,9 @@ class PostIngredient(unittest.TestCase):
     def test_7_nutriments_calories_without(self):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
-                api.param_nutriments: {api.param_carbohydrates: "0",
-                                       api.param_fats: "0",
-                                       api.param_proteins: "0"}}
+                api.param_nutriments: {api.param_carbohydrates: 0,
+                                       api.param_fats: 0,
+                                       api.param_proteins: 0}}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -517,9 +524,9 @@ class PostIngredient(unittest.TestCase):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
                 api.param_nutriments: {api.param_calories: None,
-                                       api.param_carbohydrates: "0",
-                                       api.param_fats: "0",
-                                       api.param_proteins: "0"}}
+                                       api.param_carbohydrates: 0,
+                                       api.param_fats: 0,
+                                       api.param_proteins: 0}}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -531,7 +538,7 @@ class PostIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_calories, msg=server.detail_must_be_a_string,
+        detail = api.create_detail(param=api.param_calories, msg=server.detail_must_be_a_float,
                                    value=body[api.param_nutriments][api.param_calories])
         self.assertEqual(response_body["detail"], detail)
         tc_ingredient.select_nok_by_name()
@@ -540,9 +547,9 @@ class PostIngredient(unittest.TestCase):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
                 api.param_nutriments: {api.param_calories: "",
-                                       api.param_carbohydrates: "0",
-                                       api.param_fats: "0",
-                                       api.param_proteins: "0"}}
+                                       api.param_carbohydrates: 0,
+                                       api.param_fats: 0,
+                                       api.param_proteins: 0}}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -554,7 +561,7 @@ class PostIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_calories, msg=server.detail_must_be_not_empty,
+        detail = api.create_detail(param=api.param_calories, msg=server.detail_must_be_a_float,
                                    value=body[api.param_nutriments][api.param_calories])
         self.assertEqual(response_body["detail"], detail)
         tc_ingredient.select_nok_by_name()
@@ -563,9 +570,55 @@ class PostIngredient(unittest.TestCase):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
                 api.param_nutriments: {api.param_calories: "invalid",
-                                       api.param_carbohydrates: "0",
-                                       api.param_fats: "0",
-                                       api.param_proteins: "0"}}
+                                       api.param_carbohydrates: 0,
+                                       api.param_fats: 0,
+                                       api.param_proteins: 0}}
+        """ call api """
+        url = server.main_url + "/" + api.url
+        response = requests.post(url, json=body, verify=False)
+        response_body = response.json()
+        tc_ingredient = ingredient_model.IngredientTest().custom(api.custom_body(body=body))
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_calories, msg=server.detail_must_be_a_float,
+                                   value=body[api.param_nutriments][api.param_calories])
+        self.assertEqual(response_body["detail"], detail)
+        tc_ingredient.select_nok_by_name()
+
+    def test_7_nutriments_calories_string_number(self):
+        body = {api.param_name: "qa_rhr_name",
+                api.param_slug: "qa_rhr_slug",
+                api.param_nutriments: {api.param_calories: "1.1",
+                                       api.param_carbohydrates: 0,
+                                       api.param_fats: 0,
+                                       api.param_proteins: 0}}
+        """ call api """
+        url = server.main_url + "/" + api.url
+        response = requests.post(url, json=body, verify=False)
+        response_body = response.json()
+        tc_ingredient = ingredient_model.IngredientTest().custom(api.custom_body(body=body))
+        """ assert """
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 201)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
+        data_check = api.json_check(data=response_body["data"], data_expected=tc_ingredient)
+        self.assertTrue(data_check["result"], data_check["error"])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ refacto """
+        tc_ingredient.custom({"_id": response_body["data"]["_id"]}).select_ok()
+
+    def test_7_nutriments_calories_number(self):
+        body = {api.param_name: "qa_rhr_name",
+                api.param_slug: "qa_rhr_slug",
+                api.param_nutriments: {api.param_calories: 1.1,
+                                       api.param_carbohydrates: 0,
+                                       api.param_fats: 0,
+                                       api.param_proteins: 0}}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -585,9 +638,9 @@ class PostIngredient(unittest.TestCase):
     def test_8_nutriments_carbohydrates_without(self):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
-                api.param_nutriments: {api.param_calories: "0",
-                                       api.param_fats: "0",
-                                       api.param_proteins: "0"}}
+                api.param_nutriments: {api.param_calories: 0,
+                                       api.param_fats: 0,
+                                       api.param_proteins: 0}}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -606,10 +659,10 @@ class PostIngredient(unittest.TestCase):
     def test_8_nutriments_carbohydrates_null(self):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
-                api.param_nutriments: {api.param_calories: "0",
+                api.param_nutriments: {api.param_calories: 0,
                                        api.param_carbohydrates: None,
-                                       api.param_fats: "0",
-                                       api.param_proteins: "0"}}
+                                       api.param_fats: 0,
+                                       api.param_proteins: 0}}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -621,7 +674,7 @@ class PostIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_carbohydrates, msg=server.detail_must_be_a_string,
+        detail = api.create_detail(param=api.param_carbohydrates, msg=server.detail_must_be_a_float,
                                    value=body[api.param_nutriments][api.param_carbohydrates])
         self.assertEqual(response_body["detail"], detail)
         tc_ingredient.select_nok_by_name()
@@ -629,10 +682,10 @@ class PostIngredient(unittest.TestCase):
     def test_8_nutriments_carbohydrates_empty(self):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
-                api.param_nutriments: {api.param_calories: "0",
+                api.param_nutriments: {api.param_calories: 0,
                                        api.param_carbohydrates: "",
-                                       api.param_fats: "0",
-                                       api.param_proteins: "0"}}
+                                       api.param_fats: 0,
+                                       api.param_proteins: 0}}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -644,7 +697,7 @@ class PostIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_carbohydrates, msg=server.detail_must_be_not_empty,
+        detail = api.create_detail(param=api.param_carbohydrates, msg=server.detail_must_be_a_float,
                                    value=body[api.param_nutriments][api.param_carbohydrates])
         self.assertEqual(response_body["detail"], detail)
         tc_ingredient.select_nok_by_name()
@@ -652,10 +705,56 @@ class PostIngredient(unittest.TestCase):
     def test_8_nutriments_carbohydrates_invalid(self):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
-                api.param_nutriments: {api.param_calories: "0",
+                api.param_nutriments: {api.param_calories: 0,
                                        api.param_carbohydrates: "invalid",
-                                       api.param_fats: "0",
-                                       api.param_proteins: "0"}}
+                                       api.param_fats: 0,
+                                       api.param_proteins: 0}}
+        """ call api """
+        url = server.main_url + "/" + api.url
+        response = requests.post(url, json=body, verify=False)
+        response_body = response.json()
+        tc_ingredient = ingredient_model.IngredientTest().custom(api.custom_body(body=body))
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_carbohydrates, msg=server.detail_must_be_a_float,
+                                   value=body[api.param_nutriments][api.param_carbohydrates])
+        self.assertEqual(response_body["detail"], detail)
+        tc_ingredient.select_nok_by_name()
+
+    def test_8_nutriments_carbohydrates_string_number(self):
+        body = {api.param_name: "qa_rhr_name",
+                api.param_slug: "qa_rhr_slug",
+                api.param_nutriments: {api.param_calories: 0,
+                                       api.param_carbohydrates: "1.1",
+                                       api.param_fats: 0,
+                                       api.param_proteins: 0}}
+        """ call api """
+        url = server.main_url + "/" + api.url
+        response = requests.post(url, json=body, verify=False)
+        response_body = response.json()
+        tc_ingredient = ingredient_model.IngredientTest().custom(api.custom_body(body=body))
+        """ assert """
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 201)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
+        data_check = api.json_check(data=response_body["data"], data_expected=tc_ingredient)
+        self.assertTrue(data_check["result"], data_check["error"])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ refacto """
+        tc_ingredient.custom({"_id": response_body["data"]["_id"]}).select_ok()
+
+    def test_8_nutriments_carbohydrates_number(self):
+        body = {api.param_name: "qa_rhr_name",
+                api.param_slug: "qa_rhr_slug",
+                api.param_nutriments: {api.param_calories: 0,
+                                       api.param_carbohydrates: 1.1,
+                                       api.param_fats: 0,
+                                       api.param_proteins: 0}}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -675,9 +774,9 @@ class PostIngredient(unittest.TestCase):
     def test_9_nutriments_fats_without(self):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
-                api.param_nutriments: {api.param_calories: "0",
-                                       api.param_carbohydrates: "0",
-                                       api.param_proteins: "0"}}
+                api.param_nutriments: {api.param_calories: 0,
+                                       api.param_carbohydrates: 0,
+                                       api.param_proteins: 0}}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -696,10 +795,10 @@ class PostIngredient(unittest.TestCase):
     def test_9_nutriments_fats_null(self):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
-                api.param_nutriments: {api.param_calories: "0",
-                                       api.param_carbohydrates: "0",
+                api.param_nutriments: {api.param_calories: 0,
+                                       api.param_carbohydrates: 0,
                                        api.param_fats: None,
-                                       api.param_proteins: "0"}}
+                                       api.param_proteins: 0}}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -711,7 +810,7 @@ class PostIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_fats, msg=server.detail_must_be_a_string,
+        detail = api.create_detail(param=api.param_fats, msg=server.detail_must_be_a_float,
                                    value=body[api.param_nutriments][api.param_fats])
         self.assertEqual(response_body["detail"], detail)
         tc_ingredient.select_nok_by_name()
@@ -719,10 +818,10 @@ class PostIngredient(unittest.TestCase):
     def test_9_nutriments_fats_empty(self):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
-                api.param_nutriments: {api.param_calories: "0",
-                                       api.param_carbohydrates: "0",
+                api.param_nutriments: {api.param_calories: 0,
+                                       api.param_carbohydrates: 0,
                                        api.param_fats: "",
-                                       api.param_proteins: "0"}}
+                                       api.param_proteins: 0}}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -734,7 +833,7 @@ class PostIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_fats, msg=server.detail_must_be_not_empty,
+        detail = api.create_detail(param=api.param_fats, msg=server.detail_must_be_a_float,
                                    value=body[api.param_nutriments][api.param_fats])
         self.assertEqual(response_body["detail"], detail)
         tc_ingredient.select_nok_by_name()
@@ -742,10 +841,56 @@ class PostIngredient(unittest.TestCase):
     def test_9_nutriments_fats_invalid(self):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
-                api.param_nutriments: {api.param_calories: "0",
-                                       api.param_carbohydrates: "0",
+                api.param_nutriments: {api.param_calories: 0,
+                                       api.param_carbohydrates: 0,
                                        api.param_fats: "invalid",
-                                       api.param_proteins: "0"}}
+                                       api.param_proteins: 0}}
+        """ call api """
+        url = server.main_url + "/" + api.url
+        response = requests.post(url, json=body, verify=False)
+        response_body = response.json()
+        tc_ingredient = ingredient_model.IngredientTest().custom(api.custom_body(body=body))
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_fats, msg=server.detail_must_be_a_float,
+                                   value=body[api.param_nutriments][api.param_fats])
+        self.assertEqual(response_body["detail"], detail)
+        tc_ingredient.select_nok_by_name()
+
+    def test_9_nutriments_fats_string_number(self):
+        body = {api.param_name: "qa_rhr_name",
+                api.param_slug: "qa_rhr_slug",
+                api.param_nutriments: {api.param_calories: 0,
+                                       api.param_carbohydrates: 0,
+                                       api.param_fats: "1.1",
+                                       api.param_proteins: 0}}
+        """ call api """
+        url = server.main_url + "/" + api.url
+        response = requests.post(url, json=body, verify=False)
+        response_body = response.json()
+        tc_ingredient = ingredient_model.IngredientTest().custom(api.custom_body(body=body))
+        """ assert """
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 201)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
+        data_check = api.json_check(data=response_body["data"], data_expected=tc_ingredient)
+        self.assertTrue(data_check["result"], data_check["error"])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ refacto """
+        tc_ingredient.custom({"_id": response_body["data"]["_id"]}).select_ok()
+
+    def test_9_nutriments_fats_number(self):
+        body = {api.param_name: "qa_rhr_name",
+                api.param_slug: "qa_rhr_slug",
+                api.param_nutriments: {api.param_calories: 0,
+                                       api.param_carbohydrates: 0,
+                                       api.param_fats: 1.1,
+                                       api.param_proteins: 0}}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -765,9 +910,9 @@ class PostIngredient(unittest.TestCase):
     def test_10_nutriments_proteins_without(self):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
-                api.param_nutriments: {api.param_calories: "0",
-                                       api.param_carbohydrates: "0",
-                                       api.param_fats: "0"}}
+                api.param_nutriments: {api.param_calories: 0,
+                                       api.param_carbohydrates: 0,
+                                       api.param_fats: 0}}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -786,9 +931,9 @@ class PostIngredient(unittest.TestCase):
     def test_10_nutriments_proteins_null(self):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
-                api.param_nutriments: {api.param_calories: "0",
-                                       api.param_carbohydrates: "0",
-                                       api.param_fats: "0",
+                api.param_nutriments: {api.param_calories: 0,
+                                       api.param_carbohydrates: 0,
+                                       api.param_fats: 0,
                                        api.param_proteins: None}}
         """ call api """
         url = server.main_url + "/" + api.url
@@ -801,7 +946,7 @@ class PostIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_proteins, msg=server.detail_must_be_a_string,
+        detail = api.create_detail(param=api.param_proteins, msg=server.detail_must_be_a_float,
                                    value=body[api.param_nutriments][api.param_proteins])
         self.assertEqual(response_body["detail"], detail)
         tc_ingredient.select_nok_by_name()
@@ -809,9 +954,9 @@ class PostIngredient(unittest.TestCase):
     def test_10_nutriments_proteins_empty(self):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
-                api.param_nutriments: {api.param_calories: "0",
-                                       api.param_carbohydrates: "0",
-                                       api.param_fats: "0",
+                api.param_nutriments: {api.param_calories: 0,
+                                       api.param_carbohydrates: 0,
+                                       api.param_fats: 0,
                                        api.param_proteins: ""}}
         """ call api """
         url = server.main_url + "/" + api.url
@@ -824,7 +969,7 @@ class PostIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_proteins, msg=server.detail_must_be_not_empty,
+        detail = api.create_detail(param=api.param_proteins, msg=server.detail_must_be_a_float,
                                    value=body[api.param_nutriments][api.param_proteins])
         self.assertEqual(response_body["detail"], detail)
         tc_ingredient.select_nok_by_name()
@@ -832,10 +977,56 @@ class PostIngredient(unittest.TestCase):
     def test_10_nutriments_proteins_invalid(self):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
-                api.param_nutriments: {api.param_calories: "0",
-                                       api.param_carbohydrates: "0",
-                                       api.param_fats: "0",
+                api.param_nutriments: {api.param_calories: 0,
+                                       api.param_carbohydrates: 0,
+                                       api.param_fats: 0,
                                        api.param_proteins: "invalid"}}
+        """ call api """
+        url = server.main_url + "/" + api.url
+        response = requests.post(url, json=body, verify=False)
+        response_body = response.json()
+        tc_ingredient = ingredient_model.IngredientTest().custom(api.custom_body(body=body))
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_proteins, msg=server.detail_must_be_a_float,
+                                   value=body[api.param_nutriments][api.param_proteins])
+        self.assertEqual(response_body["detail"], detail)
+        tc_ingredient.select_nok_by_name()
+
+    def test_10_nutriments_proteins_string_number(self):
+        body = {api.param_name: "qa_rhr_name",
+                api.param_slug: "qa_rhr_slug",
+                api.param_nutriments: {api.param_calories: 0,
+                                       api.param_carbohydrates: 0,
+                                       api.param_fats: 0,
+                                       api.param_proteins: "1.1"}}
+        """ call api """
+        url = server.main_url + "/" + api.url
+        response = requests.post(url, json=body, verify=False)
+        response_body = response.json()
+        tc_ingredient = ingredient_model.IngredientTest().custom(api.custom_body(body=body))
+        """ assert """
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 201)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
+        data_check = api.json_check(data=response_body["data"], data_expected=tc_ingredient)
+        self.assertTrue(data_check["result"], data_check["error"])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ refacto """
+        tc_ingredient.custom({"_id": response_body["data"]["_id"]}).select_ok()
+
+    def test_10_nutriments_proteins_number(self):
+        body = {api.param_name: "qa_rhr_name",
+                api.param_slug: "qa_rhr_slug",
+                api.param_nutriments: {api.param_calories: 0,
+                                       api.param_carbohydrates: 0,
+                                       api.param_fats: 0,
+                                       api.param_proteins: 1.1}}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -855,10 +1046,10 @@ class PostIngredient(unittest.TestCase):
     def test_11_nutriments_info_without(self):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
-                api.param_nutriments: {api.param_calories: "0",
-                                       api.param_carbohydrates: "0",
-                                       api.param_fats: "0",
-                                       api.param_proteins: "0"}}
+                api.param_nutriments: {api.param_calories: 0,
+                                       api.param_carbohydrates: 0,
+                                       api.param_fats: 0,
+                                       api.param_proteins: 0}}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -878,10 +1069,10 @@ class PostIngredient(unittest.TestCase):
     def test_11_nutriments_info_null(self):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
-                api.param_nutriments: {api.param_calories: "0",
-                                       api.param_carbohydrates: "0",
-                                       api.param_fats: "0",
-                                       api.param_proteins: "0",
+                api.param_nutriments: {api.param_calories: 0,
+                                       api.param_carbohydrates: 0,
+                                       api.param_fats: 0,
+                                       api.param_proteins: 0,
                                        api.param_info: None}}
         """ call api """
         url = server.main_url + "/" + api.url
@@ -902,10 +1093,10 @@ class PostIngredient(unittest.TestCase):
     def test_11_nutriments_info_empty(self):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
-                api.param_nutriments: {api.param_calories: "0",
-                                       api.param_carbohydrates: "0",
-                                       api.param_fats: "0",
-                                       api.param_proteins: "0",
+                api.param_nutriments: {api.param_calories: 0,
+                                       api.param_carbohydrates: 0,
+                                       api.param_fats: 0,
+                                       api.param_proteins: 0,
                                        api.param_info: ""}}
         """ call api """
         url = server.main_url + "/" + api.url
@@ -926,10 +1117,10 @@ class PostIngredient(unittest.TestCase):
     def test_11_nutriments_info_invalid(self):
         body = {api.param_name: "qa_rhr_name",
                 api.param_slug: "qa_rhr_slug",
-                api.param_nutriments: {api.param_calories: "0",
-                                       api.param_carbohydrates: "0",
-                                       api.param_fats: "0",
-                                       api.param_proteins: "0",
+                api.param_nutriments: {api.param_calories: 0,
+                                       api.param_carbohydrates: 0,
+                                       api.param_fats: 0,
+                                       api.param_proteins: 0,
                                        api.param_info: "invalid"}}
         """ call api """
         url = server.main_url + "/" + api.url

@@ -12,6 +12,7 @@ class Factory(object):
         self.param_fats = "fats"
         self.param_proteins = "proteins"
         self.param_info = "info"
+        self.body = {}
 
     def get_body_param(self):
         """ Get PostIngredient's body parameters.
@@ -23,25 +24,17 @@ class Factory(object):
         """
         return [self.param_name, self.param_slug, self.param_categories, self.param_nutriments]
 
-    def format_body(self, data):
-        """ Format body for PostIngredient.
-
-        Parameters
-        ----------
-        data : dict
-            To be cleaned.
+    def get_nutriments_param(self):
+        """ Get PostIngredient's nutriments parameters.
 
         Returns
         -------
-        dict
-            Correct body.
+        list
+            Nutriments parameters.
         """
-        cleaned = self.remove_foreign_key(data=data)
-        filled = self.fill_body_with_missing_key(data=cleaned)
-        return filled
+        return [self.param_calories, self.param_carbohydrates, self.param_fats, self.param_proteins, self.param_info]
 
-    # use in format_body
-    def remove_foreign_key(self, data):
+    def clean_body(self, data):
         """ Remove keys that are not in PostIngredient's parameters.
 
         Parameters
@@ -54,35 +47,71 @@ class Factory(object):
         dict
             Cleaned dict.
         """
-        for i in list(data):
-            if i not in self.get_body_param():
-                del data[i]
-        return data
+        """ body keys """
+        self.__setattr__("body", data)
+        self.remove_foreign_key()
+        self.remove_foreign_key_nutriments()
+        return self.body
 
-    # use in format_body
-    def fill_body_with_missing_key(self, data):
-        """ Fill keys that are not mandatory with default value for PostIngredient.
-         - categories -> []
-         - nutriments -> {"calories": "0", "carbohydrates": "0","fats": "0","proteins": "0","info": "per 100g"}
+    # use in clean_body
+    def remove_foreign_key(self):
+        """ Remove keys that are not in PostIngredient's body parameters.
+        """
+        for i in list(self.body):
+            if i not in self.get_body_param():
+                del self.body[i]
+
+    # use in clean_body
+    def remove_foreign_key_nutriments(self):
+        """ Remove keys that are not in PostIngredient's nutriments parameters.
+        """
+        try:
+            for i in list(self.body[self.param_nutriments]):
+                if i not in self.get_nutriments_param():
+                    del self.body[self.param_nutriments][i]
+        except (KeyError, TypeError):
+            pass
+
+    def fill_body(self, data):
+        """ Fill body for PostIngredient.
 
         Parameters
         ----------
         data : dict
-            Dict to be filled with default value.
+            To be filled.
 
         Returns
         -------
         dict
-            Filled dict.
+            Correct body.
+        """
+        self.__setattr__("body", data)
+        self.fill_body_missing_key()
+        self.fill_nutriments_missing_key()
+        return self.body
+
+    # use in fill_body
+    def fill_body_missing_key(self):
+        """ Fill keys that are not mandatory with default value for PostIngredient.
+         - categories -> []
+         - nutriments -> {"calories": "0", "carbohydrates": "0","fats": "0","proteins": "0","info": "per 100g"}
         """
         for key in self.get_body_param():
-            if key not in data:
+            if key not in self.body:
                 if key == self.param_categories:
-                    data[key] = []
+                    self.body[key] = []
                 if key == self.param_nutriments:
-                    data[key] = {self.param_calories: "0",
-                                 self.param_carbohydrates: "0",
-                                 self.param_fats: "0",
-                                 self.param_proteins: "0",
-                                 self.param_info: "per 100g"}
-        return data
+                    self.body[key] = {self.param_calories: 0,
+                                      self.param_carbohydrates: 0,
+                                      self.param_fats: 0,
+                                      self.param_proteins: 0,
+                                      self.param_info: "per 100g"}
+
+    # use in fill_body
+    def fill_nutriments_missing_key(self):
+        """ Fill keys that are not mandatory with default value for nutriments PostIngredient.
+         - "info": "per 100g"
+        """
+        if self.param_info not in self.body[self.param_nutriments]:
+            self.body[self.param_nutriments][self.param_info] = "per 100g"
+
