@@ -443,7 +443,8 @@ class Validator(object):
         if value in values:
             return True
         else:
-            detail = server.format_detail(param=param, msg=server.detail_must_be_in + " [" + ', '.join(values) + "]",
+            detail = server.format_detail(param=param,
+                                          msg=server.detail_must_be_in + " ['" + "', '".join(values) + "']",
                                           value=value)
             return abort(status=400, description=detail)
 

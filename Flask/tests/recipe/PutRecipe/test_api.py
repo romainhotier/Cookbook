@@ -1072,7 +1072,7 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
         tc_recipe.select_ok()
 
-    def test_10_steps_without(self):
+    def test_10_status_without(self):
         tc_recipe = recipe_model.RecipeTest().insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update"}
@@ -1090,16 +1090,76 @@ class PutRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         tc_recipe.select_ok()
 
-    def test_10_steps_none(self):
+    def test_10_status_none(self):
         tc_recipe = recipe_model.RecipeTest().insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
-                api.param_steps: None}
+                api.param_status: None}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
-        tc_recipe.custom({api.param_title: "qa_rhr_title_update"})
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_status, msg=server.detail_must_be_in + api.rep_detail_status,
+                                   value=body[api.param_status])
+        self.assertEqual(response_body["detail"], detail)
+        tc_recipe.select_ok()
+
+    def test_10_status_empty(self):
+        tc_recipe = recipe_model.RecipeTest().insert()
+        tc_id = tc_recipe.get_id()
+        body = {api.param_title: "qa_rhr_title_update",
+                api.param_status: ""}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_status, msg=server.detail_must_be_in + api.rep_detail_status,
+                                   value=body[api.param_status])
+        self.assertEqual(response_body["detail"], detail)
+        tc_recipe.select_ok()
+
+    def test_10_status_string(self):
+        tc_recipe = recipe_model.RecipeTest().insert()
+        tc_id = tc_recipe.get_id()
+        body = {api.param_title: "qa_rhr_title_update",
+                api.param_status: "invalid"}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_status, msg=server.detail_must_be_in + api.rep_detail_status,
+                                   value=body[api.param_status])
+        self.assertEqual(response_body["detail"], detail)
+        tc_recipe.select_ok()
+
+    def test_10_status_in_progress(self):
+        tc_recipe = recipe_model.RecipeTest().insert()
+        tc_id = tc_recipe.get_id()
+        body = {api.param_title: "qa_rhr_title_update",
+                api.param_status: "in_progress"}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
@@ -1109,16 +1169,16 @@ class PutRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         tc_recipe.select_ok()
 
-    def test_10_steps_empty(self):
+    def test_10_status_finished(self):
         tc_recipe = recipe_model.RecipeTest().insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
-                api.param_steps: ""}
+                api.param_status: "finished"}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
-        tc_recipe.custom({api.param_title: "qa_rhr_title_update"})
+        tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
@@ -1128,64 +1188,7 @@ class PutRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         tc_recipe.select_ok()
 
-    def test_10_steps_string(self):
-        tc_recipe = recipe_model.RecipeTest().insert()
-        tc_id = tc_recipe.get_id()
-        body = {api.param_title: "qa_rhr_title_update",
-                api.param_steps: "invalid"}
-        """ call api """
-        url = server.main_url + "/" + api.url + "/" + tc_id
-        response = requests.put(url, json=body, verify=False)
-        response_body = response.json()
-        tc_recipe.custom({api.param_title: "qa_rhr_title_update"})
-        """ assert """
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body["codeStatus"], 200)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
-        tc_recipe.select_ok()
-
-    def test_10_steps_tab(self):
-        tc_recipe = recipe_model.RecipeTest().insert()
-        tc_id = tc_recipe.get_id()
-        body = {api.param_title: "qa_rhr_title_update",
-                api.param_steps: ["invalid"]}
-        """ call api """
-        url = server.main_url + "/" + api.url + "/" + tc_id
-        response = requests.put(url, json=body, verify=False)
-        response_body = response.json()
-        tc_recipe.custom({api.param_title: "qa_rhr_title_update"})
-        """ assert """
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body["codeStatus"], 200)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
-        tc_recipe.select_ok()
-
-    def test_10_steps_object(self):
-        tc_recipe = recipe_model.RecipeTest().insert()
-        tc_id = tc_recipe.get_id()
-        body = {api.param_title: "qa_rhr_title_update",
-                api.param_steps: {}}
-        """ call api """
-        url = server.main_url + "/" + api.url + "/" + tc_id
-        response = requests.put(url, json=body, verify=False)
-        response_body = response.json()
-        tc_recipe.custom({api.param_title: "qa_rhr_title_update"})
-        """ assert """
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body["codeStatus"], 200)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
-        tc_recipe.select_ok()
-
-    def test_11_categorties_without(self):
+    def test_11_categories_without(self):
         tc_recipe = recipe_model.RecipeTest().insert()
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update"}
@@ -1444,7 +1447,7 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + " [true, false]",
+        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + api.rep_detail_with_files,
                                    value=tc_with_files)
         self.assertEqual(response_body["detail"], detail)
         tc_recipe.select_ok()
@@ -1464,7 +1467,7 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + " [true, false]",
+        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + api.rep_detail_with_files,
                                    value=tc_with_files)
         self.assertEqual(response_body["detail"], detail)
         tc_recipe.select_ok()

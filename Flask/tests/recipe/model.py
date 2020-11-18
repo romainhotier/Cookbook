@@ -25,6 +25,7 @@ class RecipeTest(object):
         self.note = "qa_rhr_note"
         self.categories = ["qa_rhr_category"]
         self.steps = []
+        self.status = "in_progress"
 
     def display(self):
         print(self.__dict__)

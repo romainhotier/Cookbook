@@ -10,6 +10,7 @@ class Factory(object):
         self.param_preparation_time = "preparation_time"
         self.param_nb_people = "nb_people"
         self.param_categories = "categories"
+        self.param_status = "status"
         self.param_with_files = "with_files"
 
     def get_search_param(self):
@@ -21,7 +22,7 @@ class Factory(object):
             Body parameters.
         """
         return [self.param_title, self.param_slug, self.param_level, self.param_cooking_time,
-                self.param_preparation_time, self.param_nb_people, self.param_categories]
+                self.param_preparation_time, self.param_nb_people, self.param_categories, self.param_status]
 
     def format_body(self, data):
         """ Format body for SearchRecipe.

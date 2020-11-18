@@ -12,6 +12,7 @@ class Factory(object):
         self.param_nb_people = "nb_people"
         self.param_note = "note"
         self.param_categories = "categories"
+        self.param_status = "status"
         self.default_steps = "steps"
         self.body = {}
 
@@ -24,7 +25,8 @@ class Factory(object):
             Body parameters.
         """
         return [self.param_title, self.param_slug, self.param_level, self.param_resume, self.param_cooking_time,
-                self.param_preparation_time, self.param_nb_people, self.param_note, self.param_categories]
+                self.param_preparation_time, self.param_nb_people, self.param_note, self.param_categories,
+                self.param_status]
 
     def clean_body(self, data):
         """ Remove keys that are not in PostRecipe's parameters.
@@ -75,6 +77,7 @@ class Factory(object):
          - resume/note -> ""
          - level/cooking_time/preparation_time/nb_people -> 0
          - categories -> []
+         - status -> "in_progress"
         """
         """ from body """
         for key in self.get_body_param():
@@ -86,5 +89,7 @@ class Factory(object):
                     self.body[key] = 0
                 elif key in [self.param_categories]:
                     self.body[key] = []
+                elif key in [self.param_status]:
+                    self.body[key] = "in_progress"
         """ from default """
         self.body[self.default_steps] = []

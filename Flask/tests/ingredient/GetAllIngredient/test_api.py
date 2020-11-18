@@ -95,7 +95,7 @@ class GetAllIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + " [true, false]",
+        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + " ['true', 'false']",
                                    value=tc_with_files)
         self.assertEqual(response_body["detail"], detail)
 
@@ -113,7 +113,7 @@ class GetAllIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + " [true, false]",
+        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + " ['true', 'false']",
                                    value=tc_with_files)
         self.assertEqual(response_body["detail"], detail)
 
