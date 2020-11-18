@@ -1017,7 +1017,7 @@ class PostRecipe(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
         tc_recipe.select_nok_by_title()
 
-    def test_9_steps_without(self):
+    def test_9_status_without(self):
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug"}
         """ call api """
@@ -1035,16 +1035,76 @@ class PostRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         tc_recipe.custom({"_id": response_body["data"]["_id"]}).select_ok()
 
-    def test_9_steps_none(self):
+    def test_9_status_none(self):
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
-                api.param_steps: None}
+                api.param_status: None}
+        """ call api """
+        url = server.main_url + "/" + api.url
+        response = requests.post(url, json=body, verify=False)
+        response_body = response.json()
+        tc_recipe = recipe_model.RecipeTest().custom(api.default_value(body=body))
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_status, msg=server.detail_must_be_in + api.rep_detail_status,
+                                   value=body[api.param_status])
+        self.assertEqual(response_body["detail"], detail)
+        tc_recipe.select_nok_by_title()
+
+    def test_9_status_empty(self):
+        body = {api.param_title: "qa_rhr_title",
+                api.param_slug: "slug",
+                api.param_status: ""}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         tc_recipe = recipe_model.RecipeTest().custom(api.default_value(body=body))
 
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_status, msg=server.detail_must_be_in + api.rep_detail_status,
+                                   value=body[api.param_status])
+        self.assertEqual(response_body["detail"], detail)
+        tc_recipe.select_nok_by_title()
+
+    def test_9_status_string(self):
+        body = {api.param_title: "qa_rhr_title",
+                api.param_slug: "slug",
+                api.param_status: "invalid"}
+        """ call api """
+        url = server.main_url + "/" + api.url
+        response = requests.post(url, json=body, verify=False)
+        response_body = response.json()
+        tc_recipe = recipe_model.RecipeTest().custom(api.default_value(body=body))
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_status, msg=server.detail_must_be_in + api.rep_detail_status,
+                                   value=body[api.param_status])
+        self.assertEqual(response_body["detail"], detail)
+        tc_recipe.select_nok_by_title()
+
+    def test_9_status_in_progress(self):
+        body = {api.param_title: "qa_rhr_title",
+                api.param_slug: "slug",
+                api.param_status: "in_progress"}
+        """ call api """
+        url = server.main_url + "/" + api.url
+        response = requests.post(url, json=body, verify=False)
+        response_body = response.json()
+        tc_recipe = recipe_model.RecipeTest().custom(api.default_value(body=body))
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], "application/json")
@@ -1055,68 +1115,10 @@ class PostRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         tc_recipe.custom({"_id": response_body["data"]["_id"]}).select_ok()
 
-    def test_9_steps_empty(self):
+    def test_9_status_finished(self):
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
-                api.param_steps: ""}
-        """ call api """
-        url = server.main_url + "/" + api.url
-        response = requests.post(url, json=body, verify=False)
-        response_body = response.json()
-        tc_recipe = recipe_model.RecipeTest().custom(api.default_value(body=body))
-
-        """ assert """
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.headers["Content-Type"], "application/json")
-        self.assertEqual(response_body["codeStatus"], 201)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
-        data_check = api.json_check(data=response_body["data"], data_expected=tc_recipe)
-        self.assertTrue(data_check["result"], data_check["error"])
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
-        tc_recipe.custom({"_id": response_body["data"]["_id"]}).select_ok()
-
-    def test_9_steps_string(self):
-        body = {api.param_title: "qa_rhr_title",
-                api.param_slug: "slug",
-                api.param_steps: "invalid"}
-        """ call api """
-        url = server.main_url + "/" + api.url
-        response = requests.post(url, json=body, verify=False)
-        response_body = response.json()
-        tc_recipe = recipe_model.RecipeTest().custom(api.default_value(body=body))
-        """ assert """
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.headers["Content-Type"], "application/json")
-        self.assertEqual(response_body["codeStatus"], 201)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
-        data_check = api.json_check(data=response_body["data"], data_expected=tc_recipe)
-        self.assertTrue(data_check["result"], data_check["error"])
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
-        tc_recipe.custom({"_id": response_body["data"]["_id"]}).select_ok()
-
-    def test_9_steps_tab(self):
-        body = {api.param_title: "qa_rhr_title",
-                api.param_slug: "slug",
-                api.param_steps: []}
-        """ call api """
-        url = server.main_url + "/" + api.url
-        response = requests.post(url, json=body, verify=False)
-        response_body = response.json()
-        tc_recipe = recipe_model.RecipeTest().custom(api.default_value(body=body))
-        """ assert """
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.headers["Content-Type"], "application/json")
-        self.assertEqual(response_body["codeStatus"], 201)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
-        data_check = api.json_check(data=response_body["data"], data_expected=tc_recipe)
-        self.assertTrue(data_check["result"], data_check["error"])
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
-        tc_recipe.custom({"_id": response_body["data"]["_id"]}).select_ok()
-
-    def test_9_steps_object(self):
-        body = {api.param_title: "qa_rhr_title",
-                api.param_slug: "slug",
-                api.param_steps: {}}
+                api.param_status: "finished"}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)

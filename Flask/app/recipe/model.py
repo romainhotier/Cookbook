@@ -25,6 +25,7 @@ class Recipe(object):
         - note = Recipe's note
         - steps = Recipe's steps
         - categories = Recipe's categories
+        - status = Recipe's status
         """
         self.result = {}
 

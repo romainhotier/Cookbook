@@ -30,8 +30,8 @@ class Validator(object):
         self.is_preparation_time_valid(data=data)
         self.is_nb_people_valid(data=data)
         self.is_note_valid(data=data)
-
         self.is_categories_valid(data=data)
+        self.is_status_valid(data=data)
 
     # use in is_body_valid
     @staticmethod
@@ -213,5 +213,25 @@ class Validator(object):
         """
         if api.param_categories in data:
             validator.is_array(param=api.param_categories, value=data[api.param_categories])
+            return True
+        return True
+
+    # use in is_body_valid
+    @staticmethod
+    def is_status_valid(data):
+        """ Check if status is correct if specified.
+
+        Parameters
+        ----------
+        data : dict
+            PostRecipe's body.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        if api.param_status in data:
+            validator.is_in(param=api.param_status, value=data[api.param_status], values=["in_progress", "finished"])
             return True
         return True

@@ -457,7 +457,55 @@ class SearchRecipe(unittest.TestCase):
         self.assertNotIn(tc_recipe2.get_stringify(), response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
-    def test_2_with_files_without(self):
+    def test_9_status_empty(self):
+        recipe_model.RecipeTest().insert()
+        tc_status = ""
+        """ call api """
+        url = server.main_url + "/" + api.url + "?" + api.param_status + "=" + tc_status
+        response = requests.get(url, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        detail = api.create_detail(param=api.param_status, msg=server.detail_must_be_not_empty, value=tc_status)
+        self.assertEqual(response_body["detail"], detail)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+
+    def test_9_status_invalid(self):
+        tc_recipe1 = recipe_model.RecipeTest().insert()
+        tc_status = "invalid"
+        """ call api """
+        url = server.main_url + "/" + api.url + "?" + api.param_status + "=" + tc_status
+        response = requests.get(url, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertNotIn(tc_recipe1.get_stringify(), response_body["data"])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+
+    def test_9_status_ok(self):
+        tc_recipe1 = recipe_model.RecipeTest().custom({"status": "in_progress"}).insert()
+        tc_recipe2 = recipe_model.RecipeTest().custom({"status": "finished"}).insert()
+        tc_status = "prog"
+        """ call api """
+        url = server.main_url + "/" + api.url + "?" + api.param_status + "=" + tc_status
+        response = requests.get(url, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertIn(tc_recipe1.get_stringify(), response_body["data"])
+        self.assertNotIn(tc_recipe2.get_stringify(), response_body["data"])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+
+    def test_10_with_files_without(self):
         tc_recipe1 = recipe_model.RecipeTest().custom({"title": "qa_rhr_a"}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom({"title": "qa_rhr_b"}).insert()
         """ call api """
@@ -473,7 +521,7 @@ class SearchRecipe(unittest.TestCase):
         self.assertIn(tc_recipe2.get_stringify(), response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
-    def test_2_with_files_empty(self):
+    def test_10_with_files_empty(self):
         recipe_model.RecipeTest().custom({"title": "qa_rhr_a"}).insert()
         recipe_model.RecipeTest().custom({"title": "qa_rhr_b"}).insert()
         tc_with_files = ""
@@ -487,11 +535,11 @@ class SearchRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + " [true, false]",
+        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + " ['true', 'false']",
                                    value=tc_with_files)
         self.assertEqual(response_body["detail"], detail)
 
-    def test_2_with_files_string(self):
+    def test_10_with_files_string(self):
         recipe_model.RecipeTest().custom({"title": "qa_rhr_a"}).insert()
         recipe_model.RecipeTest().custom({"title": "qa_rhr_b"}).insert()
         tc_with_files = "invalid"
@@ -505,11 +553,11 @@ class SearchRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + " [true, false]",
+        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + " ['true', 'false']",
                                    value=tc_with_files)
         self.assertEqual(response_body["detail"], detail)
 
-    def test_2_with_files_string_false(self):
+    def test_10_with_files_string_false(self):
         tc_recipe1 = recipe_model.RecipeTest().custom({"title": "qa_rhr_a"})
         tc_recipe2 = recipe_model.RecipeTest().custom({"title": "qa_rhr_b"})
         tc_recipe1.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
@@ -539,7 +587,7 @@ class SearchRecipe(unittest.TestCase):
         self.assertIn(tc_recipe2.get_stringify(), response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
-    def test_2_with_files_string_true(self):
+    def test_10_with_files_string_true(self):
         tc_recipe1 = recipe_model.RecipeTest().custom({"title": "qa_rhr_a"})
         tc_recipe2 = recipe_model.RecipeTest().custom({"title": "qa_rhr_b"})
         tc_recipe1.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")

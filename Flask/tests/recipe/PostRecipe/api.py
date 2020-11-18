@@ -19,8 +19,8 @@ class PostRecipe(object):
         self.param_nb_people = "nb_people"
         self.param_note = "note"
         self.param_categories = "categories"
-        self.param_steps = "steps"
-        self.param_ingredients = "ingredients"
+        self.param_status = "status"
+        self.rep_detail_status = " ['in_progress', 'finished']"
         self.rep_code_msg_created = server.rep_code_msg_created.replace("xxx", "recipe")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "recipe")
         self.rep_code_msg_error_404 = server.rep_code_msg_error_404.replace("xxx", "recipe")
@@ -49,6 +49,8 @@ class PostRecipe(object):
             default_value["preparation_time"] = 0
         if self.param_resume not in default_value.keys():
             default_value["resume"] = ""
+        if self.param_status not in default_value.keys():
+            default_value["status"] = "in_progress"
         default_value["steps"] = []
         return default_value
 
@@ -66,9 +68,10 @@ class PostRecipe(object):
                     "resume": {"enum": [recipe.resume]},
                     "slug": {"enum": [recipe.slug]},
                     "steps": {"enum": [[]]},
-                    "title": {"enum": [recipe.title]}},
+                    "title": {"enum": [recipe.title]},
+                    "status": {"enum": [recipe.status]}},
                 "required": ["_id", "categories", "cooking_time", "level", "nb_people", "note", "preparation_time",
-                             "resume", "slug", "steps", "title"],
+                             "resume", "slug", "steps", "title", "status"],
                 "additionalProperties": False}
 
     def json_check(self, data, data_expected):

@@ -122,9 +122,11 @@ def get_all_recipe():
         'codeMsg': 'cookbook.recipe.success.ok',
         'codeStatus': 200,
         'data': [{'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,
-                  'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'qa_rhr_1'},
+                  'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'qa_rhr_1',
+                  'status': 'in_progress'},
                  {'_id': '5e71eb8f39358991f2ea19f7', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,
-                  'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr_2'}]
+                  'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr_2',
+                  'status': 'in_progress'}]
     }
     """
     api = factory.GetAllRecipe.Factory()
@@ -207,7 +209,8 @@ def get_recipe(slug):
         'codeMsg': 'cookbook.recipe.success.ok',
         'codeStatus': 200,
         'data': {'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,
-                 'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr'}
+                 'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr',
+                 'status': 'in_progress'}
     }
 
     @apiErrorExample {json} Error response:
@@ -242,13 +245,14 @@ def post_recipe():
 
     @apiParam (Body param) {String} title Recipe's title
     @apiParam (Body param) {String} slug Recipe's slug for url
-    @apiParam (Body param) {Integer} [level] Recipe's level (between 0 and 3)
-    @apiParam (Body param) {String} [resume] Recipe's resume
-    @apiParam (Body param) {Integer} [cooking_time] Recipe's cooking time
-    @apiParam (Body param) {Integer} [preparation_time] Recipe's preparation time
-    @apiParam (Body param) {String} [nb_people] Recipe's number of people
-    @apiParam (Body param) {String} [note] Recipe's note
-    @apiParam (Body param) {Array} [categories] Recipe's categories
+    @apiParam (Body param) {Integer} [level]=0 Recipe's level (between 0 and 3)
+    @apiParam (Body param) {String} [resume]="" Recipe's resume
+    @apiParam (Body param) {Integer} [cooking_time]=0 Recipe's cooking time
+    @apiParam (Body param) {Integer} [preparation_time]=0 Recipe's preparation time
+    @apiParam (Body param) {String} [nb_people]=0 Recipe's number of people
+    @apiParam (Body param) {String} [note]="" Recipe's note
+    @apiParam (Body param) {Array} [categories]=Empty_Array Recipe's categories
+    @apiParam (Body param) {String} [status]="in_progress" Recipe's categories ("in_progress" or "finished")
 
     @apiExample {json} Example usage:
     POST http://127.0.0.1:5000/recipe
@@ -262,7 +266,8 @@ def post_recipe():
         'codeMsg': 'cookbook.recipe.success.created',
         'codeStatus': 201,
         'data': {'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,
-                 'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr'}
+                 'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr',
+                 'status': 'in_progress'}
     }
 
     @apiErrorExample {json} Error response:
@@ -359,6 +364,7 @@ def put_recipe(_id):
     @apiParam (Body param) {String} [nb_people] Recipe's number of people
     @apiParam (Body param) {String} [note] Recipe's note
     @apiParam (Body param) {Array} [categories] Recipe's categories
+    @apiParam (Body param) {String} [status]="in_progress" Recipe's categories ("in_progress" or "finished")
 
     @apiExample {json} Example usage:
     PUT http://127.0.0.1:5000/recipe/<_id_recipe>
@@ -372,7 +378,8 @@ def put_recipe(_id):
         'codeMsg': 'cookbook.recipe.success.created',
         'codeStatus': 201,
         'data': {'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,
-                 'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr'}
+                 'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr',
+                 'status': 'in_progress'}
     }
 
     @apiErrorExample {json} Error response:
@@ -471,6 +478,7 @@ def search_recipe():
     @apiParam (Query param) {String} [nb_people] search by nb_people
     @apiParam (Query param) {String} [categories] search by categories
     @apiParam (Query param) {String} [with_files] if "true", add recipe's files
+    @apiParam (Query param) {String} [status] search by status
 
     @apiExample {json} Example usage:
     GET http://127.0.0.1:5000/recipe/search?title=<recipe_title>
@@ -481,9 +489,11 @@ def search_recipe():
         'codeMsg': 'cookbook.recipe.success.ok',
         'codeStatus': 200,
         'data': [{'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,
-                  'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'qa_rhr_1'},
+                  'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'qa_rhr_1',
+                  'status': 'in_progress'},
                  {'_id': '5e71eb8f39358991f2ea19f7', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,
-                  'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr_2'}]
+                  'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr_2',
+                  'status': 'in_progress'}]
     }
 
     @apiErrorExample {json} Error response:

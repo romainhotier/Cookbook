@@ -41,7 +41,7 @@ class Validator(object):
             Response server if validation failed, True otherwise.
         """
         for i, j in data.items():
-            if i in [api.param_title, api.param_slug, api.param_categories]:
+            if i in [api.param_title, api.param_slug, api.param_categories, api.param_status]:
                 validator.is_string_non_empty(param=i, value=j)
             elif i in [api.param_level, api.param_cooking_time, api.param_preparation_time, api.param_nb_people]:
                 validator.is_int(param=i, value=j)

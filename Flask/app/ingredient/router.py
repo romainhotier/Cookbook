@@ -222,7 +222,7 @@ def post_ingredient():
 
     @apiParam (Body param) {String} name Ingredient's name
     @apiParam (Body param) {String} slug Ingredient's slug
-    @apiParam (Body param) {String[]} [categories=Empty_Array] Ingredient's categories
+    @apiParam (Body param) {Array} [categories=Empty_Array] Ingredient's categories
     @apiParam (Body param) {Object} [nutriments] Ingredient's nutriments
     @apiParam (Body param) {Number} nutriments[calories]=0 Ingredient's calories
     @apiParam (Body param) {Number} nutriments[carbohydrates]=0 Ingredient's carbohydrates
@@ -331,7 +331,7 @@ def put_ingredient(_id):
     @apiParam (Query param) {String} [with_files] if "true", add ingredient's files
     @apiParam (Body param) {String} [name] Ingredient's name
     @apiParam (Body param) {String} [slug] Ingredient's slug
-    @apiParam (Body param) {String[]} [categories] Ingredient's categories
+    @apiParam (Body param) {Array} [categories] Ingredient's categories
     @apiParam (Body param) {Object} [nutriments] Ingredient's nutriments
     @apiParam (Body param) {Number} [nutriments[calories]] Ingredient's calories
     @apiParam (Body param) {Number} [nutriments[carbohydrates]] Ingredient's carbohydrates
