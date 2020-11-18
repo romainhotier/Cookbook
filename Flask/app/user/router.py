@@ -54,7 +54,7 @@ def signup():
     api = factory.PostUserSignup.Factory()
     validation = validator.PostUserSignup.Validator()
     """ check body """
-    body = api.format_body(data=request.json)
+    body = api.clean_body(data=request.json)
     validation.is_body_valid(data=body)
     """ add user """
     data = user.insert(data=body)
@@ -98,7 +98,7 @@ def login():
     api = factory.PostUserLogin.Factory()
     validation = validator.PostUserLogin.Validator()
     """ check body """
-    body = api.format_body(data=request.json)
+    body = api.clean_body(data=request.json)
     validation.is_body_valid(data=body)
     """ check password """
     if api.check_password(data=body):

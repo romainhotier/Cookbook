@@ -9,6 +9,7 @@ class Factory(object):
         self.param_path = "path"
         self.param_filename = "filename"
         self.param_is_main = "is_main"
+        self.body = {}
 
     def get_body_param(self):
         """ Get PostFile's body parameters.
@@ -20,25 +21,7 @@ class Factory(object):
         """
         return [self.param_path, self.param_filename, self.param_is_main]
 
-    def format_body(self, data):
-        """ Format body for PostFile.
-
-        Parameters
-        ----------
-        data : dict
-            To be cleaned.
-
-        Returns
-        -------
-        dict
-            Correct body.
-        """
-        cleaned = self.remove_foreign_key(data)
-        filled = self.fill_body_with_missing_key(cleaned)
-        return filled
-
-    # use in format_body
-    def remove_foreign_key(self, data):
+    def clean_body(self, data):
         """ Remove keys that are not in PostFile's parameters.
 
         Parameters
@@ -51,31 +34,45 @@ class Factory(object):
         dict
             Cleaned dict.
         """
-        for i in list(data):
-            if i not in self.get_body_param():
-                del data[i]
-        return data
+        """ body keys """
+        self.__setattr__("body", data)
+        self.remove_foreign_key()
+        return self.body
 
-    # use in format_body
-    def fill_body_with_missing_key(self, data):
-        """ Fill keys that are not mandatory with default value for PostFile.
-         - is_main -> False
+    # use in clean_body
+    def remove_foreign_key(self):
+        """ Remove keys that are not in PostFile's parameters.
+        """
+        for i in list(self.body):
+            if i not in self.get_body_param():
+                del self.body[i]
+
+    def fill_body(self, data):
+        """ Fill body for PostIngredient.
 
         Parameters
         ----------
         data : dict
-            Dict to be filled with default value.
+            To be filled.
 
         Returns
         -------
         dict
-            Filled dict.
+            Correct body.
+        """
+        self.__setattr__("body", data)
+        self.fill_body_missing_key()
+        return self.body
+
+    # use in fill_body
+    def fill_body_missing_key(self):
+        """ Fill keys that are not mandatory with default value for PostFile.
+            - is_main -> False
         """
         for key in self.get_body_param():
-            if key not in data:
+            if key not in self.body:
                 if key == self.param_is_main:
-                    data[key] = False
-        return data
+                    self.body[key] = False
 
     @staticmethod
     def detail_information(_id_file):

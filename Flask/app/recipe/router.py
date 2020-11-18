@@ -276,10 +276,11 @@ def post_recipe():
     api = factory.PostRecipe.Factory()
     validation = validator.PostRecipe.Validator()
     """ check body """
-    body = api.format_body(data=request.json)
+    body = api.clean_body(data=request.json)
     validation.is_body_valid(data=body)
+    body_filled = api.fill_body(data=body)
     """ insert recipe """
-    data = recipe.insert(data=body)
+    data = recipe.insert(data=body_filled)
     """ return result """
     return server.return_response(data=data.result, api=apis.name, http_code=201)
 
@@ -329,7 +330,7 @@ def post_recipe_step(_id):
     validation.is_with_files_valid(value=with_files)
     validation.is_object_id_valid(value=_id)
     """ check body """
-    body = api.format_body(data=request.json)
+    body = api.clean_body(data=request.json)
     validation.is_body_valid(_id_recipe=_id, data=body)
     """ insert step """
     data = step.insert(_id=_id, data=body)
@@ -389,7 +390,7 @@ def put_recipe(_id):
     validation.is_with_files_valid(value=with_files)
     validation.is_object_id_valid(value=_id)
     """ check body """
-    body = api.format_body(data=request.json)
+    body = api.clean_body(data=request.json)
     validation.is_body_valid(data=body)
     """ update recipe """
     data = recipe.update(_id=_id, data=body)
@@ -444,7 +445,7 @@ def put_recipe_step(_id_recipe, _id_step):
     validation.is_object_id_valid_recipe(value=_id_recipe)
     validation.is_object_id_valid_steps(_id_recipe=_id_recipe, _id_step=_id_step)
     """ check body """
-    body = api.format_body(data=request.json)
+    body = api.clean_body(data=request.json)
     validation.is_body_valid(data=body)
     """ update step """
     data = step.update(_id_recipe=_id_recipe, _id_step=_id_step, data=body)

@@ -93,8 +93,8 @@ class Factory(object):
     # use in fill_body
     def fill_body_missing_key(self):
         """ Fill keys that are not mandatory with default value for PostIngredient.
-         - categories -> []
-         - nutriments -> {"calories": "0", "carbohydrates": "0","fats": "0","proteins": "0","info": "per 100g"}
+            - categories -> []
+            - nutriments -> {"calories": "0", "carbohydrates": "0","fats": "0","proteins": "0","info": "per 100g"}
         """
         for key in self.get_body_param():
             if key not in self.body:
@@ -114,4 +114,3 @@ class Factory(object):
         """
         if self.param_info not in self.body[self.param_nutriments]:
             self.body[self.param_nutriments][self.param_info] = "per 100g"
-
