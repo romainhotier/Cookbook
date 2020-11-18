@@ -1,4 +1,4 @@
-from pymongo import MongoClient
+from pymongo import MongoClient, errors
 from bson import ObjectId
 import re
 
@@ -146,7 +146,19 @@ class Ingredient(object):
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient]
-        db.update_one({"_id": ObjectId(_id)}, {'$set': data})
+        """ update nutriments if exist """
+        try:
+            data_nutriments = data.pop("nutriments")
+            for i, j in data_nutriments.items():
+                db.update_one({"_id": ObjectId(_id)}, {'$set': {"nutriments.{}".format(i): j}})
+        except KeyError:
+            pass
+        """ update ingredient others keys"""
+        try:
+            db.update_one({"_id": ObjectId(_id)}, {'$set': data})
+        except errors.WriteError:
+            pass
+        """ return result """
         result = db.find_one({"_id": ObjectId(_id)})
         client.close()
         self.result = mongo.to_json(result)

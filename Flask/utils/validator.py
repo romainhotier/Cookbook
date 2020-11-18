@@ -2,7 +2,6 @@ from flask import abort
 from pymongo import MongoClient
 from bson import ObjectId
 from os import path
-import jsonschema
 
 import utils
 import app.ingredient.model as ingredient_model
@@ -129,206 +128,6 @@ class Validator(object):
             return True
 
     @staticmethod
-    def is_string(param, value):
-        """ Check if the value is a string.
-
-        Parameters
-        ----------
-        param : str
-            Name of the tested parameter.
-        value : Any
-            Value of the tested parameter.
-
-        Returns
-        -------
-        Any
-            Raise an "abort 400" if validation failed.
-        """
-        if isinstance(value, str):
-            return True
-        else:
-            detail = server.format_detail(param=param, msg=server.detail_must_be_a_string, value=value)
-            return abort(status=400, description=detail)
-
-    @staticmethod
-    def is_int(param, value):
-        """ Check if the value is an integer.
-
-        Parameters
-        ----------
-        param : str
-            Name of the tested parameter.
-        value : Any
-            Value of the tested parameter.
-
-        Returns
-        -------
-        Any
-            Raise an "abort 400" if validation failed.
-        """
-        if isinstance(value, int):
-            return True
-        else:
-            try:
-                int(value)
-                return True
-            except (ValueError, TypeError):
-                detail = server.format_detail(param=param, msg=server.detail_must_be_an_integer, value=value)
-                return abort(status=400, description=detail)
-
-    @staticmethod
-    def is_array(param, value):
-        """ Check if the value is an array.
-
-        Parameters
-        ----------
-        param : str
-            Name of the tested parameter.
-        value : Any
-            Value of the tested parameter.
-
-        Returns
-        -------
-        Any
-            Raise an "abort 400" if validation failed.
-        """
-        if isinstance(value, list):
-            return True
-        else:
-            detail = server.format_detail(param=param, msg=server.detail_must_be_an_array, value=value)
-            return abort(status=400, description=detail)
-
-    @staticmethod
-    def is_object(param, value):
-        """ Check if the value is an object.
-
-        Parameters
-        ----------
-        param : str
-            Name of the tested parameter.
-        value : Any
-            Value of the tested parameter.
-
-        Returns
-        -------
-        Any
-            Raise an "abort 400" if validation failed.
-        """
-        if isinstance(value, dict):
-            return True
-        else:
-            detail = server.format_detail(param=param, msg=server.detail_must_be_an_object, value=value)
-            return abort(status=400, description=detail)
-
-    @staticmethod
-    def has_at_least_one_key(data):
-        """ Check if the body have at least one key.
-
-        Parameters
-        ----------
-        data : dict
-            Dict to be tested.
-
-        Returns
-        -------
-        Any
-            Raise an "abort 400" if validation failed.
-        """
-        if len(data) != 0:
-            return True
-        else:
-            detail = server.format_detail(param="body", msg=server.detail_must_contain_at_least_one_key, value=data)
-            return abort(status=400, description=detail)
-
-    @staticmethod
-    def is_boolean(param, value):
-        """ Check if the value is a boolean.
-
-        Parameters
-        ----------
-        param : str
-            Name of the tested parameter.
-        value : Any
-            Value of the tested parameter.
-
-        Returns
-        -------
-        Any
-            Raise an "abort 400" if validation failed.
-        """
-        if isinstance(value, bool):
-            return True
-        else:
-            detail = server.format_detail(param=param, msg=server.detail_must_be_a_boolean, value=value)
-            return abort(status=400, description=detail)
-
-    @staticmethod
-    def is_string_non_empty(param, value):
-        """ Check if the value is a non empty string.
-
-        Parameters
-        ----------
-        param : str
-            Name of the tested parameter.
-        value : str
-            Value of the tested parameter.
-
-        Returns
-        -------
-        Any
-            Raise an "abort 400" if validation failed.
-        """
-        if value.strip() == "":
-            detail = server.format_detail(param=param, msg=server.detail_must_be_not_empty, value=value)
-            return abort(status=400, description=detail)
-        else:
-            return True
-
-    def is_string_boolean_or_none(self, param, value):
-        """ Check if the value is a boolean string or None.
-
-        Parameters
-        ----------
-        param : str
-            Name of the tested parameter.
-        value : str
-            Value of the tested parameter.
-
-        Returns
-        -------
-        Any
-            Raise an "abort 400" if validation failed.
-        """
-        if value is None:
-            return True
-        else:
-            self.is_string(param=param, value=value)
-            self.is_in(param=param, value=value, values=["true", "false"])
-            return True
-
-    @staticmethod
-    def is_mandatory(param, data):
-        """ Check if the param is present in body.
-
-        Parameters
-        ----------
-        param : str
-            Name of the tested parameter.
-        data : dict
-            Dict to be tested.
-
-        Returns
-        -------
-        Any
-            Raise an "abort 400" if validation failed.
-        """
-        if param in data:
-            return True
-        else:
-            detail = server.format_detail(param=param, msg=server.detail_is_required)
-            return abort(status=400, description=detail)
-
-    @staticmethod
     def is_unique_user(param, value):
         """ Check if User already exist.
 
@@ -413,8 +212,51 @@ class Validator(object):
         return True
 
     @staticmethod
-    def is_mandatory_query(param, value):
-        """ Check if the param is present in query.
+    def is_string(param, value):
+        """ Check if the value is a string.
+
+        Parameters
+        ----------
+        param : str
+            Name of the tested parameter.
+        value : Any
+            Value of the tested parameter.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        if isinstance(value, str):
+            return True
+        else:
+            detail = server.format_detail(param=param, msg=server.detail_must_be_a_string, value=value)
+            return abort(status=400, description=detail)
+
+    @staticmethod
+    def is_string_non_empty(param, value):
+        """ Check if the value is a non empty string.
+
+        Parameters
+        ----------
+        param : str
+            Name of the tested parameter.
+        value : str
+            Value of the tested parameter.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        if value.strip() == "":
+            detail = server.format_detail(param=param, msg=server.detail_must_be_not_empty, value=value)
+            return abort(status=400, description=detail)
+        else:
+            return True
+
+    def is_string_boolean_or_none(self, param, value):
+        """ Check if the value is a boolean string or None.
 
         Parameters
         ----------
@@ -429,7 +271,128 @@ class Validator(object):
             Raise an "abort 400" if validation failed.
         """
         if value is None:
-            detail = server.format_detail(param=param, msg=server.detail_is_required)
+            return True
+        else:
+            self.is_string(param=param, value=value)
+            self.is_in(param=param, value=value, values=["true", "false"])
+            return True
+
+    @staticmethod
+    def is_int(param, value):
+        """ Check if the value is an integer.
+
+        Parameters
+        ----------
+        param : str
+            Name of the tested parameter.
+        value : Any
+            Value of the tested parameter.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        if isinstance(value, int):
+            return True
+        else:
+            try:
+                int(value)
+                return True
+            except (ValueError, TypeError):
+                detail = server.format_detail(param=param, msg=server.detail_must_be_an_integer, value=value)
+                return abort(status=400, description=detail)
+
+    @staticmethod
+    def is_float(param, value):
+        """ Check if the value is an float.
+
+        Parameters
+        ----------
+        param : str
+            Name of the tested parameter.
+        value : Any
+            Value of the tested parameter.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        if isinstance(value, float):
+            return True
+        else:
+            try:
+                float(value)
+                return True
+            except (ValueError, TypeError):
+                detail = server.format_detail(param=param, msg=server.detail_must_be_a_float, value=value)
+                return abort(status=400, description=detail)
+
+    @staticmethod
+    def is_array(param, value):
+        """ Check if the value is an array.
+
+        Parameters
+        ----------
+        param : str
+            Name of the tested parameter.
+        value : Any
+            Value of the tested parameter.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        if isinstance(value, list):
+            return True
+        else:
+            detail = server.format_detail(param=param, msg=server.detail_must_be_an_array, value=value)
+            return abort(status=400, description=detail)
+
+    @staticmethod
+    def is_object(param, value):
+        """ Check if the value is an object.
+
+        Parameters
+        ----------
+        param : str
+            Name of the tested parameter.
+        value : Any
+            Value of the tested parameter.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        if isinstance(value, dict):
+            return True
+        else:
+            detail = server.format_detail(param=param, msg=server.detail_must_be_an_object, value=value)
+            return abort(status=400, description=detail)
+
+    @staticmethod
+    def is_boolean(param, value):
+        """ Check if the value is a boolean.
+
+        Parameters
+        ----------
+        param : str
+            Name of the tested parameter.
+        value : Any
+            Value of the tested parameter.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        if isinstance(value, bool):
+            return True
+        else:
+            detail = server.format_detail(param=param, msg=server.detail_must_be_a_boolean, value=value)
             return abort(status=400, description=detail)
 
     @staticmethod
@@ -507,11 +470,13 @@ class Validator(object):
             return abort(status=400, description=detail)
 
     @staticmethod
-    def is_nutriment(data):
-        """ Check if the value validate nutriment schema.
+    def has_at_least_one_key(param, data):
+        """ Check if the body have at least one key.
 
         Parameters
         ----------
+        param : str
+            Param to be tested.
         data : dict
             Dict to be tested.
 
@@ -520,79 +485,50 @@ class Validator(object):
         Any
             Raise an "abort 400" if validation failed.
         """
-        try:
-            jsonschema.validate(instance=data, schema=Schema().nutriment())
+        if len(data) != 0:
             return True
-        except jsonschema.exceptions.ValidationError as err:
-            detail = Schema().format_detail_from_err(err=err)
+        else:
+            detail = server.format_detail(param=param, msg=server.detail_must_contain_at_least_one_key, value=data)
             return abort(status=400, description=detail)
 
-
-class Schema(object):
-
-    def __init__(self):
-        """ Schema for validation.
-        """
-        self.schema = {}
-
-    def nutriment(self):
-        """ Set nutriment schema for validation.
-
-        Returns
-        -------
-        dict
-            Nutriment schema.
-        """
-        schema = {"definitions": {"measurement": {
-            "type": "object",
-            "properties": {
-                "quantity": {"type": "number"},
-                "unit": {"type": "string"}},
-            "required": ["quantity", "unit"],
-            "additionalProperties": False}},
-
-            "type": "object",
-            "properties": {
-                "calories_per_100g": {"$ref": "#/definitions/measurement"},
-                "carbohydrates_per_100g": {"$ref": "#/definitions/measurement"},
-                "fats_per_100g": {"$ref": "#/definitions/measurement"},
-                "proteins_per_100g": {"$ref": "#/definitions/measurement"}},
-            "required": ["calories_per_100g", "carbohydrates_per_100g", "fats_per_100g", "proteins_per_100g"],
-            "additionalProperties": False}
-        self.__setattr__("schema", schema)
-
-    def format_detail_from_err(self, err):
-        """ Format detail from a jsonschema error.
-
-        Parameters
-        ----------
-        err
-            Error raised by jsonschema validation.
-
-        Returns
-        -------
-        dict
-            Detail object.
-        """
-        param = err.message.split("'")[1]
-        msg = self.format_msg(err.message.split("'")[2])
-        value = err.instance
-        return server.format_detail(param=param, msg=msg, value=value)
-
-    # use in format_detail_from_err
     @staticmethod
-    def format_msg(msg):
-        """ Format jsonschema message with our own server message.
+    def is_mandatory(param, data):
+        """ Check if the param is present in body.
 
         Parameters
         ----------
-        msg : str
-            Message from jsonschema exception.
+        param : str
+            Name of the tested parameter.
+        data : dict
+            Dict to be tested.
 
         Returns
         -------
-        str
-            Server message.
+        Any
+            Raise an "abort 400" if validation failed.
         """
-        if msg == 'is a required property':
-            return server.detail_is_required
+        if param in data:
+            return True
+        else:
+            detail = server.format_detail(param=param, msg=server.detail_is_required)
+            return abort(status=400, description=detail)
+
+    @staticmethod
+    def is_mandatory_query(param, value):
+        """ Check if the param is present in query.
+
+        Parameters
+        ----------
+        param : str
+            Name of the tested parameter.
+        value : str
+            Value of the tested parameter.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        if value is None:
+            detail = server.format_detail(param=param, msg=server.detail_is_required)
+            return abort(status=400, description=detail)

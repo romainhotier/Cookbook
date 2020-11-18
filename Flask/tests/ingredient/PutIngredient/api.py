@@ -12,6 +12,12 @@ class PutIngredient(object):
         self.param_name = "name"
         self.param_slug = "slug"
         self.param_categories = "categories"
+        self.param_nutriments = "nutriments"
+        self.param_calories = "calories"
+        self.param_carbohydrates = "carbohydrates"
+        self.param_fats = "fats"
+        self.param_proteins = "proteins"
+        self.param_info = "info"
         self.rep_code_msg_ok = server.rep_code_msg_ok.replace("xxx", "ingredient")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "ingredient")
         self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")

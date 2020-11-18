@@ -10,6 +10,7 @@ class Factory(object):
         """
         self.param_email = "email"
         self.param_password = "password"
+        self.body = {}
 
     def get_body_param(self):
         """ Get PostUserLogin's body parameters.
@@ -21,8 +22,8 @@ class Factory(object):
         """
         return [self.param_email, self.param_password]
 
-    def format_body(self, data):
-        """ Format body for PostUserLogin.
+    def clean_body(self, data):
+        """ Remove keys that are not in PostUserLogin's parameters.
 
         Parameters
         ----------
@@ -34,27 +35,17 @@ class Factory(object):
         dict
             Correct body.
         """
-        cleaned = self.remove_foreign_key(data)
-        return cleaned
+        self.__setattr__("body", data)
+        self.remove_foreign_key()
+        return self.body
 
-    # use in format_body
-    def remove_foreign_key(self, data):
+    # use in clean_body
+    def remove_foreign_key(self):
         """ Remove keys that are not in PostUserLogin's parameters.
-
-        Parameters
-        ----------
-        data : dict
-            To be cleaned.
-
-        Returns
-        -------
-        dict
-            Cleaned dict.
         """
-        for i in list(data):
+        for i in list(self.body):
             if i not in self.get_body_param():
-                del data[i]
-        return data
+                del self.body[i]
 
     def check_password(self, data):
         """ Check access for the user.

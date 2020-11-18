@@ -7,6 +7,7 @@ class Factory(object):
         self.param_id_step = "_id_step"
         self.param_with_files = "with_files"
         self.param_description = "description"
+        self.body = {}
 
     def get_body_param(self):
         """ Get PutRecipeStep's body parameters.
@@ -18,8 +19,8 @@ class Factory(object):
         """
         return [self.param_description]
 
-    def format_body(self, data):
-        """ Format body for PutRecipeStep.
+    def clean_body(self, data):
+        """ Remove keys that are not in PutRecipeStep's parameters.
 
         Parameters
         ----------
@@ -31,24 +32,14 @@ class Factory(object):
         dict
             Correct body.
         """
-        filled = self.remove_foreign_key(data)
-        return filled
+        self.__setattr__("body", data)
+        self.remove_foreign_key()
+        return self.body
 
     # use in format_body
-    def remove_foreign_key(self, data):
+    def remove_foreign_key(self):
         """ Remove keys that are not in PutRecipeStep's parameters.
-
-        Parameters
-        ----------
-        data : dict
-            To be cleaned.
-
-        Returns
-        -------
-        dict
-            Cleaned dict.
         """
-        for i in list(data):
+        for i in list(self.body):
             if i not in self.get_body_param():
-                del data[i]
-        return data
+                del self.body[i]

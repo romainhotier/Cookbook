@@ -126,10 +126,11 @@ def post_ingredient_file(_id):
     """ check param """
     validation.is_object_id_valid(kind="ingredient", value=_id)
     """ check body """
-    body = api.format_body(data=request.json)
+    body = api.clean_body(data=request.json)
     validation.is_body_valid(data=body)
+    body_filled = api.fill_body(data=body)
     """ insert file """
-    inserted_id = file.insert(kind="ingredient", _id_parent=_id, metadata=body)
+    inserted_id = file.insert(kind="ingredient", _id_parent=_id, metadata=body_filled)
     """ return response """
     data = ingredient.select_one(_id=_id).add_enrichment_file_for_one()
     detail = api.detail_information(_id_file=inserted_id)
@@ -181,10 +182,11 @@ def post_recipe_file(_id):
     """ check param """
     validation.is_object_id_valid(kind="recipe", value=_id)
     """ check body """
-    body = api.format_body(data=request.json)
+    body = api.clean_body(data=request.json)
     validation.is_body_valid(data=body)
+    body_filled = api.fill_body(data=body)
     """ insert file """
-    inserted_id = file.insert(kind="recipe", _id_parent=_id, metadata=body)
+    inserted_id = file.insert(kind="recipe", _id_parent=_id, metadata=body_filled)
     """ return response """
     data = recipe.select_one(_id=_id).add_enrichment_file_for_one()
     detail = api.detail_information(_id_file=inserted_id)
@@ -239,10 +241,11 @@ def post_step_file(_id_recipe, _id_step):
     validation.is_object_id_valid_special_step(kind="recipe", _id_recipe=_id_recipe)
     validation.is_object_id_valid_special_step(kind="step", _id_recipe=_id_recipe, _id_step=_id_step)
     """ check body """
-    body = api.format_body(data=request.json)
+    body = api.clean_body(data=request.json)
     validation.is_body_valid(data=body)
+    body_filled = api.fill_body(data=body)
     """ insert file """
-    inserted_id = file.insert(kind="step", _id_parent=_id_step, metadata=body)
+    inserted_id = file.insert(kind="step", _id_parent=_id_step, metadata=body_filled)
     """ return response """
     data = recipe.select_one(_id=_id_recipe).add_enrichment_file_for_one()
     detail = api.detail_information(_id_file=inserted_id)
