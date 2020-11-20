@@ -1,5 +1,5 @@
 import { connect } from "react-redux";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Row, Col } from "antd";
 
 import { slugify } from "constants/functions.constants";
@@ -9,10 +9,14 @@ import { IngredientValidator } from "./IngredientPageAdd.validator";
 
 const IngredientPageAdd = ({ loadingPostIngredients, ingredients, postIngredient }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  console.log("in ")
+
+  useEffect(() => {
+    console.log('useEffect')
+    setModalVisible(false)
+  }, [ingredients])
+
   const onFinish = (values) => {
     const slug = slugify(values.name)
-    console.log({ ...values, slug})
     postIngredient({ ...values, slug})
   };
 
@@ -87,7 +91,7 @@ const IngredientPageAdd = ({ loadingPostIngredients, ingredients, postIngredient
             </Col>
           </Row>
           <Form.Item style={{ textAlign: 'right' }}>
-            <Button type="primary" htmlType="submit" loading={loadingPostIngredients}>
+            <Button type="primary" htmlType="submit" loading={loadingPostIngredients} disabled={loadingPostIngredients}>
               Créer
             </Button>
           </Form.Item>

@@ -1,4 +1,4 @@
-export const slugify = (str) => {
+export const slugify = (str, charUse = "-") => {
   str = str.replace(/^\s+|\s+$/g, "");
 
   // Make the string lowercase
@@ -17,9 +17,13 @@ export const slugify = (str) => {
   str = str
     .replace(/[^a-z0-9 -]/g, "")
     // Collapse whitespace and replace by -
-    .replace(/\s+/g, "-")
+    .replace(/\s+/g, charUse)
     // Collapse dashes
-    .replace(/-+/g, "-");
+    .replace(/-+/g, charUse);
 
   return str;
+};
+
+export const slugifyResponse = (str) => {
+  return slugify(str, "_");
 };

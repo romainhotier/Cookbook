@@ -32,7 +32,7 @@ const IngredientReducer = handleActions(
     [getAllIngredientsSuccess](state, action) {
       let data = {}
       action.payload.forEach((ing) => {
-        data[ing.name] = {
+        data[ing.slug] = {
           ...ing,
         }
       })
@@ -64,18 +64,15 @@ const IngredientReducer = handleActions(
     },
 
     [postIngredientSuccess](state, action) {
-      let data = {}
-      console.log("state", state)
-      console.log("action.payload", action.payload)
-      action.payload.forEach((ing) => {
-        data[ing.name] = {
-          ...ing,
-        }
-      })
+      let { content } = state
+      const { data } = action.payload
 
       return {
         ...state,
-        content: data,
+        content: {
+          ...content,
+          [data.slug]: data,
+        },
         loadingPostIngredient: false,
       }
     },
