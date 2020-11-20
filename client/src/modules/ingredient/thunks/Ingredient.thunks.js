@@ -13,6 +13,11 @@ import {
   postIngredientURL,
 } from '../api/Ingredient.api'
 
+import { notification } from 'antd'
+import get from 'lodash/get'
+import { codeMsg } from 'constants/codeMsg.constants'
+import { slugifyResponse } from 'constants/functions.constants'
+
 export const fetchAllIngredients = () => (dispatch => {
   dispatch(getAllIngredientsRequest());
 
@@ -36,22 +41,37 @@ export const postIngredient = (data) => (dispatch => {
   fetch(postIngredientURL(), {
     method: 'POST',
     headers: new Headers({
-      'Accept': '*',
       'Content-Type': 'application/json'
     }),
     body: JSON.stringify(data)
   })
   .then(res => res.json())
   .then(response => {
-    console.log('response', response)
-    // if (response.ok) {
-    //   dispatch(addRecipeSuccess(resolve(response.json())));
-    // } else {
-    //   response.json().then(json => { reject(json) })
-    // }
+    if(response.codeStatus === 201) {
+      dispatch(
+        postIngredientSuccess(response)
+      );
+      console.log()
+      notification['success']({
+        message: 'Ingrédient créé !',
+        description:
+          `${get(codeMsg, `${response.codeMsg}`)}`
+      });
+    } else {
+      dispatch(
+        dispatch(postIngredientFailed(response.detail))
+      );
+
+      const errorFormat = get(codeMsg, `${response.codeMsg}.${slugifyResponse(response.detail.msg)}`);
+      notification['error']({
+        message: 'Oooh une erreur',
+        description:
+        `${errorFormat(response.detail.value)}`
+      });
+    }
   })
   .catch(error => {
-      dispatch(postIngredientFailed(error));
+    dispatch(postIngredientFailed(error));
   })
 
 })

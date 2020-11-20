@@ -1,18 +1,50 @@
-import React from "react";
-// import { Form, Button, Row, Col, Divider } from "antd";
+import { connect } from "react-redux";
+import React, { Component } from "react";
 
-// import { Input } from "components/Form/Input.component";
-// import { CheckboxWithImage } from "components/Form/CheckboxWithImage.component";
-// import { categories } from "constants/categories.constants";
+import { fetchAllIngredients } from 'modules/ingredient/thunks'
 
-// import { RecipeValidator } from "./RecipeForm.validator";
+class RecipeIngredientsForm extends Component {
+  componentDidMount() {
+    this.props.fetchAllIngredients();
+  }
 
-const RecipeIngredientsForm = () => {
-  return (
-    <>
-      <h2>Ingrédients</h2>
-    </>
-  );
+  render() {
+    const { ingredients } = this.props
+    console.log(ingredients)
+
+    if( Object.entries(ingredients).length === 0 ) {
+      return 'loader'
+    }
+    console.log(ingredients)
+    const dataIngredients = Object.values(ingredients).map(ing => ({value: ing.name, salut: ing._id, label: ing.name}))
+
+    return (
+      <>
+        <h2>Ingrédients</h2>
+        {/* Ingrédients */}
+
+        {/* <Input
+          label="Ingrédient"
+          name="ingredient"
+          required={RecipeValidator["title"].required}
+          error={RecipeValidator["title"].errorMessage}
+          placeholder={RecipeValidator["title"].placeholder}
+        /> */}
+      </>
+    );
+  }
+}
+
+const mapDispatchToProps = {
+  fetchAllIngredients,
 };
 
-export default RecipeIngredientsForm;
+const mapStateToProps = ({ ingredients: { content, loadingFetchIngredients } }) => ({
+  ingredients: content,
+  loadingFetchIngredients,
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(RecipeIngredientsForm);
