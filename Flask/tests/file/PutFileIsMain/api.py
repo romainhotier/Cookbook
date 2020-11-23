@@ -4,6 +4,8 @@ server = utils.Server()
 
 
 class PutFileIsMain(object):
+    """ Class to test PutFileIsMain.
+    """
 
     def __init__(self):
         self.url = 'file/is_main'
@@ -14,6 +16,22 @@ class PutFileIsMain(object):
 
     @staticmethod
     def create_detail(param, msg, **kwargs):
+        """ Format Server's detail response.
+
+        Parameters
+        ----------
+        param : str
+            Tested parameter.
+        msg : str
+            Server's message.
+        kwargs : str
+            Value if one existed.
+
+        Returns
+        -------
+        dict
+            Server's detail response.
+        """
         detail = {"param": param, "msg": msg}
         if "value" in kwargs:
             detail["value"] = kwargs["value"]
@@ -21,6 +39,19 @@ class PutFileIsMain(object):
 
     @staticmethod
     def check_not_present(value, rep):
+        """ Check if data/detail is not present in Server's response.
+
+        Parameters
+        ----------
+        value : str
+            Tested value.
+        rep : dict
+            Server's response.
+
+        Returns
+        -------
+        bool
+        """
         if value in rep.keys():
             return False
         else:
@@ -28,4 +59,18 @@ class PutFileIsMain(object):
 
     @staticmethod
     def data_expected(_id_file, _id_parent):
+        """ Format detail's response.
+
+        Parameters
+        ----------
+        _id_file : str
+            File's ObjectId.
+        _id_parent : str
+            Parent's ObjectId.
+
+        Returns
+        -------
+        str
+            Detail's response.
+        """
         return "{0} is now set as main file for {1}".format(str(_id_file), str(_id_parent))

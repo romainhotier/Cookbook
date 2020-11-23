@@ -13,10 +13,18 @@ file = file_model.FileTest()
 class DeleteFile(unittest.TestCase):
 
     def setUp(self):
+        """ Clean all FileTest. """
         file.clean()
 
     def test_0_api_ok(self):
+        """ Default case.
+
+        Return
+            204 - File Deleted.
+        """
+        """ env """
         tc_file = file_model.FileTest().insert()
+        """ param """
         tc_id = tc_file.get_id()
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
@@ -27,7 +35,14 @@ class DeleteFile(unittest.TestCase):
         self.assertEqual(response.text, "")
 
     def test_1_url_not_found(self):
+        """ Wrong url.
+
+        Return
+            404 - Url not found.
+        """
+        """ env """
         tc_file = file_model.FileTest().insert()
+        """ param """
         tc_id = tc_file.get_id()
         """ call api """
         url = server.main_url + "/" + api.url + "x/" + tc_id
@@ -42,7 +57,14 @@ class DeleteFile(unittest.TestCase):
         self.assertEqual(response_body["detail"], server.detail_url_not_found)
 
     def test_2_id_without(self):
+        """ QueryParameter _id missing.
+
+        Return
+            404 - Url not found.
+        """
+        """ env """
         file_model.FileTest().insert()
+        """ param """
         tc_id = ""
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
@@ -57,7 +79,14 @@ class DeleteFile(unittest.TestCase):
         self.assertEqual(response_body["detail"], server.detail_url_not_found)
 
     def test_2_id_string(self):
+        """ QueryParameter _id is a string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         file_model.FileTest().insert()
+        """ param """
         tc_id = "invalid"
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
@@ -73,6 +102,12 @@ class DeleteFile(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
 
     def test_2_id_object_id_invalid(self):
+        """ QueryParameter _id is a nok ObjectId.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         file_model.FileTest().insert()
         tc_id = "aaaaaaaaaaaaaaaaaaaaaaaa"
         """ call api """
@@ -88,12 +123,9 @@ class DeleteFile(unittest.TestCase):
         detail = api.create_detail(param=api.param_id, msg=server.detail_doesnot_exist, value=tc_id)
         self.assertEqual(response_body["detail"], detail)
 
-    def tearDown(self):
-        file.clean()
-
     @classmethod
     def tearDownClass(cls):
-        file.clean()
+        cls.setUp(DeleteFile())
 
 
 if __name__ == '__main__':

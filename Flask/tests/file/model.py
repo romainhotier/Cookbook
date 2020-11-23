@@ -29,51 +29,74 @@ class FileTest(object):
                          "is_main": False}
 
     def display(self):
-        """ Print UserTest model.
+        """ Print FileTest model.
 
         Returns
         -------
         Any
-            Display UserTest
+            Display FileTest.
         """
         print(self.__dict__)
 
     def get_param(self):
-        """ Get UserTest parameters.
+        """ Get FileTest parameters.
 
         Returns
         -------
         list
-            UserTest parameters.
+            FileTest parameters.
         """
         return [attr for attr in dir(self) if not callable(getattr(self, attr)) and not attr.startswith("__")]
 
     def get_id(self):
-        """ Get _id of UserTest.
+        """ Get FileTest's _id.
 
         Returns
         -------
         str
-            UserTest's _id.
+            FileTest's _id.
         """
         return str(self._id)
 
     def get_is_main(self):
+        """ Get FileTest's metadata.is_main.
+
+        Returns
+        -------
+        str
+            FileTest's is_main.
+        """
         return self.metadata["is_main"]
 
     def get_data(self):
+        """ Get FileTest's data.
+
+        Returns
+        -------
+        str
+            FileTest's data.
+        """
         return copy.deepcopy(self.data[0].decode("utf-8"))
 
     def get_for_enrichment(self):
+        """ Get FileTest's _id and is_main for enrichment.
+
+        Returns
+        -------
+        dict
+            FileTest's info for enrichment.
+            - _id
+            - is_main
+        """
         return copy.deepcopy({"_id": self._id, "is_main": self.metadata["is_main"]})
 
     def custom(self, data):
-        """ Update UserTest.
+        """ Update FileTest.
 
         Parameters
         ----------
         data : dict
-            Data to be updated for UserTest.
+            Data to be updated for FileTest.
 
         Returns
         -------
@@ -89,11 +112,23 @@ class FileTest(object):
         return self
 
     def custom_is_main(self, is_main):
+        """ Update FileTest's is_main.
+
+        Parameters
+        ----------
+        is_main : bool
+            Is_main's value.
+
+        Returns
+        -------
+        Any
+            Self
+        """
         self.metadata["is_main"] = is_main
         return self
 
     def insert(self):
-        """ Insert UserTest.
+        """ Insert FileTest.
 
         Returns
         -------
@@ -108,7 +143,7 @@ class FileTest(object):
         return self
 
     def select_if_present_by_id(self):
-        """ Check if UserTest exist by ObjectId.
+        """ Check if FileTest exist by ObjectId.
         """
         client = MongoClient(mongo.ip, mongo.port)
         fs = gridfs.GridFS(client[mongo.name])
@@ -116,7 +151,7 @@ class FileTest(object):
         assert fs.exists(_id=ObjectId(self._id))
 
     def select_ok(self):
-        """ Check if UserTest.
+        """ Check if FileTest.
         """
         client = MongoClient(mongo.ip, mongo.port)
         """ check file file exist """
@@ -129,7 +164,7 @@ class FileTest(object):
         assert file["metadata"] == self.metadata
 
     def select_nok(self):
-        """ Check if UserTest doesn't exist.
+        """ Check if FileTest doesn't exist.
         """
         client = MongoClient(mongo.ip, mongo.port)
         fs = gridfs.GridFS(client[mongo.name])
@@ -137,7 +172,7 @@ class FileTest(object):
         assert not fs.exists({"_id": ObjectId(self.get_id())})
 
     def select_nok_by_filename(self):
-        """ Check if UserTest doesn't exist by filename.
+        """ Check if FileTest doesn't exist by filename.
         """
         client = MongoClient(mongo.ip, mongo.port)
         fs = gridfs.GridFS(client[mongo.name])
@@ -146,7 +181,7 @@ class FileTest(object):
 
     @staticmethod
     def clean():
-        """ Clean UserTest by filename.
+        """ Clean FileTest by filename.
         """
         rgx = re.compile('.*qa_rhr.*', re.IGNORECASE)
         client = MongoClient(mongo.ip, mongo.port)

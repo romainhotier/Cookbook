@@ -14,9 +14,16 @@ file = file_model.FileTest()
 class PutFileIsMain(unittest.TestCase):
 
     def setUp(self):
+        """ Clean all FileTest"""
         file.clean()
 
     def test_0_api_ok(self):
+        """ Default case
+
+        Return
+            200 - Update information.
+        """
+        """ env """
         tc_file1 = file_model.FileTest().custom({"metadata": {"kind": "kind_file",
                                                               "_id_parent": ObjectId("111111111111111111111111"),
                                                               "is_main": True}}).insert()
@@ -29,11 +36,13 @@ class PutFileIsMain(unittest.TestCase):
         tc_file4 = file_model.FileTest().custom({"metadata": {"kind": "kind_file",
                                                               "_id_parent": ObjectId("222222222222222222222222"),
                                                               "is_main": True}}).insert()
+        """ param """
         tc_id = tc_file3.get_id()
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, verify=False)
         response_body = response.json()
+        """ change """
         tc_file1.custom_is_main(False)
         tc_file3.custom_is_main(True)
         """ assert """
@@ -44,13 +53,21 @@ class PutFileIsMain(unittest.TestCase):
         self.assertEqual(response_body["data"], api.data_expected(_id_file=tc_id,
                                                                   _id_parent="111111111111111111111111"))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check files """
         tc_file1.select_ok()
         tc_file2.select_ok()
         tc_file3.select_ok()
         tc_file4.select_ok()
 
     def test_1_url_not_found(self):
+        """ Wrong url.
+
+        Return
+            404 - Url not found.
+        """
+        """ env """
         tc_file = file_model.FileTest().insert()
+        """ param """
         tc_id = tc_file.get_id()
         """ call api """
         url = server.main_url + "/" + api.url + "x/" + tc_id
@@ -63,9 +80,18 @@ class PutFileIsMain(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
         self.assertEqual(response_body["detail"], server.detail_url_not_found)
+        """ check file """
+        tc_file.select_ok()
 
     def test_2_id_without(self):
-        file_model.FileTest().insert()
+        """ QueryParameter _id is missing.
+
+        Return
+            404 - Url not found.
+        """
+        """ env """
+        tc_file = file_model.FileTest().insert()
+        """ param """
         tc_id = ""
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
@@ -78,9 +104,18 @@ class PutFileIsMain(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
         self.assertEqual(response_body["detail"], server.detail_url_not_found)
+        """ check file """
+        tc_file.select_ok()
 
     def test_2_id_string(self):
-        file_model.FileTest().insert()
+        """ QueryParameter _id is a string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
+        tc_file = file_model.FileTest().insert()
+        """ param """
         tc_id = "invalid"
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
@@ -94,9 +129,18 @@ class PutFileIsMain(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_id, msg=server.detail_must_be_an_object_id, value=tc_id)
         self.assertEqual(response_body["detail"], detail)
+        """ check file """
+        tc_file.select_ok()
 
     def test_2_id_object_id_invalid(self):
-        file_model.FileTest().insert()
+        """ QueryParameter _id is a nok ObjectId.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
+        tc_file = file_model.FileTest().insert()
+        """ param """
         tc_id = "aaaaaaaaaaaaaaaaaaaaaaaa"
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
@@ -110,6 +154,8 @@ class PutFileIsMain(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_id, msg=server.detail_doesnot_exist, value=tc_id)
         self.assertEqual(response_body["detail"], detail)
+        """ check file """
+        tc_file.select_ok()
 
     @classmethod
     def tearDownClass(cls):

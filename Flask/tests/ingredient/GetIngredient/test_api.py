@@ -15,12 +15,20 @@ file = file_model.FileTest()
 class GetIngredient(unittest.TestCase):
 
     def setUp(self):
+        """ Clean IngredientTest and FileTest. """
         ingredient.clean()
         file.clean()
 
     def test_0_api_ok(self):
-        tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
-        ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
+        """ Default case.
+
+        Return
+            200 - Get one Ingredient.
+        """
+        """ env """
+        tc_ingredient1 = ingredient_model.IngredientTest().insert()
+        ingredient_model.IngredientTest().insert()
+        """ param """
         tc_id = tc_ingredient1.get_id()
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
@@ -35,8 +43,15 @@ class GetIngredient(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_0_api_ok_more_param(self):
-        tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
-        ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
+        """ Default case with more parameter.
+
+        Return
+            200 - Get one Ingredient.
+        """
+        """ env """
+        tc_ingredient1 = ingredient_model.IngredientTest().insert()
+        ingredient_model.IngredientTest().insert()
+        """ param """
         tc_id = tc_ingredient1.get_id()
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id + "?invalid=invalid"
@@ -51,8 +66,15 @@ class GetIngredient(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_1_url_not_found(self):
-        tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
-        ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
+        """ Wrong url.
+
+        Return
+            404 - Url not found.
+        """
+        """ env """
+        tc_ingredient1 = ingredient_model.IngredientTest().insert()
+        ingredient_model.IngredientTest().insert()
+        """ param """
         tc_id = tc_ingredient1.get_id()
         """ call api """
         url = server.main_url + "/" + api.url + "x/" + tc_id
@@ -67,8 +89,14 @@ class GetIngredient(unittest.TestCase):
         self.assertEqual(response_body["detail"], server.detail_url_not_found)
 
     def test_2_id_without(self):
-        tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
-        tc_ingredient2 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
+        """ QueryParameter _id is missing.
+
+        Return
+            404 - Url not found.
+        """
+        """ env """
+        tc_ingredient1 = ingredient_model.IngredientTest().insert()
+        tc_ingredient2 = ingredient_model.IngredientTest().insert()
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.get(url, verify=False)
@@ -83,7 +111,14 @@ class GetIngredient(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_2_id_string(self):
-        ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
+        """ QueryParameter _id is a string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
+        ingredient_model.IngredientTest().insert()
+        """ param """
         tc_id = "invalid"
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
@@ -99,7 +134,14 @@ class GetIngredient(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
 
     def test_2_id_object_id_invalid(self):
-        ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
+        """ QueryParameter _id is a nok ObjectId.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
+        ingredient_model.IngredientTest().insert()
+        """ param """
         tc_id = "aaaaaaaaaaaaaaaaaaaaaaaa"
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
@@ -115,8 +157,15 @@ class GetIngredient(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
 
     def test_3_with_files_without(self):
-        tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
-        ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
+        """ QueryParameter with_files is missing.
+
+        Return
+            200 - Get one Ingredient.
+        """
+        """ env """
+        tc_ingredient1 = ingredient_model.IngredientTest().insert()
+        ingredient_model.IngredientTest().insert()
+        """ param """
         tc_id = tc_ingredient1.get_id()
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
@@ -131,8 +180,15 @@ class GetIngredient(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_3_with_files_empty(self):
-        tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
-        ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
+        """ QueryParameter with_files is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
+        tc_ingredient1 = ingredient_model.IngredientTest().insert()
+        ingredient_model.IngredientTest().insert()
+        """ param """
         tc_id = tc_ingredient1.get_id()
         tc_with_files = ""
         """ call api """
