@@ -301,7 +301,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 201\n{\n    'codeMsg': 'cookbook.file.success.created',\n    'codeStatus': 201,\n    'data': {'_id': '5e6a4223e664b60da7cd8626', 'cooking_time': 0, 'files': [], 'level': 0, 'nb_people': 0,\n             'note': '', 'preparation_time': 0, 'resume': '',\n             'steps': [{'_id': '111111111111111111111111', 'files': [{'_id': '5e6a42237e59e8439a883d99',\n             'is_main': False}], 'step': 'a'}, {'_id': '222222222222222222222222', 'files': [], 'step': 'b'}],\n             'title': 'qa_rhr', 'slug': 'x', 'categories': []},\n    'detail': 'added file ObjectId: 5e6a42237e59e8439a883d99'\n}",
+          "content": "HTTPS 201\n{\n    'codeMsg': 'cookbook.file.success.created',\n    'codeStatus': 201,\n    'data': {'_id': '5e6a4223e664b60da7cd8626', 'cooking_time': 0, 'files': [], 'level': 0, 'nb_people': 0,\n             'note': '', 'preparation_time': 0, 'resume': '',\n             'steps': [{'_id': '111111111111111111111111', 'files': [{'_id': '5e6a42237e59e8439a883d99',\n             'is_main': False}], 'description': 'a'}, {'_id': '222222222222222222222222', 'files': [],\n             'description': 'b'}], 'title': 'qa_rhr', 'slug': 'x', 'categories': []},\n    'detail': 'added file ObjectId: 5e6a42237e59e8439a883d99'\n}",
           "type": "json"
         }
       ]
@@ -497,7 +497,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.ingredient.success.ok',\n    'codeStatus': 200,\n    'data': [{'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr'},\n             {'_id': '5e583de9b0fcef0a922a7bc2', 'name': 'bqa_rhr'}]\n}",
+          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.ingredient.success.ok',\n    'codeStatus': 200,\n    'data': [{'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr', 'categories': [],\n              'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'proteins': '0',\n                             'info': 'per 100g'}},\n             {'_id': '5e583de9b0fcef0a922a7bc2', 'name': 'bqa_rhr', 'categories': [],\n              'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'proteins': '0',\n                             'info': 'per 100g'}}]\n}",
           "type": "json"
         }
       ]
@@ -506,6 +506,76 @@ define({ "api": [
     "filename": "../Flask/app/ingredient/router.py",
     "groupTitle": "Ingredient",
     "name": "GetIngredient"
+  },
+  {
+    "type": "get",
+    "url": "/ingredient/search",
+    "title": "SearchIngredient",
+    "group": "Ingredient",
+    "description": "<p>Search an ingredient by key/value</p>",
+    "parameter": {
+      "fields": {
+        "Query param": [
+          {
+            "group": "Query param",
+            "type": "String",
+            "optional": true,
+            "field": "name",
+            "description": "<p>ingredient's name</p>"
+          },
+          {
+            "group": "Query param",
+            "type": "String",
+            "optional": true,
+            "field": "slug",
+            "description": "<p>ingredient's slug</p>"
+          },
+          {
+            "group": "Query param",
+            "type": "String",
+            "optional": true,
+            "field": "categories",
+            "description": "<p>ingredient's categories</p>"
+          },
+          {
+            "group": "Query param",
+            "type": "String",
+            "optional": true,
+            "field": "with_files",
+            "description": "<p>if &quot;true&quot;, add ingredient's files</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "GET http://127.0.0.1:5000/ingredient/search?name=<ingredient_name>",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.ingredient.success.ok',\n    'codeStatus': 200,\n    'data': [{'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr'}]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "examples": [
+        {
+          "title": "Error response:",
+          "content": "HTTPS 400\n{\n    'codeMsg': 'cookbook.ingredient.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be a string', 'param': 'name', 'value': ''}\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "../Flask/app/ingredient/router.py",
+    "groupTitle": "Ingredient",
+    "name": "GetIngredientSearch"
   },
   {
     "type": "get",
@@ -544,7 +614,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.ingredient.success.ok',\n    'codeStatus': 200,\n    'data': {'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr'}\n}",
+          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.ingredient.success.ok',\n    'codeStatus': 200,\n    'data': {'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr', 'categories': [],\n             'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'proteins': '0',\n                            'info': 'per 100g'}}\n}",
           "type": "json"
         }
       ]
@@ -583,7 +653,7 @@ define({ "api": [
             "group": "Query param",
             "type": "String",
             "optional": true,
-            "field": "with_title",
+            "field": "with_titles",
             "description": "<p>if &quot;true&quot;, add recipe's title</p>"
           }
         ]
@@ -634,6 +704,60 @@ define({ "api": [
             "optional": false,
             "field": "name",
             "description": "<p>Ingredient's name</p>"
+          },
+          {
+            "group": "Body param",
+            "type": "String",
+            "optional": false,
+            "field": "slug",
+            "description": "<p>Ingredient's slug</p>"
+          },
+          {
+            "group": "Body param",
+            "type": "String[]",
+            "optional": true,
+            "field": "categories",
+            "defaultValue": "Empty_Array",
+            "description": "<p>Ingredient's categories</p>"
+          },
+          {
+            "group": "Body param",
+            "type": "Object",
+            "optional": true,
+            "field": "nutriments",
+            "description": "<p>Ingredient's nutriments</p>"
+          },
+          {
+            "group": "Body param",
+            "type": "Number",
+            "optional": false,
+            "field": "nutriments[calories]",
+            "defaultValue": "0",
+            "description": "<p>Ingredient's calories</p>"
+          },
+          {
+            "group": "Body param",
+            "type": "Number",
+            "optional": false,
+            "field": "nutriments[carbohydrates]",
+            "defaultValue": "0",
+            "description": "<p>Ingredient's carbohydrates</p>"
+          },
+          {
+            "group": "Body param",
+            "type": "Number",
+            "optional": false,
+            "field": "nutriments[fats]",
+            "defaultValue": "0",
+            "description": "<p>Ingredient's fats</p>"
+          },
+          {
+            "group": "Body param",
+            "type": "String",
+            "optional": true,
+            "field": "nutriments[info]",
+            "defaultValue": "per 100g",
+            "description": "<p>Ingredient's info</p>"
           }
         ]
       }
@@ -641,7 +765,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "POST http://127.0.0.1:5000/ingredient\n{\n    'name': <name>\n}",
+        "content": "POST http://127.0.0.1:5000/ingredient\n{\n    'name': <name>\n    'slug': <slug>\n    'categories': [<category1>, <category2>],\n    'nutriments': {'calories': 10, 'carbohydrates': 20, 'fats': 30, 'proteins': 40, 'info': 'peer 100g'}\n}",
         "type": "json"
       }
     ],
@@ -649,7 +773,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 201\n{\n    'codeMsg': 'cookbook.ingredient.success.created',\n    'codeStatus': 201,\n    'data': {'_id': '5e5840e63ed55d9119064649', 'name': 'qa_rhr_name'}\n}",
+          "content": "HTTPS 201\n{\n    'codeMsg': 'cookbook.ingredient.success.created',\n    'codeStatus': 201,\n    'data': {'_id': '5e5840e63ed55d9119064649', 'name': 'qa_rhr_name', 'slug': 'qa_rhr_slug',\n             'categories': ['qa_rhr_category'],\n             'nutriments': {'calories': '10', 'carbohydrates': '20', 'fats': '30', 'proteins': '40',\n                            'info': 'per 100g'}}\n}",
           "type": "json"
         }
       ]
@@ -806,7 +930,7 @@ define({ "api": [
   {
     "type": "put",
     "url": "/ingredient/<_id_ingredient>",
-    "title": "UpdateIngredient",
+    "title": "PutIngredient",
     "group": "Ingredient",
     "description": "<p>Update an ingredient by it's ObjectId</p>",
     "parameter": {
@@ -827,13 +951,69 @@ define({ "api": [
             "description": "<p>if &quot;true&quot;, add ingredient's files</p>"
           }
         ],
-        "Body Param": [
+        "Body param": [
           {
-            "group": "Body Param",
+            "group": "Body param",
             "type": "String",
-            "optional": false,
+            "optional": true,
             "field": "name",
             "description": "<p>Ingredient's name</p>"
+          },
+          {
+            "group": "Body param",
+            "type": "String",
+            "optional": true,
+            "field": "slug",
+            "description": "<p>Ingredient's slug</p>"
+          },
+          {
+            "group": "Body param",
+            "type": "String[]",
+            "optional": true,
+            "field": "categories",
+            "description": "<p>Ingredient's categories</p>"
+          },
+          {
+            "group": "Body param",
+            "type": "Object",
+            "optional": true,
+            "field": "nutriments",
+            "description": "<p>Ingredient's nutriments</p>"
+          },
+          {
+            "group": "Body param",
+            "type": "Number",
+            "optional": true,
+            "field": "nutriments[calories]",
+            "description": "<p>Ingredient's calories</p>"
+          },
+          {
+            "group": "Body param",
+            "type": "Number",
+            "optional": true,
+            "field": "nutriments[carbohydrates]",
+            "description": "<p>Ingredient's carbohydrates</p>"
+          },
+          {
+            "group": "Body param",
+            "type": "Number",
+            "optional": true,
+            "field": "nutriments[fats]",
+            "description": "<p>Ingredient's fats</p>"
+          },
+          {
+            "group": "Body param",
+            "type": "Number",
+            "optional": true,
+            "field": "nutriments[proteins]",
+            "description": "<p>Ingredient's proteins</p>"
+          },
+          {
+            "group": "Body param",
+            "type": "String",
+            "optional": true,
+            "field": "nutriments[info]",
+            "description": "<p>Ingredient's info</p>"
           }
         ]
       }
@@ -961,7 +1141,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.recipe.success.ok',\n    'codeStatus': 200,\n    'data': {'_id': '5e68acb9e067528c70c75f3c', 'cooking_time': 0, 'level': 0, 'nb_people': 0, 'note': '',\n             'preparation_time': 0, 'resume': '', title': 'qa_rhr', 'slug': '', 'categories': [],\n             'steps': [{'_id': '5e68acb97b0ead079be3cef7', 'step': 'another_previous_step'}]}\n}",
+          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.recipe.success.ok',\n    'codeStatus': 200,\n    'data': {'_id': '5e68acb9e067528c70c75f3c', 'cooking_time': 0, 'level': 0, 'nb_people': 0, 'note': '',\n             'preparation_time': 0, 'resume': '', title': 'qa_rhr', 'slug': '', 'categories': [],\n             'steps': [{'_id': '5e68acb97b0ead079be3cef7', 'description': 'another_previous_step'}]}\n}",
           "type": "json"
         }
       ]
@@ -985,7 +1165,7 @@ define({ "api": [
     "url": "/recipe",
     "title": "GetAllRecipe",
     "group": "Recipe",
-    "description": "<p>Get file recipes</p>",
+    "description": "<p>Get all recipes</p>",
     "parameter": {
       "fields": {
         "Query param": [
@@ -1022,19 +1202,61 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/recipe/<_id_recipe>",
-    "title": "GetRecipe",
+    "url": "/recipe/search",
+    "title": "SearchRecipe",
     "group": "Recipe",
-    "description": "<p>Get a recipe by it's ObjectId</p>",
+    "description": "<p>Search an recipe by unique or multiple key/value ($and in query)</p>",
     "parameter": {
       "fields": {
         "Query param": [
           {
             "group": "Query param",
             "type": "String",
-            "optional": false,
-            "field": "_id",
-            "description": "<p>Recipe's ObjectId</p>"
+            "optional": true,
+            "field": "title",
+            "description": "<p>search by title</p>"
+          },
+          {
+            "group": "Query param",
+            "type": "String",
+            "optional": true,
+            "field": "slug",
+            "description": "<p>search by slug</p>"
+          },
+          {
+            "group": "Query param",
+            "type": "String",
+            "optional": true,
+            "field": "level",
+            "description": "<p>search by level</p>"
+          },
+          {
+            "group": "Query param",
+            "type": "String",
+            "optional": true,
+            "field": "cooking_time",
+            "description": "<p>search by cooking_time</p>"
+          },
+          {
+            "group": "Query param",
+            "type": "String",
+            "optional": true,
+            "field": "preparation_time",
+            "description": "<p>search by preparation_time</p>"
+          },
+          {
+            "group": "Query param",
+            "type": "String",
+            "optional": true,
+            "field": "nb_people",
+            "description": "<p>search by nb_people</p>"
+          },
+          {
+            "group": "Query param",
+            "type": "String",
+            "optional": true,
+            "field": "categories",
+            "description": "<p>search by categories</p>"
           },
           {
             "group": "Query param",
@@ -1049,7 +1271,63 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "GET http://127.0.0.1:5000/recipe/<_id_recipe>",
+        "content": "GET http://127.0.0.1:5000/recipe/search?title=<recipe_title>",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.recipe.success.ok',\n    'codeStatus': 200,\n    'data': [{'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,\n              'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'qa_rhr_1'},\n             {'_id': '5e71eb8f39358991f2ea19f7', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,\n              'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr_2'}]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "examples": [
+        {
+          "title": "Error response:",
+          "content": "HTTPS 400\n{\n    'codeMsg': 'cookbook.recipe.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be not empty', 'param': 'title', 'value': ''}\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "../Flask/app/recipe/router.py",
+    "groupTitle": "Recipe",
+    "name": "GetRecipeSearch"
+  },
+  {
+    "type": "get",
+    "url": "/recipe/<slug>",
+    "title": "GetRecipe",
+    "group": "Recipe",
+    "description": "<p>Get a recipe by it's slug</p>",
+    "parameter": {
+      "fields": {
+        "Query param": [
+          {
+            "group": "Query param",
+            "type": "String",
+            "optional": false,
+            "field": "slug",
+            "description": "<p>Recipe's slug</p>"
+          },
+          {
+            "group": "Query param",
+            "type": "String",
+            "optional": true,
+            "field": "with_files",
+            "description": "<p>if &quot;true&quot;, add recipe's files</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "GET http://127.0.0.1:5000/recipe/<slug>",
         "type": "json"
       }
     ],
@@ -1066,7 +1344,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Error response:",
-          "content": "HTTPS 400\n{\n    'codeMsg': 'cookbook.recipe.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}\n}",
+          "content": "HTTPS 400\n{\n    'codeMsg': 'cookbook.recipe.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be not empty', 'param': 'slug', 'value': ''}\n}",
           "type": "json"
         }
       ]
@@ -1074,7 +1352,7 @@ define({ "api": [
     "version": "0.0.0",
     "filename": "../Flask/app/recipe/router.py",
     "groupTitle": "Recipe",
-    "name": "GetRecipe_id_recipe"
+    "name": "GetRecipeSlug"
   },
   {
     "type": "get",
@@ -1096,7 +1374,7 @@ define({ "api": [
             "group": "Query param",
             "type": "String",
             "optional": true,
-            "field": "with_name",
+            "field": "with_names",
             "description": "<p>if &quot;true&quot;, add ingredient's name</p>"
           }
         ]
@@ -1201,13 +1479,6 @@ define({ "api": [
             "group": "Body param",
             "type": "Array",
             "optional": true,
-            "field": "steps",
-            "description": "<p>Recipe's steps</p>"
-          },
-          {
-            "group": "Body param",
-            "type": "Array",
-            "optional": true,
             "field": "categories",
             "description": "<p>Recipe's categories</p>"
           }
@@ -1246,56 +1517,7 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "/recipe/step",
-    "title": "PostStep",
-    "group": "Recipe",
-    "description": "<p>Return en step to add in param 'steps' for PostRecipe</p>",
-    "parameter": {
-      "fields": {
-        "Body param": [
-          {
-            "group": "Body param",
-            "type": "String",
-            "optional": false,
-            "field": "step",
-            "description": "<p>Step's value</p>"
-          }
-        ]
-      }
-    },
-    "examples": [
-      {
-        "title": "Example usage:",
-        "content": "POST http://127.0.0.1:5000/recipe/step\n{\n    'step': <step>,\n}",
-        "type": "json"
-      }
-    ],
-    "success": {
-      "examples": [
-        {
-          "title": "Success response:",
-          "content": "HTTPS 201\n{\n    'codeMsg': 'cookbook.recipe.success.created',\n    'codeStatus': 201,\n    'data': {'_id': '5e68acb9e067528c70c75f3c', 'step': ''}\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "error": {
-      "examples": [
-        {
-          "title": "Error response:",
-          "content": "HTTPS 400\n{\n    'codeMsg': 'cookbook.recipe.error.bad_request',\n    'codeStatus': 400,\n    'detail': {'msg': 'Must be not empty', 'param': 'step', 'value': ''}\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "version": "0.0.0",
-    "filename": "../Flask/app/recipe/router.py",
-    "groupTitle": "Recipe",
-    "name": "PostRecipeStep"
-  },
-  {
-    "type": "post",
-    "url": "/recipe/<_id_recipe>/step",
+    "url": "/recipe/step/<_id_recipe>",
     "title": "PostRecipeStep",
     "group": "Recipe",
     "description": "<p>Create a recipe's step. Can specify where to add the step</p>",
@@ -1322,8 +1544,8 @@ define({ "api": [
             "group": "Body param",
             "type": "String",
             "optional": false,
-            "field": "step",
-            "description": "<p>Step's value to add</p>"
+            "field": "description",
+            "description": "<p>Step's description to add</p>"
           },
           {
             "group": "Body param",
@@ -1338,7 +1560,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "POST http://127.0.0.1:5000/recipe/<_id_recipe>/step\n{\n    'step': <step>,\n    'position': <position>\n}",
+        "content": "POST http://127.0.0.1:5000/recipe/step/<_id_recipe>\n{\n    'description': <description>,\n    'position': <position>\n}",
         "type": "json"
       }
     ],
@@ -1346,7 +1568,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 201\n{\n    'codeMsg': 'cookbook.recipe.success.created',\n    'codeStatus': 201,\n    'data': {'_id': '5e68acb9e067528c70c75f3c', 'cooking_time': 0, 'level': 0, 'nb_people': 0, 'note': '',\n             'preparation_time': 0, 'resume': '', title': 'qa_rhr', 'slug': '', 'categories': [],\n             'steps': [{'_id': '5e68acb97b0ead079be3cef7', 'step': 'new_step'}]}\n}",
+          "content": "HTTPS 201\n{\n    'codeMsg': 'cookbook.recipe.success.created',\n    'codeStatus': 201,\n    'data': {'_id': '5e68acb9e067528c70c75f3c', 'cooking_time': 0, 'level': 0, 'nb_people': 0, 'note': '',\n             'preparation_time': 0, 'resume': '', title': 'qa_rhr', 'slug': '', 'categories': [],\n             'steps': [{'_id': '5e68acb97b0ead079be3cef7', 'description': 'new_step'}]}\n}",
           "type": "json"
         }
       ]
@@ -1363,7 +1585,7 @@ define({ "api": [
     "version": "0.0.0",
     "filename": "../Flask/app/recipe/router.py",
     "groupTitle": "Recipe",
-    "name": "PostRecipe_id_recipeStep"
+    "name": "PostRecipeStep_id_recipe"
   },
   {
     "type": "put",
@@ -1522,8 +1744,8 @@ define({ "api": [
             "group": "Body param",
             "type": "String",
             "optional": false,
-            "field": "step",
-            "description": "<p>Step's value to add</p>"
+            "field": "description",
+            "description": "<p>Step's description to add</p>"
           }
         ]
       }
@@ -1531,7 +1753,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "PUT http://127.0.0.1:5000/recipe/<_id_recipe>/step/<_id_step>\n{\n    'step': <step>\n}",
+        "content": "PUT http://127.0.0.1:5000/recipe/<_id_recipe>/step/<_id_step>\n{\n    'description': <description>\n}",
         "type": "json"
       }
     ],
@@ -1539,7 +1761,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.recipe.success.ok',\n    'codeStatus': 200,\n    'data': {'_id': '5e68acb9e067528c70c75f3c', 'cooking_time': 0, 'level': 0, 'nb_people': 0, 'note': '',\n             'preparation_time': 0, 'resume': '', title': 'qa_rhr', 'slug': '', 'categories': [],\n             'steps': [{'_id': '5e68acb97b0ead079be3cef7', 'step': 'updated_step'}]}\n}",
+          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.recipe.success.ok',\n    'codeStatus': 200,\n    'data': {'_id': '5e68acb9e067528c70c75f3c', 'cooking_time': 0, 'level': 0, 'nb_people': 0, 'note': '',\n             'preparation_time': 0, 'resume': '', title': 'qa_rhr', 'slug': '', 'categories': [],\n             'steps': [{'_id': '5e68acb97b0ead079be3cef7', 'description': 'updated_step'}]}\n}",
           "type": "json"
         }
       ]
@@ -1557,6 +1779,42 @@ define({ "api": [
     "filename": "../Flask/app/recipe/router.py",
     "groupTitle": "Recipe",
     "name": "PutRecipe_id_recipeStep_id_step"
+  },
+  {
+    "type": "get",
+    "url": "/user/me",
+    "title": "GetMyUser",
+    "group": "User",
+    "description": "<p>Get my user</p>",
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "GET http://127.0.0.1:5000/user/me",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.user.success.ok',\n    'codeStatus': 200,\n    'data': {'_id': '5f6a0327e9fea33b5861445c', 'display_name': 'qa_rhr_display_name', 'email': 'qa@rhr.com',\n             'status': []}\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "examples": [
+        {
+          "title": "Error response:",
+          "content": "HTTPS 401\n{\n    'codeMsg': 'cookbook.user.error.bad_request',\n    'codeStatus': 401,\n    'detail': {'msg': 'Is required', 'param': 'token'}}\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "../Flask/app/user/router.py",
+    "groupTitle": "User",
+    "name": "GetUserMe"
   },
   {
     "type": "post",

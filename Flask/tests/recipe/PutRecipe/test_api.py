@@ -15,17 +15,26 @@ file = file_model.FileTest()
 class PutRecipe(unittest.TestCase):
 
     def setUp(self):
+        """ Clean RecipeTest and FileTest."""
         recipe.clean()
         file.clean()
 
     def test_0_api_ok(self):
-        tc_recipe = recipe_model.RecipeTest().custom({"resume": "invalid"}).insert()
+        """ Default case.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
+        tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update"}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -34,10 +43,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_0_api_ok_more_param(self):
+        """ Default case with more parameters.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 "invalid": "invalid"}
@@ -45,6 +62,7 @@ class PutRecipe(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id + "?invalid=invalid"
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -53,10 +71,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_1_url_not_found(self):
+        """ Wrong url.
+
+        Return
+            404 - Url not found.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update"}
         """ call api """
@@ -70,10 +96,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
         self.assertEqual(response_body["detail"], server.detail_url_not_found)
+        """ check """
         tc_recipe.select_ok()
 
     def test_2_id_without(self):
+        """ QueryParameter _id is missing.
+
+        Return
+            404 - Url not found.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         body = {api.param_title: "qa_rhr_title_update"}
         """ call api """
         url = server.main_url + "/" + api.url + "/"
@@ -86,10 +120,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
         self.assertEqual(response_body["detail"], server.detail_url_not_found)
+        """ check """
         tc_recipe.select_ok()
 
     def test_2_id_string(self):
+        """ QueryParameter _id is a string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = "invalid"
         body = {api.param_title: "qa_rhr_title_update"}
         """ call api """
@@ -104,10 +146,18 @@ class PutRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_id, msg=server.detail_must_be_an_object_id, value=tc_id)
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_2_id_object_id_invalid(self):
+        """ QueryParameter _id is a nok ObjectId.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = "aaaaaaaaaaaaaaaaaaaaaaaa"
         body = {api.param_title: "qa_rhr_title_update"}
         """ call api """
@@ -122,10 +172,18 @@ class PutRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_id, msg=server.detail_doesnot_exist, value=tc_id)
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_3_title_without(self):
+        """ BodyParameter title is missing.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {}
         """ call api """
@@ -140,10 +198,18 @@ class PutRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail("body", msg=server.detail_must_contain_at_least_one_key, value=body)
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_3_title_none(self):
+        """ BodyParameter title is null.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: None}
         """ call api """
@@ -159,10 +225,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_title, msg=server.detail_must_be_a_string, 
                                    value=body[api.param_title])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_3_title_empty(self):
+        """ BodyParameter title is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: ""}
         """ call api """
@@ -178,16 +252,25 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_title, msg=server.detail_must_be_not_empty, 
                                    value=body[api.param_title])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_3_title_string(self):
+        """ BodyParameter title is a string.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update"}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -196,10 +279,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_3_title_tab(self):
+        """ BodyParameter title is an empty array.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: []}
         """ call api """
@@ -215,10 +306,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_title, msg=server.detail_must_be_a_string, 
                                    value=body[api.param_title])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_3_title_object(self):
+        """ BodyParameter title is an empty object.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: {}}
         """ call api """
@@ -234,16 +333,53 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_title, msg=server.detail_must_be_a_string, 
                                    value=body[api.param_title])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
+    def test_3_title_already_exist(self):
+        """ BodyParameter title already exist.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
+        tc_recipe1 = recipe_model.RecipeTest().custom({"title": "title_1"}).insert()
+        tc_recipe2 = recipe_model.RecipeTest().custom({"title": "title_2"}).insert()
+        """ param """
+        tc_id = tc_recipe1.get_id()
+        body = {api.param_title: tc_recipe2.title}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_title, msg=server.detail_already_exist, value=body[api.param_title])
+        self.assertEqual(response_body["detail"], detail)
+        """ check """
+        tc_recipe1.select_ok()
+        tc_recipe2.select_ok()
+
     def test_4_level_without(self):
+        """ BodyParameter level is missing.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update"}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -252,10 +388,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_4_level_none(self):
+        """ BodyParameter level is null.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_level: None}
@@ -272,10 +416,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_level, msg=server.detail_must_be_an_integer, 
                                    value=body[api.param_level])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_4_level_empty(self):
+        """ BodyParameter level is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_level: ""}
@@ -292,10 +444,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_level, msg=server.detail_must_be_an_integer, 
                                    value=body[api.param_level])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_4_level_string(self):
+        """ BodyParameter level is a string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_level: "invalid"}
@@ -312,10 +472,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_level, msg=server.detail_must_be_an_integer, 
                                    value=body[api.param_level])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_4_level_integer_min_over(self):
+        """ BodyParameter level is min-1.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_level: -1}
@@ -332,10 +500,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_level, msg=server.detail_must_be_between + " 0 and 3", 
                                    value=body[api.param_level])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_4_level_integer_min(self):
+        """ BodyParameter level is min.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_level: 0}
@@ -343,6 +519,7 @@ class PutRecipe(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -351,10 +528,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_4_level_integer_max(self):
+        """ BodyParameter level is max.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_level: 3}
@@ -362,6 +547,7 @@ class PutRecipe(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -370,10 +556,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_4_level_integer_max_over(self):
+        """ BodyParameter level is max+1.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_level: 4}
@@ -390,10 +584,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_level, msg=server.detail_must_be_between + " 0 and 3", 
                                    value=body[api.param_level])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_4_level_tab(self):
+        """ BodyParameter level is an empty tab.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_level: []}
@@ -410,10 +612,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_level, msg=server.detail_must_be_an_integer, 
                                    value=body[api.param_level])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_4_level_object(self):
+        """ BodyParameter level is an empty object.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_level: {}}
@@ -430,16 +640,25 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_level, msg=server.detail_must_be_an_integer, 
                                    value=body[api.param_level])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_5_resume_without(self):
+        """ BodyParameter resume is missing.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update"}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -448,10 +667,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_5_resume_none(self):
+        """ BodyParameter resume is null.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_resume: None}
@@ -468,10 +695,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_resume, msg=server.detail_must_be_a_string, 
                                    value=body[api.param_resume])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_5_resume_empty(self):
+        """ BodyParameter resume is an empty string.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_resume: ""}
@@ -479,6 +714,7 @@ class PutRecipe(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -487,10 +723,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_5_resume_string(self):
+        """ BodyParameter resume is a string.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_resume: "invalid"}
@@ -498,6 +742,7 @@ class PutRecipe(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -506,10 +751,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_5_resume_tab(self):
+        """ BodyParameter resume is an empty tab.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_resume: []}
@@ -526,10 +779,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_resume, msg=server.detail_must_be_a_string, 
                                    value=body[api.param_resume])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_5_resume_object(self):
+        """ BodyParameter resume is an empty object.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_resume: {}}
@@ -546,16 +807,25 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_resume, msg=server.detail_must_be_a_string, 
                                    value=body[api.param_resume])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_6_cooking_time_without(self):
+        """ BodyParameter cooking_time is missing.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update"}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -564,10 +834,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_6_cooking_time_none(self):
+        """ BodyParameter cooking_time is null.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_cooking_time: None}
@@ -584,10 +862,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_cooking_time, msg=server.detail_must_be_an_integer,
                                    value=body[api.param_cooking_time])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_6_cooking_time_empty(self):
+        """ BodyParameter cooking_time is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_cooking_time: ""}
@@ -604,10 +890,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_cooking_time, msg=server.detail_must_be_an_integer,
                                    value=body[api.param_cooking_time])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_6_cooking_time_string(self):
+        """ BodyParameter cooking_time is a string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_cooking_time: "invalid"}
@@ -624,10 +918,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_cooking_time, msg=server.detail_must_be_an_integer,
                                    value=body[api.param_cooking_time])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_6_cooking_time_integer(self):
+        """ BodyParameter cooking_time is a number.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_cooking_time: 5}
@@ -635,6 +937,7 @@ class PutRecipe(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -643,10 +946,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_6_cooking_time_tab(self):
+        """ BodyParameter cooking_time is an empty tab.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_cooking_time: []}
@@ -663,10 +974,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_cooking_time, msg=server.detail_must_be_an_integer,
                                    value=body[api.param_cooking_time])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_6_cooking_time_object(self):
+        """ BodyParameter cooking_time is an empty object.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_cooking_time: {}}
@@ -683,16 +1002,25 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_cooking_time, msg=server.detail_must_be_an_integer,
                                    value=body[api.param_cooking_time])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_7_preparation_time_without(self):
+        """ BodyParameter preparation_time is missing.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update"}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -701,10 +1029,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_7_preparation_time_none(self):
+        """ BodyParameter preparation_time is null.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_preparation_time: None}
@@ -721,10 +1057,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_preparation_time, msg=server.detail_must_be_an_integer,
                                    value=body[api.param_preparation_time])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_7_preparation_time_empty(self):
+        """ BodyParameter preparation_time is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_preparation_time: ""}
@@ -741,10 +1085,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_preparation_time, msg=server.detail_must_be_an_integer,
                                    value=body[api.param_preparation_time])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_7_preparation_time_string(self):
+        """ BodyParameter preparation_time is a string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_preparation_time: "invalid"}
@@ -761,10 +1113,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_preparation_time, msg=server.detail_must_be_an_integer,
                                    value=body[api.param_preparation_time])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_7_preparation_time_integer(self):
+        """ BodyParameter preparation_time is a number.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_preparation_time: 5}
@@ -772,6 +1132,7 @@ class PutRecipe(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -780,10 +1141,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_7_preparation_time_tab(self):
+        """ BodyParameter preparation_time is an empty tab.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_preparation_time: []}
@@ -800,10 +1169,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_preparation_time, msg=server.detail_must_be_an_integer,
                                    value=body[api.param_preparation_time])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_7_preparation_time_object(self):
+        """ BodyParameter preparation_time is an empty object.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_preparation_time: {}}
@@ -820,16 +1197,25 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_preparation_time, msg=server.detail_must_be_an_integer,
                                    value=body[api.param_preparation_time])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_8_nb_people_without(self):
+        """ BodyParameter nb_people is missing.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update"}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -838,10 +1224,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_8_nb_people_none(self):
+        """ BodyParameter nb_people is null.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_nb_people: None}
@@ -858,10 +1252,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_nb_people, msg=server.detail_must_be_an_integer,
                                    value=body[api.param_nb_people])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_8_nb_people_empty(self):
+        """ BodyParameter nb_people is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_nb_people: ""}
@@ -878,10 +1280,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_nb_people, msg=server.detail_must_be_an_integer,
                                    value=body[api.param_nb_people])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_8_nb_people_string(self):
+        """ BodyParameter nb_people is a string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_nb_people: "invalid"}
@@ -898,10 +1308,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_nb_people, msg=server.detail_must_be_an_integer,
                                    value=body[api.param_nb_people])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_8_nb_people_integer(self):
+        """ BodyParameter nb_people is a number.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_nb_people: 5}
@@ -909,6 +1327,7 @@ class PutRecipe(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -917,10 +1336,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_8_nb_people_tab(self):
+        """ BodyParameter nb_people is an empty tab.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_nb_people: []}
@@ -937,10 +1364,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_nb_people, msg=server.detail_must_be_an_integer,
                                    value=body[api.param_nb_people])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_8_nb_people_object(self):
+        """ BodyParameter nb_people is an empty object.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_nb_people: {}}
@@ -957,16 +1392,25 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_nb_people, msg=server.detail_must_be_an_integer,
                                    value=body[api.param_nb_people])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_9_note_without(self):
+        """ BodyParameter note is missing.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update"}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -975,10 +1419,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_9_note_none(self):
+        """ BodyParameter note is null.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_note: None}
@@ -994,10 +1446,18 @@ class PutRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_note, msg=server.detail_must_be_a_string, value=body[api.param_note])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_9_note_empty(self):
+        """ BodyParameter note is an empty string.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_note: ""}
@@ -1005,6 +1465,7 @@ class PutRecipe(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -1013,10 +1474,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_9_note_string(self):
+        """ BodyParameter note is a string.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_note: "invalid"}
@@ -1024,6 +1493,7 @@ class PutRecipe(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -1032,10 +1502,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_9_note_tab(self):
+        """ BodyParameter note is an empty tab.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_note: []}
@@ -1051,10 +1529,18 @@ class PutRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_note, msg=server.detail_must_be_a_string, value=body[api.param_note])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_9_note_object(self):
+        """ BodyParameter note is an empty object.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_note: {}}
@@ -1070,16 +1556,25 @@ class PutRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_note, msg=server.detail_must_be_a_string, value=body[api.param_note])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_10_status_without(self):
+        """ BodyParameter status is missing.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update"}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -1088,10 +1583,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_10_status_none(self):
+        """ BodyParameter status is null.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_status: None}
@@ -1105,13 +1608,21 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_status, msg=server.detail_must_be_in + api.rep_detail_status,
+        detail = api.create_detail(param=api.param_status, msg=server.detail_must_be_in + api.detail_status,
                                    value=body[api.param_status])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_10_status_empty(self):
+        """ BodyParameter status is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_status: ""}
@@ -1125,13 +1636,21 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_status, msg=server.detail_must_be_in + api.rep_detail_status,
+        detail = api.create_detail(param=api.param_status, msg=server.detail_must_be_in + api.detail_status,
                                    value=body[api.param_status])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_10_status_string(self):
+        """ BodyParameter status is a string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_status: "invalid"}
@@ -1145,13 +1664,21 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_status, msg=server.detail_must_be_in + api.rep_detail_status,
+        detail = api.create_detail(param=api.param_status, msg=server.detail_must_be_in + api.detail_status,
                                    value=body[api.param_status])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_10_status_in_progress(self):
+        """ BodyParameter status is in_progress.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_status: "in_progress"}
@@ -1159,6 +1686,7 @@ class PutRecipe(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -1167,10 +1695,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_10_status_finished(self):
+        """ BodyParameter status is finished.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_status: "finished"}
@@ -1178,6 +1714,7 @@ class PutRecipe(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -1186,16 +1723,25 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_11_categories_without(self):
+        """ BodyParameter categories is missing.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update"}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -1204,10 +1750,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_11_categories_none(self):
+        """ BodyParameter categories is null.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_categories: None}
@@ -1224,10 +1778,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_categories, msg=server.detail_must_be_an_array,
                                    value=body[api.param_categories])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_11_categories_empty(self):
+        """ BodyParameter categories is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_categories: ""}
@@ -1244,10 +1806,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_categories, msg=server.detail_must_be_an_array,
                                    value=body[api.param_categories])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_11_categories_string(self):
+        """ BodyParameter categories is a string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_categories: "invalid"}
@@ -1264,10 +1834,18 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_categories, msg=server.detail_must_be_an_array,
                                    value=body[api.param_categories])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_11_categories_tab(self):
+        """ BodyParameter categories is an empty tab.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_categories: ["invalid"]}
@@ -1275,6 +1853,7 @@ class PutRecipe(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -1283,10 +1862,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_11_categories_object(self):
+        """ BodyParameter categories is an empty object.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update",
                 api.param_categories: {}}
@@ -1303,16 +1890,25 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_categories, msg=server.detail_must_be_an_array,
                                    value=body[api.param_categories])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_12_slug_without(self):
+        """ BodyParameter slug is missing.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update"}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -1321,10 +1917,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_12_slug_none(self):
+        """ BodyParameter slug is null.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_slug: None}
         """ call api """
@@ -1339,10 +1943,18 @@ class PutRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_slug, msg=server.detail_must_be_a_string, value=body[api.param_slug])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_12_slug_empty(self):
+        """ BodyParameter slug is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_slug: ""}
         """ call api """
@@ -1358,16 +1970,25 @@ class PutRecipe(unittest.TestCase):
         detail = api.create_detail(param=api.param_slug, msg=server.detail_must_be_not_empty,
                                    value=body[api.param_slug])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_12_slug_string(self):
+        """ BodyParameter slug is a string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_slug: "slug_update"}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -1376,10 +1997,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_12_slug_tab(self):
+        """ BodyParameter slug is an empty tab.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_slug: []}
         """ call api """
@@ -1394,10 +2023,18 @@ class PutRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_slug, msg=server.detail_must_be_a_string, value=body[api.param_slug])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_12_slug_object(self):
+        """ BodyParameter slug is an empty object.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_slug: {}}
         """ call api """
@@ -1412,16 +2049,53 @@ class PutRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
         detail = api.create_detail(param=api.param_slug, msg=server.detail_must_be_a_string, value=body[api.param_slug])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
+    def test_12_slug_already_exist(self):
+        """ BodyParameter slug already exist.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
+        tc_recipe1 = recipe_model.RecipeTest().custom({"slug": "slug_1"}).insert()
+        tc_recipe2 = recipe_model.RecipeTest().custom({"slug": "slug_2"}).insert()
+        """ param """
+        tc_id = tc_recipe1.get_id()
+        body = {api.param_slug: tc_recipe2.slug}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_slug, msg=server.detail_already_exist, value=body[api.param_slug])
+        self.assertEqual(response_body["detail"], detail)
+        """ check """
+        tc_recipe1.select_ok()
+        tc_recipe2.select_ok()
+
     def test_13_with_files_without(self):
+        """ QueryParameter with_files is missing.
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_title: "qa_rhr_title_update"}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -1430,10 +2104,17 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_13_with_files_empty(self):
+        """ QueryParameter with_files is an empty string.
+
+        Return
+            400 - Bad request.
+        """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         tc_with_files = ""
         body = {api.param_title: "qa_rhr_title_update"}
@@ -1447,13 +2128,20 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + api.rep_detail_with_files,
+        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + api.detail_with_files,
                                    value=tc_with_files)
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_13_with_files_string(self):
+        """ QueryParameter with_files is a string.
+
+        Return
+            400 - Bad request.
+        """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         tc_with_files = "invalid"
         body = {api.param_title: "qa_rhr_title_update"}
@@ -1467,12 +2155,18 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + api.rep_detail_with_files,
+        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + api.detail_with_files,
                                    value=tc_with_files)
         self.assertEqual(response_body["detail"], detail)
+        """ check """
         tc_recipe.select_ok()
 
     def test_13_with_files_string_false(self):
+        """ QueryParameter with_files is false.
+
+        Return
+            200 - Updated Recipe.
+        """
         tc_recipe = recipe_model.RecipeTest()
         tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
         tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
@@ -1482,6 +2176,7 @@ class PutRecipe(unittest.TestCase):
         tc_recipe.add_file_step(_id_step="111111111111111111111111", filename="qa_rhr_11", is_main=False)
         tc_recipe.add_file_step(_id_step="222222222222222222222222", filename="qa_rhr_21", is_main=False)
         tc_recipe.add_file_step(_id_step="222222222222222222222222", filename="qa_rhr_22", is_main=True)
+        """ param """
         tc_id = tc_recipe.get_id()
         tc_with_files = "false"
         body = {api.param_title: "qa_rhr_title_update"}
@@ -1489,6 +2184,7 @@ class PutRecipe(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id + "?" + api.param_with_files + "=" + tc_with_files
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -1497,9 +2193,15 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_recipe.select_ok()
 
     def test_13_with_files_string_true(self):
+        """ QueryParameter with_files is true.
+
+        Return
+            200 - Updated Recipe with Files.
+        """
         tc_recipe = recipe_model.RecipeTest()
         tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
         tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
@@ -1512,6 +2214,7 @@ class PutRecipe(unittest.TestCase):
                                                   is_main=False)
         tc_file_step122 = tc_recipe.add_file_step(_id_step="222222222222222222222222", filename="qa_rhr_22",
                                                   is_main=True)
+        """ param """
         tc_id = tc_recipe.get_id()
         tc_with_files = "true"
         body = {api.param_title: "qa_rhr_title_update"}
@@ -1519,6 +2222,7 @@ class PutRecipe(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id + "?" + api.param_with_files + "=" + tc_with_files
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_recipe.custom(body)
         """ assert """
         self.assertEqual(response.status_code, 200)
@@ -1532,26 +2236,6 @@ class PutRecipe(unittest.TestCase):
                                                             "222222222222222222222222": [tc_file_step121,
                                                                                          tc_file_step122]}}))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
-
-    def test_14_title_already_exist(self):
-        tc_recipe1 = recipe_model.RecipeTest().custom({"title": "title_1"}).insert()
-        tc_recipe2 = recipe_model.RecipeTest().custom({"title": "title_2"}).insert()
-        tc_id = tc_recipe1.get_id()
-        body = {api.param_title: tc_recipe2.title}
-        """ call api """
-        url = server.main_url + "/" + api.url + "/" + tc_id
-        response = requests.put(url, json=body, verify=False)
-        response_body = response.json()
-        """ assert """
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body["codeStatus"], 400)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_title, msg=server.detail_already_exist, value=body[api.param_title])
-        self.assertEqual(response_body["detail"], detail)
-        tc_recipe1.select_ok()
-        tc_recipe2.select_ok()
 
     @classmethod
     def tearDownClass(cls):

@@ -4,6 +4,8 @@ server = utils.Server()
 
 
 class SearchIngredient(object):
+    """ Class to test SearchIngredient.
+    """
 
     def __init__(self):
         self.url = 'ingredient/search'
@@ -14,9 +16,26 @@ class SearchIngredient(object):
         self.rep_code_msg_ok = server.rep_code_msg_ok.replace("xxx", "ingredient")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "ingredient")
         self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
+        self.rep_detail_true_false = " ['true', 'false']"
 
     @staticmethod
     def create_detail(param, msg, **kwargs):
+        """ Format Server's detail response.
+
+        Parameters
+        ----------
+        param : str
+            Tested parameter.
+        msg : str
+            Server's message.
+        kwargs : Any
+            Value if one existed.
+
+        Returns
+        -------
+        dict
+            Server's detail response.
+        """
         detail = {"param": param, "msg": msg}
         if "value" in kwargs:
             detail["value"] = kwargs["value"]
@@ -24,6 +43,20 @@ class SearchIngredient(object):
 
     @staticmethod
     def data_expected(ingredient, **kwargs):
+        """ Format data's response.
+
+        Parameters
+        ----------
+        ingredient : Any
+            IngredientTest.
+        kwargs : Any
+            files : FileTests.
+
+        Returns
+        -------
+        str
+            Data's response.
+        """
         if "files" in kwargs.keys():
             data_expected = ingredient.get_stringify_with_files(files=kwargs["files"])
         else:
@@ -32,6 +65,19 @@ class SearchIngredient(object):
 
     @staticmethod
     def check_not_present(value, rep):
+        """ Check if data/detail is not present in Server's response.
+
+        Parameters
+        ----------
+        value : str
+            Tested value.
+        rep : dict
+            Server's response.
+
+        Returns
+        -------
+        bool
+        """
         if value in rep.keys():
             return False
         else:

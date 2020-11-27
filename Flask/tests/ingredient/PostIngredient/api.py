@@ -7,6 +7,8 @@ server = utils.Server()
 
 
 class PostIngredient(object):
+    """ Class to test PostIngredient.
+    """
 
     def __init__(self):
         self.url = 'ingredient'
@@ -25,12 +27,39 @@ class PostIngredient(object):
 
     @staticmethod
     def create_detail(param, msg, **kwargs):
+        """ Format Server's detail response.
+
+        Parameters
+        ----------
+        param : str
+            Tested parameter.
+        msg : str
+            Server's message.
+        kwargs : str
+            Value if one existed.
+
+        Returns
+        -------
+        dict
+            Server's detail response.
+        """
         detail = {"param": param, "msg": msg}
         if "value" in kwargs:
             detail["value"] = kwargs["value"]
         return detail
 
     def custom_body(self, body):
+        """ Format body to custom the Ingredient.
+
+        Parameters
+        ----------
+        body : dict
+            Body's value.
+
+        Returns
+        -------
+        dict
+        """
         data = copy.deepcopy(body)
         if self.param_categories not in body.keys():
             data["categories"] = []
@@ -44,6 +73,18 @@ class PostIngredient(object):
 
     @staticmethod
     def create_schema(ingredient):
+        """ Format schema's response.
+
+        Parameters
+        ----------
+        ingredient : Any
+            IngredientTest.
+
+        Returns
+        -------
+        dict
+            Schema.
+        """
         return {"type": "object",
                 "properties": {
                     "_id": {"type": "string"},
@@ -55,6 +96,20 @@ class PostIngredient(object):
                 "additionalProperties": False}
 
     def json_check(self, data, data_expected):
+        """ Format schema's response.
+
+        Parameters
+        ----------
+        data : dict
+            Server's response.
+        data_expected : Any
+            Schema from IngredientTest.
+
+        Returns
+        -------
+        dict
+            Result and err if exist.
+        """
         try:
             jsonschema.validate(instance=data, schema=self.create_schema(ingredient=data_expected))
             return {"result": True, "error": None}
@@ -63,8 +118,20 @@ class PostIngredient(object):
 
     @staticmethod
     def check_not_present(value, rep):
+        """ Check if data/detail is not present in Server's response.
+
+        Parameters
+        ----------
+        value : str
+            Tested value.
+        rep : dict
+            Server's response.
+
+        Returns
+        -------
+        bool
+        """
         if value in rep.keys():
             return False
         else:
             return True
-

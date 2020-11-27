@@ -15,13 +15,19 @@ file = file_model.FileTest()
 class SearchIngredient(unittest.TestCase):
 
     def setUp(self):
+        """ Clean IngredientTest and FileTest."""
         ingredient.clean()
         file.clean()
 
     def test_0_no_param(self):
-        """ go to getIngredient """
-        tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
-        tc_ingredient2 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
+        """ Default case.
+
+        Return
+            200 - Go to GetIngredient.
+        """
+        """ env """
+        tc_ingredient1 = ingredient_model.IngredientTest().insert()
+        tc_ingredient2 = ingredient_model.IngredientTest().insert()
         """ call api """
         url = server.main_url + "/" + api.url + "?"
         response = requests.get(url, verify=False)
@@ -35,9 +41,15 @@ class SearchIngredient(unittest.TestCase):
         self.assertIn(api.data_expected(ingredient=tc_ingredient2), response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
-    def test_2_name_more_param(self):
-        tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a", "invalid": "invalid"}).insert()
-        tc_ingredient2 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a", "aaa": "bbb"}).insert()
+    def test_0_more_param(self):
+        """ Default case with more parameters.
+
+        Return
+            200 - Go to GetIngredient.
+        """
+        """ env """
+        tc_ingredient1 = ingredient_model.IngredientTest().custom({"invalid": "invalid"}).insert()
+        tc_ingredient2 = ingredient_model.IngredientTest().insert()
         """ call api """
         url = server.main_url + "/" + api.url + "?" + "invalid=invalid"
         response = requests.get(url, verify=False)
@@ -52,7 +64,14 @@ class SearchIngredient(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_1_url_not_found(self):
+        """ Wrong url.
+
+        Return
+            400 - Go to GetIngredient.
+        """
+        """ env """
         ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
+        """ param """
         tc_name = "qa"
         """ call api """
         url = server.main_url + "/" + api.url + "x" + "?" + api.param_name + "=" + tc_name
@@ -68,7 +87,14 @@ class SearchIngredient(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
 
     def test_2_name_empty(self):
+        """ QueryParameter name is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
+        """ param """
         tc_name = ""
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_name + "=" + tc_name
@@ -84,7 +110,14 @@ class SearchIngredient(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
 
     def test_2_name_invalid(self):
+        """ QueryParameter name is a string.
+
+        Return
+            200 - Get Ingredient.
+        """
+        """ env """
         ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
+        """ param """
         tc_name = "invalid"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_name + "=" + tc_name
@@ -99,8 +132,15 @@ class SearchIngredient(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_2_name_exact(self):
+        """ QueryParameter name is exact.
+
+        Return
+            200 - Get Ingredient.
+        """
+        """ env """
         tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
         ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
+        """ param """
         tc_name = tc_ingredient1.name
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_name + "=" + tc_name
@@ -115,8 +155,15 @@ class SearchIngredient(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_2_name_partial(self):
+        """ QueryParameter name is partial.
+
+        Return
+            200 - Get Ingredient.
+        """
+        """ env """
         tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
         tc_ingredient2 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
+        """ param """
         tc_name = "qa_rhr"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_name + "=" + tc_name
@@ -132,7 +179,14 @@ class SearchIngredient(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         
     def test_3_slug_empty(self):
+        """ QueryParameter slug is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         ingredient_model.IngredientTest().custom({"slug": "qa_rhr_a"}).insert()
+        """ param """
         tc_slug = ""
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_slug + "=" + tc_slug
@@ -148,7 +202,14 @@ class SearchIngredient(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
 
     def test_3_slug_invalid(self):
+        """ QueryParameter slug is a string.
+
+        Return
+            200 - Get Ingredient.
+        """
+        """ env """
         ingredient_model.IngredientTest().custom({"slug": "qa_rhr_a"}).insert()
+        """ param """
         tc_slug = "invalid"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_slug + "=" + tc_slug
@@ -163,8 +224,15 @@ class SearchIngredient(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_3_slug_exact(self):
+        """ QueryParameter slug is exact.
+
+        Return
+            200 - Get Ingredient.
+        """
+        """ env """
         tc_ingredient1 = ingredient_model.IngredientTest().custom({"slug": "qa_rhr_a"}).insert()
         ingredient_model.IngredientTest().custom({"slug": "qa_rhr_b"}).insert()
+        """ param """
         tc_slug = tc_ingredient1.slug
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_slug + "=" + tc_slug
@@ -179,8 +247,15 @@ class SearchIngredient(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_3_slug_partial(self):
+        """ QueryParameter slug is partial.
+
+        Return
+            200 - Get Ingredient.
+        """
+        """ env """
         tc_ingredient1 = ingredient_model.IngredientTest().custom({"slug": "qa_rhr_a"}).insert()
         tc_ingredient2 = ingredient_model.IngredientTest().custom({"slug": "qa_rhr_b"}).insert()
+        """ param """
         tc_slug = "qa_rhr"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_slug + "=" + tc_slug
@@ -196,7 +271,14 @@ class SearchIngredient(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         
     def test_4_categories_empty(self):
+        """ QueryParameter category is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         ingredient_model.IngredientTest().custom({"categories": ["qa_rhr_a"]}).insert()
+        """ param """
         tc_categories = ""
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_categories + "=" + tc_categories
@@ -212,7 +294,14 @@ class SearchIngredient(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
 
     def test_4_categories_invalid(self):
+        """ QueryParameter category is a string.
+
+        Return
+            200 - Get Ingredient.
+        """
+        """ env """
         ingredient_model.IngredientTest().custom({"categories": ["qa_rhr_a"]}).insert()
+        """ param """
         tc_categories = "invalid"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_categories + "=" + tc_categories
@@ -227,8 +316,15 @@ class SearchIngredient(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_4_categories_exact(self):
+        """ QueryParameter category is exact.
+
+        Return
+            200 - Get Ingredient.
+        """
+        """ env """
         tc_ingredient1 = ingredient_model.IngredientTest().custom({"categories": ["qa_rhr_a"]}).insert()
         ingredient_model.IngredientTest().custom({"categories": ["qa_rhr_b"]}).insert()
+        """ param """
         tc_categories = tc_ingredient1.categories[0]
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_categories + "=" + tc_categories
@@ -243,8 +339,15 @@ class SearchIngredient(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_4_categories_partial(self):
+        """ QueryParameter category is partial.
+
+        Return
+            200 - Get Ingredient.
+        """
+        """ env """
         tc_ingredient1 = ingredient_model.IngredientTest().custom({"categories": ["qa_rhr_a"]}).insert()
         tc_ingredient2 = ingredient_model.IngredientTest().custom({"categories": ["qa_rhr_b"]}).insert()
+        """ param """
         tc_categories = "qa_rhr"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_categories + "=" + tc_categories
@@ -260,8 +363,15 @@ class SearchIngredient(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_5_with_files_without(self):
+        """ QueryParameter with_files is missing.
+
+        Return
+            200 - Get Ingredient.
+        """
+        """ env """
         tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
         tc_ingredient2 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
+        """ param """
         tc_name = "qa_rhr"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_name + "=" + tc_name
@@ -278,8 +388,15 @@ class SearchIngredient(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_5_with_files_empty(self):
+        """ QueryParameter with_files is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
         ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
+        """ param """
         tc_name = tc_ingredient1.name
         tc_with_files = ""
         """ call api """
@@ -293,11 +410,17 @@ class SearchIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + " ['true', 'false']",
+        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + api.rep_detail_true_false,
                                    value=tc_with_files)
         self.assertEqual(response_body["detail"], detail)
 
     def test_5_with_files_string(self):
+        """ QueryParameter with_files is a string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
         ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
         tc_name = tc_ingredient1.name
@@ -313,16 +436,23 @@ class SearchIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + " ['true', 'false']",
+        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + api.rep_detail_true_false,
                                    value=tc_with_files)
         self.assertEqual(response_body["detail"], detail)
 
     def test_5_with_files_string_false(self):
+        """ QueryParameter with_files is false.
+
+        Return
+            200 - Get Ingredient.
+        """
+        """ env """
         tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
         tc_ingredient2 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
         tc_ingredient1.add_file(filename="qa_rhr_1", is_main=False)
         tc_ingredient1.add_file(filename="qa_rhr_2", is_main=True)
         tc_ingredient2.add_file(filename="qa_rhr_3", is_main=False)
+        """ param """
         tc_name = "qa_rhr"
         tc_with_files = "false"
         """ call api """
@@ -340,11 +470,18 @@ class SearchIngredient(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_5_with_files_string_true(self):
+        """ QueryParameter with_files is true.
+
+        Return
+            200 - Get Ingredient with Files.
+        """
+        """ env """
         tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_a"}).insert()
         tc_ingredient2 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_b"}).insert()
         tc_file1 = tc_ingredient1.add_file(filename="qa_rhr_1", is_main=False)
         tc_file2 = tc_ingredient1.add_file(filename="qa_rhr_2", is_main=True)
         tc_file3 = tc_ingredient2.add_file(filename="qa_rhr_3", is_main=False)
+        """ param """
         tc_name = "qa_rhr"
         tc_with_files = "true"
         """ call api """

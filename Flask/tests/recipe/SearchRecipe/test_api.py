@@ -15,12 +15,20 @@ file = file_model.FileTest()
 class SearchRecipe(unittest.TestCase):
 
     def setUp(self):
+        """ Clean RecipeTest and FileTest."""
         recipe.clean()
         file.clean()
 
     def test_0_api_ok(self):
+        """ Default case.
+
+        Return
+            200 - Matched Recipes.
+        """
+        """ env """
         tc_recipe1 = recipe_model.RecipeTest().custom({"title": "qa_rhr_a"}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom({"title": "qa_rhr_b"}).insert()
+        """ param """
         tc_title = "qa_rhr"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_title + "=" + tc_title
@@ -36,8 +44,15 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_0_api_ok_more_param(self):
+        """ Default case with more parameters.
+
+        Return
+            200 - Matched Recipes.
+        """
+        """ env """
         tc_recipe1 = recipe_model.RecipeTest().custom({"title": "qa_rhr_a"}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom({"title": "qa_rhr_b"}).insert()
+        """ param """
         tc_title = "qa_rhr"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_title + "=" + tc_title + "&invalid=invalid"
@@ -53,7 +68,12 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_0_api_no_param(self):
-        """ similar to getAll"""
+        """ Default case with no parameter.
+
+        Return
+            200 - Go to GetAll.
+        """
+        """ env """
         tc_recipe1 = recipe_model.RecipeTest().insert()
         tc_recipe2 = recipe_model.RecipeTest().insert()
         """ call api """
@@ -70,9 +90,16 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_0_api_multi_param(self):
+        """ Default case with several parameters.
+
+        Return
+            200 - Matched Recipes.
+        """
+        """ env """
         tc_recipe1 = recipe_model.RecipeTest().custom({"title": "qa_rhr_a", "level": 5}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom({"title": "qa_rhr_b", "level": 5}).insert()
         tc_recipe3 = recipe_model.RecipeTest().custom({"title": "qa_rhr_a", "level": 6}).insert()
+        """ param """
         tc_title = "qa_rhr_a"
         tc_level = "5"
         """ call api """
@@ -91,8 +118,14 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_1_url_not_found(self):
-        """ go to getRecipe """
+        """ Wrong url.
+
+        Return
+            200 - Go to GetRecipe.
+        """
+        """ env """
         recipe_model.RecipeTest().insert()
+        """ param """
         tc_title = "qa_rhr"
         """ call api """
         url = server.main_url + "/" + api.url + "x" + "?" + api.param_title + "=" + tc_title
@@ -108,7 +141,14 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
 
     def test_2_title_empty(self):
+        """ QueryParameter title is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         recipe_model.RecipeTest().insert()
+        """ param """
         tc_title = ""
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_title + "=" + tc_title
@@ -124,8 +164,15 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
 
     def test_2_title_invalid(self):
+        """ QueryParameter title is a string.
+
+        Return
+            200 - Matched Recipe.
+        """
+        """ env """
         tc_recipe1 = recipe_model.RecipeTest().custom({"title": "qa_rhr_a"}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom({"title": "qa_rhr_b"}).insert()
+        """ param """
         tc_title = "invalid"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_title + "=" + tc_title
@@ -141,8 +188,15 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_2_title_ok(self):
+        """ QueryParameter title is a ok string.
+
+        Return
+            200 - Matched Recipe.
+        """
+        """ env """
         tc_recipe1 = recipe_model.RecipeTest().custom({"title": "qa_rhra"}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom({"title": "qa_rhrb"}).insert()
+        """ param """
         tc_title = "qa_rhra"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_title + "=" + tc_title
@@ -158,7 +212,14 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_3_slug_empty(self):
+        """ QueryParameter slug is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         recipe_model.RecipeTest().insert()
+        """ param """
         tc_slug = ""
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_slug + "=" + tc_slug
@@ -174,8 +235,15 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
 
     def test_3_slug_invalid(self):
+        """ QueryParameter slug is a string.
+
+        Return
+            200 - Matched Recipe.
+        """
+        """ env """
         tc_recipe1 = recipe_model.RecipeTest().custom({"slug": "qa_rhr_a"}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom({"slug": "qa_rhr_b"}).insert()
+        """ param """
         tc_slug = "invalid"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_slug + "=" + tc_slug
@@ -191,8 +259,15 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_3_slug_ok(self):
+        """ QueryParameter slug is a ok string.
+
+        Return
+            200 - Matched Recipe.
+        """
+        """ env """
         tc_recipe1 = recipe_model.RecipeTest().custom({"slug": "qa_rhra"}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom({"slug": "qa_rhrb"}).insert()
+        """ param """
         tc_slug = "qa_rhra"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_slug + "=" + tc_slug
@@ -208,7 +283,14 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_4_level_empty(self):
+        """ QueryParameter level is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         recipe_model.RecipeTest().insert()
+        """ param """
         tc_level = ""
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_level + "=" + tc_level
@@ -224,7 +306,14 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
 
     def test_4_level_invalid(self):
+        """ QueryParameter level is a string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         recipe_model.RecipeTest().insert()
+        """ param """
         tc_level = "invalid"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_level + "=" + tc_level
@@ -240,8 +329,15 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
 
     def test_4_level_ok(self):
+        """ QueryParameter level is a number.
+
+        Return
+            200 - Matched Recipe.
+        """
+        """ env """
         tc_recipe1 = recipe_model.RecipeTest().custom({"level": 5}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom({"level": 6}).insert()
+        """ param """
         tc_level = "5"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_level + "=" + tc_level
@@ -257,7 +353,14 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_5_cooking_time_empty(self):
+        """ QueryParameter cooking_time is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         recipe_model.RecipeTest().insert()
+        """ param """
         tc_cooking_time = ""
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_cooking_time + "=" + tc_cooking_time
@@ -274,7 +377,14 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
 
     def test_5_cooking_time_invalid(self):
+        """ QueryParameter cooking_time is a string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         recipe_model.RecipeTest().insert()
+        """ param """
         tc_cooking_time = "invalid"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_cooking_time + "=" + tc_cooking_time
@@ -291,8 +401,15 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
 
     def test_5_cooking_time_ok(self):
+        """ QueryParameter cooking_time is a number.
+
+        Return
+            200 - Matched Recipe.
+        """
+        """ env """
         tc_recipe1 = recipe_model.RecipeTest().custom({"cooking_time": 5}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom({"cooking_time": 6}).insert()
+        """ param """
         tc_cooking_time = "5"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_cooking_time + "=" + tc_cooking_time
@@ -308,7 +425,14 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_6_preparation_time_empty(self):
+        """ QueryParameter preparation_time is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         recipe_model.RecipeTest().insert()
+        """ param """
         tc_preparation_time = ""
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_preparation_time + "=" + tc_preparation_time
@@ -325,7 +449,14 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
 
     def test_6_preparation_time_invalid(self):
+        """ QueryParameter preparation_time is a string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         recipe_model.RecipeTest().insert()
+        """ param """
         tc_preparation_time = "invalid"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_preparation_time + "=" + tc_preparation_time
@@ -342,8 +473,15 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
 
     def test_6_preparation_time_ok(self):
+        """ QueryParameter preparation_time is a number.
+
+        Return
+            200 - Matched Recipe.
+        """
+        """ env """
         tc_recipe1 = recipe_model.RecipeTest().custom({"preparation_time": 5}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom({"preparation_time": 6}).insert()
+        """ param """
         tc_preparation_time = "5"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_preparation_time + "=" + tc_preparation_time
@@ -359,7 +497,14 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_7_nb_people_empty(self):
+        """ QueryParameter nb_people is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         recipe_model.RecipeTest().insert()
+        """ param """
         tc_nb_people = ""
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_nb_people + "=" + tc_nb_people
@@ -375,7 +520,14 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
 
     def test_7_nb_people_invalid(self):
+        """ QueryParameter nb_people is a string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         recipe_model.RecipeTest().insert()
+        """ param """
         tc_nb_people = "invalid"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_nb_people + "=" + tc_nb_people
@@ -391,8 +543,15 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
 
     def test_7_nb_people_ok(self):
+        """ QueryParameter nb_people is a number.
+
+        Return
+            200 - Matched Recipe.
+        """
+        """ env """
         tc_recipe1 = recipe_model.RecipeTest().custom({"nb_people": 5}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom({"nb_people": 6}).insert()
+        """ param """
         tc_nb_people = "5"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_nb_people + "=" + tc_nb_people
@@ -408,7 +567,14 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_8_categories_empty(self):
+        """ QueryParameter categories is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         recipe_model.RecipeTest().insert()
+        """ param """
         tc_categories = ""
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_categories + "=" + tc_categories
@@ -424,8 +590,15 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
 
     def test_8_categories_invalid(self):
+        """ QueryParameter categories is a string.
+
+        Return
+            200 - Matched Recipe.
+        """
+        """ env """
         tc_recipe1 = recipe_model.RecipeTest().custom({"categories": ["qa_rhr_", "qa_rhr_b", "qa_rhr_c"]}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom({"categories": ["qa_rhr_a", "qa_rhr_c"]}).insert()
+        """ param """
         tc_categories = "invalid"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_categories + "=" + tc_categories
@@ -441,8 +614,15 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_8_categories_ok(self):
+        """ QueryParameter categories is a ok string.
+
+        Return
+            200 - Matched Recipe.
+        """
+        """ env """
         tc_recipe1 = recipe_model.RecipeTest().custom({"categories": ["qa_rhr_", "qa_rhr_b", "qa_rhr_c"]}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom({"categories": ["qa_rhr_a", "qa_rhr_c"]}).insert()
+        """ param """
         tc_categories = "qa_rhr_b"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_categories + "=" + tc_categories
@@ -458,7 +638,14 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_9_status_empty(self):
+        """ QueryParameter status is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         recipe_model.RecipeTest().insert()
+        """ param """
         tc_status = ""
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_status + "=" + tc_status
@@ -474,7 +661,14 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
 
     def test_9_status_invalid(self):
+        """ QueryParameter status is a string.
+
+        Return
+            200 - Matched Recipe.
+        """
+        """ env """
         tc_recipe1 = recipe_model.RecipeTest().insert()
+        """ param """
         tc_status = "invalid"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_status + "=" + tc_status
@@ -489,8 +683,15 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_9_status_ok(self):
+        """ QueryParameter status is a ok string.
+
+        Return
+            200 - Matched Recipe.
+        """
+        """ env """
         tc_recipe1 = recipe_model.RecipeTest().custom({"status": "in_progress"}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom({"status": "finished"}).insert()
+        """ param """
         tc_status = "prog"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_status + "=" + tc_status
@@ -506,6 +707,12 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_10_with_files_without(self):
+        """ QueryParameter with_files is missing.
+
+        Return
+            200 - Matched Recipe.
+        """
+        """ env """
         tc_recipe1 = recipe_model.RecipeTest().custom({"title": "qa_rhr_a"}).insert()
         tc_recipe2 = recipe_model.RecipeTest().custom({"title": "qa_rhr_b"}).insert()
         """ call api """
@@ -522,8 +729,15 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_10_with_files_empty(self):
+        """ QueryParameter with_files is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         recipe_model.RecipeTest().custom({"title": "qa_rhr_a"}).insert()
         recipe_model.RecipeTest().custom({"title": "qa_rhr_b"}).insert()
+        """ param """
         tc_with_files = ""
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_with_files + "=" + tc_with_files
@@ -535,13 +749,20 @@ class SearchRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + " ['true', 'false']",
+        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + api.detail_with_files,
                                    value=tc_with_files)
         self.assertEqual(response_body["detail"], detail)
 
     def test_10_with_files_string(self):
+        """ QueryParameter with_files is a string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         recipe_model.RecipeTest().custom({"title": "qa_rhr_a"}).insert()
         recipe_model.RecipeTest().custom({"title": "qa_rhr_b"}).insert()
+        """ param """
         tc_with_files = "invalid"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_with_files + "=" + tc_with_files
@@ -553,11 +774,17 @@ class SearchRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + " ['true', 'false']",
+        detail = api.create_detail(param=api.param_with_files, msg=server.detail_must_be_in + api.detail_with_files,
                                    value=tc_with_files)
         self.assertEqual(response_body["detail"], detail)
 
     def test_10_with_files_string_false(self):
+        """ QueryParameter with_files is false.
+
+        Return
+            200 - Matched Recipe.
+        """
+        """ env """
         tc_recipe1 = recipe_model.RecipeTest().custom({"title": "qa_rhr_a"})
         tc_recipe2 = recipe_model.RecipeTest().custom({"title": "qa_rhr_b"})
         tc_recipe1.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
@@ -573,6 +800,7 @@ class SearchRecipe(unittest.TestCase):
         tc_recipe1.add_file_step(_id_step="222222222222222222222222", filename="qa_rhr_22", is_main=True)
         tc_recipe2.add_file_step(_id_step="333333333333333333333333", filename="qa_rhr_31", is_main=True)
         tc_recipe2.add_file_step(_id_step="333333333333333333333333", filename="qa_rhr_32", is_main=False)
+        """ param """
         tc_with_files = "false"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_with_files + "=" + tc_with_files
@@ -588,6 +816,12 @@ class SearchRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_10_with_files_string_true(self):
+        """ QueryParameter with_files is true.
+
+        Return
+            200 - Matched Recipe with files.
+        """
+        """ env """
         tc_recipe1 = recipe_model.RecipeTest().custom({"title": "qa_rhr_a"})
         tc_recipe2 = recipe_model.RecipeTest().custom({"title": "qa_rhr_b"})
         tc_recipe1.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
@@ -608,6 +842,7 @@ class SearchRecipe(unittest.TestCase):
                                                    is_main=True)
         tc_file_step212 = tc_recipe2.add_file_step(_id_step="333333333333333333333333", filename="qa_rhr_32",
                                                    is_main=False)
+        """ param """
         tc_with_files = "true"
         """ call api """
         url = server.main_url + "/" + api.url + "?" + api.param_with_files + "=" + tc_with_files

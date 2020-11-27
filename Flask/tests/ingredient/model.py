@@ -41,7 +41,7 @@ class IngredientTest(object):
         Returns
         -------
         Any
-            Display IngredientTest
+            Display IngredientTest.
         """
         print(self.__dict__)
 
@@ -229,8 +229,7 @@ class IngredientTest(object):
         Returns
         -------
         Any
-            Response server if validation failed, True otherwise.
-
+            FileTest added.
         """
         file = file_model.FileTest().custom({"filename": filename,
                                              "metadata": {"kind": "ingredient",
@@ -438,9 +437,13 @@ class IngredientRecipeTest(object):
         client.close()
 
     def add_name(self):
+        """ Add IngredientRecipeTest's name for Ingredient.
+        """
         self.__setattr__("name", ingredient.get_name_by_id(str(self._id_ingredient)))
         return self
 
     def add_title(self):
+        """ Add IngredientRecipeTest's title for Recipe.
+        """
         self.__setattr__("title", recipe.get_title_by_id(str(self._id_recipe)))
         return self

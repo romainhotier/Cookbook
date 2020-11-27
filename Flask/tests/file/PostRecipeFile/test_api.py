@@ -17,20 +17,28 @@ file_path = api.get_file_path_for_test()
 class PostRecipeFile(unittest.TestCase):
 
     def setUp(self):
+        """ Clean all FileTest and RecipeTest """
         recipe.clean()
         file.clean()
 
     def test_0_api_ok(self):
+        """ Default case
+
+        Return
+            201 - RecipeTest and FileTests.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         new_id = api.return_new_file_id(response_body)
         tc_file = tc_recipe.add_file_recipe(filename=body[api.param_filename], is_main=body[api.param_is_main],
                                             identifier=new_id)
@@ -47,17 +55,24 @@ class PostRecipeFile(unittest.TestCase):
         tc_file.select_ok()
 
     def test_0_api_ok_more_param(self):
+        """ Default case with more parameter.
+
+        Return
+            201 - RecipeTest and FileTests.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
                 api.param_is_main: False,
-                "invalid": "invalid"
-                }
+                "invalid": "invalid"}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         new_id = api.return_new_file_id(response_body)
         tc_file = tc_recipe.add_file_recipe(filename=body[api.param_filename], is_main=body[api.param_is_main],
                                             identifier=new_id)
@@ -74,13 +89,18 @@ class PostRecipeFile(unittest.TestCase):
         tc_file.select_ok()
 
     def test_1_url_not_found(self):
+        """ Wrong url.
+
+        Return
+            404 - Url not found.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False,
-                "invalid": "invalid"
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url + "x/" + tc_id
         response = requests.post(url, json=body, verify=False)
@@ -98,12 +118,18 @@ class PostRecipeFile(unittest.TestCase):
         file_model.FileTest().custom({"filename": body[api.param_filename]}).select_nok_by_filename()
 
     def test_2_id_without(self):
+        """ QueryParameter _id is missing.
+
+        Return
+            404 - Url not found.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = ""
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
@@ -121,12 +147,18 @@ class PostRecipeFile(unittest.TestCase):
         file_model.FileTest().custom({"filename": body[api.param_filename]}).select_nok_by_filename()
 
     def test_2_id_string(self):
+        """ QueryParameter _id is a string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = "invalid"
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
@@ -145,12 +177,18 @@ class PostRecipeFile(unittest.TestCase):
         file_model.FileTest().custom({"filename": body[api.param_filename]}).select_nok_by_filename()
 
     def test_2_id_object_id_invalid(self):
+        """ QueryParameter _id is a nok ObjectId.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = "aaaaaaaaaaaaaaaaaaaaaaaa"
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
@@ -169,11 +207,17 @@ class PostRecipeFile(unittest.TestCase):
         file_model.FileTest().custom({"filename": body[api.param_filename]}).select_nok_by_filename()
 
     def test_3_path_without(self):
+        """ BodyParameter path is missing.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
@@ -192,12 +236,18 @@ class PostRecipeFile(unittest.TestCase):
         file_model.FileTest().custom({"filename": body[api.param_filename]}).select_nok_by_filename()
 
     def test_3_path_null(self):
+        """ BodyParameter path is null.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_path: None,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
@@ -216,12 +266,18 @@ class PostRecipeFile(unittest.TestCase):
         file_model.FileTest().custom({"filename": body[api.param_filename]}).select_nok_by_filename()
 
     def test_3_path_empty(self):
+        """ BodyParameter path is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_path: "",
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
@@ -241,12 +297,18 @@ class PostRecipeFile(unittest.TestCase):
         file_model.FileTest().custom({"filename": body[api.param_filename]}).select_nok_by_filename()
 
     def test_3_path_string(self):
+        """ BodyParameter path is a nok string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_path: "invalid",
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
@@ -265,11 +327,17 @@ class PostRecipeFile(unittest.TestCase):
         file_model.FileTest().custom({"filename": body[api.param_filename]}).select_nok_by_filename()
 
     def test_4_filename_without(self):
+        """ BodyParameter filename is missing.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_path: file_path,
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
@@ -286,12 +354,18 @@ class PostRecipeFile(unittest.TestCase):
         tc_recipe.select_ok()
 
     def test_4_filename_null(self):
+        """ BodyParameter filename is null.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_path: file_path,
                 api.param_filename: None,
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
@@ -311,12 +385,18 @@ class PostRecipeFile(unittest.TestCase):
         file_model.FileTest().custom({"filename": body[api.param_filename]}).select_nok_by_filename()
 
     def test_4_filename_empty(self):
+        """ BodyParameter filename is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_path: file_path,
                 api.param_filename: "",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
@@ -336,16 +416,23 @@ class PostRecipeFile(unittest.TestCase):
         file_model.FileTest().custom({"filename": body[api.param_filename]}).select_nok_by_filename()
 
     def test_4_filename_string(self):
+        """ BodyParameter filename is a string.
+
+        Return
+            201 - RecipeTest and FileTests.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         new_id = api.return_new_file_id(response_body)
         tc_file = tc_recipe.add_file_recipe(filename=body[api.param_filename], is_main=body[api.param_is_main],
                                             identifier=new_id)
@@ -362,15 +449,22 @@ class PostRecipeFile(unittest.TestCase):
         tc_file.select_ok()
 
     def test_5_is_main_without(self):
+        """ BodyParameter is_main is missing.
+
+        Return
+            201 - RecipeTest and FileTests.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_path: file_path,
-                api.param_filename: "qa_rhr_filename"
-                }
+                api.param_filename: "qa_rhr_filename"}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         new_id = api.return_new_file_id(response_body)
         tc_file = tc_recipe.add_file_recipe(filename=body[api.param_filename], is_main=False, identifier=new_id)
         """ assert """
@@ -386,12 +480,18 @@ class PostRecipeFile(unittest.TestCase):
         tc_file.select_ok()
 
     def test_5_is_main_null(self):
+        """ BodyParameter is_main is null.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: None
-                }
+                api.param_is_main: None}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
@@ -411,12 +511,18 @@ class PostRecipeFile(unittest.TestCase):
         file_model.FileTest().custom({"filename": body[api.param_filename]}).select_nok_by_filename()
 
     def test_5_is_main_empty(self):
+        """ BodyParameter is_main is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: ""
-                }
+                api.param_is_main: ""}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
@@ -436,12 +542,18 @@ class PostRecipeFile(unittest.TestCase):
         file_model.FileTest().custom({"filename": body[api.param_filename]}).select_nok_by_filename()
 
     def test_5_is_main_string(self):
+        """ BodyParameter is_main is a string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: "invalid"
-                }
+                api.param_is_main: "invalid"}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
@@ -461,16 +573,23 @@ class PostRecipeFile(unittest.TestCase):
         file_model.FileTest().custom({"filename": body[api.param_filename]}).select_nok_by_filename()
 
     def test_5_is_main_false(self):
+        """ BodyParameter is_main is False.
+
+        Return
+            201 - RecipeTest and FileTests.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False
-                }
+                api.param_is_main: False}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         new_id = api.return_new_file_id(response_body)
         tc_file = tc_recipe.add_file_recipe(filename=body[api.param_filename], is_main=body[api.param_is_main],
                                             identifier=new_id)
@@ -487,16 +606,23 @@ class PostRecipeFile(unittest.TestCase):
         tc_file.select_ok()
 
     def test_5_is_main_true(self):
+        """ BodyParameter is_main is True.
+
+        Return
+            201 - RecipeTest and FileTests.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
-                api.param_is_main: True
-                }
+                api.param_is_main: True}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         new_id = api.return_new_file_id(response_body)
         tc_file = tc_recipe.add_file_recipe(filename=body[api.param_filename], is_main=body[api.param_is_main],
                                             identifier=new_id)
@@ -513,8 +639,15 @@ class PostRecipeFile(unittest.TestCase):
         tc_file.select_ok()
 
     def test_5_is_main_true_already_exist(self):
+        """ BodyParameter is_main is True and another True exist.
+
+        Return
+            201 - RecipeTest and FileTests.
+        """
+        """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
         tc_file1 = tc_recipe.add_file_recipe(filename="qa_rhr_filename", is_main=True)
+        """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename_new",
@@ -523,6 +656,7 @@ class PostRecipeFile(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
         tc_file1.custom_is_main(False)
         new_id = api.return_new_file_id(response_body)
         tc_file2 = tc_recipe.add_file_recipe(filename=body[api.param_filename], is_main=body[api.param_is_main],
@@ -541,14 +675,9 @@ class PostRecipeFile(unittest.TestCase):
         tc_file2.select_ok()
         tc_file1.select_ok()
 
-    def tearDown(self):
-        recipe.clean()
-        file.clean()
-
     @classmethod
     def tearDownClass(cls):
-        recipe.clean()
-        file.clean()
+        cls.setUp(PostRecipeFile())
 
 
 if __name__ == '__main__':
