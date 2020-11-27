@@ -13,10 +13,18 @@ user = user_model.UserTest()
 class PostUserLogin(unittest.TestCase):
 
     def setUp(self):
+        """ Clean UserTest."""
         user.clean()
 
     def test_0_api_ok(self):
+        """ Default case.
+
+        Return
+            200 - Get Token.
+        """
+        """ env """
         tc_user = user_model.UserTest().insert()
+        """ param """
         body = {api.param_email: tc_user.email,
                 api.param_password: tc_user.password}
         """ call api """
@@ -32,7 +40,14 @@ class PostUserLogin(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_0_api_ok_more_param(self):
+        """ Default case with more parameters.
+
+        Return
+            200 - Get Token.
+        """
+        """ env """
         tc_user = user_model.UserTest().insert()
+        """ param """
         body = {api.param_email: tc_user.email,
                 api.param_password: tc_user.password,
                 "invalid": "invalid"}
@@ -49,7 +64,14 @@ class PostUserLogin(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_1_url_not_found(self):
+        """ Wrong url.
+
+        Return
+            404 - url not found.
+        """
+        """ env """
         tc_user = user_model.UserTest().insert()
+        """ param """
         body = {api.param_email: tc_user.email,
                 api.param_password: tc_user.password}
         """ call api """
@@ -65,7 +87,14 @@ class PostUserLogin(unittest.TestCase):
         self.assertEqual(response_body["detail"], server.detail_url_not_found)
 
     def test_2_email_without(self):
+        """ BodyParameter email is missing.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_user = user_model.UserTest().insert()
+        """ param """
         body = {api.param_password: tc_user.password}
         """ call api """
         url = server.main_url + "/" + api.url
@@ -81,7 +110,14 @@ class PostUserLogin(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
 
     def test_2_email_null(self):
+        """ BodyParameter email is null.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_user = user_model.UserTest().insert()
+        """ param """
         body = {api.param_email: None,
                 api.param_password: tc_user.password}
         """ call api """
@@ -99,7 +135,14 @@ class PostUserLogin(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
 
     def test_2_email_empty(self):
+        """ BodyParameter email is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_user = user_model.UserTest().insert()
+        """ param """
         body = {api.param_email: "",
                 api.param_password: tc_user.password}
         """ call api """
@@ -117,7 +160,14 @@ class PostUserLogin(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
 
     def test_3_password_without(self):
+        """ BodyParameter password is missing.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_user = user_model.UserTest().insert()
+        """ param """
         body = {api.param_email: tc_user.email}
         """ call api """
         url = server.main_url + "/" + api.url
@@ -133,7 +183,14 @@ class PostUserLogin(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
 
     def test_3_password_null(self):
+        """ BodyParameter password is null.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_user = user_model.UserTest().insert()
+        """ param """
         body = {api.param_email: tc_user.email,
                 api.param_password: None}
         """ call api """
@@ -151,7 +208,14 @@ class PostUserLogin(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
 
     def test_3_password_empty(self):
+        """ BodyParameter password is an empty string.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
         tc_user = user_model.UserTest().insert()
+        """ param """
         body = {api.param_email: tc_user.email,
                 api.param_password: ""}
         """ call api """
@@ -168,12 +232,9 @@ class PostUserLogin(unittest.TestCase):
                                    value=body[api.param_password])
         self.assertEqual(response_body["detail"], detail)
 
-    def tearDown(self):
-        user.clean()
-
     @classmethod
     def tearDownClass(cls):
-        user.clean()
+        cls.setUp(PostUserLogin())
 
 
 if __name__ == '__main__':

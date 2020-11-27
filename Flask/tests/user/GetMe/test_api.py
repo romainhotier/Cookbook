@@ -15,10 +15,17 @@ class GetMe(unittest.TestCase):
 
     @user.login
     def setUp(self, **kwargs):
+        """ Login and store info."""
         self.user = kwargs["user"]
         self.headers = kwargs["headers"]
 
     def test_0_api_ok(self):
+        """ Default case.
+
+        Return
+            200 - Get User.
+        """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.get(url, headers=self.headers, verify=False)
         response_body = response.json()
@@ -31,7 +38,14 @@ class GetMe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_0_api_header_deprecated(self):
+        """ Header is deprecated.
+
+        Return
+            401 - Unauthorized".
+        """
+        """ env """
         time.sleep(6)
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.get(url, headers=self.headers, verify=False)
         response_body = response.json()
@@ -45,6 +59,12 @@ class GetMe(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
 
     def test_0_api_header_nok(self):
+        """ Header is nok.
+
+        Return
+            401 - Unauthorized".
+        """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.get(url, headers={"Authorization": "aaa"}, verify=False)
         response_body = response.json()
@@ -58,6 +78,12 @@ class GetMe(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
 
     def test_0_api_without_header(self):
+        """ Header is missing.
+
+        Return
+            401 - Unauthorized".
+        """
+        """ call api """
         url = server.main_url + "/" + api.url
         response = requests.get(url, verify=False)
         response_body = response.json()
@@ -71,10 +97,12 @@ class GetMe(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
 
     def tearDown(self):
+        """ Clean UserTest."""
         user.clean()
 
     @classmethod
     def tearDownClass(cls):
+        """ Clean UserTest."""
         user.clean()
 
 

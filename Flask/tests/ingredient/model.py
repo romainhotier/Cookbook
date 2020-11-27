@@ -229,8 +229,7 @@ class IngredientTest(object):
         Returns
         -------
         Any
-            Response server if validation failed, True otherwise.
-
+            FileTest added.
         """
         file = file_model.FileTest().custom({"filename": filename,
                                              "metadata": {"kind": "ingredient",

@@ -6,6 +6,8 @@ server = utils.Server()
 
 
 class PostIngredientRecipe(object):
+    """ Class to test PostIngredientRecipe.
+    """
 
     def __init__(self):
         self.url = 'ingredient/recipe'
@@ -19,6 +21,22 @@ class PostIngredientRecipe(object):
 
     @staticmethod
     def create_detail(param, msg, **kwargs):
+        """ Format Server's detail response.
+
+        Parameters
+        ----------
+        param : str
+            Tested parameter.
+        msg : str
+            Server's message.
+        kwargs : str
+            Value if one existed.
+
+        Returns
+        -------
+        dict
+            Server's detail response.
+        """
         detail = {"param": param, "msg": msg}
         if "value" in kwargs:
             detail["value"] = kwargs["value"]
@@ -26,6 +44,18 @@ class PostIngredientRecipe(object):
 
     @staticmethod
     def create_schema(link):
+        """ Format schema's response.
+
+        Parameters
+        ----------
+        link : Any
+            IngredientRecipeTest.
+
+        Returns
+        -------
+        dict
+            Schema.
+        """
         return {"type": "object",
                 "properties": {
                     "_id": {"type": "string"},
@@ -37,6 +67,20 @@ class PostIngredientRecipe(object):
                 "additionalProperties": False}
 
     def json_check(self, data, data_expected):
+        """ Format schema's response.
+
+        Parameters
+        ----------
+        data : dict
+            Server's response.
+        data_expected : Any
+            Schema from IngredientRecipeTest.
+
+        Returns
+        -------
+        dict
+            Result and err if exist.
+        """
         try:
             jsonschema.validate(instance=data, schema=self.create_schema(link=data_expected))
             return {"result": True, "error": None}
@@ -45,6 +89,19 @@ class PostIngredientRecipe(object):
 
     @staticmethod
     def check_not_present(value, rep):
+        """ Check if data/detail is not present in Server's response.
+
+        Parameters
+        ----------
+        value : str
+            Tested value.
+        rep : dict
+            Server's response.
+
+        Returns
+        -------
+        bool
+        """
         if value in rep.keys():
             return False
         else:

@@ -14,7 +14,7 @@ class GetIngredient(object):
         self.rep_code_msg_ok = server.rep_code_msg_ok.replace("xxx", "ingredient")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "ingredient")
         self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
-        self.rep_detail_true_false = " [true, false]"
+        self.rep_detail_true_false = " ['true', 'false']"
 
     @staticmethod
     def create_detail(param, msg, **kwargs):

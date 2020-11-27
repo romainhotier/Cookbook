@@ -15,7 +15,7 @@ file = file_model.FileTest()
 class GetAllIngredient(unittest.TestCase):
 
     def setUp(self):
-        """ Clean IngredientTest and FileTest. """
+        """ Clean IngredientTest and FileTest."""
         ingredient.clean()
         file.clean()
 

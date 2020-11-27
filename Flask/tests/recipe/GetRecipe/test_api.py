@@ -13,14 +13,22 @@ file = file_model.FileTest()
 
 
 class GetRecipe(unittest.TestCase):
-
+    
     def setUp(self):
+        """ Clean RecipeTest and FileTest."""
         recipe.clean()
         file.clean()
 
     def test_0_api_ok(self):
-        tc_recipe1 = recipe_model.RecipeTest().custom({"title": "qa_rhr_a"}).insert()
-        recipe_model.RecipeTest().custom({"title": "qa_rhr_b"}).insert()
+        """ Default case.
+
+        Return
+            200 - One Recipe.
+        """
+        """ env """
+        tc_recipe1 = recipe_model.RecipeTest().insert()
+        recipe_model.RecipeTest().insert()
+        """ param """
         tc_slug = tc_recipe1.slug
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_slug
@@ -35,8 +43,15 @@ class GetRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_0_api_ok_more_param(self):
-        tc_recipe1 = recipe_model.RecipeTest().custom({"title": "qa_rhr_a"}).insert()
-        recipe_model.RecipeTest().custom({"title": "qa_rhr_b"}).insert()
+        """ Default case with more parameters.
+
+        Return
+            200 - One Recipe.
+        """
+        """ env """
+        tc_recipe1 = recipe_model.RecipeTest().insert()
+        recipe_model.RecipeTest().insert()
+        """ param """
         tc_slug = tc_recipe1.slug
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_slug + "?invalid=invalid"
@@ -51,8 +66,15 @@ class GetRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_1_url_not_found(self):
-        tc_recipe1 = recipe_model.RecipeTest().custom({"title": "qa_rhr_a"}).insert()
-        recipe_model.RecipeTest().custom({"title": "qa_rhr_b"}).insert()
+        """ Wrong url.
+
+        Return
+            404 - Bad request.
+        """
+        """ env """
+        tc_recipe1 = recipe_model.RecipeTest().insert()
+        recipe_model.RecipeTest().insert()
+        """ param """
         tc_slug = tc_recipe1.slug
         """ call api """
         url = server.main_url + "/" + api.url + "x/" + tc_slug
@@ -67,8 +89,15 @@ class GetRecipe(unittest.TestCase):
         self.assertEqual(response_body["detail"], server.detail_url_not_found)
 
     def test_2_slug_without(self):
-        tc_recipe1 = recipe_model.RecipeTest().custom({"title": "qa_rhr_a"}).insert()
-        tc_recipe2 = recipe_model.RecipeTest().custom({"title": "qa_rhr_b"}).insert()
+        """ QueryParameter slug is missing.
+
+        Return
+
+            200 - Go to GetAllRecipe.
+        """
+        """ env """
+        tc_recipe1 = recipe_model.RecipeTest().insert()
+        tc_recipe2 = recipe_model.RecipeTest().insert()
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.get(url, verify=False)
@@ -83,7 +112,15 @@ class GetRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_2_slug_string(self):
-        recipe_model.RecipeTest().custom({"title": "qa_rhr_a"}).insert()
+        """ QueryParameter slug is a string.
+
+        Return
+
+            400 - Bad request.
+        """
+        """ env """
+        recipe_model.RecipeTest().insert()
+        """ param """
         tc_slug = "invalid"
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_slug
@@ -99,8 +136,16 @@ class GetRecipe(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
 
     def test_3_with_files_without(self):
-        tc_recipe1 = recipe_model.RecipeTest().custom({"title": "qa_rhr_a"}).insert()
-        recipe_model.RecipeTest().custom({"title": "qa_rhr_b"}).insert()
+        """ QueryParameter with_files is missing.
+
+        Return
+
+            200 - One Recipe.
+        """
+        """ env """
+        tc_recipe1 = recipe_model.RecipeTest().insert()
+        recipe_model.RecipeTest().insert()
+        """ param """
         tc_slug = tc_recipe1.slug
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_slug
@@ -115,8 +160,16 @@ class GetRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_3_with_files_empty(self):
-        tc_recipe1 = recipe_model.RecipeTest().custom({"title": "qa_rhr_a"}).insert()
-        recipe_model.RecipeTest().custom({"title": "qa_rhr_b"}).insert()
+        """ QueryParameter with_files is an empty string.
+
+        Return
+
+            400 - Bad request.
+        """
+        """ env """
+        tc_recipe1 = recipe_model.RecipeTest().insert()
+        recipe_model.RecipeTest().insert()
+        """ param """
         tc_slug = tc_recipe1.slug
         tc_with_files = ""
         """ call api """
@@ -134,8 +187,16 @@ class GetRecipe(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
 
     def test_3_with_files_string(self):
-        tc_recipe1 = recipe_model.RecipeTest().custom({"title": "qa_rhr_a"}).insert()
-        recipe_model.RecipeTest().custom({"title": "qa_rhr_b"}).insert()
+        """ QueryParameter with_files is a string.
+
+        Return
+
+            400 - Bad request.
+        """
+        """ env """
+        tc_recipe1 = recipe_model.RecipeTest().insert()
+        recipe_model.RecipeTest().insert()
+        """ param """
         tc_slug = tc_recipe1.slug
         tc_with_files = "invalid"
         """ call api """
@@ -153,7 +214,14 @@ class GetRecipe(unittest.TestCase):
         self.assertEqual(response_body["detail"], detail)
 
     def test_4_with_files_string_false(self):
-        tc_recipe = recipe_model.RecipeTest().custom({"title": "qa_rhr_a"})
+        """ QueryParameter with_files is false.
+
+        Return
+
+            200 - One Recipe.
+        """
+        """ env """
+        tc_recipe = recipe_model.RecipeTest()
         tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
         tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
@@ -162,6 +230,7 @@ class GetRecipe(unittest.TestCase):
         tc_recipe.add_file_step(_id_step="111111111111111111111111", filename="qa_rhr_11", is_main=False)
         tc_recipe.add_file_step(_id_step="222222222222222222222222", filename="qa_rhr_21", is_main=False)
         tc_recipe.add_file_step(_id_step="222222222222222222222222", filename="qa_rhr_22", is_main=True)
+        """ param """
         tc_slug = tc_recipe.slug
         tc_with_files = "false"
         """ call api """
@@ -177,7 +246,14 @@ class GetRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_4_with_files_string_true(self):
-        tc_recipe = recipe_model.RecipeTest().custom({"title": "qa_rhr_a"})
+        """ QueryParameter with_files is true.
+
+        Return
+
+            200 - One Recipe.
+        """
+        """ env """
+        tc_recipe = recipe_model.RecipeTest()
         tc_recipe.add_step(_id_step="111111111111111111111111", description="step recipe 1 - 1st")
         tc_recipe.add_step(_id_step="222222222222222222222222", description="step recipe 1 - 2nd")
         tc_recipe.insert()
@@ -189,6 +265,7 @@ class GetRecipe(unittest.TestCase):
                                                   is_main=False)
         tc_file_step122 = tc_recipe.add_file_step(_id_step="222222222222222222222222", filename="qa_rhr_22",
                                                   is_main=True)
+        """ param """
         tc_slug = tc_recipe.slug
         tc_with_files = "true"
         """ call api """
