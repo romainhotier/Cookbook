@@ -11,7 +11,6 @@ const IngredientPageAdd = ({ loadingPostIngredients, ingredients, postIngredient
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
-    console.log('useEffect')
     setModalVisible(false)
   }, [ingredients])
 

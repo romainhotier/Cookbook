@@ -19,3 +19,23 @@ export const getRecipeSuccess = createAction(
 export const getRecipeFailed = createAction(
   'GET_RECIPE_FAILED'
 )
+
+export const postRecipeRequest = createAction(
+  'POST_RECIPE_REQUEST'
+)
+export const postRecipeSuccess = createAction(
+  'POST_RECIPE_SUCCESS'
+)
+export const postRecipeFailed = createAction(
+  'POST_RECIPE_FAILED'
+)
+
+export const putRecipeRequest = createAction(
+  'PUT_RECIPE_REQUEST'
+)
+export const putRecipeSuccess = createAction(
+  'PUT_RECIPE_SUCCESS'
+)
+export const putRecipeFailed = createAction(
+  'PUT_RECIPE_FAILED'
+)

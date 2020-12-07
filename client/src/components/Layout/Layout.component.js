@@ -15,7 +15,7 @@ const Layout = () => {
       <Col
         xs={{ span: 24, offset: 0 }}
         sm={{ span: 24, offset: 0 }}
-        md={{ span: 20, offset: 2 }}
+        md={{ span: 24, offset: 0 }}
         lg={{ span: 20, offset: 2 }}
         xl={{ span: 20, offset: 2 }}
       >

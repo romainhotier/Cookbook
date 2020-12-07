@@ -51,7 +51,6 @@ export const postIngredient = (data) => (dispatch => {
       dispatch(
         postIngredientSuccess(response)
       );
-      console.log()
       notification['success']({
         message: 'Ingrédient créé !',
         description:

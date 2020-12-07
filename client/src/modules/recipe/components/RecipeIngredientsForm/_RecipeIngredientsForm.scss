@@ -1,0 +1,15 @@
+.blockDisabled * {
+  color: rgba(grey, 0.7);
+  .button {
+    background-color: white;
+  }
+}
+
+.ingredients_table {
+  .ant-table-cell {
+    padding: 5px;
+  }
+  .button_remove {
+    color: $black;
+  }
+}
