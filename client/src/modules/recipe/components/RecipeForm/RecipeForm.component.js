@@ -7,11 +7,13 @@ import { categories } from "constants/categories.constants";
 import { slugify } from "constants/functions.constants";
 
 import RecipeIngredientsForm from "../RecipeIngredientsForm";
+import RecipeStepForm from "../RecipeStepForm";
 import { RecipeValidator } from "./RecipeForm.validator";
 
 const RecipeForm = ({recipe, createRecipe}) => {
 
   const [listIngredients, setListIngredients] = useState([]);
+  const [listSteps, setListSteps] = useState([{position: 0, description: ''}]);
 
   console.log("recipe", recipe)
   const recipeExist = !!recipe.id;
@@ -109,7 +111,7 @@ const RecipeForm = ({recipe, createRecipe}) => {
           </Col>
           {/* Steps */}
           <Col lg={14} md={12} sm={24} xs={24}>
-            <h2>Préparation</h2>
+            <RecipeStepForm disabled={!recipeExist} _id_recipe={recipe._id} listSteps={listSteps} setListSteps={setListSteps}/>
           </Col>
         </Row>
 
