@@ -84,6 +84,7 @@ const IngredientReducer = handleActions(
         error: true,
       }
     },
+
   },
   defaultState
 )

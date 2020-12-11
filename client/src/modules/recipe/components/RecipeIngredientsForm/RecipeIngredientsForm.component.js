@@ -45,8 +45,7 @@ class RecipeIngredientsForm extends Component {
     const options = researchIngredients.map(d => <Option key={d._id}>{d.name}</Option>)
 
     return (
-      // <div className={recipeExist ? '' : 'blockDisabled'}>
-      <div>
+      <div className={recipeExist ? '' : 'blockDisabled'}>
         <h2>Ingrédients</h2>
           <Form.List name="ingredients">
           {(fields, { add, remove }) => (

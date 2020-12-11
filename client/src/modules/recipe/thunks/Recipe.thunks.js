@@ -11,12 +11,16 @@ import {
     postRecipeRequest,
     postRecipeSuccess,
     postRecipeFailed,
+    putRecipeRequest,
+    putRecipeSuccess,
+    putRecipeFailed,
 } from '../actions'
 
 import {
     fetchAllRecipesURL,
     fetchRecipeURL,
-    createRecipeURL
+    createRecipeURL,
+    updateRecipeURL,
 } from '../api/Recipe.api'
 
 import { codeMsg } from 'constants/codeMsg.constants'
@@ -39,10 +43,10 @@ export const fetchAllRecipe = () => (dispatch => {
     })
 })
 
-export const fetchRecipe = (id) => (dispatch => {
+export const fetchRecipe = (slug) => (dispatch => {
     dispatch(getRecipeRequest());
 
-    fetch(fetchRecipeURL(id))
+    fetch(fetchRecipeURL(slug))
     .then(res => res.json())
     .then(res => {
         if(res.error) {
@@ -55,7 +59,6 @@ export const fetchRecipe = (id) => (dispatch => {
         dispatch(getRecipeFailed(error));
     })
 })
-
 
 export const postRecipe = (data) => (dispatch => {
   dispatch(postRecipeRequest());
@@ -93,6 +96,46 @@ export const postRecipe = (data) => (dispatch => {
   })
   .catch(error => {
     dispatch(postRecipeFailed(error));
+  })
+
+})
+
+export const putRecipe = (id, data, isComplete = false) => (dispatch => {
+  dispatch(putRecipeRequest());
+
+  fetch(updateRecipeURL(id), {
+    method: 'PUT',
+    headers: new Headers({
+      'Content-Type': 'application/json'
+    }),
+    body: JSON.stringify(data)
+  })
+  .then(res => res.json())
+  .then(response => {
+    if(response.codeStatus === 201) {
+      dispatch(
+        putRecipeSuccess(response.data)
+      );
+      notification['success']({
+        message: isComplete ? 'Recette complétée !' : 'Recette modifiée !',
+        description:
+          `${get(codeMsg, `${response.codeMsg}`)}`
+      });
+    } else {
+      dispatch(
+        dispatch(putRecipeFailed(response.detail))
+      );
+
+      const errorFormat = get(codeMsg, `${response.codeMsg}.${slugifyResponse(response.detail.msg)}`);
+      notification['error']({
+        message: 'Oooh une erreur',
+        description:
+        `${errorFormat(response.detail.value)}`
+      });
+    }
+  })
+  .catch(error => {
+    dispatch(putRecipeFailed(error));
   })
 
 })

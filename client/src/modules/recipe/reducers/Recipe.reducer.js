@@ -10,12 +10,16 @@ import {
   postRecipeRequest,
   postRecipeSuccess,
   postRecipeFailed,
+  putRecipeRequest,
+  putRecipeSuccess,
+  putRecipeFailed,
 } from './../actions'
 
 const defaultState = {
   content: {},
   loadingFetchRecipes: false,
   loadingPostRecipes: false,
+  loadingPutRecipes: false,
   error: null
 }
 
@@ -119,6 +123,40 @@ const RecipeReducer = handleActions(
       return {
         ...state,
         loadingPostRecipes: false,
+        error: true,
+      }
+    },
+
+    /*
+     ** PUT RECIPE
+     */
+    [putRecipeRequest](state) {
+      return {
+        ...state,
+        loadingPutRecipes: true,
+        error: null,
+      }
+    },
+
+    [putRecipeSuccess](state, action) {
+      let data = {}
+      const recipe = action.payload
+
+      data[recipe.slug] = {
+        ...recipe,
+      }
+
+      return {
+        ...state,
+        content: data,
+        loadingPutRecipes: false,
+      }
+    },
+
+    [putRecipeFailed](state) {
+      return {
+        ...state,
+        loadingPutRecipes: false,
         error: true,
       }
     },

@@ -20,3 +20,14 @@ export const postIngredientSuccess = createAction(
 export const postIngredientFailed = createAction(
   'POST_INGREDIENT_FAILED'
 )
+
+
+export const postIngredientsRecipeRequest = createAction(
+  'POST_INGREDIENTS_RECIPE_REQUEST'
+)
+export const postIngredientsRecipeSuccess = createAction(
+  'POST_INGREDIENTS_RECIPE_SUCCESS'
+)
+export const postIngredientsRecipeFailed = createAction(
+  'POST_INGREDIENTS_RECIPE_FAILED'
+)

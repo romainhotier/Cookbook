@@ -47,8 +47,7 @@ const RecipeStepForm = ({recipeExist, listSteps, setListSteps, disabled}) => {
   };
 
   return (
-    // <div className={recipeExist ? '' : 'blockDisabled'}>
-    <div>
+    <div className={recipeExist ? '' : 'blockDisabled'}>
       <h2>Préparation</h2>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
@@ -68,7 +67,7 @@ const RecipeStepForm = ({recipeExist, listSteps, setListSteps, disabled}) => {
 
                     >
                       <label key={`${index}-label`} className={`${id}-recipeStep`}>Etape {index +1}</label>
-                      <RecipeStepElement key={`${id}-recipeStep`} id={id} description={description} removeStep={removeStep} changeDescription={changeDescription} />
+                      <RecipeStepElement disabled={disabled} key={`${id}-recipeStep`} id={id} description={description} removeStep={removeStep} changeDescription={changeDescription} />
                     </div>
                     )}
                   </Draggable>
@@ -80,7 +79,7 @@ const RecipeStepForm = ({recipeExist, listSteps, setListSteps, disabled}) => {
         </Droppable>
       </DragDropContext>
       <div className="button_add_step">
-        <Button type="primary" onClick={addStep} >Ajouter une étape</Button>
+        <Button type="primary" onClick={addStep} disabled={disabled}>Ajouter une étape</Button>
       </div>
     </div>
   )

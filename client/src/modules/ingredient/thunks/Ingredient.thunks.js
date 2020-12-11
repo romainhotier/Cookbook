@@ -6,11 +6,15 @@ import {
   postIngredientRequest,
   postIngredientSuccess,
   postIngredientFailed,
+  postIngredientsRecipeRequest,
+  postIngredientsRecipeSuccess,
+  postIngredientsRecipeFailed,
 } from '../actions'
 
 import {
   fetchAllIngredientsURL,
   postIngredientURL,
+  postIngredientsRecipeURL,
 } from '../api/Ingredient.api'
 
 import { notification } from 'antd'
@@ -61,6 +65,48 @@ export const postIngredient = (data) => (dispatch => {
         dispatch(postIngredientFailed(response.detail))
       );
 
+      const errorFormat = get(codeMsg, `${response.codeMsg}.${slugifyResponse(response.detail.msg)}`);
+      notification['error']({
+        message: 'Oooh une erreur',
+        description:
+        `${errorFormat(response.detail.value)}`
+      });
+    }
+  })
+  .catch(error => {
+    dispatch(postIngredientFailed(error));
+  })
+
+})
+
+export const postIngredientsRecipe = (data) => (dispatch => {
+  dispatch(postIngredientsRecipeRequest());
+
+  fetch(postIngredientsRecipeURL(), {
+    method: 'POST',
+    headers: new Headers({
+      'Content-Type': 'application/json'
+    }),
+    body: JSON.stringify(data)
+  })
+  .then(res => res.json())
+  .then(response => {
+    if(response.codeStatus === 201) {
+      dispatch(
+        postIngredientsRecipeSuccess(response)
+      );
+      console.log("response ingredients", response)
+      notification['success']({
+        message: 'Ingrédient associé à la recette !',
+        description:
+          `${get(codeMsg, `${response.codeMsg}`)}`
+      });
+    } else {
+      dispatch(
+        dispatch(postIngredientsRecipeFailed(response.detail))
+      );
+
+      console.log("response ingredients", response)
       const errorFormat = get(codeMsg, `${response.codeMsg}.${slugifyResponse(response.detail.msg)}`);
       notification['error']({
         message: 'Oooh une erreur',
