@@ -320,6 +320,56 @@ def post_ingredient_recipe():
     return server.return_response(data=data.result, api=apis.name, http_code=201)
 
 
+@apis.route('/recipe/multi', methods=['POST'])
+def post_ingredient_recipe_multi():
+    """
+    @api {post} /ingredient/recipe/multi  PostIngredientRecipeMulti
+    @apiGroup Ingredient
+    @apiDescription Associate multiple ingredients to a recipe
+
+    @apiParam (Body param) {String} _id_recipe Recipe's ObjectId to link
+    @apiParam (Body param) {String} _id_ingredient Ingredient's ObjectId to link
+    @apiParam (Body param) {Integer} quantity Ingredient's quantity for the recipe
+    @apiParam (Body param) {String} unit Ingredient's unit for the recipe
+
+    @apiExample {json} Example usage:
+    POST http://127.0.0.1:5000/ingredient/recipe/multi
+    {
+        '_id_recipe': <_id_recipe>,
+        'ingredients': [{'_id_ingredient': <_id_ingredient1>, 'quantity': <quantity1>, 'unit': <unit1>},
+                        {'_id_ingredient': <_id_ingredient2>, 'quantity': <quantity2>, 'unit': <unit2>}]
+    }
+
+    @apiSuccessExample {json} Success response:
+    HTTPS 201
+    {
+        'codeMsg': 'cookbook.ingredient.success.created',
+        'codeStatus': 201,
+        'data': [{'_id': '5e722e87f94648b72c7d8f03', '_id_ingredient': '5e722e875754d5e780a8f1e5',
+                 '_id_recipe': '5e722e875754d5e780a8f1e3', 'quantity': 5, 'unit': 'qa_rhr_unit'},
+                 {'_id': '5e722e87f94648b72c7d8f04', '_id_ingredient': '5e722e875754d5e780a8f1e6',
+                 '_id_recipe': '5e722e875754d5e780a8f1e4', 'quantity': 7, 'unit': 'qa_rhr_unit2'}]
+    }
+
+    @apiErrorExample {json} Error response:
+    HTTPS 400
+    {
+        'codeMsg': 'cookbook.ingredient.error.bad_request',
+        'codeStatus': 400,
+        'detail': {'msg': 'Must be an ObjectId', 'param': '_id_ingredient', 'value': 'invalid'}
+    }
+    """
+    api = factory.PostIngredientRecipeMulti.Factory()
+    validation = validator.PostIngredientRecipeMulti.Validator()
+    """ check body """
+    body = api.clean_body(data=request.json)
+    validation.is_body_valid(data=body)
+    """ add link """
+    data = ingredient_recipe.insert_multi(data=body)
+    """ return response """
+    return server.return_response(data=data.result, api=apis.name, http_code=201)
+
+
 @apis.route('/<_id>', methods=['PUT'])
 def put_ingredient(_id):
     """

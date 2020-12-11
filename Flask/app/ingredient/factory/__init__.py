@@ -5,6 +5,7 @@ import app.ingredient.factory.GetIngredient
 import app.ingredient.factory.GetRecipeForIngredient
 import app.ingredient.factory.PostIngredient
 import app.ingredient.factory.PostIngredientRecipe
+import app.ingredient.factory.PostIngredientRecipeMulti
 import app.ingredient.factory.PutIngredient
 import app.ingredient.factory.PutIngredientRecipe
 import app.ingredient.factory.SearchIngredient

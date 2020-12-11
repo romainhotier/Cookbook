@@ -400,6 +400,15 @@ class IngredientRecipeTest(object):
         client.close()
         assert result == 0
 
+    def select_nok_by_id_recipe(self):
+        """ Check if IngredientRecipeTest doesn't exist by id_recipe.
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_ingredient_recipe]
+        result = db.count_documents({"_id_recipe": self._id_recipe})
+        client.close()
+        assert result == 0
+
     def insert(self):
         """ Insert IngredientRecipeTest.
 
@@ -434,6 +443,22 @@ class IngredientRecipeTest(object):
         db = client[mongo.name][mongo.collection_ingredient_recipe]
         db.delete_many({"unit": {"$regex": rgx}})
         db.delete_many({"unit": {"$regex": rgx2}})
+        client.close()
+
+    @staticmethod
+    def clean_complete():
+        """ Clean IngredientRecipeTest by searching orphan (may be long).
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db_link = client[mongo.name][mongo.collection_ingredient_recipe]
+        db_recipe = client[mongo.name][mongo.collection_recipe]
+        db_ingredient = client[mongo.name][mongo.collection_ingredient]
+        results = db_link.find({})
+        for link in results:
+            tmp_recipe = db_recipe.find_one({"_id": ObjectId(link["_id_recipe"])})
+            tmp_ingredient = db_ingredient.find_one({"_id": ObjectId(link["_id_ingredient"])})
+            if tmp_recipe is None or tmp_ingredient is None:
+                db_link.delete_one({"_id": link["_id"]})
         client.close()
 
     def add_name(self):

@@ -93,10 +93,10 @@ class Validator(object):
         Any
             Response server if validation failed, True otherwise.
         """
-        utils.Validator.is_mandatory(param=api.param_path, data=data)
-        utils.Validator.is_string(param=api.param_path, value=data[api.param_path])
-        utils.Validator.is_string_non_empty(param=api.param_path, value=data[api.param_path])
-        utils.Validator.is_path_exist(param=api.param_path, value=data[api.param_path])
+        validator.is_mandatory(param=api.param_path, data=data)
+        validator.is_string(param=api.param_path, value=data[api.param_path])
+        validator.is_string_non_empty(param=api.param_path, value=data[api.param_path])
+        validator.is_path_exist(param=api.param_path, value=data[api.param_path])
         return True
 
     # use in is_body_valid
@@ -114,9 +114,9 @@ class Validator(object):
         Any
             Response server if validation failed, True otherwise.
         """
-        utils.Validator.is_mandatory(param=api.param_filename, data=data)
-        utils.Validator.is_string(param=api.param_filename, value=data[api.param_filename])
-        utils.Validator.is_string_non_empty(param=api.param_filename, value=data[api.param_filename])
+        validator.is_mandatory(param=api.param_filename, data=data)
+        validator.is_string(param=api.param_filename, value=data[api.param_filename])
+        validator.is_string_non_empty(param=api.param_filename, value=data[api.param_filename])
         return True
 
     # use in is_body_valid
@@ -135,6 +135,6 @@ class Validator(object):
             Response server if validation failed, True otherwise.
         """
         if api.param_is_main in data:
-            utils.Validator.is_boolean(param=api.param_is_main, value=data[api.param_is_main])
+            validator.is_boolean(param=api.param_is_main, value=data[api.param_is_main])
             return True
         return True
