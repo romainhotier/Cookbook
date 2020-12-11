@@ -463,6 +463,61 @@ def put_recipe_step(_id_recipe, _id_step):
     return server.return_response(data=data.result, api=apis.name, http_code=200)
 
 
+@apis.route('/steps/<_id>', methods=['PUT'])
+def put_recipe_steps(_id):
+    """
+    @api {put} /recipe/steps/<_id_recipe> PutRecipeSteps
+    @apiGroup Recipe
+    @apiDescription Create recipe's steps.
+
+    @apiParam (Query param) {String} _id Recipe's ObjectId
+    @apiParam (Query param) {String} [with_files] if "true", add recipe's files
+    @apiParam (Body param) {String} description Step's description to add
+
+    @apiExample {json} Example usage:
+    PUT http://127.0.0.1:5000/recipe/steps/<_id_recipe>
+    {
+        'steps': [{'description': <description1>},
+                  {'description': <description2>}]
+    }
+
+    @apiSuccessExample {json} Success response:
+    HTTPS 200
+    {
+        'codeMsg': 'cookbook.recipe.success.created',
+        'codeStatus': 200,
+        'data': {'_id': '5e68acb9e067528c70c75f3c', 'cooking_time': 0, 'level': 0, 'nb_people': 0, 'note': '',
+                 'preparation_time': 0, 'resume': '', title': 'qa_rhr', 'slug': '', 'categories': [],
+                 'steps': [{'_id': '5e68acb97b0ead079be3cef7', 'description': 'new_step'},
+                           {'_id': '5e68acb97b0ead079be3cef8', 'description': 'new_step2'}]}
+    }
+
+    @apiErrorExample {json} Error response:
+    HTTPS 400
+    {
+        'codeMsg': 'cookbook.recipe.error.bad_request',
+        'codeStatus': 400,
+        'detail': {'msg': 'Must be an integer', 'param': 'position', 'value': 'invalid'}
+    }
+    """
+    api = factory.PutRecipeSteps.Factory()
+    validation = validator.PutRecipeSteps.Validator()
+    with_files = request.args.get(api.param_with_files)
+    """ check param """
+    validation.is_with_files_valid(value=with_files)
+    validation.is_object_id_valid(value=_id)
+    """ check body """
+    body = api.clean_body(data=request.json)
+    validation.is_body_valid(data=body)
+    """ update steps """
+    data = step.update_multi(_id=_id, data=body)
+    """ add enrichment if needed """
+    if with_files == "true":
+        data.add_enrichment_file_for_one()
+    """ return response """
+    return server.return_response(data=data.result, api=apis.name, http_code=200)
+
+
 @apis.route('/search', methods=['GET'])
 def search_recipe():
     """

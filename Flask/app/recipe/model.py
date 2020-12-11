@@ -374,6 +374,34 @@ class Step(object):
         self.result = Recipe().select_one(_id=_id_recipe).result
         return self
 
+    def update_multi(self, _id, data):
+        """ Update Steps for a Recipe.
+
+        Parameters
+        ----------
+        _id : str
+            Recipe's ObjectId.
+        data : dict
+            Step's data.
+
+        Returns
+        -------
+        Any
+            Recipe with Steps.
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        """ reset """
+        db.update_one({"_id": ObjectId(_id)}, {'$set': {"steps": []}})
+        """ insert """
+        for stp in data["steps"]:
+            new_step = {"_id": ObjectId(), "description": stp["description"]}
+            db.update_one({"_id": ObjectId(_id)}, {'$push': {"steps": {"$each": [new_step]}}})
+        client.close()
+        """ return result """
+        self.result = Recipe().select_one(_id=_id).result
+        return self
+
     def delete(self, _id_recipe, _id_step):
         """ Delete a Step for a Recipe.
 

@@ -7,4 +7,5 @@ import app.recipe.validator.PostRecipe
 import app.recipe.validator.PostRecipeStep
 import app.recipe.validator.PutRecipe
 import app.recipe.validator.PutRecipeStep
+import app.recipe.validator.PutRecipeSteps
 import app.recipe.validator.SearchRecipe
