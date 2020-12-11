@@ -13,7 +13,7 @@ const defaultState = {
   content: {},
   loadingFetchIngredients: false,
   loadingPostIngredient: false,
-  error: null
+  error: null,
 }
 
 const IngredientReducer = handleActions(
@@ -31,7 +31,7 @@ const IngredientReducer = handleActions(
 
     [getAllIngredientsSuccess](state, action) {
       let data = {}
-      action.payload.forEach((ing) => {
+      action.payload.forEach(ing => {
         data[ing.slug] = {
           ...ing,
         }
@@ -84,7 +84,6 @@ const IngredientReducer = handleActions(
         error: true,
       }
     },
-
   },
   defaultState
 )

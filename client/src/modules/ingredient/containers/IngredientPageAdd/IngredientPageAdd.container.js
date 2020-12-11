@@ -1,23 +1,23 @@
-import { connect } from "react-redux";
-import React, { useState, useEffect } from "react";
-import { Modal, Button, Form, Row, Col } from "antd";
+import { connect } from 'react-redux'
+import React, { useState, useEffect } from 'react'
+import { Modal, Button, Form, Row, Col } from 'antd'
 
-import { slugify } from "constants/functions.constants";
-import { Input } from "components/Form/Input.component";
-import { postIngredient } from "../../thunks";
-import { IngredientValidator } from "./IngredientPageAdd.validator";
+import { slugify } from 'constants/functions.constants'
+import { Input } from 'components/Form/Input.component'
+import { postIngredient } from '../../thunks'
+import { IngredientValidator } from './IngredientPageAdd.validator'
 
 const IngredientPageAdd = ({ loadingPostIngredients, ingredients, postIngredient }) => {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false)
 
   useEffect(() => {
     setModalVisible(false)
   }, [ingredients])
 
-  const onFinish = (values) => {
+  const onFinish = values => {
     const slug = slugify(values.name)
-    postIngredient({ ...values, slug})
-  };
+    postIngredient({ ...values, slug })
+  }
 
   return (
     <>
@@ -31,11 +31,7 @@ const IngredientPageAdd = ({ loadingPostIngredients, ingredients, postIngredient
         onCancel={() => setModalVisible(false)}
         width={'80%'}
       >
-        <Form
-          name="IngredientPageAdd"
-          layout="vertical"
-          onFinish={onFinish}
-        >
+        <Form name="IngredientPageAdd" layout="vertical" onFinish={onFinish}>
           <Input
             label="Nom de l'ingrédient"
             name="name"
@@ -97,15 +93,16 @@ const IngredientPageAdd = ({ loadingPostIngredients, ingredients, postIngredient
         </Form>
       </Modal>
     </>
-  );
-};
+  )
+}
 
 const mapDispatchToProps = {
   postIngredient,
-};
+}
 
-const mapStateToProps = ({
-  ingredients: { content, loadingPostIngredients },
-}) => ({ ingredients: content, loadingPostIngredients });
+const mapStateToProps = ({ ingredients: { content, loadingPostIngredients } }) => ({
+  ingredients: content,
+  loadingPostIngredients,
+})
 
-export default connect(mapStateToProps, mapDispatchToProps)(IngredientPageAdd);
+export default connect(mapStateToProps, mapDispatchToProps)(IngredientPageAdd)

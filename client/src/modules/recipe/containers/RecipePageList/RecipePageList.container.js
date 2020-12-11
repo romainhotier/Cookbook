@@ -22,14 +22,7 @@ class RecipePageList extends Component {
       <>
         <Row>
           {Object.values(recipes).map((singleRecipe, key) => (
-            <Col
-              key={key}
-              xs={{ span: 24 }}
-              sm={{ span: 12 }}
-              md={{ span: 12}}
-              lg={{ span: 6}}
-              xl={{ span: 4}}
-            >
+            <Col key={key} xs={{ span: 24 }} sm={{ span: 12 }} md={{ span: 12 }} lg={{ span: 6 }} xl={{ span: 4 }}>
               <RecipeSingleElement recipe={singleRecipe} />
             </Col>
           ))}
@@ -43,9 +36,6 @@ const mapDispatchToProps = {
   fetchAllRecipe,
 }
 
-const mapStateToProps = ({recipes : {content, loadingFetchRecipes}}) => ({recipes: content, loadingFetchRecipes})
+const mapStateToProps = ({ recipes: { content, loadingFetchRecipes } }) => ({ recipes: content, loadingFetchRecipes })
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(RecipePageList)
+export default connect(mapStateToProps, mapDispatchToProps)(RecipePageList)

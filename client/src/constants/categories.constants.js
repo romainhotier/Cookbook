@@ -1,11 +1,11 @@
 export const categories = [
   {
     title: 'Salée',
-    icon: 'fas fa-pepper-hot'
+    icon: 'fas fa-pepper-hot',
   },
   {
     title: 'Sucrée',
-    icon: 'fas fa-apple-alt'
+    icon: 'fas fa-apple-alt',
   },
   {
     title: 'Apéritifs',
@@ -18,23 +18,23 @@ export const categories = [
   },
   {
     title: 'Cheatmeals',
-    icon: 'fas fa-hamburger'
+    icon: 'fas fa-hamburger',
   },
   {
     title: 'Healthy',
-    icon: 'fas fa-heartbeat'
+    icon: 'fas fa-heartbeat',
   },
   {
     title: 'Snacks',
   },
   {
     title: 'Cookies / Biscuits',
-    icon: 'fas fa-cookie'
+    icon: 'fas fa-cookie',
   },
   {
     title: 'Gâteaux',
   },
   {
     title: 'Petit dej',
-  }
+  },
 ]

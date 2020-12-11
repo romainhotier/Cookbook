@@ -1,1 +1,1 @@
-export {default} from './RecipeSingleElement.component.js'
+export { default } from './RecipeSingleElement.component.js'

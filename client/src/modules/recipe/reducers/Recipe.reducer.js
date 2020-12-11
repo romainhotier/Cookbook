@@ -20,7 +20,7 @@ const defaultState = {
   loadingFetchRecipes: false,
   loadingPostRecipes: false,
   loadingPutRecipes: false,
-  error: null
+  error: null,
 }
 
 const RecipeReducer = handleActions(
@@ -28,7 +28,7 @@ const RecipeReducer = handleActions(
     /*
      ** GET ALL RECIPES
      */
-    [getAllRecipesRequest](state, action) {
+    [getAllRecipesRequest](state) {
       return {
         ...state,
         loadingFetchRecipes: true,
@@ -38,7 +38,7 @@ const RecipeReducer = handleActions(
 
     [getAllRecipesSuccess](state, action) {
       let data = {}
-      action.payload.forEach((recipe) => {
+      action.payload.forEach(recipe => {
         data[recipe.slug] = {
           ...recipe,
         }
@@ -51,7 +51,7 @@ const RecipeReducer = handleActions(
       }
     },
 
-    [getAllRecipesFailed](state, action) {
+    [getAllRecipesFailed](state) {
       return {
         ...state,
         loadingFetchRecipes: false,
@@ -59,10 +59,10 @@ const RecipeReducer = handleActions(
       }
     },
 
-     /*
+    /*
      ** GET RECIPE
      */
-    [getRecipeRequest](state, action) {
+    [getRecipeRequest](state) {
       return {
         ...state,
         loadingFetchRecipes: true,
@@ -85,7 +85,7 @@ const RecipeReducer = handleActions(
       }
     },
 
-    [getRecipeFailed](state, action) {
+    [getRecipeFailed](state) {
       return {
         ...state,
         loadingFetchRecipes: false,

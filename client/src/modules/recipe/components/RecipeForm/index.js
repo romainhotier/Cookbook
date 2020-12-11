@@ -1,1 +1,1 @@
-export {default} from './RecipeForm.component.js'
+export { default } from './RecipeForm.component.js'

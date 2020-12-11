@@ -5,7 +5,7 @@ import IngredientsList from '../../components/IngredientsList'
 import IngredientPageAdd from '../IngredientPageAdd'
 import { fetchAllIngredients } from '../../thunks'
 
-import "./_IngredientPageList.scss";
+import './_IngredientPageList.scss'
 
 class IngredientPageList extends Component {
   componentDidMount() {
@@ -34,9 +34,9 @@ const mapDispatchToProps = {
   fetchAllIngredients,
 }
 
-const mapStateToProps = ({ingredients : {content, loadingFetchIngredients}}) => ({ingredients: content, loadingFetchIngredients})
+const mapStateToProps = ({ ingredients: { content, loadingFetchIngredients } }) => ({
+  ingredients: content,
+  loadingFetchIngredients,
+})
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(IngredientPageList)
+export default connect(mapStateToProps, mapDispatchToProps)(IngredientPageList)
