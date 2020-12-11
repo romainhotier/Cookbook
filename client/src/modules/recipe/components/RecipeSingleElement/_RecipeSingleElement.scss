@@ -1,14 +1,14 @@
 .recipeSingleElement {
   padding: 5px;
   &_image {
-    position: relative;
+    id: relative;
     background-color: grey;
     height: 300px;
     margin-bottom: 15px;
     text-align: center;
   }
   &_mainCategorie {
-    position: absolute;
+    id: absolute;
     bottom: 0;
     left: 0;
     right: 0;

@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import { Form, Button, Row, Col, Divider } from "antd";
+import omit from "lodash/omit";
 
 import { Input } from "components/Form/Input.component";
 import { CheckboxWithImage } from "components/Form/CheckboxWithImage.component";
@@ -10,27 +11,42 @@ import RecipeIngredientsForm from "../RecipeIngredientsForm";
 import RecipeStepForm from "../RecipeStepForm";
 import { RecipeValidator } from "./RecipeForm.validator";
 
-const RecipeForm = ({recipe, createRecipe}) => {
+const RecipeForm = ({recipe = {}, createRecipe, slugRecipe, setSlugRecipe}) => {
+  const [recipeState, setRecipeState] = useState({});
+  const [listSteps, setListSteps] = useState([{id: 0, description: ''}]);
 
-  const [listIngredients, setListIngredients] = useState([]);
-  const [listSteps, setListSteps] = useState([{position: 0, description: ''}]);
+  const recipeExist = !!slugRecipe && Object.keys(recipe).length > 0 && !!recipe[slugRecipe]._id;
 
-  console.log("recipe", recipe)
-  const recipeExist = !!recipe.id;
+  console.log("!!slugRecipe", !!slugRecipe)
+  console.log("Object.keys(recipe).length", Object.keys(recipe).length)
+
+  if(recipeExist && Object.keys(recipeState).length === 0) {
+    console.log('if set recipe state')
+    console.log(recipe[slugRecipe])
+    setRecipeState(recipe[slugRecipe])
+  }
+
   console.log("recipeExist", recipeExist)
-
-
+  console.log("Object.keys(recipeState)", Object.keys(recipeState))
+  console.log("Object.keys(recipeState)", Object.keys(recipeState).length)
+  console.log("recipeState", recipeState)
 
   const onFinish = (values) => {
     console.log("Success:", values);
-    const slug = slugify(values.title)
-    if(recipe.length > 0 && recipe.id) {
-      console.log(recipe.id)
-      console.log(listIngredients)
 
+    if(Object.keys(recipeState).length === 0) {
+      const slug = slugify(values.title);
+      setSlugRecipe(slug);
+      createRecipe({...values, slug});
+      return;
     }
 
-    createRecipe({...values, slug});
+    const ingredientsList = omit(values, 'ingredients')
+    console.log("ingredientsList:", ingredientsList);
+    console.log("values:", values);
+    console.log("listSteps:", listSteps);
+
+
   };
 
   const onChange = (data) => {
@@ -107,7 +123,9 @@ const RecipeForm = ({recipe, createRecipe}) => {
         <Row gutter={32}>
           {/* Ingrédients */}
           <Col lg={10} md={12} sm={24} xs={24}>
-            <RecipeIngredientsForm disabled={!recipeExist} _id_recipe={recipe._id} setListIngredients={setListIngredients}/>
+            <RecipeIngredientsForm
+              //disabled={!recipeExist}
+              _id_recipe={recipe._id}/>
           </Col>
           {/* Steps */}
           <Col lg={14} md={12} sm={24} xs={24}>
@@ -116,7 +134,11 @@ const RecipeForm = ({recipe, createRecipe}) => {
         </Row>
 
         <Row style={{ justifyContent: 'flex-end' }}>
-          <Button type="primary" htmlType="submit" disabled={!recipeExist}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            // disabled={!recipeExist}
+          >
             Ajoutée la recette
           </Button>
         </Row>

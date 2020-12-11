@@ -1,94 +1,26 @@
 import { connect } from "react-redux"
 import React, { Component } from "react"
-import { Select, Table } from 'antd'
-import keyBy from 'lodash/keyBy'
-import omitBy from 'lodash/omitBy'
+import { Select, Form, Space, Input, Button, Spin } from 'antd'
 
 import { fetchAllIngredients } from 'modules/ingredient/thunks'
-import { columns } from "./RecipeIngredientsColumn";
+import { RecipeIngredientsValidator } from "./RecipeIngredientsForm.validator";
 
 import './_RecipeIngredientsForm.scss'
 
 const { Option } = Select
-
-const defaultLineIngredientState = {
-  _id_ingredient: null,
-  quantity: null,
-  unit: null,
-  name: null,
-}
 
 class RecipeIngredientsForm extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      recipeIngredients: [],
-      ingredientsById: [],
       researchIngredients: [],
-      lineIngredient: {
-        _id_recipe: this.props._id_recipe,
-        ...defaultLineIngredientState
-      }
     }
   }
-
 
   componentDidMount() {
     this.props.fetchAllIngredients();
   }
-
-  componentDidUpdate(prevProps, prevState) {
-    const {ingredients, setListIngredients} = this.props
-    const {recipeIngredients} = this.state
-
-    if(prevProps.ingredients !== ingredients) {
-      this.setState({
-        ingredientsById: keyBy(ingredients, '_id'),
-      })
-    }
-    if(prevState.recipeIngredients !== recipeIngredients) {
-      setListIngredients(recipeIngredients)
-    }
-  }
-
-  addIngredient = () => {
-    const {lineIngredient: {_id_ingredient, quantity}, lineIngredient, recipeIngredients} = this.state
-    const {_id_recipe, } = this.props
-
-    if(!!_id_ingredient && !!quantity) {
-      this.setState({
-        lineIngredient: {
-          _id_recipe,
-          name: null,
-          ...defaultLineIngredientState
-        },
-        recipeIngredients: [...recipeIngredients, {...lineIngredient, id: recipeIngredients.length}]
-      })
-    }
-
-  }
-
-  removeIngredient = (id) => {
-    const {recipeIngredients} = this.state
-
-    const newRecipeIngredients = omitBy(recipeIngredients, line => line.id === id)
-
-    this.setState({
-      recipeIngredients: Object.values(newRecipeIngredients)
-    })
-  }
-
-  handleChange = (value, elem) => {
-    const {lineIngredient, ingredientsById} = this.state
-    if(elem === '_id_ingredient' && !!ingredientsById) {
-      const infoIng = ingredientsById[value]
-      this.setState({lineIngredient: {...lineIngredient, name: infoIng.name, [elem]: value}  })
-    } else {
-      this.setState({lineIngredient: {...lineIngredient, [elem]: value}  })
-
-    }
-  };
 
   handleSearch = value => {
     const { ingredients } = this.props
@@ -104,39 +36,79 @@ class RecipeIngredientsForm extends Component {
 
   render() {
     const { ingredients, recipeExist, disabled } = this.props
-    const { recipeIngredients, ingredientsById, researchIngredients, lineIngredient } = this.state
+    const { researchIngredients } = this.state
 
     if( Object.entries(ingredients).length === 0 ) {
-      return 'loader'
+      return <Spin />
     }
 
     const options = researchIngredients.map(d => <Option key={d._id}>{d.name}</Option>)
 
-    const listIngredients = recipeIngredients.map((ing) => {
-      const infoIng = ingredientsById[ing._id_ingredient]
-      return { name: infoIng.name, quantity: ing.quantity, unity: ing.unit, id: ing.id}
-    })
-
     return (
-      <div className={recipeExist ? '' : 'blockDisabled'}>
+      // <div className={recipeExist ? '' : 'blockDisabled'}>
+      <div>
         <h2>Ingrédients</h2>
+          <Form.List name="ingredients">
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map(field => (
+                <Space key={field.key} style={{ display: 'flex', marginBottom: 0, alignItems: 'center' }} align="baseline">
 
-        <Table
-          columns={
-            columns(
-              disabled,
-              this.handleSearch,
-              this.handleChange,
-              this.addIngredient,
-              this.removeIngredient,
-              options,
-              lineIngredient
-            )
-          }
-          className="ingredients_table"
-          dataSource={listIngredients}
-          rowKey={record => record.id}
-        />
+                  <Form.Item
+                    {...field}
+                    name={[field.name, '_id_ingredient']}
+                    fieldKey={[field.fieldKey, '_id_ingredient']}
+                    rules={[{ required: RecipeIngredientsValidator['name'].required, message: RecipeIngredientsValidator['name'].message }]}
+                    label="Nom"
+                  >
+                    <Select
+                      showSearch
+                      placeholder={RecipeIngredientsValidator['name'].placeholder}
+                      style={{ minWidth: '220px' }}
+                      defaultActiveFirstOption={false}
+                      showArrow={false}
+                      filterOption={false}
+                      onSearch={this.handleSearch}
+                      notFoundContent={null}
+                      value={field.name}
+                      disabled={disabled}
+                    >
+                      {options}
+                    </Select>
+                  </Form.Item>
+
+                  <Form.Item
+                    {...field}
+                    name={[field.name, 'quantity']}
+                    label="Quantité"
+                    fieldKey={[field.fieldKey, 'quantity']}
+                    rules={[{ required: RecipeIngredientsValidator['quantity'].required, message: RecipeIngredientsValidator['quantity'].message }]}
+                  >
+                    <Input placeholder={RecipeIngredientsValidator['quantity'].placeholder} />
+                  </Form.Item>
+
+                  <Form.Item
+                    {...field}
+                    name={[field.name, 'unity']}
+                    label="Unité"
+                    fieldKey={[field.fieldKey, 'unity']}
+                    rules={[{ required: RecipeIngredientsValidator['unity'].required, message: RecipeIngredientsValidator['unity'].message }]}
+                  >
+                    <Input placeholder={RecipeIngredientsValidator['unity'].placeholder} />
+                  </Form.Item>
+                  <Button key={field.name} htmlType="button" type="text" onClick={() => remove(field.name)} className='button_remove'>
+                    <i className="fas fa-trash"></i>
+                  </Button>
+                </Space>
+              ))}
+              <Form.Item>
+                <Button type="dashed" onClick={() => add()} block >
+                  Ajouter un ingrédient
+                </Button>
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
       </div>
     );
   }
