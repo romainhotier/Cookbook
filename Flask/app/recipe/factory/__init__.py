@@ -7,4 +7,5 @@ import app.recipe.factory.PostRecipe
 import app.recipe.factory.PostRecipeStep
 import app.recipe.factory.PutRecipe
 import app.recipe.factory.PutRecipeStep
+import app.recipe.factory.PutRecipeSteps
 import app.recipe.factory.SearchRecipe
