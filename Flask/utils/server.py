@@ -34,6 +34,7 @@ class Server(object):
         self.detail_must_be_an_integer = "Must be an integer"
         self.detail_must_be_a_float = "Must be a float"
         self.detail_must_be_an_array = "Must be an array"
+        self.detail_must_be_an_array_of_object = "Must be an array of object"
         self.detail_must_be_an_object = "Must be an object"
         self.detail_must_be_a_boolean = "Must be a boolean"
         self.detail_must_be_not_empty = "Must be not empty"
@@ -42,6 +43,7 @@ class Server(object):
         self.detail_must_contain_at_least_one_key = "Must contain at least one key"
         self.detail_already_exist = "Already exist"
         self.detail_doesnot_exist = "Doesn't exist"
+        self.detail_must_be_unique = "Must be unique"
         self.detail_url_not_found = "The requested URL was not found on the server"
         self.detail_method_not_allowed = "The method is not allowed for the requested URL."
 

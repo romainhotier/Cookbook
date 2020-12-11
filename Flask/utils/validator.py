@@ -171,7 +171,7 @@ class Validator(object):
 
     @staticmethod
     def is_unique_ingredient_recipe(_id_ingredient, _id_recipe):
-        """ Check if the key/value is unique.
+        """ Check if IngredientRecipe already exist.
 
         Parameters
         ----------
@@ -189,6 +189,31 @@ class Validator(object):
             detail = "link between {} and {} ".format(_id_ingredient, _id_recipe) + server.detail_already_exist.lower()
             return abort(status=400, description=detail)
         return True
+
+    @staticmethod
+    def is_unique_ingredient_recipe_multi(param, data):
+        """ Check if the key/value is unique.
+
+        Parameters
+        ----------
+        param : str
+            Parameter's name.
+        data : dict
+            PostIngredientRecipeMulti's body.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        len_default = len(data["ingredients"])
+        len_unicity = len(set([ingr["_id_ingredient"] for ingr in data["ingredients"]]))
+        if len_default != len_unicity:
+            detail = server.format_detail(param=param, msg=server.detail_must_be_unique,
+                                          value=[ingr["_id_ingredient"] for ingr in data["ingredients"]])
+            return abort(status=400, description=detail)
+        else:
+            return True
 
     @staticmethod
     def is_unique_recipe(param, value):
@@ -350,6 +375,50 @@ class Validator(object):
         else:
             detail = server.format_detail(param=param, msg=server.detail_must_be_an_array, value=value)
             return abort(status=400, description=detail)
+
+    @staticmethod
+    def is_array_non_empty(param, value):
+        """ Check if the value is an array non empty.
+
+        Parameters
+        ----------
+        param : str
+            Name of the tested parameter.
+        value : Any
+            Value of the tested parameter.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        if len(value) == 0:
+            detail = server.format_detail(param=param, msg=server.detail_must_be_not_empty, value=value)
+            return abort(status=400, description=detail)
+        else:
+            return True
+
+    @staticmethod
+    def is_array_of_object(param, value):
+        """ Check if the value is an array of object.
+
+        Parameters
+        ----------
+        param : str
+            Name of the tested parameter.
+        value : Any
+            Value of the tested parameter.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        for element in value:
+            if not isinstance(element, dict):
+                detail = server.format_detail(param=param, msg=server.detail_must_be_an_array_of_object, value=value)
+                return abort(status=400, description=detail)
+        return True
 
     @staticmethod
     def is_object(param, value):

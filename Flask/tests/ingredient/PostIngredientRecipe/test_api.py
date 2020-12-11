@@ -740,6 +740,7 @@ class PostIngredientRecipe(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.setUp(PostIngredientRecipe())
+        link.clean_complete()
 
 
 if __name__ == '__main__':

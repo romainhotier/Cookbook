@@ -266,6 +266,29 @@ class IngredientRecipe(object):
         self.result = mongo.to_json(result)
         return self
 
+    def insert_multi(self, data):
+        """ Associate an Ingredient to a Recipe.
+
+        Parameters
+        ----------
+        data : dict
+            Link's data.
+
+        Returns
+        -------
+        Any
+            Association Ingredient and Recipe.
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_ingredient_recipe]
+        for link in data["ingredients"]:
+            link["_id_recipe"] = data["_id_recipe"]
+            db.insert_one(link)
+        result = db.find({"_id_recipe": data["_id_recipe"]})
+        client.close()
+        self.result = mongo.to_json([link for link in result])
+        return self
+
     def select_all_by_id_recipe(self, _id_recipe):
         """ Get all Ingredients for a Recipe.
 
