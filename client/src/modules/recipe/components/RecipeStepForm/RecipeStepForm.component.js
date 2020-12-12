@@ -1,50 +1,45 @@
-import React from "react";
-import { Button } from 'antd';
-import map from 'lodash/map';
-import remove from 'lodash/remove';
-import findIndex from 'lodash/findIndex';
+import React from 'react'
+import { Button } from 'antd'
+import map from 'lodash/map'
+import remove from 'lodash/remove'
+import findIndex from 'lodash/findIndex'
 
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 
-import {reorder, getListStyle} from './RecipeStepForm.helpers';
-import RecipeStepElement from './RecipeStepElement.component';
+import { reorder, getListStyle } from './RecipeStepForm.helpers'
+import RecipeStepElement from './RecipeStepElement.component'
 
-import './_RecipeStepForm.scss';
+import './_RecipeStepForm.scss'
 
-const RecipeStepForm = ({recipeExist, listSteps, setListSteps, disabled}) => {
-
+const RecipeStepForm = ({ recipeExist, listSteps, setListSteps, disabled }) => {
   const addStep = () => {
-    const lastIndex = listSteps.length-1
+    const lastIndex = listSteps.length - 1
     const lastId = listSteps[lastIndex].id
-    setListSteps([...listSteps, {id: lastId+1, description: ''}])
+    setListSteps([...listSteps, { id: lastId + 1, description: '' }])
   }
 
-  const removeStep = (key) => {
+  const removeStep = key => {
     const newListSteps = Array.from(listSteps)
-    remove(newListSteps, (elem) => elem.id === key)
+    remove(newListSteps, elem => elem.id === key)
     setListSteps(newListSteps)
   }
 
-  const onDragEnd = (result) => {
+  const onDragEnd = result => {
     if (!result.destination) {
-      return;
+      return
     }
 
-    const items = reorder(
-      listSteps,
-      result.source.index,
-      result.destination.index,
-    );
+    const items = reorder(listSteps, result.source.index, result.destination.index)
 
     setListSteps(items)
   }
 
   const changeDescription = ({ target: { value } }, id) => {
     const newListSteps = Array.from(listSteps)
-    const index = findIndex(newListSteps, (elem) => elem.id === id)
-    newListSteps[index].description = value;
+    const index = findIndex(newListSteps, elem => elem.id === id)
+    newListSteps[index].description = value
     setListSteps(newListSteps)
-  };
+  }
 
   return (
     <div className={recipeExist ? '' : 'blockDisabled'}>
@@ -56,19 +51,27 @@ const RecipeStepForm = ({recipeExist, listSteps, setListSteps, disabled}) => {
               ref={droppableProvided.innerRef}
               style={getListStyle(droppableSnapshot.isDraggingOver, listSteps.length)}
             >
-              {map(listSteps, ({id, description}, index) => (
+              {map(listSteps, ({ id, description }, index) => (
                 <article className="step_item" key={`${index}-step`}>
                   <Draggable key={id} draggableId={`${id}-step`} index={index}>
                     {(draggableProvided, draggableSnapshot) => (
-                    <div
-                      ref={draggableProvided.innerRef}
-                      {...draggableProvided.draggableProps}
-                      {...draggableProvided.dragHandleProps}
-
-                    >
-                      <label key={`${index}-label`} className={`${id}-recipeStep`}>Etape {index +1}</label>
-                      <RecipeStepElement disabled={disabled} key={`${id}-recipeStep`} id={id} description={description} removeStep={removeStep} changeDescription={changeDescription} />
-                    </div>
+                      <div
+                        ref={draggableProvided.innerRef}
+                        {...draggableProvided.draggableProps}
+                        {...draggableProvided.dragHandleProps}
+                      >
+                        <label key={`${index}-label`} className={`${id}-recipeStep`}>
+                          Etape {index + 1}
+                        </label>
+                        <RecipeStepElement
+                          disabled={disabled}
+                          key={`${id}-recipeStep`}
+                          id={id}
+                          description={description}
+                          removeStep={removeStep}
+                          changeDescription={changeDescription}
+                        />
+                      </div>
                     )}
                   </Draggable>
                 </article>
@@ -79,10 +82,12 @@ const RecipeStepForm = ({recipeExist, listSteps, setListSteps, disabled}) => {
         </Droppable>
       </DragDropContext>
       <div className="button_add_step">
-        <Button type="primary" onClick={addStep} disabled={disabled}>Ajouter une étape</Button>
+        <Button type="primary" onClick={addStep} disabled={disabled}>
+          Ajouter une étape
+        </Button>
       </div>
     </div>
   )
 }
 
-export default RecipeStepForm;
+export default RecipeStepForm

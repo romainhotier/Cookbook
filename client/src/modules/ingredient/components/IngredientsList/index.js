@@ -1,1 +1,1 @@
-export {default} from './IngredientsList.component.js'
+export { default } from './IngredientsList.component.js'

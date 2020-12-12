@@ -39,20 +39,21 @@ const columns = [
     width: '12%',
     render(action, record) {
       return (
-        <div style={{display: 'flex', justifyContent: 'space-around', width: '100%'}}>
-          <Button><i className="fas fa-pen"></i></Button>
-          <Button><i className="fas fa-trash-alt"></i></Button>
+        <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%' }}>
+          <Button>
+            <i className="fas fa-pen"></i>
+          </Button>
+          <Button>
+            <i className="fas fa-trash-alt"></i>
+          </Button>
         </div>
       )
-
-    }
+    },
   },
-];
+]
 
-const IngredientsList = ({data}) => {
-  return (
-    <Table columns={columns} dataSource={data} rowKey={record => record._id} />
-  )
+const IngredientsList = ({ data }) => {
+  return <Table columns={columns} dataSource={data} rowKey={record => record._id} />
 }
 
 export default IngredientsList

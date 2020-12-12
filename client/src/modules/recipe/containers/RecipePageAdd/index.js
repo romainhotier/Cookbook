@@ -1,1 +1,1 @@
-export {default} from './RecipePageAdd.container.js'
+export { default } from './RecipePageAdd.container.js'

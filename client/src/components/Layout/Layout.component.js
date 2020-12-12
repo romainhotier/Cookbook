@@ -1,11 +1,11 @@
 import React from 'react'
-import {Row, Col} from 'antd'
+import { Row, Col } from 'antd'
 import { NavLink } from 'react-router-dom'
 
 import RecipeRouter from 'modules/recipe/RecipeRouter'
-import {Routes as RecipeRoutes} from 'modules/recipe/RecipeRoutes'
+import { Routes as RecipeRoutes } from 'modules/recipe/RecipeRoutes'
 import IngredientRouter from 'modules/ingredient/IngredientRouter'
-import {Routes as IngredientRoutes} from 'modules/ingredient/IngredientRoutes'
+import { Routes as IngredientRoutes } from 'modules/ingredient/IngredientRoutes'
 
 import './_Layout.scss'
 
@@ -36,9 +36,9 @@ const Layout = () => {
               </NavLink>
             </div>
           </nav>
-          <main className='layout_content'>
-            { RecipeRouter }
-            { IngredientRouter }
+          <main className="layout_content">
+            {RecipeRouter}
+            {IngredientRouter}
           </main>
         </div>
       </Col>

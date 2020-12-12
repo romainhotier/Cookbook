@@ -16,7 +16,7 @@ class Routes {
     }
     if (param !== undefined) {
       const regex = new RegExp(':(.+)(?=/|$)')
-      fragment = (regex.test(fragment)) ? fragment.replace(regex, param) : fragment + param
+      fragment = regex.test(fragment) ? fragment.replace(regex, param) : fragment + param
     }
 
     return base + fragment

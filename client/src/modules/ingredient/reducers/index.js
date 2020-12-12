@@ -1,1 +1,1 @@
-export {default as IngredientReducer} from './Ingredient.reducer.js'
+export { default as IngredientReducer } from './Ingredient.reducer.js'

@@ -1,1 +1,1 @@
-export {default} from './RecipeStepForm.component'
+export { default } from './RecipeStepForm.component'
