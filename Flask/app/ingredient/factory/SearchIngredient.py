@@ -3,10 +3,9 @@ class Factory(object):
     def __init__(self):
         """ Class to work around SearchIngredient.
         """
+        self.param_categories = "categories"
         self.param_name = "name"
         self.param_slug = "slug"
-        self.param_categories = "categories"
-        self.param_with_files = "with_files"
 
     def get_search_param(self):
         """ Get SearchIngredient's parameters.
@@ -16,7 +15,7 @@ class Factory(object):
         list
             Body parameters.
         """
-        return [self.param_name, self.param_slug, self.param_categories]
+        return [self.param_categories, self.param_name, self.param_slug]
 
     def format_body(self, data):
         """ Format body for SearchIngredient.

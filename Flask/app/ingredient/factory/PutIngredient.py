@@ -4,16 +4,15 @@ class Factory(object):
         """ Class to work around PutIngredient.
         """
         self.param_id = "_id"
-        self.param_with_files = "with_files"
-        self.param_name = "name"
-        self.param_slug = "slug"
         self.param_categories = "categories"
+        self.param_name = "name"
         self.param_nutriments = "nutriments"
-        self.param_calories = "calories"
-        self.param_carbohydrates = "carbohydrates"
-        self.param_fats = "fats"
-        self.param_proteins = "proteins"
-        self.param_info = "info"
+        self.param_nutriments_calories = "calories"
+        self.param_nutriments_carbohydrates = "carbohydrates"
+        self.param_nutriments_fats = "fats"
+        self.param_nutriments_info = "info"
+        self.param_nutriments_proteins = "proteins"
+        self.param_slug = "slug"
         self.body = {}
 
     def get_body_param(self):
@@ -24,7 +23,7 @@ class Factory(object):
         list
             Body parameters.
         """
-        return [self.param_name, self.param_slug, self.param_categories, self.param_nutriments]
+        return [self.param_categories, self.param_name, self.param_nutriments, self.param_slug]
 
     def get_nutriments_param(self):
         """ Get PutIngredient's nutriments parameters.
@@ -34,7 +33,8 @@ class Factory(object):
         list
             Nutriments parameters.
         """
-        return [self.param_calories, self.param_carbohydrates, self.param_fats, self.param_proteins, self.param_info]
+        return [self.param_nutriments_calories, self.param_nutriments_carbohydrates, self.param_nutriments_fats,
+                self.param_nutriments_info, self.param_nutriments_proteins]
 
     def clean_body(self, data):
         """ Remove keys that are not in PutIngredient's parameters.

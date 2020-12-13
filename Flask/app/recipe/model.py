@@ -24,9 +24,13 @@ class Recipe(object):
         - nb_people = Recipe's nb_people
         - note = Recipe's note
         - steps = Recipe's steps
+        - steps.description = Step's description
         - categories = Recipe's categories
         - status = Recipe's status
         - ingredients = Recipe's Ingredients
+        - ingredients._id = Ingredient's ObjectId
+        - ingredients.quantity = Ingredient's quantity
+        - ingredients.unit = Ingredient's unit
         """
         self.result = {}
 

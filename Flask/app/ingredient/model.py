@@ -3,7 +3,6 @@ from bson import ObjectId
 import re
 
 import utils
-import app.file.model as file_model
 
 mongo = utils.Mongo()
 
@@ -14,15 +13,15 @@ class Ingredient(object):
         """ Ingredient model.
 
         - _id = ObjectId in mongo
-        - name = Ingredient's name (Unique)
-        - slug = Ingredient's slug (Unique)
         - categories = Ingredient's categories
+        - name = Ingredient's name (Unique)
         - nutriments = Ingredient's nutriments
         - nutriments.calories = Ingredient's calories
         - nutriments.carbohydrates = Ingredient's carbohydrates
         - nutriments.fats = Ingredient's fats
         - nutriments.proteins = Ingredient's proteins
         - nutriments.info  = nutriments' information
+        - slug = Ingredient's slug (Unique)
         """
         self.result = {}
 
@@ -157,39 +156,6 @@ class Ingredient(object):
         db.delete_one({"_id": ObjectId(_id)})
         client.close()
         return
-
-    def add_enrichment_file_for_all(self):
-        """ Add files information for all Ingredients.
-
-        Returns
-        -------
-        Any
-            List of Ingredients with Files information.
-        """
-        for ingredient in self.result:
-            ingredient["files"] = []
-            """ get files """
-            files = file_model.File().get_all_file_by_id_parent(_id_parent=ingredient["_id"]).result
-            for file in files:
-                file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
-                ingredient["files"].append(file_enrichment)
-        return self
-
-    def add_enrichment_file_for_one(self):
-        """ Add Files information for one Ingredient.
-
-        Returns
-        -------
-        Any
-            One Ingredient with Files information.
-        """
-        self.result["files"] = []
-        """ get files """
-        files = file_model.File().get_all_file_by_id_parent(_id_parent=self.result["_id"]).result
-        for file in files:
-            file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
-            self.result["files"].append(file_enrichment)
-        return self
 
     @staticmethod
     def check_ingredient_is_unique(key, value):
