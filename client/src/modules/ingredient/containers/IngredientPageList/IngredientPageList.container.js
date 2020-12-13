@@ -3,8 +3,8 @@ import React, { Component } from 'react'
 import { Spin } from 'antd'
 
 import IngredientsList from '../../components/IngredientsList'
-import IngredientPageAdd from '../IngredientPageAdd'
-import { fetchAllIngredients } from '../../thunks'
+import IngredientModalAdd from '../IngredientModalAdd'
+import { fetchAllIngredients, deleteIngredient } from '../../thunks'
 
 import './_IngredientPageList.scss'
 
@@ -14,8 +14,8 @@ class IngredientPageList extends Component {
   }
 
   render() {
-    const { loadingFetchIngredients, ingredients } = this.props
-    if (loadingFetchIngredients === true) {
+    const { loading, ingredients, deleteIngredient } = this.props
+    if (loading === true) {
       return (
         <div className="page_loader">
           <Spin size="large" />
@@ -27,11 +27,11 @@ class IngredientPageList extends Component {
       <>
         <div className="ingredientsList_header">
           <h1>Liste des ingrédients</h1>
-          <IngredientPageAdd />
+          <IngredientModalAdd />
         </div>
         <IngredientsList
           data={Object.values(ingredients)}
-          deleteIngredient={() => console.log('delete')}
+          deleteIngredient={id => deleteIngredient(id)}
           editIngredient={data => console.log('edit', data)}
         />
       </>
@@ -41,11 +41,12 @@ class IngredientPageList extends Component {
 
 const mapDispatchToProps = {
   fetchAllIngredients,
+  deleteIngredient,
 }
 
-const mapStateToProps = ({ ingredients: { content, loadingFetchIngredients } }) => ({
+const mapStateToProps = ({ ingredients: { content, loadingFetchIngredients, loadingDeleteIngredient } }) => ({
   ingredients: content,
-  loadingFetchIngredients,
+  loading: loadingFetchIngredients || loadingDeleteIngredient,
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(IngredientPageList)

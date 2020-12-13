@@ -5,12 +5,20 @@ import {
   postIngredientRequest,
   postIngredientSuccess,
   postIngredientFailed,
+  deleteIngredientRequest,
+  deleteIngredientSuccess,
+  deleteIngredientFailed,
   postIngredientsRecipeRequest,
   postIngredientsRecipeSuccess,
   postIngredientsRecipeFailed,
 } from '../actions'
 
-import { fetchAllIngredientsURL, postIngredientURL, postIngredientsRecipeURL } from '../api/Ingredient.api'
+import {
+  fetchAllIngredientsURL,
+  postIngredientURL,
+  postIngredientsRecipeURL,
+  deleteIngredientURL,
+} from '../api/Ingredient.api'
 
 import { notification } from 'antd'
 import get from 'lodash/get'
@@ -64,6 +72,34 @@ export const postIngredient = data => dispatch => {
     })
     .catch(error => {
       dispatch(postIngredientFailed(error))
+    })
+}
+
+export const deleteIngredient = id => dispatch => {
+  dispatch(deleteIngredientRequest())
+
+  fetch(deleteIngredientURL(id), {
+    method: 'DELETE',
+  })
+    .then(response => {
+      if (response.status === 204) {
+        dispatch(deleteIngredientSuccess())
+        notification['success']({
+          message: 'Ingrédient Supprimé !',
+          description: `${get(codeMsg, `${response.codeMsg}`)}`,
+        })
+      } else {
+        dispatch(dispatch(deleteIngredientFailed(response.detail)))
+
+        const errorFormat = get(codeMsg, `${response.codeMsg}.${slugifyResponse(response.detail.msg)}`)
+        notification['error']({
+          message: 'Oooh une erreur',
+          description: `${errorFormat(response.detail.value)}`,
+        })
+      }
+    })
+    .catch(error => {
+      dispatch(deleteIngredientFailed(error))
     })
 }
 

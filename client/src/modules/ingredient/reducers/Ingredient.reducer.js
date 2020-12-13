@@ -7,11 +7,15 @@ import {
   postIngredientRequest,
   postIngredientSuccess,
   postIngredientFailed,
+  deleteIngredientRequest,
+  deleteIngredientSuccess,
+  deleteIngredientFailed,
 } from './../actions'
 
 const defaultState = {
   content: {},
   loadingFetchIngredients: false,
+  loadingDeleteIngredient: false,
   loadingPostIngredient: false,
   error: null,
 }
@@ -81,6 +85,40 @@ const IngredientReducer = handleActions(
       return {
         ...state,
         loadingPostIngredient: false,
+        error: true,
+      }
+    },
+
+    /*
+     ** DELETE INGREDIENT
+     */
+    [deleteIngredientRequest](state, action) {
+      return {
+        ...state,
+        loadingDeleteIngredient: true,
+        error: null,
+      }
+    },
+
+    [deleteIngredientSuccess](state, action) {
+      let { content } = state
+      const { id } = action.payload
+
+      console.log('content', content)
+      console.log('id', id)
+      return {
+        ...state,
+        content: {
+          ...content,
+        },
+        loadingDeleteIngredient: false,
+      }
+    },
+
+    [deleteIngredientFailed](state, action) {
+      return {
+        ...state,
+        loadingDeleteIngredient: false,
         error: true,
       }
     },
