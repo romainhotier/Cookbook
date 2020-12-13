@@ -5,20 +5,21 @@ import utils
 import tests.recipe.DeleteRecipe.api as api
 import tests.ingredient.model as ingredient_model
 import tests.recipe.model as recipe_model
+import tests.link.model as link_model
 import tests.file.model as file_model
 
 server = utils.Server()
 api = api.DeleteRecipe()
 ingredient = ingredient_model.IngredientTest()
 recipe = recipe_model.RecipeTest()
-link = ingredient_model.IngredientRecipeTest
+link = link_model.LinkTest
 file = file_model.FileTest()
 
 
 class DeleteRecipe(unittest.TestCase):
 
     def setUp(self):
-        """ Clean IngredientTest, RecipeTest, IngredientRecipeTest and FileTest."""
+        """ Clean IngredientTest, RecipeTest, LinkTest and FileTest."""
         recipe.clean()
         ingredient.clean()
         file.clean()
@@ -205,8 +206,9 @@ class DeleteRecipe(unittest.TestCase):
         """ env """
         tc_ingredient = ingredient_model.IngredientTest().insert()
         tc_recipe = recipe_model.RecipeTest().insert()
-        tc_link = ingredient_model.IngredientRecipeTest().custom({"_id_ingredient": tc_ingredient._id,
-                                                                  "_id_recipe": tc_recipe._id}).insert()
+        tc_link = link_model.LinkTest().custom({"_id_recipe": tc_recipe.get_id()})
+        tc_link.add_ingredient(_id=tc_ingredient.get_id(), quantity=1, unit="unit")
+        tc_link.insert()
         """ param """
         tc_id = tc_recipe.get_id()
         """ call api """

@@ -1,11 +1,6 @@
 import app.ingredient.validator.DeleteIngredient
-import app.ingredient.validator.DeleteIngredientRecipe
 import app.ingredient.validator.GetAllIngredient
 import app.ingredient.validator.GetIngredient
-import app.ingredient.validator.GetRecipeForIngredient
 import app.ingredient.validator.PostIngredient
-import app.ingredient.validator.PostIngredientRecipe
-import app.ingredient.validator.PostIngredientRecipeMulti
 import app.ingredient.validator.PutIngredient
-import app.ingredient.validator.PutIngredientRecipe
 import app.ingredient.validator.SearchIngredient

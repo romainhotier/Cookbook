@@ -6,11 +6,12 @@ import tests.ingredient.DeleteIngredient.api as api
 import tests.ingredient.model as ingredient_model
 import tests.file.model as file_model
 import tests.recipe.model as recipe_model
+import tests.link.model as link_model
 
 server = utils.Server()
 api = api.DeleteIngredient()
 ingredient = ingredient_model.IngredientTest()
-ingredient_recipe = ingredient_model.IngredientRecipeTest()
+link = link_model.LinkTest()
 recipe = recipe_model.RecipeTest()
 file = file_model.FileTest()
 
@@ -18,10 +19,10 @@ file = file_model.FileTest()
 class DeleteIngredient(unittest.TestCase):
 
     def setUp(self):
-        """ Clean all IngredientTest, RecipeTest, IngredientRecipeTest and FileTest. """
+        """ Clean all IngredientTest, RecipeTest, LinkTest and FileTest. """
         ingredient.clean()
         recipe.clean()
-        ingredient_recipe.clean()
+        link.clean()
         file.clean()
 
     def test_0_api_ok(self):
@@ -180,23 +181,29 @@ class DeleteIngredient(unittest.TestCase):
             204 - Ingredient Deleted.
         """
         """ env """
-        tc_ingredient = ingredient_model.IngredientTest().insert()
+        tc_ingredient1 = ingredient_model.IngredientTest().insert()
+        tc_ingredient2 = ingredient_model.IngredientTest().insert()
         tc_recipe = recipe_model.RecipeTest().insert()
-        tc_lk = ingredient_model.IngredientRecipeTest().custom({"_id_ingredient": tc_ingredient._id,
-                                                                "_id_recipe": tc_recipe._id}).insert()
+        tc_link = link_model.LinkTest().custom({"_id_recipe": tc_recipe.get_id()})
+        tc_link.add_ingredient(_id=tc_ingredient1.get_id(), quantity=1, unit="unit")
+        tc_link.add_ingredient(_id=tc_ingredient2.get_id(), quantity=2, unit="unit_2")
+        tc_link.insert()
         """ param """
-        tc_id = tc_ingredient.get_id()
+        tc_id = tc_ingredient1.get_id()
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.delete(url, verify=False)
+        """ change """
+        tc_link.delete_ingredient(_id=tc_ingredient1.get_id())
         """ assert """
         self.assertEqual(response.status_code, 204)
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response.text, '')
         """ check """
-        tc_ingredient.select_nok()
+        tc_ingredient1.select_nok()
+        tc_ingredient2.select_ok()
         tc_recipe.select_ok()
-        tc_lk.select_nok()
+        tc_link.select_ok()
 
     @classmethod
     def tearDownClass(cls):

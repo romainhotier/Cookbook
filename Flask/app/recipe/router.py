@@ -4,7 +4,6 @@ import utils
 import app.recipe.factory as factory
 import app.recipe.validator as validator
 import app.recipe.model as recipe_model
-import app.ingredient.model as ingredient_model
 import app.file.model as file_model
 
 apis = Blueprint('recipe', __name__, url_prefix='/recipe')
@@ -12,7 +11,6 @@ apis = Blueprint('recipe', __name__, url_prefix='/recipe')
 server = utils.Server()
 recipe = recipe_model.Recipe()
 step = recipe_model.Step()
-ingredient_recipe = ingredient_model.IngredientRecipe()
 file = file_model.File()
 
 
@@ -44,10 +42,9 @@ def delete_recipe(_id):
     validation.is_object_id_valid(value=_id)
     """ clean files recipe """
     file.clean_file_by_id_parent(_id_parent=_id)
-    """ clean files steps and link """
+    """ clean files steps """
     for _id_step in recipe.get_all_step_id(_id_recipe=_id):
         file.clean_file_by_id_parent(_id_parent=_id_step)
-    ingredient_recipe.clean_link_by_id_recipe(_id_recipe=_id)
     """ delete recipe """
     recipe.delete(_id=_id)
     """ return response """
@@ -143,53 +140,6 @@ def get_all_recipe():
     return server.return_response(data=data.result, api=apis.name, http_code=200)
 
 
-@apis.route('/<_id_recipe>/ingredient', methods=['GET'])
-def get_ingredient_for_recipe(_id_recipe):
-    """
-    @api {get} /recipe/<_id_recipe>/ingredient  GetIngredientForRecipe
-    @apiGroup Recipe
-    @apiDescription Get all ingredients for a recipe by it's ObjectId
-
-    @apiParam (Query param) {String} _id Recipe's ObjectId
-    @apiParam (Query param) {String} [with_names] if "true", add ingredient's name
-
-    @apiExample {json} Example usage:
-    GET http://127.0.0.1:5000/recipe/<_id_recipe>/ingredient
-
-    @apiSuccessExample {json} Success response:
-    HTTPS 200
-    {
-        'codeMsg': 'cookbook.recipe.success.ok',
-        'codeStatus': 200,
-        'data': [{'_id': '5e7347c82222535ac818942b', '_id_ingredient': '5e7347c82222535ac8189425',
-                  '_id_recipe': '5e7347c82222535ac8189423', 'quantity': 0, 'unit': 'qa_rhr_unit_qa_rhr'},
-                {'_id': '5e7347c82222535ac818942f', '_id_ingredient': '5e7347c82222535ac8189427',
-                 '_id_recipe': '5e7347c82222535ac8189423', 'quantity': 0, 'unit': 'qa_rhr_unit_qa_rhr'}]
-    }
-
-    @apiErrorExample {json} Error response:
-    HTTPS 400
-    {
-        'codeMsg': 'cookbook.recipe.error.bad_request',
-        'codeStatus': 400,
-        'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
-    }
-    """
-    api = factory.GetIngredientForRecipe.Factory()
-    validation = validator.GetIngredientForRecipe.Validator()
-    with_names = request.args.get(api.param_with_names)
-    """ check param """
-    validation.is_with_names_valid(value=with_names)
-    validation.is_object_id_valid(value=_id_recipe)
-    """ get all """
-    data = ingredient_recipe.select_all_by_id_recipe(_id_recipe=_id_recipe)
-    """ add enrichment if needed """
-    if with_names == "true":
-        data.add_enrichment_name_for_all()
-    """ return response """
-    return server.return_response(data=data.result, api=apis.name, http_code=200)
-
-
 @apis.route('/<slug>', methods=['GET'])
 def get_recipe(slug):
     """
@@ -243,21 +193,28 @@ def post_recipe():
     @apiGroup Recipe
     @apiDescription Create a recipe
 
-    @apiParam (Body param) {String} title Recipe's title
-    @apiParam (Body param) {String} slug Recipe's slug for url
-    @apiParam (Body param) {Integer} [level]=0 Recipe's level (between 0 and 3)
-    @apiParam (Body param) {String} [resume]="" Recipe's resume
+    @apiParam (Body param) {Array} [categories]=Empty_Array Recipe's categories
     @apiParam (Body param) {Integer} [cooking_time]=0 Recipe's cooking time
-    @apiParam (Body param) {Integer} [preparation_time]=0 Recipe's preparation time
+    @apiParam (Body param) {Array} [ingredients]=Empty_Array Recipe's Ingredients
+    @apiParam (Body param) {String} ingredients[_id] Ingredient's ObjectId
+    @apiParam (Body param) {Integer} ingredients[quantity] Ingredient's quantity
+    @apiParam (Body param) {String} [ingredients[unit]=""] Ingredient's unit
+    @apiParam (Body param) {Integer} [level]=0 Recipe's level (between 0 and 3)
     @apiParam (Body param) {String} [nb_people]=0 Recipe's number of people
     @apiParam (Body param) {String} [note]="" Recipe's note
-    @apiParam (Body param) {Array} [categories]=Empty_Array Recipe's categories
+    @apiParam (Body param) {Integer} [preparation_time]=0 Recipe's preparation time
+    @apiParam (Body param) {String} [resume]="" Recipe's resume
+    @apiParam (Body param) {String} slug Recipe's slug for url
     @apiParam (Body param) {String} [status]="in_progress" Recipe's categories ("in_progress" or "finished")
+    @apiParam (Body param) {Array} [steps]=Empty_Array Recipe's steps
+    @apiParam (Body param) {String} steps[description] Step's description
+    @apiParam (Body param) {String} title Recipe's title
 
     @apiExample {json} Example usage:
     POST http://127.0.0.1:5000/recipe
     {
-        'title': <title>
+        'title': <title>,
+        'slug': <slug>,
     }
 
     @apiSuccessExample {json} Success response:
@@ -265,9 +222,9 @@ def post_recipe():
     {
         'codeMsg': 'cookbook.recipe.success.created',
         'codeStatus': 201,
-        'data': {'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,
-                 'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr',
-                 'status': 'in_progress'}
+        'data': {'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'ingredients': [], 'level': 0,
+                 'nb_people': 0, 'note': '', 'preparation_time': 0, 'resume': '', 'slug': 'slug_ex',
+                 'status': 'in_progress', 'steps': [], 'title': 'title_ex'}
     }
 
     @apiErrorExample {json} Error response:

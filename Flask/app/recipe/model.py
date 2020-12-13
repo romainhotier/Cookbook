@@ -26,8 +26,19 @@ class Recipe(object):
         - steps = Recipe's steps
         - categories = Recipe's categories
         - status = Recipe's status
+        - ingredients = Recipe's Ingredients
         """
         self.result = {}
+
+    def get_id(self):
+        """ Get Recipe _id.
+
+        Returns
+        -------
+        str
+            Recipe's ObjectId.
+        """
+        return str(self.result["_id"])
 
     def select_all(self):
         """ Get all existing Recipe.

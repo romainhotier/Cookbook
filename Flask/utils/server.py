@@ -34,6 +34,7 @@ class Server(object):
         self.detail_must_be_an_integer = "Must be an integer"
         self.detail_must_be_a_float = "Must be a float"
         self.detail_must_be_an_array = "Must be an array"
+        self.detail_must_be_an_array_of_string = "Must be an array of string"
         self.detail_must_be_an_array_of_object = "Must be an array of object"
         self.detail_must_be_an_object = "Must be an object"
         self.detail_must_be_a_boolean = "Must be a boolean"
