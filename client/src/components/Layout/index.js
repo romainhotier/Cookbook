@@ -1,1 +1,1 @@
-export {default} from './Layout.component.js'
+export { default } from './Layout.component.js'

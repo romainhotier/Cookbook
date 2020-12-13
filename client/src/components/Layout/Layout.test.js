@@ -1,12 +1,11 @@
-import React from 'react';
-import { render } from '@testing-library/react';
+import React from 'react'
 import { shallow } from 'enzyme'
-import Layout from './Layout.component';
+import Layout from './Layout.component'
 
 describe('Layout.component', () => {
-    it('should if Layout is present in the page', () => {
-        const wrapper = shallow(<Layout />)
-      
-        expect(wrapper.find('.layout').length).toEqual(1)
-      })
-});
+  it('should if Layout is present in the page', () => {
+    const wrapper = shallow(<Layout />)
+
+    expect(wrapper.find('.layout').length).toEqual(1)
+  })
+})

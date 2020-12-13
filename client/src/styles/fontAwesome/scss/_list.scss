@@ -6,12 +6,12 @@
   margin-left: $fa-li-width * 5/4;
   padding-left: 0;
 
-  > li { position: relative; }
+  > li { id: relative; }
 }
 
 .#{$fa-css-prefix}-li {
   left: -$fa-li-width;
-  position: absolute;
+  id: absolute;
   text-align: center;
   width: $fa-li-width;
   line-height: inherit;

@@ -714,7 +714,11 @@ define({ "api": [
           },
           {
             "group": "Body param",
+<<<<<<< Updated upstream
             "type": "String[]",
+=======
+            "type": "Array",
+>>>>>>> Stashed changes
             "optional": true,
             "field": "categories",
             "defaultValue": "Empty_Array",
@@ -968,7 +972,11 @@ define({ "api": [
           },
           {
             "group": "Body param",
+<<<<<<< Updated upstream
             "type": "String[]",
+=======
+            "type": "Array",
+>>>>>>> Stashed changes
             "optional": true,
             "field": "categories",
             "description": "<p>Ingredient's categories</p>"
@@ -1190,7 +1198,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.recipe.success.ok',\n    'codeStatus': 200,\n    'data': [{'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,\n              'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'qa_rhr_1'},\n             {'_id': '5e71eb8f39358991f2ea19f7', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,\n              'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr_2'}]\n}",
+          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.recipe.success.ok',\n    'codeStatus': 200,\n    'data': [{'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,\n              'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'qa_rhr_1',\n              'status': 'in_progress'},\n             {'_id': '5e71eb8f39358991f2ea19f7', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,\n              'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr_2',\n              'status': 'in_progress'}]\n}",
           "type": "json"
         }
       ]
@@ -1264,6 +1272,16 @@ define({ "api": [
             "optional": true,
             "field": "with_files",
             "description": "<p>if &quot;true&quot;, add recipe's files</p>"
+<<<<<<< Updated upstream
+=======
+          },
+          {
+            "group": "Query param",
+            "type": "String",
+            "optional": true,
+            "field": "status",
+            "description": "<p>search by status</p>"
+>>>>>>> Stashed changes
           }
         ]
       }
@@ -1279,7 +1297,11 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
+<<<<<<< Updated upstream
           "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.recipe.success.ok',\n    'codeStatus': 200,\n    'data': [{'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,\n              'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'qa_rhr_1'},\n             {'_id': '5e71eb8f39358991f2ea19f7', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,\n              'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr_2'}]\n}",
+=======
+          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.recipe.success.ok',\n    'codeStatus': 200,\n    'data': [{'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,\n              'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'qa_rhr_1',\n              'status': 'in_progress'},\n             {'_id': '5e71eb8f39358991f2ea19f7', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,\n              'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr_2',\n              'status': 'in_progress'}]\n}",
+>>>>>>> Stashed changes
           "type": "json"
         }
       ]
@@ -1335,7 +1357,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.recipe.success.ok',\n    'codeStatus': 200,\n    'data': {'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,\n             'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr'}\n}",
+          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.recipe.success.ok',\n    'codeStatus': 200,\n    'data': {'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,\n             'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr',\n             'status': 'in_progress'}\n}",
           "type": "json"
         }
       ]
@@ -1438,49 +1460,60 @@ define({ "api": [
             "type": "Integer",
             "optional": true,
             "field": "level",
-            "description": "<p>Recipe's level (between 0 and 3)</p>"
+            "description": "<p>=0 Recipe's level (between 0 and 3)</p>"
           },
           {
             "group": "Body param",
             "type": "String",
             "optional": true,
             "field": "resume",
-            "description": "<p>Recipe's resume</p>"
+            "description": "<p>=&quot;&quot; Recipe's resume</p>"
           },
           {
             "group": "Body param",
             "type": "Integer",
             "optional": true,
             "field": "cooking_time",
-            "description": "<p>Recipe's cooking time</p>"
+            "description": "<p>=0 Recipe's cooking time</p>"
           },
           {
             "group": "Body param",
             "type": "Integer",
             "optional": true,
             "field": "preparation_time",
-            "description": "<p>Recipe's preparation time</p>"
+            "description": "<p>=0 Recipe's preparation time</p>"
           },
           {
             "group": "Body param",
             "type": "String",
             "optional": true,
             "field": "nb_people",
-            "description": "<p>Recipe's number of people</p>"
+            "description": "<p>=0 Recipe's number of people</p>"
           },
           {
             "group": "Body param",
             "type": "String",
             "optional": true,
             "field": "note",
-            "description": "<p>Recipe's note</p>"
+            "description": "<p>=&quot;&quot; Recipe's note</p>"
           },
           {
             "group": "Body param",
             "type": "Array",
             "optional": true,
             "field": "categories",
+<<<<<<< Updated upstream
             "description": "<p>Recipe's categories</p>"
+=======
+            "description": "<p>=Empty_Array Recipe's categories</p>"
+          },
+          {
+            "group": "Body param",
+            "type": "String",
+            "optional": true,
+            "field": "status",
+            "description": "<p>=&quot;in_progress&quot; Recipe's categories (&quot;in_progress&quot; or &quot;finished&quot;)</p>"
+>>>>>>> Stashed changes
           }
         ]
       }
@@ -1496,7 +1529,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 201\n{\n    'codeMsg': 'cookbook.recipe.success.created',\n    'codeStatus': 201,\n    'data': {'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,\n             'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr'}\n}",
+          "content": "HTTPS 201\n{\n    'codeMsg': 'cookbook.recipe.success.created',\n    'codeStatus': 201,\n    'data': {'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,\n             'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr',\n             'status': 'in_progress'}\n}",
           "type": "json"
         }
       ]
@@ -1674,6 +1707,13 @@ define({ "api": [
             "optional": true,
             "field": "categories",
             "description": "<p>Recipe's categories</p>"
+          },
+          {
+            "group": "Body param",
+            "type": "String",
+            "optional": true,
+            "field": "status",
+            "description": "<p>=&quot;in_progress&quot; Recipe's categories (&quot;in_progress&quot; or &quot;finished&quot;)</p>"
           }
         ]
       }
@@ -1689,7 +1729,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.recipe.success.created',\n    'codeStatus': 201,\n    'data': {'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,\n             'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr'}\n}",
+          "content": "HTTPS 200\n{\n    'codeMsg': 'cookbook.recipe.success.created',\n    'codeStatus': 201,\n    'data': {'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,\n             'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr',\n             'status': 'in_progress'}\n}",
           "type": "json"
         }
       ]

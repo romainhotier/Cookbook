@@ -1,0 +1,18 @@
+.step_item {
+  margin: 10px 0;
+  &_content {
+    display: flex;
+    align-items: center;
+    > div {
+      width: 100%;
+    }
+    .button_remove {
+      color: $black;
+    }
+  }
+}
+
+.button_add_step {
+  text-align: right;
+  margin: 20px 0;
+}

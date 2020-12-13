@@ -1,9 +1,11 @@
 import React from 'react'
-import {Row, Col} from 'antd'
+import { Row, Col } from 'antd'
 import { NavLink } from 'react-router-dom'
 
 import RecipeRouter from 'modules/recipe/RecipeRouter'
-import {Routes as RecipeRoutes} from 'modules/recipe/RecipeRoutes'
+import { Routes as RecipeRoutes } from 'modules/recipe/RecipeRoutes'
+import IngredientRouter from 'modules/ingredient/IngredientRouter'
+import { Routes as IngredientRoutes } from 'modules/ingredient/IngredientRoutes'
 
 import './_Layout.scss'
 
@@ -13,7 +15,7 @@ const Layout = () => {
       <Col
         xs={{ span: 24, offset: 0 }}
         sm={{ span: 24, offset: 0 }}
-        md={{ span: 20, offset: 2 }}
+        md={{ span: 24, offset: 0 }}
         lg={{ span: 20, offset: 2 }}
         xl={{ span: 20, offset: 2 }}
       >
@@ -26,10 +28,17 @@ const Layout = () => {
               <NavLink to={RecipeRoutes.recipe()} exact>
                 Liste des recettes
               </NavLink>
+              <NavLink to={RecipeRoutes.recipeAdd()} exact>
+                Ajouter une recette
+              </NavLink>
+              <NavLink to={IngredientRoutes.ingredient()} exact>
+                Liste des ingrédients
+              </NavLink>
             </div>
           </nav>
-          <main className='layout_content'>
-            { RecipeRouter }
+          <main className="layout_content">
+            {RecipeRouter}
+            {IngredientRouter}
           </main>
         </div>
       </Col>

@@ -1,1 +1,1 @@
-export {default as RecipeReducer} from './Recipe.reducer.js'
+export { default as RecipeReducer } from './Recipe.reducer.js'
