@@ -1,49 +1,60 @@
 import React from 'react'
 import { Table, Button } from 'antd'
+import PropTypes from 'prop-types'
 
-const columns = [
+const columns = (editIngredient, deleteIngredient) => [
   {
     title: 'Ingrédients',
     dataIndex: 'name',
     key: 'name',
+    align: 'center',
   },
   {
     title: 'Groupe alimentaire',
     dataIndex: 'categories',
     key: 'categories',
+    align: 'center',
   },
   {
     title: 'Calories (100gr)',
     dataIndex: 'calories',
     key: 'calories',
+    align: 'center',
+    render: (_text, { nutriments }) => nutriments.calories,
   },
   {
     title: 'Protéines (gr)',
-    dataIndex: 'prot',
-    key: 'prot',
+    dataIndex: 'proteins',
+    key: 'proteins',
+    align: 'center',
+    render: (_text, { nutriments }) => nutriments.proteins,
   },
   {
     title: 'Glucides (gr)',
-    dataIndex: 'glucide',
-    key: 'glucide',
+    dataIndex: 'carbohydrates',
+    key: 'carbohydrates',
+    align: 'center',
+    render: (_text, { nutriments }) => nutriments.carbohydrates,
   },
   {
     title: 'Lipides (gr)',
-    dataIndex: 'lipide',
-    key: 'lipide',
+    dataIndex: 'fats',
+    key: 'fats',
+    align: 'center',
+    render: (_text, { nutriments }) => nutriments.fats,
   },
   {
     title: '',
     dataIndex: 'action',
     key: 'action',
     width: '12%',
-    render(action, record) {
+    render(action, { _id }) {
       return (
         <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%' }}>
-          <Button>
+          <Button onClick={() => editIngredient(_id)} htmlType="button">
             <i className="fas fa-pen"></i>
           </Button>
-          <Button>
+          <Button onClick={() => deleteIngredient(_id)} htmlType="button">
             <i className="fas fa-trash-alt"></i>
           </Button>
         </div>
@@ -52,8 +63,14 @@ const columns = [
   },
 ]
 
-const IngredientsList = ({ data }) => {
-  return <Table columns={columns} dataSource={data} rowKey={record => record._id} />
+const IngredientsList = ({ data, editIngredient, deleteIngredient }) => {
+  return <Table columns={columns(editIngredient, deleteIngredient)} dataSource={data} rowKey={record => record._id} />
+}
+
+IngredientsList.propTypes = {
+  data: PropTypes.array,
+  editIngredient: PropTypes.func,
+  deleteIngredient: PropTypes.func,
 }
 
 export default IngredientsList

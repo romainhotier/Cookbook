@@ -14,17 +14,17 @@ export const IngredientValidator = {
     errorMessage: '',
     placeholder: 'ex: 300',
   },
-  proteine: {
+  proteins: {
     required: false,
     errorMessage: '',
     placeholder: 'ex: 30',
   },
-  glucide: {
+  carbohydrates: {
     required: false,
     errorMessage: '',
     placeholder: 'ex: 45',
   },
-  lipide: {
+  fats: {
     required: false,
     errorMessage: '',
     placeholder: 'ex: 30',

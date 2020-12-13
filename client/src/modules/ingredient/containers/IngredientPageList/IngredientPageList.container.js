@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import React, { Component } from 'react'
+import { Spin } from 'antd'
 
 import IngredientsList from '../../components/IngredientsList'
 import IngredientPageAdd from '../IngredientPageAdd'
@@ -14,8 +15,12 @@ class IngredientPageList extends Component {
 
   render() {
     const { loadingFetchIngredients, ingredients } = this.props
-    if (loadingFetchIngredients === true || Object.entries(ingredients).length === 0) {
-      return 'Patientez'
+    if (loadingFetchIngredients === true) {
+      return (
+        <div className="page_loader">
+          <Spin size="large" />
+        </div>
+      )
     }
 
     return (
@@ -24,7 +29,11 @@ class IngredientPageList extends Component {
           <h1>Liste des ingrédients</h1>
           <IngredientPageAdd />
         </div>
-        <IngredientsList data={Object.values(ingredients)} />
+        <IngredientsList
+          data={Object.values(ingredients)}
+          deleteIngredient={() => console.log('delete')}
+          editIngredient={data => console.log('edit', data)}
+        />
       </>
     )
   }

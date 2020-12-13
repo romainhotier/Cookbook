@@ -15,8 +15,19 @@ const IngredientPageAdd = ({ loadingPostIngredients, ingredients, postIngredient
   }, [ingredients])
 
   const onFinish = values => {
-    const slug = slugify(values.name)
-    postIngredient({ ...values, slug })
+    const ingredient = {
+      name: values.name,
+      slug: slugify(values.name),
+      categories: [values.categories],
+      nutriments: {
+        calories: values.calories,
+        proteins: values.proteins,
+        carbohydrates: values.carbohydrates,
+        fats: values.fats,
+      },
+    }
+
+    postIngredient(ingredient)
   }
 
   return (
@@ -60,28 +71,28 @@ const IngredientPageAdd = ({ loadingPostIngredients, ingredients, postIngredient
             <Col span={6}>
               <Input
                 label="Protéine"
-                name="proteine"
-                required={IngredientValidator['proteine'].required}
-                error={IngredientValidator['proteine'].errorMessage}
-                placeholder={IngredientValidator['proteine'].placeholder}
+                name="proteins"
+                required={IngredientValidator['proteins'].required}
+                error={IngredientValidator['proteins'].errorMessage}
+                placeholder={IngredientValidator['proteins'].placeholder}
               />
             </Col>
             <Col span={6}>
               <Input
                 label="Glucide"
-                name="glucide"
-                required={IngredientValidator['glucide'].required}
-                error={IngredientValidator['glucide'].errorMessage}
-                placeholder={IngredientValidator['glucide'].placeholder}
+                name="carbohydrates"
+                required={IngredientValidator['carbohydrates'].required}
+                error={IngredientValidator['carbohydrates'].errorMessage}
+                placeholder={IngredientValidator['carbohydrates'].placeholder}
               />
             </Col>
             <Col span={6}>
               <Input
                 label="Lipide"
-                name="lipide"
-                required={IngredientValidator['lipide'].required}
-                error={IngredientValidator['lipide'].errorMessage}
-                placeholder={IngredientValidator['lipide'].placeholder}
+                name="fats"
+                required={IngredientValidator['fats'].required}
+                error={IngredientValidator['fats'].errorMessage}
+                placeholder={IngredientValidator['fats'].placeholder}
               />
             </Col>
           </Row>

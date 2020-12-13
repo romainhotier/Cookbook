@@ -5,12 +5,22 @@ body {
   background-color: $white-600;
 }
 
-@import "./fontAwesome/scss/fontawesome.scss";
-@import "./fontAwesome/scss/solid.scss";
-@import "./fontAwesome/scss/brands.scss";
-@import "./fontAwesome/scss/regular.scss";
-
+@import './fontAwesome/scss/fontawesome.scss';
+@import './fontAwesome/scss/solid.scss';
+@import './fontAwesome/scss/brands.scss';
+@import './fontAwesome/scss/regular.scss';
 
 a {
   color: inherit;
+}
+
+h1 {
+  color: $black;
+}
+
+.page {
+  &_loader {
+    text-align: center;
+    margin-top: 100px;
+  }
 }
