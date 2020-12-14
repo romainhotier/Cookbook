@@ -10,20 +10,18 @@ class PutIngredient(object):
     def __init__(self):
         self.url = 'ingredient'
         self.param_id = "_id"
-        self.param_with_files = "with_files"
-        self.param_name = "name"
-        self.param_slug = "slug"
         self.param_categories = "categories"
+        self.param_name = "name"
         self.param_nutriments = "nutriments"
-        self.param_calories = "calories"
-        self.param_carbohydrates = "carbohydrates"
-        self.param_fats = "fats"
-        self.param_proteins = "proteins"
-        self.param_info = "info"
+        self.param_nutriments_calories = "calories"
+        self.param_nutriments_carbohydrates = "carbohydrates"
+        self.param_nutriments_fats = "fats"
+        self.param_nutriments_proteins = "proteins"
+        self.param_nutriments_info = "info"
+        self.param_slug = "slug"
         self.rep_code_msg_ok = server.rep_code_msg_ok.replace("xxx", "ingredient")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "ingredient")
         self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
-        self.rep_detail_true_false = " ['true', 'false']"
 
     @staticmethod
     def create_detail(param, msg, **kwargs):
@@ -49,25 +47,20 @@ class PutIngredient(object):
         return detail
 
     @staticmethod
-    def data_expected(ingredient, **kwargs):
+    def data_expected(ingredient):
         """ Format data's response.
 
         Parameters
         ----------
         ingredient : Any
             IngredientTest.
-        kwargs : Any
-            files : FileTests.
 
         Returns
         -------
         str
             Data's response.
         """
-        if "files" in kwargs.keys():
-            data_expected = ingredient.get_stringify_with_files(files=kwargs["files"])
-        else:
-            data_expected = ingredient.get_stringify()
+        data_expected = ingredient.get_stringify()
         return data_expected
 
     @staticmethod

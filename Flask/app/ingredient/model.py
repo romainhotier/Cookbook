@@ -30,7 +30,7 @@ class Ingredient(object):
 
         Returns
         -------
-        Any
+        Ingredient
             List of all Ingredients.
         """
         client = MongoClient(mongo.ip, mongo.port)
@@ -50,7 +50,7 @@ class Ingredient(object):
 
         Returns
         -------
-        Any
+        Ingredient
             One Ingredient
         """
         client = MongoClient(mongo.ip, mongo.port)
@@ -70,7 +70,7 @@ class Ingredient(object):
 
         Returns
         -------
-        Any
+        Ingredient
             List of matched Ingredients.
         """
         search = {}
@@ -96,7 +96,7 @@ class Ingredient(object):
 
         Returns
         -------
-        Any
+        Ingredient
             Inserted Ingredient.
         """
         client = MongoClient(mongo.ip, mongo.port)
@@ -119,7 +119,7 @@ class Ingredient(object):
 
         Returns
         -------
-        Any
+        Ingredient
             Updated Ingredient.
         """
         client = MongoClient(mongo.ip, mongo.port)

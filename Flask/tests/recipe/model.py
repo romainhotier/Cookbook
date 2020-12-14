@@ -3,11 +3,10 @@ from bson import ObjectId
 import copy
 import re
 
-
 import utils
 
-import tests.file.model as file_model
-import tests.link.model as link_model
+import tests.file.model as filetest_model
+FileTest = filetest_model.FileTest()
 
 mongo = utils.Mongo()
 
@@ -245,101 +244,68 @@ class RecipeTest(object):
         """
         del self.steps[position]
 
-    # def add_file_recipe(self, filename, is_main, **kwargs):
-    #     """ Add a file to RecipeTest.
-    #
-    #     Parameters
-    #     ----------
-    #     filename : str
-    #         Name of File.
-    #     is_main : bool
-    #         Is primary or not.
-    #     kwargs : Any
-    #         identifier : force ObjectId
-    #
-    #     Returns
-    #     -------
-    #     Any
-    #         FileTest added.
-    #     """
-    #     file = file_model.FileTest().custom({"filename": filename,
-    #                                          "metadata": {"kind": "recipe",
-    #                                                       "_id_parent": ObjectId(self._id),
-    #                                                       "is_main": is_main}}).insert()
-    #     if "identifier" in kwargs.keys():
-    #         file.custom({"_id": kwargs["identifier"]})
-    #     return file
-    #
-    # @staticmethod
-    # def add_file_step(_id_step, filename, is_main, **kwargs):
-    #     """ Add a file to RecipeTest's step.
-    #
-    #     Parameters
-    #     ----------
-    #     _id_step : str
-    #         Step's ObjectId
-    #     filename : str
-    #         Name of File.
-    #     is_main : bool
-    #         Is primary or not.
-    #     kwargs : Any
-    #         identifier : force ObjectId
-    #
-    #     Returns
-    #     -------
-    #     Any
-    #         FileTest added.
-    #     """
-    #     file = file_model.FileTest().custom({"filename": filename,
-    #                                          "metadata": {"kind": "step",
-    #                                                       "_id_parent": ObjectId(_id_step),
-    #                                                       "is_main": is_main}}).insert()
-    #     if "identifier" in kwargs.keys():
-    #         file.custom({"_id": kwargs["identifier"]})
-    #     return file
+    """ ingredients """
+    def add_ingredient(self, _id, quantity, unit):
+        self.ingredients.append({"_id": _id, "quantity": quantity, "unit": unit})
+        return self
 
-    # def check_ok_by_title(self):
-    #     """ Check if RecipeTest is correct by title.
-    #     """
-    #     client = MongoClient(mongo.ip, mongo.port)
-    #     db = client[mongo.name][mongo.collection_recipe]
-    #     recipe = db.find_one({"title": self.title})
-    #     client.close()
-    #     assert recipe is not None
-    #     for value in recipe:
-    #         if value not in ["_id", "files"]:
-    #             assert recipe[value] == self.__getattribute__(value)
-    #
-    #
-    # def get_stringify_with_file(self, files_recipe, files_steps):
-    #     """ Get RecipeTest with ObjectId stringify and files.
-    #
-    #     Returns
-    #     -------
-    #     dict
-    #         Copy of RecipeTest with ObjectId stringify with files.
-    #     """
-    #     data = mongo.to_json(self.get())
-    #     data["files"] = []
-    #     for recipe_file in files_recipe:
-    #         data["files"].append(recipe_file.get_for_enrichment())
-    #     if len(files_steps) != 0:
-    #         for i, j in files_steps.items():
-    #             for step in data["steps"]:
-    #                 if str(step["_id"]) == i:
-    #                     step["files"] = []
-    #                     for step_file in j:
-    #                         step["files"].append(step_file.get_for_enrichment())
-    #     return mongo.to_json(data)
-    #
-    # def get_without_id(self):
-    #     """ Get RecipeTest without _id attribute.
-    #
-    #     Returns
-    #     -------
-    #     dict
-    #         Copy of RecipeTest without _id.
-    #     """
-    #     data = self.get()
-    #     data.pop("_id")
-    #     return data
+    def delete_ingredient(self, _id):
+        for ingredient in self.ingredients:
+            if ingredient["_id"] == _id:
+                self.ingredients.remove(ingredient)
+                break
+        return self
+
+    """ files """
+    def add_file_recipe(self, filename, is_main, **kwargs):
+        """ Add a file to RecipeTest.
+
+        Parameters
+        ----------
+        filename : str
+            Name of File.
+        is_main : bool
+            Is primary or not.
+        kwargs : Any
+            identifier : force ObjectId
+
+        Returns
+        -------
+        FileTest
+            FileTest added.
+        """
+        file = FileTest.custom({"filename": filename,
+                                "metadata": {"kind": "recipe",
+                                             "_id_parent": ObjectId(self._id),
+                                             "is_main": is_main}}).insert()
+        if "identifier" in kwargs.keys():
+            file.custom({"_id": kwargs["identifier"]})
+        return file
+
+    @staticmethod
+    def add_file_step(_id_step, filename, is_main, **kwargs):
+        """ Add a file to RecipeTest's step.
+
+        Parameters
+        ----------
+        _id_step : str
+            Step's ObjectId
+        filename : str
+            Name of File.
+        is_main : bool
+            Is primary or not.
+        kwargs : Any
+            identifier : force ObjectId
+
+        Returns
+        -------
+        FileTest
+            FileTest added.
+        """
+        file = FileTest.custom({"filename": filename,
+                                "metadata": {"kind": "step",
+                                             "_id_parent": ObjectId(_id_step),
+                                             "is_main": is_main}}).insert()
+        if "identifier" in kwargs.keys():
+            file.custom({"_id": kwargs["identifier"]})
+        return file

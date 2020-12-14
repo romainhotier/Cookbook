@@ -10,6 +10,7 @@ class DeleteIngredient(object):
     def __init__(self):
         self.url = 'ingredient'
         self.param_id = "_id"
+        self.rep_code_msg_ok = server.rep_code_msg_ok.replace("xxx", "ingredient")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "ingredient")
         self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
 
@@ -35,6 +36,10 @@ class DeleteIngredient(object):
         if "value" in kwargs:
             detail["value"] = kwargs["value"]
         return detail
+
+    @staticmethod
+    def data_expected(_id):
+        return "Delete Ingredient: {}".format(_id)
 
     @staticmethod
     def check_not_present(value, rep):

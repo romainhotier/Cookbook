@@ -4,12 +4,14 @@ import utils
 import app.ingredient.factory as factory
 import app.ingredient.validator as validator
 import app.ingredient.model as ingredient_model
+import app.recipe.model as recipe_model
 import app.file.model as file_model
 
 apis = Blueprint('ingredient', __name__, url_prefix='/ingredient')
 
 server = utils.Server()
 ingredient = ingredient_model.Ingredient()
+recipe = recipe_model.Recipe()
 file = file_model.File()
 
 
@@ -26,7 +28,12 @@ def delete_ingredient(_id):
     DELETE http://127.0.0.1:5000/ingredient/<_id_ingredient>
 
     @apiSuccessExample {json} Success response:
-    HTTPS 204
+    HTTPS 200
+    {
+        'codeMsg': 'cookbook.ingredient.success.ok',
+        'codeStatus': 200,
+        'data': 'Delete Ingredient: 5fd770e1a9888551191a8743'
+    }
 
     @apiErrorExample {json} Error response:
     HTTPS 400
@@ -37,14 +44,17 @@ def delete_ingredient(_id):
     }
     """
     validation = validator.DeleteIngredient.Validator()
+    api = factory.DeleteIngredient.Factory()
     """ check param """
     validation.is_object_id_valid(value=_id)
     """ clean files and link """
     file.clean_file_by_id_parent(_id_parent=_id)
+    recipe.clean_ingredients_by_id(_id_ingredient=_id)
     """ delete ingredient """
     ingredient.delete(_id=_id)
     """ return response """
-    return server.return_response(data=None, api=apis.name, http_code=204)
+    data = api.data_information(_id=_id)
+    return server.return_response(data=data, api=apis.name, http_code=200)
 
 
 @apis.route('', methods=['GET'])
