@@ -5,27 +5,24 @@ import utils
 import tests.recipe.DeleteRecipe.api as api
 import tests.ingredient.model as ingredient_model
 import tests.recipe.model as recipe_model
-import tests.link.model as link_model
 import tests.file.model as file_model
 
 server = utils.Server()
 api = api.DeleteRecipe()
 ingredient = ingredient_model.IngredientTest()
 recipe = recipe_model.RecipeTest()
-link = link_model.LinkTest
 file = file_model.FileTest()
 
 
 class DeleteRecipe(unittest.TestCase):
 
     def setUp(self):
-        """ Clean IngredientTest, RecipeTest, LinkTest and FileTest."""
+        """ Clean IngredientTest, RecipeTest and FileTest."""
         recipe.clean()
         ingredient.clean()
         file.clean()
-        link.clean()
 
-    def test_0_api_ok(self):
+    def test_api_ok(self):
         """ Default case.
 
         Return
@@ -39,15 +36,19 @@ class DeleteRecipe(unittest.TestCase):
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.delete(url, verify=False)
+        response_body = response.json()
         """ assert """
-        self.assertEqual(response.status_code, 204)
-        self.assertEqual(response.headers["Content-Type"], "application/json")
-        self.assertEqual(response.text, '')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"],  "application/json")
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertEqual(response_body["data"], api.data_expected(_id=tc_id))
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
-        tc_recipe1.select_nok()
-        tc_recipe2.select_ok()
+        tc_recipe1.check_doesnt_exist_by_id()
+        tc_recipe2.check_bdd_data()
 
-    def test_1_url_not_found(self):
+    def test_api_url_not_found(self):
         """ Wrong url.
 
         Return
@@ -70,86 +71,10 @@ class DeleteRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
         self.assertEqual(response_body["detail"], server.detail_url_not_found)
         """ check """
-        tc_recipe1.select_ok()
-        tc_recipe2.select_ok()
+        tc_recipe1.check_bdd_data()
+        tc_recipe2.check_bdd_data()
 
-    def test_2_id_without(self):
-        """ QueryParameter _id is missing.
-
-        Return
-            404 - Url not found.
-        """
-        """ env """
-        tc_recipe1 = recipe_model.RecipeTest().insert()
-        tc_recipe2 = recipe_model.RecipeTest().insert()
-        """ call api """
-        url = server.main_url + "/" + api.url + "/"
-        response = requests.delete(url, verify=False)
-        response_body = response.json()
-        """ assert """
-        self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.headers["Content-Type"], "application/json")
-        self.assertEqual(response_body["codeStatus"], 404)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        self.assertEqual(response_body["detail"], server.detail_url_not_found)
-        """ check """
-        tc_recipe1.select_ok()
-        tc_recipe2.select_ok()
-
-    def test_2_id_string(self):
-        """ QueryParameter _id is a string.
-
-        Return
-            400 - Bad request.
-        """
-        """ env """
-        tc_recipe1 = recipe_model.RecipeTest().insert()
-        tc_recipe2 = recipe_model.RecipeTest().insert()
-        """ param """
-        tc_id = "invalid"
-        """ call api """
-        url = server.main_url + "/" + api.url + "/" + tc_id
-        response = requests.delete(url, verify=False)
-        response_body = response.json()
-        """ assert """
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], "application/json")
-        self.assertEqual(response_body["codeStatus"], 400)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        detail = api.create_detail(param=api.param_id, msg=server.detail_must_be_an_object_id, value=tc_id)
-        self.assertEqual(response_body["detail"], detail)
-        """ check """
-        tc_recipe1.select_ok()
-        tc_recipe2.select_ok()
-
-    def test_2_id_object_id_invalid(self):
-        """ QueryParameter _id is a nok ObjectId.
-
-        Return
-            400 - Bad request.
-        """
-        """ env """
-        tc_recipe1 = recipe_model.RecipeTest().insert()
-        tc_recipe2 = recipe_model.RecipeTest().insert()
-        """ param """
-        tc_id = "aaaaaaaaaaaaaaaaaaaaaaaa"
-        """ call api """
-        url = server.main_url + "/" + api.url + "/" + tc_id
-        response = requests.delete(url, verify=False)
-        response_body = response.json()
-        """ assert """
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], "application/json")
-        self.assertEqual(response_body["codeStatus"], 400)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        detail = api.create_detail(param=api.param_id, msg=server.detail_doesnot_exist, value=tc_id)
-        self.assertEqual(response_body["detail"], detail)
-        """ check """
-        tc_recipe1.select_ok()
-        tc_recipe2.select_ok()
-
-    def test_3_clean_file(self):
+    def test_api_clean_file(self):
         """ File associated cleaned.
 
         Return
@@ -186,42 +111,16 @@ class DeleteRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response.text, '')
         """ check """
-        tc_recipe1.select_nok()
-        tc_file_recipe11.select_nok()
-        tc_file_recipe12.select_nok()
-        tc_file_step111.select_nok()
-        tc_file_step121.select_nok()
-        tc_file_step122.select_nok()
-        tc_recipe2.select_ok()
-        tc_file_recipe2.select_ok()
-        tc_file_step211.select_ok()
-        tc_file_step212.select_ok()
-
-    def test_4_link_clean(self):
-        """ IngredientRecipe associated cleaned.
-
-        Return
-            204 - Recipe Deleted.
-        """
-        """ env """
-        tc_ingredient = ingredient_model.IngredientTest().insert()
-        tc_recipe = recipe_model.RecipeTest().insert()
-        tc_link = link_model.LinkTest().custom({"_id_recipe": tc_recipe.get_id()})
-        tc_link.add_ingredient(_id=tc_ingredient.get_id(), quantity=1, unit="unit")
-        tc_link.insert()
-        """ param """
-        tc_id = tc_recipe.get_id()
-        """ call api """
-        url = server.main_url + "/" + api.url + "/" + tc_id
-        response = requests.delete(url, verify=False)
-        """ assert """
-        self.assertEqual(response.status_code, 204)
-        self.assertEqual(response.headers["Content-Type"], "application/json")
-        self.assertEqual(response.text, '')
-        """ check """
-        tc_ingredient.select_ok()
-        tc_recipe.select_nok()
-        tc_link.select_nok()
+        tc_recipe1.check_doesnt_exist_by_id()
+        tc_file_recipe11.check_doesnt_exist_by_id()
+        tc_file_recipe12.check_doesnt_exist_by_id()
+        tc_file_step111.check_doesnt_exist_by_id()
+        tc_file_step121.check_doesnt_exist_by_id()
+        tc_file_step122.check_doesnt_exist_by_id()
+        tc_recipe2.check_bdd_data()
+        tc_file_recipe2.check_exist_by_id()
+        tc_file_step211.check_exist_by_id()
+        tc_file_step212.check_exist_by_id()
 
     @classmethod
     def tearDownClass(cls):

@@ -4,7 +4,6 @@ class Factory(object):
         """ Class to work around PostRecipeStep.
         """
         self.param_id_recipe = "_id_recipe"
-        self.param_with_files = "with_files"
         self.param_description = "description"
         self.param_position = "position"
         self.body = {}

@@ -329,7 +329,7 @@ class Validator(object):
     # use in is_steps_valid
     @staticmethod
     def is_description_valid(data):
-        """ Check if quantity is correct.
+        """ Check if description is correct.
 
         Parameters
         ----------

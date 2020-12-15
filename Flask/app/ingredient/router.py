@@ -32,7 +32,7 @@ def delete_ingredient(_id):
     {
         'codeMsg': 'cookbook.ingredient.success.ok',
         'codeStatus': 200,
-        'data': 'Delete Ingredient: 5fd770e1a9888551191a8743'
+        'data': 'Deleted Ingredient: 5fd770e1a9888551191a8743'
     }
 
     @apiErrorExample {json} Error response:

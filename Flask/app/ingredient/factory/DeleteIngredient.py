@@ -19,4 +19,4 @@ class Factory(object):
         str
             Information.
         """
-        return "Delete Ingredient: {0}".format(_id)
+        return "Deleted Ingredient: {0}".format(_id)
