@@ -41,7 +41,7 @@ class Validator(object):
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_mandatory(param=api.param_email, data=data)
+        validator.is_mandatory(name=api.param_email, param=api.param_email, data=data)
         validator.is_string(param=api.param_email, value=data[api.param_email])
         validator.is_string_non_empty(param=api.param_email, value=data[api.param_email])
         return True
@@ -61,7 +61,7 @@ class Validator(object):
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_mandatory(param=api.param_password, data=data)
+        validator.is_mandatory(name=api.param_password, param=api.param_password, data=data)
         validator.is_string(param=api.param_password, value=data[api.param_password])
         validator.is_string_non_empty(param=api.param_password, value=data[api.param_password])
         return True

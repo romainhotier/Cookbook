@@ -34,7 +34,7 @@ class IngredientTest(object):
                            "carbohydrates": 40,
                            "fats": 10,
                            "proteins": 30,
-                           "info": "per 100g"}
+                           "portion": 1}
 
     def display(self):
         """ Print IngredientTest model.
@@ -123,7 +123,7 @@ class IngredientTest(object):
                 if i == "nutriments":
                     try:
                         for k, v in data[i].items():
-                            if k in ["calories", "carbohydrates", "fats", "proteins", "info"]:
+                            if k in ["calories", "carbohydrates", "fats", "proteins", "portion"]:
                                 self.nutriments[k] = v
                     except AttributeError:
                         pass

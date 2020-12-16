@@ -10,8 +10,8 @@ class Factory(object):
         self.param_nutriments_calories = "calories"
         self.param_nutriments_carbohydrates = "carbohydrates"
         self.param_nutriments_fats = "fats"
-        self.param_nutriments_info = "info"
         self.param_nutriments_proteins = "proteins"
+        self.param_nutriments_portion = "portion"
         self.param_slug = "slug"
         self.body = {}
 
@@ -34,7 +34,7 @@ class Factory(object):
             Nutriments parameters.
         """
         return [self.param_nutriments_calories, self.param_nutriments_carbohydrates, self.param_nutriments_fats,
-                self.param_nutriments_info, self.param_nutriments_proteins]
+                self.param_nutriments_proteins, self.param_nutriments_portion]
 
     def clean_body(self, data):
         """ Remove keys that are not in PutIngredient's parameters.

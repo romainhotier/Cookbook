@@ -17,7 +17,7 @@ class PutIngredient(object):
         self.param_nutriments_carbohydrates = "carbohydrates"
         self.param_nutriments_fats = "fats"
         self.param_nutriments_proteins = "proteins"
-        self.param_nutriments_info = "info"
+        self.param_nutriments_portion = "portion"
         self.param_slug = "slug"
         self.rep_code_msg_ok = server.rep_code_msg_ok.replace("xxx", "ingredient")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "ingredient")

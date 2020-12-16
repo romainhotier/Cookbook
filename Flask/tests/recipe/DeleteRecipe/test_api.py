@@ -131,8 +131,7 @@ class DeleteRecipe(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        #cls.setUp(DeleteRecipe())
-        pass
+        cls.setUp(DeleteRecipe())
 
 
 if __name__ == '__main__':

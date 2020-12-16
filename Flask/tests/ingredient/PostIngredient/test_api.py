@@ -56,7 +56,7 @@ class PostIngredient(unittest.TestCase):
                                        api.param_nutriments_carbohydrates: 0,
                                        api.param_nutriments_fats: 0,
                                        api.param_nutriments_proteins: 0,
-                                       api.param_nutriments_info: "per 100g",
+                                       api.param_nutriments_portion: 1,
                                        "invalid": "invalid"}}
         """ call api """
         url = server.main_url + "/" + api.url

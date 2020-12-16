@@ -19,7 +19,7 @@ class PostIngredient(object):
         self.param_nutriments_carbohydrates = "carbohydrates"
         self.param_nutriments_fats = "fats"
         self.param_nutriments_proteins = "proteins"
-        self.param_nutriments_info = "info"
+        self.param_nutriments_portion = "portion"
         self.param_slug = "slug"
         self.rep_code_msg_created = server.rep_code_msg_created.replace("xxx", "ingredient")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "ingredient")
@@ -68,7 +68,7 @@ class PostIngredient(object):
                                   self.param_nutriments_carbohydrates: 0,
                                   self.param_nutriments_fats: 0,
                                   self.param_nutriments_proteins: 0,
-                                  self.param_nutriments_info: "per 100g"}
+                                  self.param_nutriments_portion: 1}
         return data
 
     @staticmethod

@@ -20,7 +20,7 @@ class Ingredient(object):
         - nutriments.carbohydrates = Ingredient's carbohydrates
         - nutriments.fats = Ingredient's fats
         - nutriments.proteins = Ingredient's proteins
-        - nutriments.info  = nutriments' information
+        - nutriments.portion  = nutriments' portion
         - slug = Ingredient's slug (Unique)
         """
         self.result = {}

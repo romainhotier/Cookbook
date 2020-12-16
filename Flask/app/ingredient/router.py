@@ -73,12 +73,10 @@ def get_all_ingredient():
         'codeMsg': 'cookbook.ingredient.success.ok',
         'codeStatus': 200,
         'data': [{'_id': '5e583de9b0fcef0a922a7bc0', 'categories': [], 'name': 'aqa_rhr',
-                  'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'proteins': '0',
-                                 'info': 'per 100g'},
+                  'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'portion': 1, 'proteins': '0'},
                   'slug': 'slug_ex1'},
                  {'_id': '5e583de9b0fcef0a922a7bc2', 'categories': [], 'name': 'bqa_rhr',
-                  'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'proteins': '0',
-                                 'info': 'per 100g'},
+                  'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'portion': 1, 'proteins': '0'},
                   'slug': 'slug_ex2'}]
     }
     """
@@ -106,8 +104,7 @@ def get_ingredient(_id):
         'codeMsg': 'cookbook.ingredient.success.ok',
         'codeStatus': 200,
         'data': {'_id': '5e583de9b0fcef0a922a7bc0', 'categories': [], 'name': 'aqa_rhr',
-                 'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'proteins': '0',
-                                 'info': 'per 100g'},
+                 'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'portion': 1, 'proteins': '0'},
                  'slug': 'slug_ex'}}
     }
 
@@ -141,7 +138,7 @@ def post_ingredient():
     @apiParam (Body param) {Number} nutriments[calories]=0 Ingredient's calories
     @apiParam (Body param) {Number} nutriments[carbohydrates]=0 Ingredient's carbohydrates
     @apiParam (Body param) {Number} nutriments[fats]=0 Ingredient's fats
-    @apiParam (Body param) {String} [nutriments[info]="per 100g"] Ingredient's info
+    @apiParam (Body param) {String} nutriments[portion]=1 Ingredient's portion
     @apiParam (Body param) {Number} nutriments[proteins=0] Ingredient's proteins
     @apiParam (Body param) {String} slug Ingredient's slug
 
@@ -151,7 +148,7 @@ def post_ingredient():
         'name': <name>
         'slug': <slug>
         'categories': [<category1>, <category2>],
-        'nutriments': {'calories': 10, 'carbohydrates': 20, 'fats': 30, 'proteins': 40, 'info': 'peer 100g'}
+        'nutriments': {'calories': 10, 'carbohydrates': 20, 'fats': 30, 'portion': 1, 'proteins': 40}
     }
 
     @apiSuccessExample {json} Success response:
@@ -161,8 +158,7 @@ def post_ingredient():
         'codeStatus': 201,
         'data': {'_id': '5e5840e63ed55d9119064649', 'name': 'qa_rhr_name', 'slug': 'qa_rhr_slug',
                  'categories': ['qa_rhr_category'],
-                 'nutriments': {'calories': '10', 'carbohydrates': '20', 'fats': '30', 'proteins': '40',
-                                'info': 'per 100g'}}
+                 'nutriments': {'calories': '10', 'carbohydrates': '20', 'fats': '30', portion: 1, 'proteins': '40'}}
     }
 
     @apiErrorExample {json} Error response:
@@ -199,7 +195,7 @@ def put_ingredient(_id):
     @apiParam (Body param) {Number} [nutriments[calories]] Ingredient's calories
     @apiParam (Body param) {Number} [nutriments[carbohydrates]] Ingredient's carbohydrates
     @apiParam (Body param) {Number} [nutriments[fats]] Ingredient's fats
-    @apiParam (Body param) {String} [nutriments[info]] Ingredient's info
+    @apiParam (Body param) {String} [nutriments[portions]] Ingredient's portion
     @apiParam (Body param) {Number} [nutriments[proteins]] Ingredient's proteins
     @apiParam (Body param) {String} [slug] Ingredient's slug
 
@@ -215,8 +211,7 @@ def put_ingredient(_id):
         'codeMsg': 'cookbook.ingredient.success.ok',
         'codeStatus': 20O,
         'data': {'_id': '5e583de9b0fcef0a922a7bc0', 'categories': [], 'name': 'aqa_rhr_update',
-                 'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'proteins': '0',
-                                 'info': 'per 100g'},
+                 'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'portion': 1, 'proteins': '0'},
                  'slug': 'slug_ex'}
     }
 
@@ -262,8 +257,7 @@ def search_ingredient():
         'codeMsg': 'cookbook.ingredient.success.ok',
         'codeStatus': 200,
         'data': [{'_id': '5e583de9b0fcef0a922a7bc0', 'categories': [], 'name': 'aqa_rhr',
-                 'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'proteins': '0',
-                                 'info': 'per 100g'},
+                 'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'portion': 1, 'proteins': '0'},
                  'slug': 'slug_ex'}]
     }
 
