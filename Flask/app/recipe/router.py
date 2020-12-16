@@ -10,7 +10,6 @@ apis = Blueprint('recipe', __name__, url_prefix='/recipe')
 
 server = utils.Server()
 recipe = recipe_model.Recipe()
-step = recipe_model.Step()
 file = file_model.File()
 
 
@@ -195,16 +194,22 @@ def put_recipe(_id):
     @apiDescription Update a recipe
 
     @apiParam (Query param) {String} _id Recipe's ObjectId
-    @apiParam (Body param) {String} [title] Recipe's title
-    @apiParam (Body param) {String} [slug] Recipe's slug for url
-    @apiParam (Body param) {String} [level] Recipe's level
-    @apiParam (Body param) {String} [resume] Recipe's resume
-    @apiParam (Body param) {String} [cooking_time] Recipe's cooking time
-    @apiParam (Body param) {String} [preparation_time] Recipe's preparation time
-    @apiParam (Body param) {String} [nb_people] Recipe's number of people
-    @apiParam (Body param) {String} [note] Recipe's note
-    @apiParam (Body param) {Array} [categories] Recipe's categories
+    @apiParam (Body param) {Array} [categories]=Empty_Array Recipe's categories
+    @apiParam (Body param) {Integer} [cooking_time]=0 Recipe's cooking time
+    @apiParam (Body param) {Array} [ingredients]=Empty_Array Recipe's Ingredients
+    @apiParam (Body param) {String} ingredients[_id] Ingredient's ObjectId
+    @apiParam (Body param) {Integer} ingredients[quantity] Ingredient's quantity
+    @apiParam (Body param) {String} [ingredients[unit]=""] Ingredient's unit
+    @apiParam (Body param) {Integer} [level]=0 Recipe's level (between 0 and 3)
+    @apiParam (Body param) {String} [nb_people]=0 Recipe's number of people
+    @apiParam (Body param) {String} [note]="" Recipe's note
+    @apiParam (Body param) {Integer} [preparation_time]=0 Recipe's preparation time
+    @apiParam (Body param) {String} [resume]="" Recipe's resume
+    @apiParam (Body param) {String} slug Recipe's slug for url
     @apiParam (Body param) {String} [status]="in_progress" Recipe's categories ("in_progress" or "finished")
+    @apiParam (Body param) {Array} [steps]=Empty_Array Recipe's steps
+    @apiParam (Body param) {String} steps[description] Step's description
+    @apiParam (Body param) {String} title Recipe's title
 
     @apiExample {json} Example usage:
     PUT http://127.0.0.1:5000/recipe/<_id_recipe>
@@ -237,8 +242,9 @@ def put_recipe(_id):
     """ check body """
     body = api.clean_body(data=request.json)
     validation.is_body_valid(data=body)
+    body_formated = api.reformat_body(data=body)
     """ update recipe """
-    data = recipe.update(_id=_id, data=body)
+    data = recipe.update(_id=_id, data=body_formated)
     """ clean steps file """
     """TBD"""
     """ return response """
@@ -293,220 +299,6 @@ def search_recipe():
     data = recipe.search(data=search)
     """ return response """
     return server.return_response(data=data.result, api=apis.name, http_code=200)
-
-
-#
-# @apis.route('/<_id_recipe>/step/<_id_step>', methods=['DELETE'])
-# def delete_recipe_step(_id_recipe, _id_step):
-#     """
-#     @api {delete} /recipe/<_id_recipe>/step/<_id_step>  DeleteRecipeStep
-#     @apiGroup Recipe
-#     @apiDescription Delete a recipe's step
-#
-#     @apiParam (Query param) {String} _id_recipe Recipe's ObjectId
-#     @apiParam (Query param) {String} _id_step Step's ObjectId
-#     @apiParam (Query param) {String} [with_files] if "true", add recipe's files
-#
-#     @apiExample {json} Example usage:
-#     DELETE http://127.0.0.1:5000/recipe/<_id_recipe>/step/<_id_step>
-#
-#     @apiSuccessExample {json} Success response:
-#     HTTPS 200
-#     {
-#         'codeMsg': 'cookbook.recipe.success.ok',
-#         'codeStatus': 200,
-#         'data': {'_id': '5e68acb9e067528c70c75f3c', 'cooking_time': 0, 'level': 0, 'nb_people': 0, 'note': '',
-#                  'preparation_time': 0, 'resume': '', title': 'qa_rhr', 'slug': '', 'categories': [],
-#                  'steps': [{'_id': '5e68acb97b0ead079be3cef7', 'description': 'another_previous_step'}]}
-#     }
-#
-#     @apiErrorExample {json} Error response:
-#     HTTPS 400
-#     {
-#         'codeMsg': 'cookbook.recipe.error.bad_request',
-#         'codeStatus': 400,
-#         'detail': {'msg': 'Must be an integer', 'param': 'position', 'value': 'invalid'}
-#     }
-#     """
-#     api = factory.DeleteRecipeStep.Factory()
-#     validation = validator.DeleteRecipeStep.Validator()
-#     with_files = request.args.get(api.param_with_files)
-#     """ check param """
-#     validation.is_with_files_valid(value=with_files)
-#     validation.is_object_id_valid_recipe(value=_id_recipe)
-#     validation.is_object_id_valid_steps(_id_recipe=_id_recipe, _id_step=_id_step)
-#     """ delete step """
-#     data = step.delete(_id_recipe=_id_recipe, _id_step=_id_step)
-#     """ clean files """
-#     file.clean_file_by_id_parent(_id_parent=_id_step)
-#     """ add enrichment if needed """
-#     if with_files == "true":
-#         data.add_enrichment_file_for_one()
-#     """ return response """
-#     return server.return_response(data=data.result, api=apis.name, http_code=200)
-#
-#
-#
-# @apis.route('/step/<_id>', methods=['POST'])
-# def post_recipe_step(_id):
-#     """
-#     @api {post} /recipe/step/<_id_recipe> PostRecipeStep
-#     @apiGroup Recipe
-#     @apiDescription Create a recipe's step. Can specify where to add the step
-#
-#     @apiParam (Query param) {String} _id Recipe's ObjectId
-#     @apiParam (Query param) {String} [with_files] if "true", add recipe's files
-#     @apiParam (Body param) {String} description Step's description to add
-#     @apiParam (Body param) {Integer} [position] Position in recipe's steps array.
-#                                                 If not specified, add at the end of the array
-#
-#     @apiExample {json} Example usage:
-#     POST http://127.0.0.1:5000/recipe/step/<_id_recipe>
-#     {
-#         'description': <description>,
-#         'position': <position>
-#     }
-#
-#     @apiSuccessExample {json} Success response:
-#     HTTPS 201
-#     {
-#         'codeMsg': 'cookbook.recipe.success.created',
-#         'codeStatus': 201,
-#         'data': {'_id': '5e68acb9e067528c70c75f3c', 'cooking_time': 0, 'level': 0, 'nb_people': 0, 'note': '',
-#                  'preparation_time': 0, 'resume': '', title': 'qa_rhr', 'slug': '', 'categories': [],
-#                  'steps': [{'_id': '5e68acb97b0ead079be3cef7', 'description': 'new_step'}]}
-#     }
-#
-#     @apiErrorExample {json} Error response:
-#     HTTPS 400
-#     {
-#         'codeMsg': 'cookbook.recipe.error.bad_request',
-#         'codeStatus': 400,
-#         'detail': {'msg': 'Must be an integer', 'param': 'position', 'value': 'invalid'}
-#     }
-#     """
-#     api = factory.PostRecipeStep.Factory()
-#     validation = validator.PostRecipeStep.Validator()
-#     with_files = request.args.get(api.param_with_files)
-#     """ check param """
-#     validation.is_with_files_valid(value=with_files)
-#     validation.is_object_id_valid(value=_id)
-#     """ check body """
-#     body = api.clean_body(data=request.json)
-#     validation.is_body_valid(_id_recipe=_id, data=body)
-#     """ insert step """
-#     data = step.insert(_id=_id, data=body)
-#     """ add enrichment if needed """
-#     if with_files == "true":
-#         data.add_enrichment_file_for_one()
-#     """ return response """
-#     return server.return_response(data=data.result, api=apis.name, http_code=201)
-# @apis.route('/<_id_recipe>/step/<_id_step>', methods=['PUT'])
-# def put_recipe_step(_id_recipe, _id_step):
-#     """
-#     @api {put} /recipe/<_id_recipe>/step/<_id_step>  PutRecipeStep
-#     @apiGroup Recipe
-#     @apiDescription Update a recipe's step
-#
-#     @apiParam (Query param) {String} _id_recipe Recipe's ObjectId
-#     @apiParam (Query param) {String} _id_step Step's ObjectId
-#     @apiParam (Query param) {String} [with_files] if "true", add recipe's files
-#     @apiParam (Body param) {String} description Step's description to add
-#
-#     @apiExample {json} Example usage:
-#     PUT http://127.0.0.1:5000/recipe/<_id_recipe>/step/<_id_step>
-#     {
-#         'description': <description>
-#     }
-#
-#     @apiSuccessExample {json} Success response:
-#     HTTPS 200
-#     {
-#         'codeMsg': 'cookbook.recipe.success.ok',
-#         'codeStatus': 200,
-#         'data': {'_id': '5e68acb9e067528c70c75f3c', 'cooking_time': 0, 'level': 0, 'nb_people': 0, 'note': '',
-#                  'preparation_time': 0, 'resume': '', title': 'qa_rhr', 'slug': '', 'categories': [],
-#                  'steps': [{'_id': '5e68acb97b0ead079be3cef7', 'description': 'updated_step'}]}
-#     }
-#
-#     @apiErrorExample {json} Error response:
-#     HTTPS 400
-#     {
-#         'codeMsg': 'cookbook.recipe.error.bad_request',
-#         'codeStatus': 400,
-#         'detail': {'msg': 'Must be an integer', 'param': 'position', 'value': 'invalid'}
-#     }
-#     """
-#     api = factory.PutRecipeStep.Factory()
-#     validation = validator.PutRecipeStep.Validator()
-#     with_files = request.args.get(api.param_with_files)
-#     """ check param """
-#     validation.is_with_files_valid(value=with_files)
-#     validation.is_object_id_valid_recipe(value=_id_recipe)
-#     validation.is_object_id_valid_steps(_id_recipe=_id_recipe, _id_step=_id_step)
-#     """ check body """
-#     body = api.clean_body(data=request.json)
-#     validation.is_body_valid(data=body)
-#     """ update step """
-#     data = step.update(_id_recipe=_id_recipe, _id_step=_id_step, data=body)
-#     """ add enrichment if needed """
-#     if with_files == "true":
-#         data.add_enrichment_file_for_one()
-#     """ return response """
-#     return server.return_response(data=data.result, api=apis.name, http_code=200)
-# @apis.route('/steps/<_id>', methods=['PUT'])
-# def put_recipe_steps(_id):
-#     """
-#     @api {put} /recipe/steps/<_id_recipe> PutRecipeSteps
-#     @apiGroup Recipe
-#     @apiDescription Create recipe's steps.
-#
-#     @apiParam (Query param) {String} _id Recipe's ObjectId
-#     @apiParam (Query param) {String} [with_files] if "true", add recipe's files
-#     @apiParam (Body param) {String} description Step's description to add
-#
-#     @apiExample {json} Example usage:
-#     PUT http://127.0.0.1:5000/recipe/steps/<_id_recipe>
-#     {
-#         'steps': [{'description': <description1>},
-#                   {'description': <description2>}]
-#     }
-#
-#     @apiSuccessExample {json} Success response:
-#     HTTPS 200
-#     {
-#         'codeMsg': 'cookbook.recipe.success.created',
-#         'codeStatus': 200,
-#         'data': {'_id': '5e68acb9e067528c70c75f3c', 'cooking_time': 0, 'level': 0, 'nb_people': 0, 'note': '',
-#                  'preparation_time': 0, 'resume': '', title': 'qa_rhr', 'slug': '', 'categories': [],
-#                  'steps': [{'_id': '5e68acb97b0ead079be3cef7', 'description': 'new_step'},
-#                            {'_id': '5e68acb97b0ead079be3cef8', 'description': 'new_step2'}]}
-#     }
-#
-#     @apiErrorExample {json} Error response:
-#     HTTPS 400
-#     {
-#         'codeMsg': 'cookbook.recipe.error.bad_request',
-#         'codeStatus': 400,
-#         'detail': {'msg': 'Must be an integer', 'param': 'position', 'value': 'invalid'}
-#     }
-#     """
-#     api = factory.PutRecipeSteps.Factory()
-#     validation = validator.PutRecipeSteps.Validator()
-#     with_files = request.args.get(api.param_with_files)
-#     """ check param """
-#     validation.is_with_files_valid(value=with_files)
-#     validation.is_object_id_valid(value=_id)
-#     """ check body """
-#     body = api.clean_body(data=request.json)
-#     validation.is_body_valid(data=body)
-#     """ update steps """
-#     data = step.update_multi(_id=_id, data=body)
-#     """ add enrichment if needed """
-#     if with_files == "true":
-#         data.add_enrichment_file_for_one()
-#     """ return response """
-#     return server.return_response(data=data.result, api=apis.name, http_code=200)
 
 
 @apis.errorhandler(400)

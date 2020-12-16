@@ -274,10 +274,10 @@ class RecipeTest(object):
         FileTest
             FileTest added.
         """
-        file = FileTest.custom({"filename": filename,
-                                "metadata": {"kind": "recipe",
-                                             "_id_parent": ObjectId(self._id),
-                                             "is_main": is_main}}).insert()
+        file = filetest_model.FileTest().custom({"filename": filename,
+                                                 "metadata": {"kind": "recipe",
+                                                              "_id_parent": ObjectId(self._id),
+                                                              "is_main": is_main}}).insert()
         if "identifier" in kwargs.keys():
             file.custom({"_id": kwargs["identifier"]})
         return file
@@ -302,10 +302,10 @@ class RecipeTest(object):
         FileTest
             FileTest added.
         """
-        file = FileTest.custom({"filename": filename,
-                                "metadata": {"kind": "step",
-                                             "_id_parent": ObjectId(_id_step),
-                                             "is_main": is_main}}).insert()
+        file = filetest_model.FileTest().custom({"filename": filename,
+                                                 "metadata": {"kind": "step",
+                                                              "_id_parent": ObjectId(_id_step),
+                                                              "is_main": is_main}}).insert()
         if "identifier" in kwargs.keys():
             file.custom({"_id": kwargs["identifier"]})
         return file

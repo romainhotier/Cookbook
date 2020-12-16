@@ -9,9 +9,10 @@ class Factory(object):
         self.param_categories = "categories"
         self.param_cooking_time = "cooking_time"
         self.param_ingredients = "ingredients"
-        self.param_ingredients_id = "_id"
-        self.param_ingredients_quantity = "quantity"
-        self.param_ingredients_unit = "unit"
+        self.param_ingredient = "ingredient"
+        self.param_ingredient_id = "_id"
+        self.param_ingredient_quantity = "quantity"
+        self.param_ingredient_unit = "unit"
         self.param_level = "level"
         self.param_nb_people = "nb_people"
         self.param_note = "note"
@@ -20,7 +21,8 @@ class Factory(object):
         self.param_slug = "slug"
         self.param_status = "status"
         self.param_steps = "steps"
-        self.param_steps_description = "description"
+        self.param_step = "steps"
+        self.param_step_description = "description"
         self.param_title = "title"
         self.body = {}
 
@@ -44,7 +46,7 @@ class Factory(object):
         list
             Ingredients body parameters.
         """
-        return [self.param_ingredients_id, self.param_ingredients_quantity, self.param_ingredients_unit]
+        return [self.param_ingredient_id, self.param_ingredient_quantity, self.param_ingredient_unit]
 
     def clean_body(self, data):
         """ Remove keys that are not in PostRecipe's parameters.
@@ -133,5 +135,5 @@ class Factory(object):
         """
         formated_steps = []
         for step in self.body[self.param_steps]:
-            formated_steps.append({"_id": ObjectId(), self.param_steps_description: step})
+            formated_steps.append({"_id": ObjectId(), self.param_step_description: step})
         self.body[self.param_steps] = formated_steps

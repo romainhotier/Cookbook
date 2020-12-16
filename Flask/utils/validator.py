@@ -421,6 +421,28 @@ class Validator(object):
         return True
 
     @staticmethod
+    def is_object_or_string(param, value):
+        """ Check if the value is an object or a string.
+
+        Parameters
+        ----------
+        param : str
+            Name of the tested parameter.
+        value : Any
+            Value of the tested parameter.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        if isinstance(value, dict) or isinstance(value, str):
+            return True
+        else:
+            detail = server.format_detail(param=param, msg=server.detail_must_be_an_object_or_string, value=value)
+            return abort(status=400, description=detail)
+
+    @staticmethod
     def is_object(param, value):
         """ Check if the value is an object.
 
@@ -562,13 +584,15 @@ class Validator(object):
             return abort(status=400, description=detail)
 
     @staticmethod
-    def is_mandatory(param, data):
+    def is_mandatory(name, param, data):
         """ Check if the param is present in body.
 
         Parameters
         ----------
-        param : str
+        name : str
             Name of the tested parameter.
+        param : str
+            Value of the tested parameter.
         data : dict
             Dict to be tested.
 
@@ -580,7 +604,7 @@ class Validator(object):
         if param in data:
             return True
         else:
-            detail = server.format_detail(param=param, msg=server.detail_is_required)
+            detail = server.format_detail(param=name, msg=server.detail_is_required)
             return abort(status=400, description=detail)
 
     @staticmethod

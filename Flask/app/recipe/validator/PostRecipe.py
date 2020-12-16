@@ -95,16 +95,16 @@ class Validator(object):
             validator.is_array_non_empty(param=api.param_ingredients, value=data[api.param_ingredients])
             validator.is_array_of_object(param=api.param_ingredients, value=data[api.param_ingredients])
             for ingredient in data[api.param_ingredients]:
-                self.is_id_ingredient_valid(data=ingredient)
-                self.is_quantity_valid(data=ingredient)
-                self.is_unit_valid(data=ingredient)
-            validator.is_unique_link_multi(param=api.param_ingredients_id, data=data)
+                self.is_ingredient_id_valid(data=ingredient)
+                self.is_ingredient_quantity_valid(data=ingredient)
+                self.is_ingredient_unit_valid(data=ingredient)
+            validator.is_unique_link_multi(param=api.param_ingredient+"."+api.param_ingredient_id, data=data)
             return True
         return True
 
     # use in is_ingredients_valid
     @staticmethod
-    def is_id_ingredient_valid(data):
+    def is_ingredient_id_valid(data):
         """ Check if _id_ingredient is correct.
 
         Parameters
@@ -117,15 +117,16 @@ class Validator(object):
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_mandatory(param=api.param_ingredients_id, data=data)
-        validator.is_object_id(param=api.param_ingredients_id, value=data[api.param_ingredients_id])
-        validator.is_object_id_in_collection(param=api.param_ingredients_id, value=data[api.param_ingredients_id],
+        param_name = api.param_ingredient+"."+api.param_ingredient_id
+        validator.is_mandatory(name=param_name, param=api.param_ingredient_id, data=data)
+        validator.is_object_id(param=param_name, value=data[api.param_ingredient_id])
+        validator.is_object_id_in_collection(param=param_name, value=data[api.param_ingredient_id],
                                              collection=mongo.collection_ingredient)
         return True
 
     # use in is_ingredients_valid
     @staticmethod
-    def is_quantity_valid(data):
+    def is_ingredient_quantity_valid(data):
         """ Check if quantity is correct.
 
         Parameters
@@ -138,13 +139,14 @@ class Validator(object):
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_mandatory(param=api.param_ingredients_quantity, data=data)
-        validator.is_int(param=api.param_ingredients_quantity, value=data[api.param_ingredients_quantity])
+        param_name = api.param_ingredient + "." + api.param_ingredient_quantity
+        validator.is_mandatory(name=param_name, param=api.param_ingredient_quantity, data=data)
+        validator.is_int(param=param_name, value=data[api.param_ingredient_quantity])
         return True
 
     # use in is_ingredients_valid
     @staticmethod
-    def is_unit_valid(data):
+    def is_ingredient_unit_valid(data):
         """ Check if unit is correct.
 
         Parameters
@@ -157,8 +159,9 @@ class Validator(object):
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_mandatory(param=api.param_ingredients_unit, data=data)
-        validator.is_string(param=api.param_ingredients_unit, value=data[api.param_ingredients_unit])
+        param_name = api.param_ingredient + "." + api.param_ingredient_unit
+        validator.is_mandatory(name=param_name, param=api.param_ingredient_unit, data=data)
+        validator.is_string(param=param_name, value=data[api.param_ingredient_unit])
         return True
 
     # use in is_body_valid
@@ -277,7 +280,7 @@ class Validator(object):
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_mandatory(param=api.param_slug, data=data)
+        validator.is_mandatory(name=api.param_slug, param=api.param_slug, data=data)
         validator.is_string(param=api.param_slug, value=data[api.param_slug])
         validator.is_string_non_empty(param=api.param_slug, value=data[api.param_slug])
         validator.is_unique_recipe(param=api.param_slug, value=data[api.param_slug])
@@ -341,8 +344,9 @@ class Validator(object):
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_string(param=api.param_steps_description, value=data)
-        validator.is_string_non_empty(param=api.param_steps_description, value=data)
+        param_name = api.param_step+"."+api.param_step_description
+        validator.is_string(param=param_name, value=data)
+        validator.is_string_non_empty(param=param_name, value=data)
         return True
 
     # use in is_body_valid
@@ -360,7 +364,7 @@ class Validator(object):
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_mandatory(param=api.param_title, data=data)
+        validator.is_mandatory(name=api.param_title, param=api.param_title, data=data)
         validator.is_string(param=api.param_title, value=data[api.param_title])
         validator.is_string_non_empty(param=api.param_title, value=data[api.param_title])
         validator.is_unique_recipe(param=api.param_title, value=data[api.param_title])

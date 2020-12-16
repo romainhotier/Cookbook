@@ -106,10 +106,17 @@ class DeleteRecipe(unittest.TestCase):
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.delete(url, verify=False)
+        response_body = response.json()
+        """ change """
+        #tc_file_recipe11.delete()
+        #tc_f
         """ assert """
-        self.assertEqual(response.status_code, 204)
-        self.assertEqual(response.headers["Content-Type"], "application/json")
-        self.assertEqual(response.text, '')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"],  "application/json")
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertEqual(response_body["data"], api.data_expected(_id=tc_id))
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
         tc_recipe1.check_doesnt_exist_by_id()
         tc_file_recipe11.check_doesnt_exist_by_id()
@@ -124,7 +131,8 @@ class DeleteRecipe(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(DeleteRecipe())
+        #cls.setUp(DeleteRecipe())
+        pass
 
 
 if __name__ == '__main__':

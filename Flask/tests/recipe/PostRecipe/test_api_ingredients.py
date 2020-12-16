@@ -5,11 +5,9 @@ import utils
 import tests.recipe.PostRecipe.api as api
 import tests.recipe.model as recipe_model
 import tests.ingredient.model as ingredient_model
-import tests.link.model as link_model
 
 server = utils.Server()
 api = api.PostRecipe()
-link = link_model.LinkTest()
 ingredient = ingredient_model.IngredientTest()
 recipe = recipe_model.RecipeTest()
 
@@ -17,10 +15,9 @@ recipe = recipe_model.RecipeTest()
 class PostRecipe(unittest.TestCase):
 
     def setUp(self):
-        """ Clean IngredientTest, RecipeTest and LinkTest."""
+        """ Clean IngredientTest, RecipeTest."""
         ingredient.clean()
         recipe.clean()
-        link.clean()
 
     def test_ingredients_without(self):
         """ Default case.
@@ -200,9 +197,9 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
                 api.param_ingredients: [None,
-                                        {api.param_ingredients_id: tc_ingredient.get_id(),
-                                         api.param_ingredients_quantity: 5,
-                                         api.param_ingredients_unit: "qa_rhr_unit"}]}
+                                        {api.param_ingredient_id: tc_ingredient.get_id(),
+                                         api.param_ingredient_quantity: 5,
+                                         api.param_ingredient_unit: "qa_rhr_unit"}]}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -233,9 +230,9 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
                 api.param_ingredients: ["",
-                                        {api.param_ingredients_id: tc_ingredient.get_id(),
-                                         api.param_ingredients_quantity: 5,
-                                         api.param_ingredients_unit: "qa_rhr_unit"}]}
+                                        {api.param_ingredient_id: tc_ingredient.get_id(),
+                                         api.param_ingredient_quantity: 5,
+                                         api.param_ingredient_unit: "qa_rhr_unit"}]}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -266,9 +263,9 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
                 api.param_ingredients: ["invalid",
-                                        {api.param_ingredients_id: tc_ingredient.get_id(),
-                                         api.param_ingredients_quantity: 5,
-                                         api.param_ingredients_unit: "qa_rhr_unit"}]}
+                                        {api.param_ingredient_id: tc_ingredient.get_id(),
+                                         api.param_ingredient_quantity: 5,
+                                         api.param_ingredient_unit: "qa_rhr_unit"}]}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -299,9 +296,9 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
                 api.param_ingredients: [[],
-                                        {api.param_ingredients_id: tc_ingredient.get_id(),
-                                         api.param_ingredients_quantity: 5,
-                                         api.param_ingredients_unit: "qa_rhr_unit"}]}
+                                        {api.param_ingredient_id: tc_ingredient.get_id(),
+                                         api.param_ingredient_quantity: 5,
+                                         api.param_ingredient_unit: "qa_rhr_unit"}]}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -332,9 +329,9 @@ class PostRecipe(unittest.TestCase):
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
                 api.param_ingredients: [{},
-                                        {api.param_ingredients_id: tc_ingredient.get_id(),
-                                         api.param_ingredients_quantity: 5,
-                                         api.param_ingredients_unit: "qa_rhr_unit"}]}
+                                        {api.param_ingredient_id: tc_ingredient.get_id(),
+                                         api.param_ingredient_quantity: 5,
+                                         api.param_ingredient_unit: "qa_rhr_unit"}]}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -347,7 +344,8 @@ class PostRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_ingredients_id, msg=server.detail_is_required)
+        detail = api.create_detail(param=api.param_ingredient+"."+api.param_ingredient_id,
+                                   msg=server.detail_is_required)
         self.assertEqual(response_body["detail"], detail)
         """ check """
         tc_recipe.check_doesnt_exist_by_title()
@@ -361,8 +359,8 @@ class PostRecipe(unittest.TestCase):
         """ param """
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
-                api.param_ingredients: [{api.param_ingredients_quantity: 5,
-                                         api.param_ingredients_unit: "qa_rhr_unit"}]}
+                api.param_ingredients: [{api.param_ingredient_quantity: 5,
+                                         api.param_ingredient_unit: "qa_rhr_unit"}]}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -375,7 +373,8 @@ class PostRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_ingredients_id, msg=server.detail_is_required)
+        detail = api.create_detail(param=api.param_ingredient+"."+api.param_ingredient_id,
+                                   msg=server.detail_is_required)
         self.assertEqual(response_body["detail"], detail)
         """ check """
         tc_recipe.check_doesnt_exist_by_title()
@@ -389,9 +388,9 @@ class PostRecipe(unittest.TestCase):
         """ param """
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
-                api.param_ingredients: [{api.param_ingredients_id: None,
-                                         api.param_ingredients_quantity: 5,
-                                         api.param_ingredients_unit: "qa_rhr_unit"}]}
+                api.param_ingredients: [{api.param_ingredient_id: None,
+                                         api.param_ingredient_quantity: 5,
+                                         api.param_ingredient_unit: "qa_rhr_unit"}]}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -404,8 +403,9 @@ class PostRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_ingredients_id, msg=server.detail_must_be_an_object_id,
-                                   value=body[api.param_ingredients][0][api.param_ingredients_id])
+        detail = api.create_detail(param=api.param_ingredient+"."+api.param_ingredient_id,
+                                   msg=server.detail_must_be_an_object_id,
+                                   value=body[api.param_ingredients][0][api.param_ingredient_id])
         self.assertEqual(response_body["detail"], detail)
         """ check """
         tc_recipe.check_doesnt_exist_by_title()
@@ -419,9 +419,9 @@ class PostRecipe(unittest.TestCase):
         """ param """
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
-                api.param_ingredients: [{api.param_ingredients_id: "",
-                                         api.param_ingredients_quantity: 5,
-                                         api.param_ingredients_unit: "qa_rhr_unit"}]}
+                api.param_ingredients: [{api.param_ingredient_id: "",
+                                         api.param_ingredient_quantity: 5,
+                                         api.param_ingredient_unit: "qa_rhr_unit"}]}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -434,8 +434,9 @@ class PostRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_ingredients_id, msg=server.detail_must_be_an_object_id,
-                                   value=body[api.param_ingredients][0][api.param_ingredients_id])
+        detail = api.create_detail(param=api.param_ingredient+"."+api.param_ingredient_id,
+                                   msg=server.detail_must_be_an_object_id,
+                                   value=body[api.param_ingredients][0][api.param_ingredient_id])
         self.assertEqual(response_body["detail"], detail)
         """ check """
         tc_recipe.check_doesnt_exist_by_title()
@@ -449,9 +450,9 @@ class PostRecipe(unittest.TestCase):
         """ param """
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
-                api.param_ingredients: [{api.param_ingredients_id: "invalid",
-                                         api.param_ingredients_quantity: 5,
-                                         api.param_ingredients_unit: "qa_rhr_unit"}]}
+                api.param_ingredients: [{api.param_ingredient_id: "invalid",
+                                         api.param_ingredient_quantity: 5,
+                                         api.param_ingredient_unit: "qa_rhr_unit"}]}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -464,8 +465,9 @@ class PostRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_ingredients_id, msg=server.detail_must_be_an_object_id,
-                                   value=body[api.param_ingredients][0][api.param_ingredients_id])
+        detail = api.create_detail(param=api.param_ingredient+"."+api.param_ingredient_id,
+                                   msg=server.detail_must_be_an_object_id,
+                                   value=body[api.param_ingredients][0][api.param_ingredient_id])
         self.assertEqual(response_body["detail"], detail)
         """ check """
         tc_recipe.check_doesnt_exist_by_title()
@@ -479,9 +481,9 @@ class PostRecipe(unittest.TestCase):
         """ param """
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
-                api.param_ingredients: [{api.param_ingredients_id: "aaaaaaaaaaaaaaaaaaaaaaaa",
-                                         api.param_ingredients_quantity: 5,
-                                         api.param_ingredients_unit: "qa_rhr_unit"}]}
+                api.param_ingredients: [{api.param_ingredient_id: "aaaaaaaaaaaaaaaaaaaaaaaa",
+                                         api.param_ingredient_quantity: 5,
+                                         api.param_ingredient_unit: "qa_rhr_unit"}]}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -494,8 +496,9 @@ class PostRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_ingredients_id, msg=server.detail_doesnot_exist,
-                                   value=body[api.param_ingredients][0][api.param_ingredients_id])
+        detail = api.create_detail(param=api.param_ingredient+"."+api.param_ingredient_id,
+                                   msg=server.detail_doesnot_exist,
+                                   value=body[api.param_ingredients][0][api.param_ingredient_id])
         self.assertEqual(response_body["detail"], detail)
         """ check """
         tc_recipe.check_doesnt_exist_by_title()
@@ -511,8 +514,8 @@ class PostRecipe(unittest.TestCase):
         """ param """
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
-                api.param_ingredients: [{api.param_ingredients_id: tc_ingredient.get_id(),
-                                         api.param_ingredients_unit: "qa_rhr_unit"}]}
+                api.param_ingredients: [{api.param_ingredient_id: tc_ingredient.get_id(),
+                                         api.param_ingredient_unit: "qa_rhr_unit"}]}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -525,7 +528,8 @@ class PostRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_ingredients_quantity, msg=server.detail_is_required)
+        detail = api.create_detail(param=api.param_ingredient+"."+api.param_ingredient_quantity,
+                                   msg=server.detail_is_required)
         self.assertEqual(response_body["detail"], detail)
         """ check """
         tc_recipe.check_doesnt_exist_by_title()
@@ -541,9 +545,9 @@ class PostRecipe(unittest.TestCase):
         """ param """
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
-                api.param_ingredients: [{api.param_ingredients_id: tc_ingredient.get_id(),
-                                         api.param_ingredients_quantity: None,
-                                         api.param_ingredients_unit: "qa_rhr_unit"}]}
+                api.param_ingredients: [{api.param_ingredient_id: tc_ingredient.get_id(),
+                                         api.param_ingredient_quantity: None,
+                                         api.param_ingredient_unit: "qa_rhr_unit"}]}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -556,8 +560,9 @@ class PostRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_ingredients_quantity, msg=server.detail_must_be_an_integer,
-                                   value=body[api.param_ingredients][0][api.param_ingredients_quantity])
+        detail = api.create_detail(param=api.param_ingredient+"."+api.param_ingredient_quantity,
+                                   msg=server.detail_must_be_an_integer,
+                                   value=body[api.param_ingredients][0][api.param_ingredient_quantity])
         self.assertEqual(response_body["detail"], detail)
         """ check """
         tc_recipe.check_doesnt_exist_by_title()
@@ -573,9 +578,9 @@ class PostRecipe(unittest.TestCase):
         """ param """
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
-                api.param_ingredients: [{api.param_ingredients_id: tc_ingredient.get_id(),
-                                         api.param_ingredients_quantity: "",
-                                         api.param_ingredients_unit: "qa_rhr_unit"}]}
+                api.param_ingredients: [{api.param_ingredient_id: tc_ingredient.get_id(),
+                                         api.param_ingredient_quantity: "",
+                                         api.param_ingredient_unit: "qa_rhr_unit"}]}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -588,8 +593,9 @@ class PostRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_ingredients_quantity, msg=server.detail_must_be_an_integer,
-                                   value=body[api.param_ingredients][0][api.param_ingredients_quantity])
+        detail = api.create_detail(param=api.param_ingredient+"."+api.param_ingredient_quantity,
+                                   msg=server.detail_must_be_an_integer,
+                                   value=body[api.param_ingredients][0][api.param_ingredient_quantity])
         self.assertEqual(response_body["detail"], detail)
         """ check """
         tc_recipe.check_doesnt_exist_by_title()
@@ -605,9 +611,9 @@ class PostRecipe(unittest.TestCase):
         """ param """
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
-                api.param_ingredients: [{api.param_ingredients_id: tc_ingredient.get_id(),
-                                         api.param_ingredients_quantity: "invalid",
-                                         api.param_ingredients_unit: "qa_rhr_unit"}]}
+                api.param_ingredients: [{api.param_ingredient_id: tc_ingredient.get_id(),
+                                         api.param_ingredient_quantity: "invalid",
+                                         api.param_ingredient_unit: "qa_rhr_unit"}]}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -620,8 +626,9 @@ class PostRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_ingredients_quantity, msg=server.detail_must_be_an_integer,
-                                   value=body[api.param_ingredients][0][api.param_ingredients_quantity])
+        detail = api.create_detail(param=api.param_ingredient+"."+api.param_ingredient_quantity,
+                                   msg=server.detail_must_be_an_integer,
+                                   value=body[api.param_ingredients][0][api.param_ingredient_quantity])
         self.assertEqual(response_body["detail"], detail)
         """ check """
         tc_recipe.check_doesnt_exist_by_title()
@@ -637,9 +644,9 @@ class PostRecipe(unittest.TestCase):
         """ param """
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
-                api.param_ingredients: [{api.param_ingredients_id: tc_ingredient.get_id(),
-                                         api.param_ingredients_quantity: "5",
-                                         api.param_ingredients_unit: "qa_rhr_unit"}]}
+                api.param_ingredients: [{api.param_ingredient_id: tc_ingredient.get_id(),
+                                         api.param_ingredient_quantity: "5",
+                                         api.param_ingredient_unit: "qa_rhr_unit"}]}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -668,9 +675,9 @@ class PostRecipe(unittest.TestCase):
         """ param """
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
-                api.param_ingredients: [{api.param_ingredients_id: tc_ingredient.get_id(),
-                                         api.param_ingredients_quantity: 5,
-                                         api.param_ingredients_unit: "qa_rhr_unit"}]}
+                api.param_ingredients: [{api.param_ingredient_id: tc_ingredient.get_id(),
+                                         api.param_ingredient_quantity: 5,
+                                         api.param_ingredient_unit: "qa_rhr_unit"}]}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -699,8 +706,8 @@ class PostRecipe(unittest.TestCase):
         """ param """
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
-                api.param_ingredients: [{api.param_ingredients_id: tc_ingredient.get_id(),
-                                         api.param_ingredients_quantity: 5}]}
+                api.param_ingredients: [{api.param_ingredient_id: tc_ingredient.get_id(),
+                                         api.param_ingredient_quantity: 5}]}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -712,7 +719,8 @@ class PostRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_ingredients_unit, msg=server.detail_is_required)
+        detail = api.create_detail(param=api.param_ingredient+"."+api.param_ingredient_unit,
+                                   msg=server.detail_is_required)
         self.assertEqual(response_body["detail"], detail)
         """ check """
         tc_recipe.check_doesnt_exist_by_title()
@@ -728,9 +736,9 @@ class PostRecipe(unittest.TestCase):
         """ param """
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
-                api.param_ingredients: [{api.param_ingredients_id: tc_ingredient.get_id(),
-                                         api.param_ingredients_quantity: 5,
-                                         api.param_ingredients_unit: None}]}
+                api.param_ingredients: [{api.param_ingredient_id: tc_ingredient.get_id(),
+                                         api.param_ingredient_quantity: 5,
+                                         api.param_ingredient_unit: None}]}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -742,8 +750,9 @@ class PostRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_ingredients_unit, msg=server.detail_must_be_a_string,
-                                   value=body[api.param_ingredients][0][api.param_ingredients_unit])
+        detail = api.create_detail(param=api.param_ingredient+"."+api.param_ingredient_unit,
+                                   msg=server.detail_must_be_a_string,
+                                   value=body[api.param_ingredients][0][api.param_ingredient_unit])
         self.assertEqual(response_body["detail"], detail)
         """ check """
         tc_recipe.check_doesnt_exist_by_title()
@@ -759,9 +768,9 @@ class PostRecipe(unittest.TestCase):
         """ param """
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
-                api.param_ingredients: [{api.param_ingredients_id: tc_ingredient.get_id(),
-                                         api.param_ingredients_quantity: 5,
-                                         api.param_ingredients_unit: ""}]}
+                api.param_ingredients: [{api.param_ingredient_id: tc_ingredient.get_id(),
+                                         api.param_ingredient_quantity: 5,
+                                         api.param_ingredient_unit: ""}]}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -790,9 +799,9 @@ class PostRecipe(unittest.TestCase):
         """ param """
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
-                api.param_ingredients: [{api.param_ingredients_id: tc_ingredient.get_id(),
-                                         api.param_ingredients_quantity: 5,
-                                         api.param_ingredients_unit: "invalid"}]}
+                api.param_ingredients: [{api.param_ingredient_id: tc_ingredient.get_id(),
+                                         api.param_ingredient_quantity: 5,
+                                         api.param_ingredient_unit: "invalid"}]}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -820,12 +829,12 @@ class PostRecipe(unittest.TestCase):
         """ param """
         body = {api.param_title: "qa_rhr_title",
                 api.param_slug: "slug",
-                api.param_ingredients: [{api.param_ingredients_id: tc_ingredient.get_id(),
-                                         api.param_ingredients_quantity: 5,
-                                         api.param_ingredients_unit: "qa_rhr_unit"},
-                                        {api.param_ingredients_id: tc_ingredient.get_id(),
-                                         api.param_ingredients_quantity: 6,
-                                         api.param_ingredients_unit: "qa_rhr_unit2"}]}
+                api.param_ingredients: [{api.param_ingredient_id: tc_ingredient.get_id(),
+                                         api.param_ingredient_quantity: 5,
+                                         api.param_ingredient_unit: "qa_rhr_unit"},
+                                        {api.param_ingredient_id: tc_ingredient.get_id(),
+                                         api.param_ingredient_quantity: 6,
+                                         api.param_ingredient_unit: "qa_rhr_unit2"}]}
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.post(url, json=body, verify=False)
@@ -838,8 +847,9 @@ class PostRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_ingredients_id, msg=server.detail_must_be_unique,
-                                   value=[ingr[api.param_ingredients_id] for ingr in body[api.param_ingredients]])
+        detail = api.create_detail(param=api.param_ingredient+"."+api.param_ingredient_id,
+                                   msg=server.detail_must_be_unique,
+                                   value=[ingr[api.param_ingredient_id] for ingr in body[api.param_ingredients]])
         self.assertEqual(response_body["detail"], detail)
         """ check """
         tc_recipe.check_doesnt_exist_by_title()

@@ -20,26 +20,25 @@ class PutRecipe(unittest.TestCase):
         """ BodyParameter note is missing.
 
         Return
-            200 - Updated Recipe.
+            400 - Bad request.
         """
         """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
         """ param """
         tc_id = tc_recipe.get_id()
-        body = {api.param_title: "qa_rhr_title_update"}
+        body = {}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
-        """ change """
-        tc_recipe.custom(body)
         """ assert """
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body["codeStatus"], 200)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail("body", msg=server.detail_must_contain_at_least_one_key, value=body)
+        self.assertEqual(response_body["detail"], detail)
         """ check """
         tc_recipe.check_bdd_data()
 
@@ -53,8 +52,7 @@ class PutRecipe(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().insert()
         """ param """
         tc_id = tc_recipe.get_id()
-        body = {api.param_title: "qa_rhr_title_update",
-                api.param_note: None}
+        body = {api.param_note: None}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
@@ -80,8 +78,7 @@ class PutRecipe(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().insert()
         """ param """
         tc_id = tc_recipe.get_id()
-        body = {api.param_title: "qa_rhr_title_update",
-                api.param_note: ""}
+        body = {api.param_note: ""}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
@@ -108,8 +105,7 @@ class PutRecipe(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().insert()
         """ param """
         tc_id = tc_recipe.get_id()
-        body = {api.param_title: "qa_rhr_title_update",
-                api.param_note: "invalid"}
+        body = {api.param_note: "invalid"}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
@@ -136,8 +132,7 @@ class PutRecipe(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().insert()
         """ param """
         tc_id = tc_recipe.get_id()
-        body = {api.param_title: "qa_rhr_title_update",
-                api.param_note: []}
+        body = {api.param_note: []}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
@@ -163,8 +158,7 @@ class PutRecipe(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().insert()
         """ param """
         tc_id = tc_recipe.get_id()
-        body = {api.param_title: "qa_rhr_title_update",
-                api.param_note: {}}
+        body = {api.param_note: {}}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)

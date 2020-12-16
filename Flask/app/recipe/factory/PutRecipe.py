@@ -1,3 +1,6 @@
+from bson import ObjectId
+
+
 class Factory(object):
 
     def __init__(self):
@@ -7,9 +10,10 @@ class Factory(object):
         self.param_categories = "categories"
         self.param_cooking_time = "cooking_time"
         self.param_ingredients = "ingredients"
-        self.param_ingredients_id = "_id"
-        self.param_ingredients_quantity = "quantity"
-        self.param_ingredients_unit = "unit"
+        self.param_ingredient = "ingredient"
+        self.param_ingredient_id = "_id"
+        self.param_ingredient_quantity = "quantity"
+        self.param_ingredient_unit = "unit"
         self.param_level = "level"
         self.param_nb_people = "nb_people"
         self.param_note = "note"
@@ -18,7 +22,9 @@ class Factory(object):
         self.param_slug = "slug"
         self.param_status = "status"
         self.param_steps = "steps"
-        self.param_steps_description = "description"
+        self.param_step = "step"
+        self.param_step_id = "_id"
+        self.param_step_description = "description"
         self.param_title = "title"
         self.body = {}
 
@@ -42,7 +48,17 @@ class Factory(object):
         list
             Ingredients body parameters.
         """
-        return [self.param_ingredients_id, self.param_ingredients_quantity, self.param_ingredients_unit]
+        return [self.param_ingredient_id, self.param_ingredient_quantity, self.param_ingredient_unit]
+
+    def get_steps_body_param(self):
+        """ Get PutRecipe's step body parameters.
+
+        Returns
+        -------
+        list
+            Ingredients body parameters.
+        """
+        return [self.param_step_id, self.param_step_description]
 
     def clean_body(self, data):
         """ Remove keys that are not in PutRecipe's parameters.
@@ -60,6 +76,7 @@ class Factory(object):
         self.__setattr__("body", data)
         self.remove_foreign_key()
         self.remove_foreign_key_ingredients()
+        self.remove_foreign_key_steps()
         return self.body
 
     # use in clean_body
@@ -83,5 +100,54 @@ class Factory(object):
                             del self.body[self.param_ingredients][index][i]
             except TypeError:
                 pass
+        except KeyError:
+            pass
+
+    # use in clean_body
+    def remove_foreign_key_steps(self):
+        """ Remove keys that are not in PutRecipe's parameters for step param.
+        """
+        try:
+            steps = self.body[self.param_steps]
+            try:
+                for index, step in enumerate(steps):
+                    if isinstance(step, dict):
+                        for i in list(step):
+                            if i not in self.get_steps_body_param():
+                                del self.body[self.param_steps][index][i]
+            except TypeError:
+                pass
+        except KeyError:
+            pass
+
+    def reformat_body(self, data):
+        """ Reformat body for PutRecipe.
+
+        Parameters
+        ----------
+        data : dict
+            To be formated.
+
+        Returns
+        -------
+        dict
+            Correct body.
+        """
+        self.__setattr__("body", data)
+        self.reformat_steps()
+        return self.body
+
+    # use in fill_body
+    def reformat_steps(self):
+        """ Fill steps with ObjectId.
+        """
+        formated_steps = []
+        try:
+            for step in self.body[self.param_steps]:
+                if isinstance(step, str):
+                    formated_steps.append({"_id": ObjectId(), self.param_step_description: step})
+                else:
+                    formated_steps.append(step)
+            self.body[self.param_steps] = formated_steps
         except KeyError:
             pass

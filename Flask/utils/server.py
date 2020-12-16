@@ -37,6 +37,7 @@ class Server(object):
         self.detail_must_be_an_array_of_string = "Must be an array of string"
         self.detail_must_be_an_array_of_object = "Must be an array of object"
         self.detail_must_be_an_object = "Must be an object"
+        self.detail_must_be_an_object_or_string = "Must be an object or a string"
         self.detail_must_be_a_boolean = "Must be a boolean"
         self.detail_must_be_not_empty = "Must be not empty"
         self.detail_must_be_between = "Must be between"
