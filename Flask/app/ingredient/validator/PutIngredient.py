@@ -28,13 +28,15 @@ class Validator(object):
         validator.is_object_id_in_collection(param=api.param_id, value=value, collection=mongo.collection_ingredient)
         return True
 
-    def is_body_valid(self, data):
+    def is_body_valid(self, data, _id):
         """ Check if body is correct.
 
         Parameters
         ----------
         data : dict
             PutIngredient's body.
+        _id : str
+            Ingredient's ObjectId.
 
         Returns
         -------
@@ -43,9 +45,9 @@ class Validator(object):
         """
         validator.has_at_least_one_key(param="body", data=data)
         self.is_categories_valid(data=data)
-        self.is_name_valid(data=data)
+        self.is_name_valid(data=data, _id=_id)
         self.is_nutriments_valid(data=data)
-        self.is_slug_valid(data=data)
+        self.is_slug_valid(data=data, _id=_id)
         self.is_unit_valid(data=data)
         return True
 
@@ -71,13 +73,15 @@ class Validator(object):
 
     # use in is_body_valid
     @staticmethod
-    def is_name_valid(data):
+    def is_name_valid(data, _id):
         """ Check if name is correct if specified.
 
         Parameters
         ----------
         data : dict
             PutIngredient's body.
+        _id : str
+            Ingredient's ObjectId.
 
         Returns
         -------
@@ -87,7 +91,7 @@ class Validator(object):
         if api.param_name in data:
             validator.is_string(param=api.param_name, value=data[api.param_name])
             validator.is_string_non_empty(param=api.param_name, value=data[api.param_name])
-            validator.is_unique_ingredient(param=api.param_name, value=data[api.param_name])
+            validator.is_coherent_ingredient(param=api.param_name, value=data[api.param_name], _id=_id)
             return True
 
     # use in is_body_valid
@@ -223,13 +227,15 @@ class Validator(object):
 
     # use in is_body_valid
     @staticmethod
-    def is_slug_valid(data):
+    def is_slug_valid(data, _id):
         """ Check if slug is correct if specified.
 
         Parameters
         ----------
         data : dict
             PutIngredient's body.
+        _id : str
+            Ingredient's ObjectId.
 
         Returns
         -------
@@ -239,7 +245,7 @@ class Validator(object):
         if api.param_slug in data:
             validator.is_string(param=api.param_slug, value=data[api.param_slug])
             validator.is_string_non_empty(param=api.param_slug, value=data[api.param_slug])
-            validator.is_unique_ingredient(param=api.param_slug, value=data[api.param_slug])
+            validator.is_coherent_ingredient(param=api.param_slug, value=data[api.param_slug], _id=_id)
         return True
 
     # use in is_body_valid

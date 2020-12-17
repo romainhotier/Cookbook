@@ -28,7 +28,21 @@ class Validator(object):
         validator.is_object_id_in_collection(param=api.param_id, value=value, collection=mongo.collection_recipe)
         return True
 
-    def is_body_valid(self, data):
+    def is_body_valid(self, data, _id):
+        """ Check if body is correct.
+
+        Parameters
+        ----------
+        data : dict
+            PutRecipe's body.
+        _id : str
+            Recipe's ObjectId.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
         validator.has_at_least_one_key(param="body", data=data)
         self.is_categories_valid(data=data)
         self.is_cooking_time_valid(data=data)
@@ -38,10 +52,10 @@ class Validator(object):
         self.is_note_valid(data=data)
         self.is_preparation_time_valid(data=data)
         self.is_resume_valid(data=data)
-        self.is_slug_valid(data=data)
+        self.is_slug_valid(data=data, _id=_id)
         self.is_status_valid(data=data)
         self.is_steps_valid(data=data)
-        self.is_title_valid(data=data)
+        self.is_title_valid(data=data, _id=_id)
 
     # use in is_body_valid
     @staticmethod
@@ -274,13 +288,15 @@ class Validator(object):
 
     # use in is_body_valid
     @staticmethod
-    def is_slug_valid(data):
+    def is_slug_valid(data, _id):
         """ Check if slug is correct.
 
         Parameters
         ----------
         data : dict
             PutRecipe's body.
+        _id : str
+            Recipe's ObjectId.
 
         Returns
         -------
@@ -290,7 +306,7 @@ class Validator(object):
         if api.param_slug in data:
             validator.is_string(param=api.param_slug, value=data[api.param_slug])
             validator.is_string_non_empty(param=api.param_slug, value=data[api.param_slug])
-            validator.is_unique_recipe(param=api.param_slug, value=data[api.param_slug])
+            validator.is_coherent_recipe(param=api.param_slug, value=data[api.param_slug], _id=_id)
             return True
         return True
 
@@ -419,13 +435,15 @@ class Validator(object):
 
     # use in is_body_valid
     @staticmethod
-    def is_title_valid(data):
+    def is_title_valid(data, _id):
         """ Check if title is correct.
 
         Parameters
         ----------
         data : dict
             PutRecipe's body.
+        _id : str
+            Recipe's ObjectId.
 
         Returns
         -------
@@ -435,6 +453,6 @@ class Validator(object):
         if api.param_title in data:
             validator.is_string(param=api.param_title, value=data[api.param_title])
             validator.is_string_non_empty(param=api.param_title, value=data[api.param_title])
-            validator.is_unique_recipe(param=api.param_title, value=data[api.param_title])
+            validator.is_coherent_recipe(param=api.param_title, value=data[api.param_title], _id=_id)
             return True
         return True

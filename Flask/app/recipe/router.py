@@ -42,7 +42,6 @@ def delete_recipe(_id):
     }
     """
     validation = validator.DeleteRecipe.Validator()
-    api = factory.DeleteRecipe.Factory()
     """ check param """
     validation.is_object_id_valid(value=_id)
     """ clean files recipe """
@@ -53,8 +52,7 @@ def delete_recipe(_id):
     """ delete recipe """
     recipe.delete(_id=_id)
     """ return response """
-    data = api.data_information(_id=_id)
-    return server.return_response(data=data, api=apis.name, http_code=200)
+    return server.return_response(data=_id, api=apis.name, http_code=200)
 
 
 @apis.route('', methods=['GET'])
@@ -241,12 +239,14 @@ def put_recipe(_id):
     validation.is_object_id_valid(value=_id)
     """ check body """
     body = api.clean_body(data=request.json)
-    validation.is_body_valid(data=body)
+    validation.is_body_valid(data=body, _id=_id)
     body_formated = api.reformat_body(data=body)
+    diff_step = api.get_diff_steps(_id=_id, body=body_formated)
     """ update recipe """
     data = recipe.update(_id=_id, data=body_formated)
     """ clean steps file """
-    """TBD"""
+    for _id_step in diff_step:
+        file.clean_file_by_id_parent(_id_parent=_id_step)
     """ return response """
     return server.return_response(data=data.result, api=apis.name, http_code=200)
 

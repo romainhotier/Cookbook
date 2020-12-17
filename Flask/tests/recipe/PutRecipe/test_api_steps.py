@@ -375,7 +375,7 @@ class PutRecipe(unittest.TestCase):
         """ BodyParameter step.id is an ObjectId.
 
         Return
-            400 - Bad request.
+            200 - Updated Recipe.
         """
         """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
@@ -489,7 +489,7 @@ class PutRecipe(unittest.TestCase):
         """ BodyParameter step.description is a string.
 
         Return
-            400 - Bad request.
+            200 - Updated Recipe.
         """
         """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
@@ -552,6 +552,44 @@ class PutRecipe(unittest.TestCase):
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
         tc_recipe.check_bdd_data(updated=True)
+
+    def test_steps_clean_files(self):
+        """ Special case : File to be cleaned
+
+        Return
+            200 - Updated Recipe.
+        """
+        """ env """
+        tc_recipe = recipe_model.RecipeTest()
+        tc_recipe.add_step(_id_step="aaaaaaaaaaaaaaaaaaaaaaaa", description="step1")
+        tc_recipe.add_step(_id_step="bbbbbbbbbbbbbbbbbbbbbbbb", description="step2")
+        tc_recipe.insert()
+        tc_file1 = tc_recipe.add_file_step(_id_step="aaaaaaaaaaaaaaaaaaaaaaaa", filename="file11", is_main=False)
+        tc_file2 = tc_recipe.add_file_step(_id_step="aaaaaaaaaaaaaaaaaaaaaaaa", filename="file12", is_main=False)
+        tc_file3 = tc_recipe.add_file_step(_id_step="bbbbbbbbbbbbbbbbbbbbbbbb", filename="file2", is_main=False)
+        """ param """
+        tc_id = tc_recipe.get_id()
+        body = {api.param_steps: ["new", {"_id": "bbbbbbbbbbbbbbbbbbbbbbbb", "description": "step2up"}]}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        """ change """
+        tc_recipe.custom(body)
+        """ assert """
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertEqual(api.response_without_steps(data=response_body["data"]),
+                         api.data_expected_without_steps(recipe=tc_recipe))
+        api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
+        tc_recipe.check_bdd_data(updated=True)
+        tc_file1.check_doesnt_exist_by_id()
+        tc_file2.check_doesnt_exist_by_id()
+        tc_file3.check_bdd_data()
 
     @classmethod
     def tearDownClass(cls):

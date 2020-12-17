@@ -1,5 +1,7 @@
 from bson import ObjectId
 
+import app.recipe.model as recipe_model
+
 
 class Factory(object):
 
@@ -153,3 +155,17 @@ class Factory(object):
             self.body[self.param_steps] = formated_steps
         except KeyError:
             pass
+
+    def get_diff_steps(self, _id, body):
+        try:
+            origin = recipe_model.Recipe().select_one(_id=_id).result[self.param_steps]
+            update = body[self.param_steps]
+            ids_origin = [str(step["_id"]) for step in origin]
+            ids_update = [str(step["_id"]) for step in update]
+            ids_to_be_cleaned = []
+            for _id in ids_origin:
+                if _id not in ids_update:
+                    ids_to_be_cleaned.append(_id)
+            return ids_to_be_cleaned
+        except KeyError:
+            return []
