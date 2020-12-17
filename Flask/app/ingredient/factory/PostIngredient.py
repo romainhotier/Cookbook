@@ -12,6 +12,7 @@ class Factory(object):
         self.param_nutriments_proteins = "proteins"
         self.param_nutriments_portion = "portion"
         self.param_slug = "slug"
+        self.param_unit = "unit"
         self.body = {}
 
     def get_body_param(self):
@@ -22,7 +23,7 @@ class Factory(object):
         list
             Body parameters.
         """
-        return [self.param_categories, self.param_name, self.param_nutriments, self.param_slug]
+        return [self.param_categories, self.param_name, self.param_nutriments, self.param_slug, self.param_unit]
 
     def get_nutriments_param(self):
         """ Get PostIngredient's nutriments parameters.
@@ -95,6 +96,7 @@ class Factory(object):
         """ Fill keys that are not mandatory with default value for PostIngredient.
             - categories -> []
             - nutriments -> {"calories": "0", "carbohydrates": "0","fats": "0","proteins": "0","portion": ""}
+            - unit -> "g"
         """
         for key in self.get_body_param():
             if key not in self.body:
@@ -106,3 +108,5 @@ class Factory(object):
                                       self.param_nutriments_fats: 0,
                                       self.param_nutriments_proteins: 0,
                                       self.param_nutriments_portion: 1}
+                if key == self.param_unit:
+                    self.body[key] = "g"

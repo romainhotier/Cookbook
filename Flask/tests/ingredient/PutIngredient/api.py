@@ -19,9 +19,11 @@ class PutIngredient(object):
         self.param_nutriments_proteins = "proteins"
         self.param_nutriments_portion = "portion"
         self.param_slug = "slug"
+        self.param_unit = "unit"
         self.rep_code_msg_ok = server.rep_code_msg_ok.replace("xxx", "ingredient")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "ingredient")
         self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
+        self.repf_detail_unit = " ['g', 'ml']"
 
     @staticmethod
     def create_detail(param, msg, **kwargs):
