@@ -129,8 +129,8 @@ class PutIngredient(unittest.TestCase):
             400 - Bad request.
         """
         """ env """
-        tc_ingredient1 = ingredient_model.IngredientTest().insert()
-        tc_ingredient2 = ingredient_model.IngredientTest().insert()
+        tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_name1"}).insert()
+        tc_ingredient2 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_name2"}).insert()
         """ param """        
         tc_id = tc_ingredient1.get_id()
         body = {api.param_name: tc_ingredient2.name}
@@ -145,6 +145,36 @@ class PutIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         detail = api.create_detail(param=api.param_name, msg=server.detail_already_exist, value=body[api.param_name])
         self.assertEqual(response_body["detail"], detail)
+        """ check """
+        tc_ingredient1.check_bdd_data()
+        tc_ingredient2.check_bdd_data()
+
+    def test_name_already_exist_coherent(self):
+        """ BodyParameter name already exist but it's coherent.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
+        tc_ingredient1 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_name1"}).insert()
+        tc_ingredient2 = ingredient_model.IngredientTest().custom({"name": "qa_rhr_name2"}).insert()
+        """ param """
+        tc_id = tc_ingredient1.get_id()
+        body = {api.param_name: tc_ingredient1.name}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        """ change """
+        tc_ingredient1.custom(body)
+        """ assert """
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertEqual(response_body["data"], api.data_expected(ingredient=tc_ingredient1))
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
         tc_ingredient1.check_bdd_data()
         tc_ingredient2.check_bdd_data()
 

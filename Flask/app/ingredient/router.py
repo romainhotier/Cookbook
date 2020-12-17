@@ -231,7 +231,7 @@ def put_ingredient(_id):
     validation.is_object_id_valid(value=_id)
     """ check body """
     body = api.clean_body(data=request.json)
-    validation.is_body_valid(data=body)
+    validation.is_body_valid(data=body, _id=_id)
     """ update ingredient """
     data = ingredient.update(_id=_id, data=body)
     """ return response """

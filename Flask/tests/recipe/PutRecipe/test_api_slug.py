@@ -202,6 +202,35 @@ class PutRecipe(unittest.TestCase):
         tc_recipe1.check_bdd_data()
         tc_recipe2.check_bdd_data()
 
+    def test_slug_already_exist_coherent(self):
+        """ BodyParameter slug already exist but it's coherent.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
+        tc_recipe1 = recipe_model.RecipeTest().custom({"slug": "slug_1"}).insert()
+        tc_recipe2 = recipe_model.RecipeTest().custom({"slug": "slug_2"}).insert()
+        """ param """
+        tc_id = tc_recipe1.get_id()
+        body = {api.param_slug: tc_recipe1.slug}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        """ change """
+        tc_recipe1.custom(body)
+        """ assert """
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe1))
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
+        tc_recipe1.check_bdd_data()
+        tc_recipe2.check_bdd_data()
+
     @classmethod
     def tearDownClass(cls):
         cls.setUp(PutRecipe())

@@ -241,7 +241,7 @@ def put_recipe(_id):
     validation.is_object_id_valid(value=_id)
     """ check body """
     body = api.clean_body(data=request.json)
-    validation.is_body_valid(data=body)
+    validation.is_body_valid(data=body, _id=_id)
     body_formated = api.reformat_body(data=body)
     """ update recipe """
     data = recipe.update(_id=_id, data=body_formated)

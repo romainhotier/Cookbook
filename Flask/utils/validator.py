@@ -169,6 +169,33 @@ class Validator(object):
         return True
 
     @staticmethod
+    def is_coherent_ingredient(param, value, _id):
+        """ Check if value and _id are coherent
+
+        Parameters
+        ----------
+        param : str
+            Key to be checked.
+        value : str
+            Value to be checked.
+        _id : str
+            Value to be checked.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        if not ingredient.check_ingredient_is_unique(key=param, value=value):
+            if ingredient.select_one(_id).result[param] == value:
+                return True
+            else:
+                detail = server.format_detail(param=param, msg=server.detail_already_exist, value=value)
+                return abort(status=400, description=detail)
+        else:
+            return True
+
+    @staticmethod
     def is_unique_recipe(param, value):
         """ Check if the key/value is unique.
 
@@ -188,6 +215,33 @@ class Validator(object):
             detail = server.format_detail(param=param, msg=server.detail_already_exist, value=value)
             return abort(status=400, description=detail)
         return True
+
+    @staticmethod
+    def is_coherent_recipe(param, value, _id):
+        """ Check if value and _id are coherent
+
+        Parameters
+        ----------
+        param : str
+            Key to be checked.
+        value : str
+            Value to be checked.
+        _id : str
+            Value to be checked.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        if not recipe.check_recipe_is_unique(key=param, value=value):
+            if recipe.select_one(_id).result[param] == value:
+                return True
+            else:
+                detail = server.format_detail(param=param, msg=server.detail_already_exist, value=value)
+                return abort(status=400, description=detail)
+        else:
+            return True
 
     @staticmethod
     def is_unique_link_multi(param, data):
