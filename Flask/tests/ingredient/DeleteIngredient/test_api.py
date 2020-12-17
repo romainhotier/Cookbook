@@ -42,7 +42,7 @@ class DeleteIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"],  "application/json")
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertEqual(response_body["data"], api.data_expected(_id=tc_id))
+        self.assertEqual(response_body["data"], tc_id)
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
         tc_ingredient1.check_doesnt_exist_by_id()
@@ -95,7 +95,7 @@ class DeleteIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"],  "application/json")
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertEqual(response_body["data"], api.data_expected(_id=tc_id))
+        self.assertEqual(response_body["data"], tc_id)
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
         tc_ingredient1.check_doesnt_exist_by_id()
@@ -128,7 +128,7 @@ class DeleteIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"],  "application/json")
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertEqual(response_body["data"], api.data_expected(_id=tc_id))
+        self.assertEqual(response_body["data"], tc_id)
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
         tc_ingredient1.check_doesnt_exist_by_id()

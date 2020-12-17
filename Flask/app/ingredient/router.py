@@ -44,7 +44,6 @@ def delete_ingredient(_id):
     }
     """
     validation = validator.DeleteIngredient.Validator()
-    api = factory.DeleteIngredient.Factory()
     """ check param """
     validation.is_object_id_valid(value=_id)
     """ clean files and link """
@@ -53,8 +52,7 @@ def delete_ingredient(_id):
     """ delete ingredient """
     ingredient.delete(_id=_id)
     """ return response """
-    data = api.data_information(_id=_id)
-    return server.return_response(data=data, api=apis.name, http_code=200)
+    return server.return_response(data=_id, api=apis.name, http_code=200)
 
 
 @apis.route('', methods=['GET'])
