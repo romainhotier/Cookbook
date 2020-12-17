@@ -8,6 +8,10 @@ export const postIngredientRequest = createAction('POST_INGREDIENT_REQUEST')
 export const postIngredientSuccess = createAction('POST_INGREDIENT_SUCCESS')
 export const postIngredientFailed = createAction('POST_INGREDIENT_FAILED')
 
+export const putIngredientRequest = createAction('PUT_INGREDIENT_REQUEST')
+export const putIngredientSuccess = createAction('PUT_INGREDIENT_SUCCESS')
+export const putIngredientFailed = createAction('PUT_INGREDIENT_FAILED')
+
 export const deleteIngredientRequest = createAction('DELETE_INGREDIENT_REQUEST')
 export const deleteIngredientSuccess = createAction('DELETE_INGREDIENT_SUCCESS')
 export const deleteIngredientFailed = createAction('DELETE_INGREDIENT_FAILED')

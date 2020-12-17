@@ -1,9 +1,9 @@
-import { connect } from "react-redux"
-import React, { Component } from "react"
+import { connect } from 'react-redux'
+import React, { Component } from 'react'
 import { Select, Form, Space, Input, Button, Spin } from 'antd'
 
 import { fetchAllIngredients } from 'modules/ingredient/thunks'
-import { RecipeIngredientsValidator } from "./RecipeIngredientsForm.validator";
+import { RecipeIngredientsValidator } from './RecipeIngredientsForm.validator'
 
 import './_RecipeIngredientsForm.scss'
 
@@ -19,26 +19,26 @@ class RecipeIngredientsForm extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchAllIngredients();
+    this.props.fetchAllIngredients()
   }
 
   handleSearch = value => {
     const { ingredients } = this.props
     if (value) {
-      const valueLowerCase = value.toLowerCase();
-      const filters = Object.values(ingredients).filter(({name = ''}) => {
-        const nameLowercase = name.toLowerCase();
-        return nameLowercase.search(valueLowerCase) > -1;
+      const valueLowerCase = value.toLowerCase()
+      const filters = Object.values(ingredients).filter(({ name = '' }) => {
+        const nameLowercase = name.toLowerCase()
+        return nameLowercase.search(valueLowerCase) > -1
       })
-      this.setState({researchIngredients: filters})
+      this.setState({ researchIngredients: filters })
     }
-  };
+  }
 
   render() {
     const { ingredients, recipeExist, disabled } = this.props
     const { researchIngredients } = this.state
 
-    if( Object.entries(ingredients).length === 0 ) {
+    if (Object.entries(ingredients).length === 0) {
       return <Spin />
     }
 
@@ -47,17 +47,25 @@ class RecipeIngredientsForm extends Component {
     return (
       <div className={recipeExist ? '' : 'blockDisabled'}>
         <h2>Ingrédients</h2>
-          <Form.List name="ingredients">
+        <Form.List name="ingredients">
           {(fields, { add, remove }) => (
             <>
               {fields.map(field => (
-                <Space key={field.key} style={{ display: 'flex', marginBottom: 0, alignItems: 'center' }} align="baseline">
-
+                <Space
+                  key={field.key}
+                  style={{ display: 'flex', marginBottom: 0, alignItems: 'center' }}
+                  align="baseline"
+                >
                   <Form.Item
                     {...field}
                     name={[field.name, '_id_ingredient']}
                     fieldKey={[field.fieldKey, '_id_ingredient']}
-                    rules={[{ required: RecipeIngredientsValidator['name'].required, message: RecipeIngredientsValidator['name'].message }]}
+                    rules={[
+                      {
+                        required: RecipeIngredientsValidator['name'].required,
+                        message: RecipeIngredientsValidator['name'].message,
+                      },
+                    ]}
                     label="Nom"
                   >
                     <Select
@@ -81,7 +89,12 @@ class RecipeIngredientsForm extends Component {
                     name={[field.name, 'quantity']}
                     label="Quantité"
                     fieldKey={[field.fieldKey, 'quantity']}
-                    rules={[{ required: RecipeIngredientsValidator['quantity'].required, message: RecipeIngredientsValidator['quantity'].message }]}
+                    rules={[
+                      {
+                        required: RecipeIngredientsValidator['quantity'].required,
+                        message: RecipeIngredientsValidator['quantity'].message,
+                      },
+                    ]}
                   >
                     <Input placeholder={RecipeIngredientsValidator['quantity'].placeholder} />
                   </Form.Item>
@@ -91,17 +104,33 @@ class RecipeIngredientsForm extends Component {
                     name={[field.name, 'unity']}
                     label="Unité"
                     fieldKey={[field.fieldKey, 'unity']}
-                    rules={[{ required: RecipeIngredientsValidator['unity'].required, message: RecipeIngredientsValidator['unity'].message }]}
+                    rules={[
+                      {
+                        required: RecipeIngredientsValidator['unity'].required,
+                        message: RecipeIngredientsValidator['unity'].message,
+                      },
+                    ]}
                   >
-                    <Input placeholder={RecipeIngredientsValidator['unity'].placeholder} />
+                    {/* <Input placeholder={RecipeIngredientsValidator['unity'].placeholder} /> */}
+                    <Select defaultValue="lucy" style={{ width: 120 }}>
+                      <Option value="jack">Pour 1 portion</Option>
+                      <Option value="lucy">Pour 100 gr</Option>
+                      <Option value="Yiminghe">Pour 1 gr</Option>
+                    </Select>
                   </Form.Item>
-                  <Button key={field.name} htmlType="button" type="text" onClick={() => remove(field.name)} className='button_remove'>
+                  <Button
+                    key={field.name}
+                    htmlType="button"
+                    type="text"
+                    onClick={() => remove(field.name)}
+                    className="button_remove"
+                  >
                     <i className="fas fa-trash"></i>
                   </Button>
                 </Space>
               ))}
               <Form.Item>
-                <Button type="dashed" onClick={() => add()} block >
+                <Button type="dashed" onClick={() => add()} block>
                   Ajouter un ingrédient
                 </Button>
               </Form.Item>
@@ -109,20 +138,17 @@ class RecipeIngredientsForm extends Component {
           )}
         </Form.List>
       </div>
-    );
+    )
   }
 }
 
 const mapDispatchToProps = {
   fetchAllIngredients,
-};
+}
 
 const mapStateToProps = ({ ingredients: { content, loadingFetchIngredients } }) => ({
   ingredients: content,
   loadingFetchIngredients,
-});
+})
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(RecipeIngredientsForm);
+export default connect(mapStateToProps, mapDispatchToProps)(RecipeIngredientsForm)

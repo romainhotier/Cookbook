@@ -8,6 +8,9 @@ import {
   deleteIngredientRequest,
   deleteIngredientSuccess,
   deleteIngredientFailed,
+  putIngredientRequest,
+  putIngredientSuccess,
+  putIngredientFailed,
   postIngredientsRecipeRequest,
   postIngredientsRecipeSuccess,
   postIngredientsRecipeFailed,
@@ -18,6 +21,7 @@ import {
   postIngredientURL,
   postIngredientsRecipeURL,
   deleteIngredientURL,
+  putIngredientURL,
 } from '../api/Ingredient.api'
 
 import { notification } from 'antd'
@@ -100,6 +104,39 @@ export const deleteIngredient = id => dispatch => {
     })
     .catch(error => {
       dispatch(deleteIngredientFailed(error))
+    })
+}
+
+export const putIngredient = ({ data, id }) => dispatch => {
+  dispatch(putIngredientRequest())
+
+  fetch(putIngredientURL(id), {
+    method: 'PUT',
+    headers: new Headers({
+      'Content-Type': 'application/json',
+    }),
+    body: JSON.stringify(data),
+  })
+    .then(res => res.json())
+    .then(response => {
+      if (response.codeStatus === 200) {
+        dispatch(putIngredientSuccess(response))
+        notification['success']({
+          message: 'Ingrédient modifiée !',
+          description: `${get(codeMsg, `${response.codeMsg}`)}`,
+        })
+      } else {
+        dispatch(dispatch(putIngredientFailed(response.detail)))
+
+        const errorFormat = get(codeMsg, `${response.codeMsg}.${slugifyResponse(response.detail.msg)}`)
+        notification['error']({
+          message: 'Oooh une erreur',
+          description: `${errorFormat(response.detail.value)}`,
+        })
+      }
+    })
+    .catch(error => {
+      dispatch(putIngredientFailed(error))
     })
 }
 

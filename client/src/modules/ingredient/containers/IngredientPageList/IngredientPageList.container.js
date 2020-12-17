@@ -29,11 +29,7 @@ class IngredientPageList extends Component {
           <h1>Liste des ingrédients</h1>
           <IngredientModalAdd />
         </div>
-        <IngredientsList
-          data={Object.values(ingredients)}
-          deleteIngredient={id => deleteIngredient(id)}
-          editIngredient={data => console.log('edit', data)}
-        />
+        <IngredientsList data={Object.values(ingredients)} deleteIngredient={id => deleteIngredient(id)} />
       </>
     )
   }
