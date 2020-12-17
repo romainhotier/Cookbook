@@ -158,8 +158,14 @@ class RecipeTest(object):
         client.close()
         return
 
-    def check_bdd_data(self):
+    def check_bdd_data(self, **kwargs):
         """ Check if RecipeTest is correct.
+
+        Parameters
+        ----------
+        kwargs : bool
+            created/updated
+
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
@@ -167,7 +173,19 @@ class RecipeTest(object):
         client.close()
         assert recipe is not None
         for value in recipe:
-            if value not in ["_id"]:
+            if value in ["steps"]:
+                if "created" in kwargs:
+                    for i, step in enumerate(recipe["steps"]):
+                        assert step["description"] == self.__getattribute__(value)[i]
+                elif "updated" in kwargs:
+                    for i, step in enumerate(recipe["steps"]):
+                        if isinstance(self.__getattribute__(value)[i], str):  # if it's and updated step
+                            assert step["description"] == self.__getattribute__(value)[i]
+                        else:
+                            assert mongo.to_json(step) == self.__getattribute__(value)[i]
+                else:
+                    assert recipe[value] == self.__getattribute__(value)
+            elif value not in ["_id"]:
                 assert recipe[value] == self.__getattribute__(value)
 
     def check_doesnt_exist_by_id(self):
@@ -246,10 +264,38 @@ class RecipeTest(object):
 
     """ ingredients """
     def add_ingredient(self, _id, quantity, unit):
+        """ Add a IngredientTest to RecipeTest.
+
+        Parameters
+        ----------
+        _id : str
+            IngredientTest's ObjectId.
+        quantity : int
+            IngredientTest's quantity.
+        unit : str
+            IngredientTest's unit
+
+        Returns
+        -------
+        RecipeTest
+            RecipeTest.
+        """
         self.ingredients.append({"_id": _id, "quantity": quantity, "unit": unit})
         return self
 
     def delete_ingredient(self, _id):
+        """ Delete a IngredientTest to RecipeTest.
+
+        Parameters
+        ----------
+        _id : str
+            IngredientTest's ObjectId.
+
+        Returns
+        -------
+        RecipeTest
+            RecipeTest.
+        """
         for ingredient in self.ingredients:
             if ingredient["_id"] == _id:
                 self.ingredients.remove(ingredient)

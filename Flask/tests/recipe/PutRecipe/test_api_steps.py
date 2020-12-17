@@ -254,10 +254,12 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
+        self.assertEqual(api.response_without_steps(data=response_body["data"]),
+                         api.data_expected_without_steps(recipe=tc_recipe))
+        api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
-        tc_recipe.check_bdd_data()
+        tc_recipe.check_bdd_data(updated=True)
 
     def test_steps_id_without(self):
         """ BodyParameter step.id is missing.
@@ -392,10 +394,12 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
+        self.assertEqual(api.response_without_steps(data=response_body["data"]),
+                         api.data_expected_without_steps(recipe=tc_recipe))
+        api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
-        tc_recipe.check_bdd_data()
+        tc_recipe.check_bdd_data(updated=True)
 
     def test_steps_description_without(self):
         """ BodyParameter step.description is missing.
@@ -504,10 +508,12 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
+        self.assertEqual(api.response_without_steps(data=response_body["data"]),
+                         api.data_expected_without_steps(recipe=tc_recipe))
+        api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
-        tc_recipe.check_bdd_data()
+        tc_recipe.check_bdd_data(updated=True)
 
     def test_steps_complexe(self):
         """ Special case : complexe update
@@ -540,10 +546,12 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
+        self.assertEqual(api.response_without_steps(data=response_body["data"]),
+                         api.data_expected_without_steps(recipe=tc_recipe))
+        api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
-        tc_recipe.check_bdd_data()
+        tc_recipe.check_bdd_data(updated=True)
 
     @classmethod
     def tearDownClass(cls):

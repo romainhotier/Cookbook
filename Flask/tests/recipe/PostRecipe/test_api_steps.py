@@ -235,7 +235,7 @@ class PostRecipe(unittest.TestCase):
         self.assertTrue(data_check["result"], data_check["error"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
-        tc_recipe.custom_id_from_body(data=response_body).check_bdd_data()
+        tc_recipe.custom_id_from_body(data=response_body).check_bdd_data(created=True)
 
     def test_steps_tab_object(self):
         """ BodyParameter steps is a tab object.

@@ -55,20 +55,24 @@ class PostRecipe(unittest.TestCase):
         tc_ingredient1 = ingredient_model.IngredientTest().insert()
         tc_ingredient2 = ingredient_model.IngredientTest().insert()
         """ param """
-        body = {"categories": ["categori1", "categori2"],
-                "cooking_time": 30,
-                "ingredients": [{"_id": tc_ingredient1.get_id(), "quantity": 1, "unit": "qa_rhr_unit1",
-                                 "invalid": "invalid"},
-                                {"_id": tc_ingredient2.get_id(), "quantity": 2, "unit": "qa_rhr_unit2"}],
-                "level": 2,
-                "nb_people": 4,
-                "note": "note_ex",
-                "preparation_time": 8,
-                "resume": "resume_ex",
-                "slug": "slug",
-                "status": "in_progress",
-                "steps": ["description_ex1", "description_ex2"],
-                "title": "qa_rhr_title",
+        body = {api.param_categories: ["categori1", "categori2"],
+                api.param_cooking_time: 30,
+                api.param_ingredients: [{api.param_ingredient_id: tc_ingredient1.get_id(),
+                                         api.param_ingredient_quantity: 1,
+                                         api.param_ingredient_unit: "qa_rhr_unit1",
+                                         "invalid": "invalid"},
+                                        {api.param_ingredient_id: tc_ingredient2.get_id(),
+                                         api.param_ingredient_quantity: 2,
+                                         api.param_ingredient_unit: "qa_rhr_unit2"}],
+                api.param_level: 2,
+                api.param_nb_people: 4,
+                api.param_note: "note_ex",
+                api.param_preparation_time: 8,
+                api.param_resume: "resume_ex",
+                api.param_slug: "slug",
+                api.param_status: "in_progress",
+                api.param_steps: ["description_ex1", "description_ex2"],
+                api.param_title: "qa_rhr_title",
                 "invalid": "invalid"}
         """ call api """
         url = server.main_url + "/" + api.url
@@ -82,12 +86,11 @@ class PostRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 201)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
-        #data_check = api.json_check(data=response_body["data"], data_expected=tc_recipe)
-        #self.assertTrue(data_check["result"], data_check["error"])
-        self.assertTrue(False, "schema tbd")
+        data_check = api.json_check(data=response_body["data"], data_expected=tc_recipe)
+        self.assertTrue(data_check["result"], data_check["error"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
-        tc_recipe.custom_id_from_body(data=response_body).check_bdd_data()
+        tc_recipe.custom_id_from_body(data=response_body).check_bdd_data(created=True)
 
     def test_api_url_not_found(self):
         """ Wrong url.

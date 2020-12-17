@@ -145,9 +145,11 @@ class Factory(object):
         try:
             for step in self.body[self.param_steps]:
                 if isinstance(step, str):
-                    formated_steps.append({"_id": ObjectId(), self.param_step_description: step})
+                    formated_steps.append({self.param_step_id: ObjectId(),
+                                           self.param_step_description: step})
                 else:
-                    formated_steps.append(step)
+                    formated_steps.append({self.param_step_id: ObjectId(step[self.param_step_id]),
+                                           self.param_step_description: step[self.param_step_description]})
             self.body[self.param_steps] = formated_steps
         except KeyError:
             pass

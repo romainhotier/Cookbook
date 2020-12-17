@@ -98,17 +98,17 @@ class PostRecipe(object):
 
     @staticmethod
     def clean_value_ingredients(data):
-        """ Add default value if not present.
+        """ Clean ingredients values.
 
         Parameters
         ----------
-        body : dict
+        data : dict
             Body's request.
 
         Returns
         -------
         dict
-            Body filled with default value.
+            Cleaned ingredients parameter.
         """
         try:
             for ingr in data["ingredients"]:
@@ -133,24 +133,62 @@ class PostRecipe(object):
         dict
             Schema.
         """
-        return {"type": "object",
+        schema = {"definitions": {"steps": {
+            "type": "array",
+            "items": {
+                "type": "object",
                 "properties": {
                     "_id": {"type": "string"},
-                    "categories": {"enum": [recipe.categories]},
-                    "cooking_time": {"enum": [recipe.cooking_time]},
-                    "ingredients": {"enum": [recipe.ingredients]},
-                    "level": {"enum": [recipe.level]},
-                    "nb_people": {"enum": [recipe.nb_people]},
-                    "note": {"enum": [recipe.note]},
-                    "preparation_time": {"enum": [recipe.preparation_time]},
-                    "resume": {"enum": [recipe.resume]},
-                    "slug": {"enum": [recipe.slug]},
-                    "steps": {"enum": [[]]},
-                    "status": {"enum": [recipe.status]},
-                    "title": {"enum": [recipe.title]}},
-                "required": ["_id", "categories", "cooking_time",  "ingredients", "level", "nb_people", "note",
-                             "preparation_time", "resume", "slug", "steps", "status", "title"],
-                "additionalProperties": False}
+                    "description": {"type": "string",
+                                    "enum": recipe.steps}},
+                "required": ["_id", "description"],
+                "additionalProperties": False}}},
+
+            "type": "object",
+            "properties": {
+                "_id": {"type": "string"},
+                "categories": {"enum": [recipe.categories]},
+                "cooking_time": {"enum": [recipe.cooking_time]},
+                "ingredients": {"enum": [recipe.ingredients]},
+                "level": {"enum": [recipe.level]},
+                "nb_people": {"enum": [recipe.nb_people]},
+                "note": {"enum": [recipe.note]},
+                "preparation_time": {"enum": [recipe.preparation_time]},
+                "resume": {"enum": [recipe.resume]},
+                "slug": {"enum": [recipe.slug]},
+                "steps": {"$ref": "#/definitions/steps"},
+                "status": {"enum": [recipe.status]},
+                "title": {"enum": [recipe.title]}},
+            "required": ["_id", "categories", "cooking_time",  "ingredients", "level", "nb_people", "note",
+                         "preparation_time", "resume", "slug", "steps", "status", "title"],
+            "additionalProperties": False}
+        return schema
+
+    def nutriment(self):
+        """ Set nutriment schema for validation.
+        Returns
+        -------
+        dict
+            Nutriment schema.
+        """
+        schema = {"definitions": {"measurement": {
+            "type": "object",
+            "properties": {
+                "quantity": {"type": "number"},
+                "unit": {"type": "string"}},
+            "required": ["quantity", "unit"],
+            "additionalProperties": False}},
+
+            "type": "object",
+            "properties": {
+                "calories_per_100g": {"$ref": "#/definitions/measurement"},
+                "carbohydrates_per_100g": {"$ref": "#/definitions/measurement"},
+                "fats_per_100g": {"$ref": "#/definitions/measurement"},
+                "proteins_per_100g": {"$ref": "#/definitions/measurement"}},
+            "required": ["calories_per_100g", "carbohydrates_per_100g", "fats_per_100g", "proteins_per_100g"],
+            "additionalProperties": False}
+        self.__setattr__("schema", schema)
+
 
     def json_check(self, data, data_expected):
         """ Format schema's response.
