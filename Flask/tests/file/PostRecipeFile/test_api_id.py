@@ -21,82 +21,19 @@ class PostRecipeFile(unittest.TestCase):
         recipe.clean()
         file.clean()
 
-    def test_api_ok(self):
-        """ Default case
-
-        Return
-            201 - RecipeTest and FileTests.
-        """
-        """ env """
-        tc_recipe = recipe_model.RecipeTest().insert()
-        """ param """
-        tc_id = tc_recipe.get_id()
-        body = {api.param_path: file_path,
-                api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False}
-        """ call api """
-        url = server.main_url + "/" + api.url + "/" + tc_id
-        response = requests.post(url, json=body, verify=False)
-        response_body = response.json()
-        """ change """
-        new_id = api.return_new_file_id(response_body)
-        tc_file = tc_recipe.add_file_recipe(filename=body[api.param_filename], is_main=body[api.param_is_main],
-                                            identifier=new_id)
-        """ assert """
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.headers["Content-Type"], "application/json")
-        self.assertEqual(response_body["codeStatus"], 201)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
-        self.assertEqual(response_body["data"], api.data_expected(new_id=new_id))
-        """ check file """
-        tc_file.check_bdd_data()
-
-    def test_api_ok_more_param(self):
-        """ Default case with more parameter.
-
-        Return
-            201 - RecipeTest and FileTests.
-        """
-        """ env """
-        tc_recipe = recipe_model.RecipeTest().insert()
-        """ param """
-        tc_id = tc_recipe.get_id()
-        body = {api.param_path: file_path,
-                api.param_filename: "qa_rhr_filename",
-                api.param_is_main: False,
-                "invalid": "invalid"}
-        """ call api """
-        url = server.main_url + "/" + api.url + "/" + tc_id
-        response = requests.post(url, json=body, verify=False)
-        response_body = response.json()
-        """ change """
-        new_id = api.return_new_file_id(response_body)
-        tc_file = tc_recipe.add_file_recipe(filename=body[api.param_filename], is_main=body[api.param_is_main],
-                                            identifier=new_id)
-        """ assert """
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.headers["Content-Type"], "application/json")
-        self.assertEqual(response_body["codeStatus"], 201)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
-        self.assertEqual(response_body["data"], api.data_expected(new_id=new_id))
-        """ check file """
-        tc_file.check_bdd_data()
-
-    def test_api_url_not_found(self):
-        """ Wrong url.
+    def test_2_id_without(self):
+        """ QueryParameter _id is missing.
 
         Return
             404 - Url not found.
         """
-        """ env """
-        tc_recipe = recipe_model.RecipeTest().insert()
         """ param """
-        tc_id = tc_recipe.get_id()
+        tc_id = ""
         body = {api.param_path: file_path,
                 api.param_filename: "qa_rhr_filename",
                 api.param_is_main: False}
         """ call api """
-        url = server.main_url + "/" + api.url + "x/" + tc_id
+        url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ assert """
@@ -106,6 +43,58 @@ class PostRecipeFile(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
         self.assertEqual(response_body["detail"], server.detail_url_not_found)
+        """ check file """
+        file_model.FileTest().custom_id_from_body(data=body).check_doesnt_exist_by_filename()
+
+    def test_2_id_string(self):
+        """ QueryParameter _id is a string.
+
+        Return
+            400 - Bad request.
+        """
+        """ param """
+        tc_id = "invalid"
+        body = {api.param_path: file_path,
+                api.param_filename: "qa_rhr_filename",
+                api.param_is_main: False}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.post(url, json=body, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_id, msg=server.detail_must_be_an_object_id, value=tc_id)
+        self.assertEqual(response_body["detail"], detail)
+        """ check file """
+        file_model.FileTest().custom_id_from_body(data=body).check_doesnt_exist_by_filename()
+
+    def test_id_object_id_invalid(self):
+        """ QueryParameter _id is a nok ObjectId.
+
+        Return
+            400 - Bad request.
+        """
+        """ param """
+        tc_id = "aaaaaaaaaaaaaaaaaaaaaaaa"
+        body = {api.param_path: file_path,
+                api.param_filename: "qa_rhr_filename",
+                api.param_is_main: False}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.post(url, json=body, verify=False)
+        response_body = response.json()
+        """ assert """
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_id, msg=server.detail_doesnot_exist, value=tc_id)
+        self.assertEqual(response_body["detail"], detail)
         """ check file """
         file_model.FileTest().custom_id_from_body(data=body).check_doesnt_exist_by_filename()
 

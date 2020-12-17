@@ -16,7 +16,7 @@ class GetFile(unittest.TestCase):
         """ Clean all FileTest """
         file.clean()
 
-    def test_0_api_ok(self):
+    def test_api_ok(self):
         """ Default case
 
         Return
@@ -34,7 +34,7 @@ class GetFile(unittest.TestCase):
         self.assertIn('text/plain', response.headers["Content-Type"])
         self.assertEqual(response.text, tc_file.get_data())
 
-    def test_1_url_not_found(self):
+    def test_api_url_not_found(self):
         """ Wrong url.
 
         Return
@@ -55,74 +55,6 @@ class GetFile(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
         self.assertEqual(response_body["detail"], server.detail_url_not_found)
-
-    def test_2_id_without(self):
-        """ QueryParameter _id missing.
-
-        Return
-            404 - Url not found.
-        """
-        """ env """
-        file_model.FileTest().insert()
-        """ param """
-        tc_id = ""
-        """ call api """
-        url = server.main_url + "/" + api.url + "/" + tc_id
-        response = requests.get(url, verify=False)
-        response_body = response.json()
-        """ assert """
-        self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.headers["Content-Type"], "application/json")
-        self.assertEqual(response_body["codeStatus"], 404)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        self.assertEqual(response_body["detail"], server.detail_url_not_found)
-
-    def test_2_id_string(self):
-        """ QueryParameter _id is a string.
-
-        Return
-            400 - Bad request.
-        """
-        """ env """
-        file_model.FileTest().insert()
-        """ param """
-        tc_id = "invalid"
-        """ call api """
-        url = server.main_url + "/" + api.url + "/" + tc_id
-        response = requests.get(url, verify=False)
-        response_body = response.json()
-        """ assert """
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], "application/json")
-        self.assertEqual(response_body["codeStatus"], 400)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_id, msg=server.detail_must_be_an_object_id, value=tc_id)
-        self.assertEqual(response_body["detail"], detail)
-
-    def test_2_id_object_id_invalid(self):
-        """ QueryParameter _id is a nok ObjectId.
-
-        Return
-            400 - Bad request.
-        """
-        """ env """
-        file_model.FileTest().insert()
-        """ param """
-        tc_id = "aaaaaaaaaaaaaaaaaaaaaaaa"
-        """ call api """
-        url = server.main_url + "/" + api.url + "/" + tc_id
-        response = requests.get(url, verify=False)
-        response_body = response.json()
-        """ assert """
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.headers["Content-Type"], "application/json")
-        self.assertEqual(response_body["codeStatus"], 400)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_id, msg=server.detail_doesnot_exist, value=tc_id)
-        self.assertEqual(response_body["detail"], detail)
 
     @classmethod
     def tearDownClass(cls):

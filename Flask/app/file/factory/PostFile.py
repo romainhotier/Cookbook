@@ -6,9 +6,9 @@ class Factory(object):
         self.param_id = "_id"
         self.param_id_recipe = "_id_recipe"
         self.param_id_step = "_id_step"
-        self.param_path = "path"
-        self.param_filename = "filename"
         self.param_is_main = "is_main"
+        self.param_filename = "filename"
+        self.param_path = "path"
         self.body = {}
 
     def get_body_param(self):
@@ -19,7 +19,7 @@ class Factory(object):
         list
             Body parameters.
         """
-        return [self.param_path, self.param_filename, self.param_is_main]
+        return [self.param_is_main, self.param_filename, self.param_path]
 
     def clean_body(self, data):
         """ Remove keys that are not in PostFile's parameters.

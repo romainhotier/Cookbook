@@ -130,6 +130,22 @@ class FileTest(object):
         self.metadata["is_main"] = is_main
         return self
 
+    def custom_id_from_body(self, data):
+        """ Update FileTest's filename from PostIngredientFile's body.
+
+        Parameters
+        ----------
+        data : dict
+            PostIngredientFile's body.
+
+        Returns
+        -------
+        FileTest
+            Self
+        """
+        self.__setattr__("filename", data["filename"])
+        return self
+
     def check_exist_by_id(self):
         """ Check if FileTest exist by ObjectId.
         """
@@ -138,7 +154,7 @@ class FileTest(object):
         client.close()
         assert fs.exists(_id=ObjectId(self._id))
 
-    def select_ok(self):
+    def check_bdd_data(self):
         """ Check if FileTest.
         """
         client = MongoClient(mongo.ip, mongo.port)

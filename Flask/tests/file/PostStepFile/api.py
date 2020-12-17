@@ -14,9 +14,9 @@ class PostStepFile(object):
         self.url2 = 'step'
         self.param_id_recipe = "_id_recipe"
         self.param_id_step = "_id_step"
-        self.param_path = "path"
-        self.param_filename = "filename"
         self.param_is_main = "is_main"
+        self.param_filename = "filename"
+        self.param_path = "path"
         self.rep_code_msg_created = utils.Server().rep_code_msg_created.replace("xxx", "file")
         self.rep_code_msg_error_400 = utils.Server().rep_code_msg_error_400.replace("xxx", "file")
         self.rep_code_msg_error_404_url = utils.Server().rep_code_msg_error_404.replace("xxx", "cookbook")
@@ -65,33 +65,8 @@ class PostStepFile(object):
             return True
 
     @staticmethod
-    def data_expected(recipe, files, index):
+    def data_expected(new_id):
         """ Format data's response.
-
-        Parameters
-        ----------
-        recipe : Any
-            RecipeTest.
-        files : Array
-            FileTests.
-        index : int
-            Step's position.
-
-        Returns
-        -------
-        str
-            Data's response.
-        """
-        data_expected = recipe.get_stringify()
-        data_expected["files"] = []
-        for step in data_expected["steps"]:
-            step["files"] = []
-        data_expected["steps"][index]["files"] = [{"_id": f.get_id(), "is_main": f.get_is_main()} for f in files]
-        return data_expected
-
-    @staticmethod
-    def detail_expected(new_id):
-        """ Format detail's response.
 
         Parameters
         ----------
@@ -101,7 +76,7 @@ class PostStepFile(object):
         Returns
         -------
         str
-            Detail's response.
+            Data's response.
         """
         return "added file ObjectId: {0}".format(str(new_id))
 
@@ -119,7 +94,7 @@ class PostStepFile(object):
         str
             File's ObjectId.
         """
-        return ObjectId(response["detail"].split(": ")[1])
+        return ObjectId(response["data"].split(": ")[1])
 
     @staticmethod
     def get_file_path_for_test():

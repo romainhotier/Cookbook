@@ -93,7 +93,7 @@ class Validator(object):
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_mandatory(param=api.param_path, data=data)
+        validator.is_mandatory(name=api.param_path, param=api.param_path, data=data)
         validator.is_string(param=api.param_path, value=data[api.param_path])
         validator.is_string_non_empty(param=api.param_path, value=data[api.param_path])
         validator.is_path_exist(param=api.param_path, value=data[api.param_path])
@@ -114,7 +114,7 @@ class Validator(object):
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_mandatory(param=api.param_filename, data=data)
+        validator.is_mandatory(name=api.param_filename, param=api.param_filename, data=data)
         validator.is_string(param=api.param_filename, value=data[api.param_filename])
         validator.is_string_non_empty(param=api.param_filename, value=data[api.param_filename])
         return True
