@@ -21,9 +21,11 @@ class PostIngredient(object):
         self.param_nutriments_proteins = "proteins"
         self.param_nutriments_portion = "portion"
         self.param_slug = "slug"
+        self.param_unit = "unit"
         self.rep_code_msg_created = server.rep_code_msg_created.replace("xxx", "ingredient")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "ingredient")
         self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
+        self.repf_detail_unit = " ['g', 'ml']"
 
     @staticmethod
     def create_detail(param, msg, **kwargs):
@@ -69,6 +71,8 @@ class PostIngredient(object):
                                   self.param_nutriments_fats: 0,
                                   self.param_nutriments_proteins: 0,
                                   self.param_nutriments_portion: 1}
+        if self.param_unit not in body.keys():
+            data["unit"] = "g"
         return data
 
     @staticmethod
@@ -91,8 +95,9 @@ class PostIngredient(object):
                     "categories": {"enum": [ingredient.categories]},
                     "name": {"enum": [ingredient.name]},
                     "nutriments": {"enum": [ingredient.nutriments]},
-                    "slug": {"enum": [ingredient.slug]}},
-                "required": ["_id", "categories", "name", "nutriments", "slug"],
+                    "slug": {"enum": [ingredient.slug]},
+                    "unit": {"enum": [ingredient.unit]}},
+                "required": ["_id", "categories", "name", "nutriments", "slug", "unit"],
                 "additionalProperties": False}
 
     def json_check(self, data, data_expected):

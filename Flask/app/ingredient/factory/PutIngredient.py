@@ -13,6 +13,7 @@ class Factory(object):
         self.param_nutriments_proteins = "proteins"
         self.param_nutriments_portion = "portion"
         self.param_slug = "slug"
+        self.param_unit = "unit"
         self.body = {}
 
     def get_body_param(self):
@@ -23,7 +24,7 @@ class Factory(object):
         list
             Body parameters.
         """
-        return [self.param_categories, self.param_name, self.param_nutriments, self.param_slug]
+        return [self.param_categories, self.param_name, self.param_nutriments, self.param_slug, self.param_unit]
 
     def get_nutriments_param(self):
         """ Get PutIngredient's nutriments parameters.

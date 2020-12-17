@@ -35,6 +35,7 @@ class IngredientTest(object):
                            "fats": 10,
                            "proteins": 30,
                            "portion": 1}
+        self.unit = "g"
 
     def display(self):
         """ Print IngredientTest model.

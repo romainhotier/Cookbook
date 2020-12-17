@@ -22,6 +22,7 @@ class Ingredient(object):
         - nutriments.proteins = Ingredient's proteins
         - nutriments.portion  = nutriments' portion
         - slug = Ingredient's slug (Unique)
+        - unit = Ingredient's unit (Unique)
         """
         self.result = {}
 

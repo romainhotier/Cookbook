@@ -46,6 +46,7 @@ class Validator(object):
         self.is_name_valid(data=data)
         self.is_nutriments_valid(data=data)
         self.is_slug_valid(data=data)
+        self.is_unit_valid(data=data)
         return True
 
     # use in is_body_valid
@@ -239,4 +240,24 @@ class Validator(object):
             validator.is_string(param=api.param_slug, value=data[api.param_slug])
             validator.is_string_non_empty(param=api.param_slug, value=data[api.param_slug])
             validator.is_unique_ingredient(param=api.param_slug, value=data[api.param_slug])
+        return True
+
+    # use in is_body_valid
+    @staticmethod
+    def is_unit_valid(data):
+        """ Check if unit is correct if specified.
+
+        Parameters
+        ----------
+        data : dict
+            PutIngredient's body.
+
+        Returns
+        -------
+        Any
+            Response server if validation failed, True otherwise.
+        """
+        if api.param_unit in data:
+            validator.is_string(param=api.param_unit, value=data[api.param_unit])
+            validator.is_in(param=api.param_unit, value=data[api.param_unit], values=["g", "ml"])
         return True

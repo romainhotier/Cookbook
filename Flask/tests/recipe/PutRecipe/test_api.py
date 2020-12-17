@@ -140,8 +140,7 @@ class PutRecipe(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        #cls.setUp(PutRecipe())
-        pass
+        cls.setUp(PutRecipe())
 
 
 if __name__ == '__main__':
