@@ -12,16 +12,22 @@ class PostRecipe(object):
 
     def __init__(self):
         self.url = 'recipe'
-        self.param_title = "title"
-        self.param_slug = "slug"
-        self.param_level = "level"
-        self.param_resume = "resume"
+        self.param_categories = "categories"
         self.param_cooking_time = "cooking_time"
-        self.param_preparation_time = "preparation_time"
+        self.param_ingredients = "ingredients"
+        self.param_ingredient = "ingredient"
+        self.param_ingredient_id = "_id"
+        self.param_ingredient_quantity = "quantity"
+        self.param_ingredient_unit = "unit"
+        self.param_level = "level"
         self.param_nb_people = "nb_people"
         self.param_note = "note"
-        self.param_categories = "categories"
+        self.param_preparation_time = "preparation_time"
+        self.param_resume = "resume"
+        self.param_slug = "slug"
         self.param_status = "status"
+        self.param_steps = "steps"
+        self.param_title = "title"
         self.rep_detail_status = " ['in_progress', 'finished']"
         self.rep_code_msg_created = server.rep_code_msg_created.replace("xxx", "recipe")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "recipe")
@@ -51,7 +57,7 @@ class PostRecipe(object):
             detail["value"] = kwargs["value"]
         return detail
 
-    def default_value(self, body):
+    def add_default_value(self, body):
         """ Add default value if not present.
 
         Parameters
@@ -64,25 +70,54 @@ class PostRecipe(object):
         dict
             Body filled with default value.
         """
-        default_value = copy.deepcopy(body)
-        if self.param_categories not in default_value.keys():
-            default_value["categories"] = []
-        if self.param_cooking_time not in default_value.keys():
-            default_value["cooking_time"] = 0
-        if self.param_level not in default_value.keys():
-            default_value["level"] = 0
-        if self.param_nb_people not in default_value.keys():
-            default_value["nb_people"] = 0
-        if self.param_note not in default_value.keys():
-            default_value["note"] = ""
-        if self.param_preparation_time not in default_value.keys():
-            default_value["preparation_time"] = 0
-        if self.param_resume not in default_value.keys():
-            default_value["resume"] = ""
-        if self.param_status not in default_value.keys():
-            default_value["status"] = "in_progress"
-        default_value["steps"] = []
-        return default_value
+        """ fill body """
+        filled_body = copy.deepcopy(body)
+        if self.param_categories not in filled_body:
+            filled_body["categories"] = []
+        if self.param_cooking_time not in filled_body:
+            filled_body["cooking_time"] = 0
+        if self.param_ingredients not in filled_body:
+            filled_body["ingredients"] = []
+        if self.param_level not in filled_body:
+            filled_body["level"] = 0
+        if self.param_nb_people not in filled_body:
+            filled_body["nb_people"] = 0
+        if self.param_note not in filled_body:
+            filled_body["note"] = ""
+        if self.param_preparation_time not in filled_body:
+            filled_body["preparation_time"] = 0
+        if self.param_resume not in filled_body:
+            filled_body["resume"] = ""
+        if self.param_status not in filled_body:
+            filled_body["status"] = "in_progress"
+        if self.param_steps not in filled_body:
+            filled_body["steps"] = []
+        """ clean value for ingredients param """
+        cleaned_ingredient = self.clean_value_ingredients(filled_body)
+        return cleaned_ingredient
+
+    @staticmethod
+    def clean_value_ingredients(data):
+        """ Clean ingredients values.
+
+        Parameters
+        ----------
+        data : dict
+            Body's request.
+
+        Returns
+        -------
+        dict
+            Cleaned ingredients parameter.
+        """
+        try:
+            for ingr in data["ingredients"]:
+                for key in list(ingr):
+                    if key not in ["_id", "quantity", "unit"]:
+                        ingr.pop(key)
+            return data
+        except (TypeError, AttributeError):
+            return data
 
     @staticmethod
     def create_schema(recipe):
@@ -98,23 +133,62 @@ class PostRecipe(object):
         dict
             Schema.
         """
-        return {"type": "object",
+        schema = {"definitions": {"steps": {
+            "type": "array",
+            "items": {
+                "type": "object",
                 "properties": {
                     "_id": {"type": "string"},
-                    "categories": {"enum": [recipe.categories]},
-                    "cooking_time": {"enum": [recipe.cooking_time]},
-                    "level": {"enum": [recipe.level]},
-                    "nb_people": {"enum": [recipe.nb_people]},
-                    "note": {"enum": [recipe.note]},
-                    "preparation_time": {"enum": [recipe.preparation_time]},
-                    "resume": {"enum": [recipe.resume]},
-                    "slug": {"enum": [recipe.slug]},
-                    "steps": {"enum": [[]]},
-                    "title": {"enum": [recipe.title]},
-                    "status": {"enum": [recipe.status]}},
-                "required": ["_id", "categories", "cooking_time", "level", "nb_people", "note", "preparation_time",
-                             "resume", "slug", "steps", "title", "status"],
-                "additionalProperties": False}
+                    "description": {"type": "string",
+                                    "enum": recipe.steps}},
+                "required": ["_id", "description"],
+                "additionalProperties": False}}},
+
+            "type": "object",
+            "properties": {
+                "_id": {"type": "string"},
+                "categories": {"enum": [recipe.categories]},
+                "cooking_time": {"enum": [recipe.cooking_time]},
+                "ingredients": {"enum": [recipe.ingredients]},
+                "level": {"enum": [recipe.level]},
+                "nb_people": {"enum": [recipe.nb_people]},
+                "note": {"enum": [recipe.note]},
+                "preparation_time": {"enum": [recipe.preparation_time]},
+                "resume": {"enum": [recipe.resume]},
+                "slug": {"enum": [recipe.slug]},
+                "steps": {"$ref": "#/definitions/steps"},
+                "status": {"enum": [recipe.status]},
+                "title": {"enum": [recipe.title]}},
+            "required": ["_id", "categories", "cooking_time",  "ingredients", "level", "nb_people", "note",
+                         "preparation_time", "resume", "slug", "steps", "status", "title"],
+            "additionalProperties": False}
+        return schema
+
+    def nutriment(self):
+        """ Set nutriment schema for validation.
+        Returns
+        -------
+        dict
+            Nutriment schema.
+        """
+        schema = {"definitions": {"measurement": {
+            "type": "object",
+            "properties": {
+                "quantity": {"type": "number"},
+                "unit": {"type": "string"}},
+            "required": ["quantity", "unit"],
+            "additionalProperties": False}},
+
+            "type": "object",
+            "properties": {
+                "calories_per_100g": {"$ref": "#/definitions/measurement"},
+                "carbohydrates_per_100g": {"$ref": "#/definitions/measurement"},
+                "fats_per_100g": {"$ref": "#/definitions/measurement"},
+                "proteins_per_100g": {"$ref": "#/definitions/measurement"}},
+            "required": ["calories_per_100g", "carbohydrates_per_100g", "fats_per_100g", "proteins_per_100g"],
+            "additionalProperties": False}
+        self.__setattr__("schema", schema)
+
 
     def json_check(self, data, data_expected):
         """ Format schema's response.

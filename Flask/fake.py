@@ -17,3 +17,11 @@ class Fake(unittest.TestCase):
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         print(response_body)
+
+    def test_2(self):
+        url = "http://127.0.0.1:5000/recipe"
+        body = {"title": "qa_rhr_title4",
+                "slug": "slug4"}
+        response = requests.post(url, json=body, verify=False)
+        response_body = response.json()
+        print(response_body)

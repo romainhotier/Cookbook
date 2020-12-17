@@ -19,7 +19,7 @@ class GetMe(unittest.TestCase):
         self.user = kwargs["user"]
         self.headers = kwargs["headers"]
 
-    def test_0_api_ok(self):
+    def test_api_ok(self):
         """ Default case.
 
         Return
@@ -37,7 +37,7 @@ class GetMe(unittest.TestCase):
         self.assertEqual(response_body["data"], api.data_expected(user=self.user))
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
-    def test_0_api_header_deprecated(self):
+    def test_api_header_deprecated(self):
         """ Header is deprecated.
 
         Return
@@ -58,7 +58,7 @@ class GetMe(unittest.TestCase):
         detail = api.create_detail(param="token", msg=server.detail_has_expired)
         self.assertEqual(response_body["detail"], detail)
 
-    def test_0_api_header_nok(self):
+    def test_api_header_nok(self):
         """ Header is nok.
 
         Return
@@ -77,7 +77,7 @@ class GetMe(unittest.TestCase):
         detail = api.create_detail(param="token", msg=server.detail_was_wrong)
         self.assertEqual(response_body["detail"], detail)
 
-    def test_0_api_without_header(self):
+    def test_api_without_header(self):
         """ Header is missing.
 
         Return

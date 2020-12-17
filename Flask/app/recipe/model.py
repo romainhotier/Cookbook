@@ -3,10 +3,8 @@ from bson import ObjectId
 import re
 
 import utils
-import app.file.model as file_model
 
 mongo = utils.Mongo()
-file = file_model.File()
 
 
 class Recipe(object):
@@ -15,17 +13,22 @@ class Recipe(object):
         """ Recipe model.
 
         - _id = ObjectId in mongo
-        - title = Recipe's name (Unique)
-        - slug = Recipe's slug (Unique)
-        - level = Recipe's level (0-3)
-        - resume = Recipe's resume
+        - categories = Recipe's categories
         - cooking_time = Recipe's cooking_time
-        - preparation_time = Recipe's preparation_time
+        - ingredients = Recipe's Ingredients
+        - ingredients._id = Ingredient's ObjectId
+        - ingredients.quantity = Ingredient's quantity
+        - ingredients.unit = Ingredient's unit
+        - level = Recipe's level (0-3)
         - nb_people = Recipe's nb_people
         - note = Recipe's note
-        - steps = Recipe's steps
-        - categories = Recipe's categories
+        - preparation_time = Recipe's preparation_time
+        - resume = Recipe's resume
+        - slug = Recipe's slug (Unique)
         - status = Recipe's status
+        - steps = Recipe's steps
+        - steps.description = Step's description
+        - title = Recipe's name (Unique)
         """
         self.result = {}
 
@@ -34,7 +37,7 @@ class Recipe(object):
 
         Returns
         -------
-        Any
+        Recipe
             List of all Recipes.
         """
         client = MongoClient(mongo.ip, mongo.port)
@@ -45,7 +48,7 @@ class Recipe(object):
         return self
 
     def select_one(self, _id):
-        """ Get one Recipe by it's ObjectId.
+        """ Get one Recipe by it's OjectId.
 
         Parameters
         ----------
@@ -54,7 +57,7 @@ class Recipe(object):
 
         Returns
         -------
-        Any
+        Recipe
             One Recipe.
         """
         client = MongoClient(mongo.ip, mongo.port)
@@ -74,7 +77,7 @@ class Recipe(object):
 
         Returns
         -------
-        Any
+        Recipe
             One Recipe.
         """
         client = MongoClient(mongo.ip, mongo.port)
@@ -94,7 +97,7 @@ class Recipe(object):
 
         Returns
         -------
-        Any
+        Recipe
             List of matched Recipes.
         """
         search = {}
@@ -147,7 +150,7 @@ class Recipe(object):
 
         Returns
         -------
-        Any
+        Recipe
             Inserted Recipe.
         """
         client = MongoClient(mongo.ip, mongo.port)
@@ -170,7 +173,7 @@ class Recipe(object):
 
         Returns
         -------
-        Any
+        Recipe
             Updated Recipe.
         """
         client = MongoClient(mongo.ip, mongo.port)
@@ -196,52 +199,19 @@ class Recipe(object):
         client.close()
         return
 
-    def add_enrichment_file_for_all(self):
-        """ Add Files information for all Recipes.
+    @staticmethod
+    def clean_ingredients_by_id(_id_ingredient):
+        """ Remove Ingredient for Recipes by ObjectId.
 
-        Returns
-        -------
-        Any
-            List of Recipes with Files information.
+        Parameters
+        ----------
+        _id_ingredient : str
+            Ingredient's ObjectId.
         """
-        for recipe in self.result:
-            recipe["files"] = []
-            """ get files for recipe """
-            files_recipe = file.get_all_file_by_id_parent(_id_parent=recipe["_id"]).result
-            for f in files_recipe:
-                file_enrichment = {"_id": str(f["_id"]), "is_main": f["metadata"]["is_main"]}
-                recipe["files"].append(file_enrichment)
-            """ get files for steps """
-            for step in recipe["steps"]:
-                step["files"] = []
-                files_step = file.get_all_file_by_id_parent(_id_parent=step["_id"]).result
-                for f in files_step:
-                    file_enrichment = {"_id": str(f["_id"]), "is_main": f["metadata"]["is_main"]}
-                    step["files"].append(file_enrichment)
-        return self
-
-    def add_enrichment_file_for_one(self):
-        """ Add Files information for one Recipe.
-
-        Returns
-        -------
-        Any
-            One Recipe with Files information.
-        """
-        self.result["files"] = []
-        """ get files for recipe """
-        files_recipe = file.get_all_file_by_id_parent(_id_parent=self.result["_id"]).result
-        for f in files_recipe:
-            file_enrichment = {"_id": str(f["_id"]), "is_main": f["metadata"]["is_main"]}
-            self.result["files"].append(file_enrichment)
-        """ get files for steps """
-        for step in self.result["steps"]:
-            step["files"] = []
-            files_step = file.get_all_file_by_id_parent(_id_parent=step["_id"]).result
-            for f in files_step:
-                file_enrichment = {"_id": str(f["_id"]), "is_main": f["metadata"]["is_main"]}
-                step["files"].append(file_enrichment)
-        return self
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        db.update({}, {'$pull': {"ingredients": {"_id": _id_ingredient}}})
+        client.close()
 
     @staticmethod
     def get_all_step_id(_id_recipe):
@@ -263,211 +233,3 @@ class Recipe(object):
         steps_ids = [step["_id"] for step in result["steps"]]
         client.close()
         return steps_ids
-
-    @staticmethod
-    def get_title_by_id(_id):
-        """ Get Recipe's title associated with a ObjectId.
-
-        Parameters
-        ----------
-        _id : str
-            Recipe's ObjectId.
-
-        Returns
-        -------
-        str
-            Recipe's title.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_recipe]
-        result = db.find_one({"_id": ObjectId(_id)})
-        client.close()
-        return result["title"]
-
-
-class Step(object):
-
-    def __init__(self):
-        """ Step model.
-
-        - _id = ObjectId in mongo
-        - description = Recipe's description
-        """
-        self.result = {}
-
-    @staticmethod
-    def get_steps_length(_id_recipe):
-        """ Get number of Steps for a Recipe.
-
-        Parameters
-        ----------
-        _id_recipe : str
-            Recipe's ObjectId.
-
-        Returns
-        -------
-        int
-            Number of Steps.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_recipe]
-        result = db.find_one({"_id": ObjectId(_id_recipe)})
-        client.close()
-        if result is None:
-            return 0
-        else:
-            steps_length = len(result["steps"])
-            return steps_length
-
-    def insert(self, _id, data):
-        """ Insert a Step for a Recipe.
-
-        Parameters
-        ----------
-        _id : str
-            Recipe's ObjectId.
-        data : dict
-            Step's data.
-
-        Returns
-        -------
-        Any
-            Recipe with Steps.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_recipe]
-        new_step = {"_id": ObjectId(), "description": data["description"]}
-        if "position" in data:
-            position = data["position"]
-            db.update_one({"_id": ObjectId(_id)}, {'$push': {"steps": {"$each": [new_step], "$position": position}}})
-        else:
-            db.update_one({"_id": ObjectId(_id)}, {'$push': {"steps": {"$each": [new_step]}}})
-        client.close()
-        """ return result """
-        self.result = Recipe().select_one(_id=_id).result
-        return self
-
-    def update(self, _id_recipe, _id_step, data):
-        """ Update a Step for a Recipe.
-
-        Parameters
-        ----------
-        _id_recipe : str
-            Recipe's ObjectId.
-        _id_step : str
-            Step's ObjectId.
-        data : dict
-            Step's data.
-
-        Returns
-        -------
-        Any
-            Recipe with Steps.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_recipe]
-        position = Step.get_step_index(_id_recipe=_id_recipe, _id_step=_id_step)
-        db.update_one({"_id": ObjectId(_id_recipe)},
-                      {'$set': {"steps.{0}.description".format(position): data["description"]}})
-        client.close()
-        """ return result """
-        self.result = Recipe().select_one(_id=_id_recipe).result
-        return self
-
-    def update_multi(self, _id, data):
-        """ Update Steps for a Recipe.
-
-        Parameters
-        ----------
-        _id : str
-            Recipe's ObjectId.
-        data : dict
-            Step's data.
-
-        Returns
-        -------
-        Any
-            Recipe with Steps.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_recipe]
-        """ reset """
-        db.update_one({"_id": ObjectId(_id)}, {'$set': {"steps": []}})
-        """ insert """
-        for stp in data["steps"]:
-            new_step = {"_id": ObjectId(), "description": stp["description"]}
-            db.update_one({"_id": ObjectId(_id)}, {'$push': {"steps": {"$each": [new_step]}}})
-        client.close()
-        """ return result """
-        self.result = Recipe().select_one(_id=_id).result
-        return self
-
-    def delete(self, _id_recipe, _id_step):
-        """ Delete a Step for a Recipe.
-
-        Parameters
-        ----------
-        _id_recipe : str
-            Recipe's ObjectId.
-        _id_step : str
-            Step's ObjectId.
-
-        Returns
-        -------
-        Any
-            Recipe with Steps.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_recipe]
-        db.update_one({"_id": ObjectId(_id_recipe)}, {'$pull': {"steps": {"_id": ObjectId(_id_step)}}})
-        client.close()
-        """ return result """
-        self.result = Recipe().select_one(_id=_id_recipe).result
-        return self
-
-    @staticmethod
-    def get_step_index(_id_recipe, _id_step):
-        """ Get position in the list.
-
-        Parameters
-        ----------
-        _id_recipe : str
-            Recipe's ObjectId.
-        _id_step : str
-            Step's ObjectId.
-
-        Returns
-        -------
-        Any
-            Position.
-        """
-        steps = Recipe().select_one(_id=_id_recipe).result["steps"]
-        i = 0
-        for step in steps:
-            if step["_id"] == _id_step:
-                return i
-            else:
-                i += 1
-
-    def add_enrichment_file_for_one(self):
-        """ Add Files information for one Recipe.
-
-        Returns
-        -------
-        Any
-            One Recipe with Files information.
-        """
-        self.result["files"] = []
-        """ get files for recipe """
-        files_recipe = file.get_all_file_by_id_parent(_id_parent=self.result["_id"]).result
-        for f in files_recipe:
-            file_enrichment = {"_id": str(f["_id"]), "is_main": f["metadata"]["is_main"]}
-            self.result["files"].append(file_enrichment)
-        """ get files for steps """
-        for step in self.result["steps"]:
-            step["files"] = []
-            files_step = file.get_all_file_by_id_parent(_id_parent=step["_id"]).result
-            for f in files_step:
-                file_enrichment = {"_id": str(f["_id"]), "is_main": f["metadata"]["is_main"]}
-                step["files"].append(file_enrichment)
-        return self

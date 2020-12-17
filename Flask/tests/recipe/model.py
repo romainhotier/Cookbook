@@ -3,10 +3,10 @@ from bson import ObjectId
 import copy
 import re
 
-
 import utils
 
-import tests.file.model as file_model
+import tests.file.model as filetest_model
+FileTest = filetest_model.FileTest()
 
 mongo = utils.Mongo()
 
@@ -17,37 +17,40 @@ class RecipeTest(object):
         """ RecipeTest model.
 
         - _id = ObjectId in mongo
-        - title = Recipe's name (Unique)
-        - slug = Recipe's slug (Unique)
-        - level = Recipe's level
-        - resume = Recipe's resume
+        - categories = Recipe's categories
         - cooking_time = Recipe's cooking_time
-        - preparation_time = Recipe's preparation_time
+        - ingredients = Recipe's ingredients
+        - level = Recipe's level
         - nb_people = Recipe's nb_people
         - note = Recipe's note
-        - categories = Recipe's categories
-        - steps = Recipe's steps
+        - preparation_time = Recipe's preparation_time
+        - resume = Recipe's resume
+        - slug = Recipe's slug (Unique)
         - status = Recipe's status
+        - steps = Recipe's steps
+        - title = Recipe's name (Unique)
         """
         self._id = ObjectId()
-        self.title = "qa_rhr_title"
-        self.slug = "qa_rhr_slug"
-        self.level = 1
-        self.resume = "qa_rhr_resume"
+        self.categories = ["qa_rhr_category"]
         self.cooking_time = 10
-        self.preparation_time = 5
+        self.ingredients = []
+        self.level = 1
         self.nb_people = 2
         self.note = "qa_rhr_note"
-        self.categories = ["qa_rhr_category"]
-        self.steps = []
+        self.preparation_time = 5
+        self.resume = "qa_rhr_resume"
+        self.slug = "qa_rhr_slug"
         self.status = "in_progress"
+        self.steps = []
+        self.title = "qa_rhr_title"
 
+    """ recipe """
     def display(self):
         """ Print RecipeTest model.
 
         Returns
         -------
-        Any
+        dict
             Display RecipeTest.
         """
         print(self.__dict__)
@@ -82,18 +85,6 @@ class RecipeTest(object):
         """
         return copy.deepcopy(self.__dict__)
 
-    def get_without_id(self):
-        """ Get RecipeTest without _id attribute.
-
-        Returns
-        -------
-        dict
-            Copy of RecipeTest without _id.
-        """
-        data = self.get()
-        data.pop("_id")
-        return data
-
     def get_stringify(self):
         """ Get RecipeTest with ObjectId stringify.
 
@@ -104,26 +95,22 @@ class RecipeTest(object):
         """
         return mongo.to_json(self.get())
 
-    def get_stringify_with_file(self, files_recipe, files_steps):
-        """ Get RecipeTest with ObjectId stringify and files.
+    def insert(self):
+        """ Insert RecipeTest.
 
         Returns
         -------
-        dict
-            Copy of RecipeTest with ObjectId stringify with files.
+        RecipeTest
+            Self
         """
-        data = mongo.to_json(self.get())
-        data["files"] = []
-        for recipe_file in files_recipe:
-            data["files"].append(recipe_file.get_for_enrichment())
-        if len(files_steps) != 0:
-            for i, j in files_steps.items():
-                for step in data["steps"]:
-                    if str(step["_id"]) == i:
-                        step["files"] = []
-                        for step_file in j:
-                            step["files"].append(step_file.get_for_enrichment())
-        return mongo.to_json(data)
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        data = self.get()
+        data.pop("_id")
+        query = db.insert_one(data)
+        client.close()
+        self.__setattr__("_id", query.inserted_id)
+        return self
 
     def custom(self, data):
         """ Update RecipeTest.
@@ -135,7 +122,7 @@ class RecipeTest(object):
 
         Returns
         -------
-        Any
+        RecipeTest
             Self
         """
         for i, j in data.items():
@@ -146,61 +133,20 @@ class RecipeTest(object):
                     self.__setattr__(i, j)
         return self
 
-    def select_ok(self):
-        """ Check if RecipeTest is correct.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_recipe]
-        recipe = db.find_one({"_id": ObjectId(self.get_id())})
-        client.close()
-        assert recipe is not None
-        for value in recipe:
-            if value not in ["_id", "files"]:
-                assert recipe[value] == self.__getattribute__(value)
+    def custom_id_from_body(self, data):
+        """ Update RecipeTest's _id from PostRecipe's body.
 
-    def select_ok_by_title(self):
-        """ Check if RecipeTest is correct by title.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_recipe]
-        recipe = db.find_one({"title": self.title})
-        client.close()
-        assert recipe is not None
-        for value in recipe:
-            if value not in ["_id", "files"]:
-                assert recipe[value] == self.__getattribute__(value)
-
-    def select_nok(self):
-        """ Check if RecipeTest doesn't exist.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_recipe]
-        result = db.count_documents({"_id": ObjectId(self.get_id())})
-        client.close()
-        assert result == 0
-
-    def select_nok_by_title(self):
-        """ Check if RecipeTest doesn't exist by title.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_recipe]
-        result = db.count_documents({"title": self.title})
-        client.close()
-        assert result == 0
-
-    def insert(self):
-        """ Insert RecipeTest.
+        Parameters
+        ----------
+        data : dict
+            PostRecipe's body.
 
         Returns
         -------
-        Any
+        RecipeTest
             Self
         """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_recipe]
-        query = db.insert_one(self.get_without_id())
-        client.close()
-        self.__setattr__("_id", query.inserted_id)
+        self.__setattr__("_id", ObjectId(data["data"]["_id"]))
         return self
 
     def delete(self):
@@ -211,6 +157,63 @@ class RecipeTest(object):
         db.delete_one({"_id": ObjectId(self.get_id())})
         client.close()
         return
+
+    def check_bdd_data(self, **kwargs):
+        """ Check if RecipeTest is correct.
+
+        Parameters
+        ----------
+        kwargs : bool
+            created/updated
+
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        recipe = db.find_one({"_id": ObjectId(self.get_id())})
+        client.close()
+        assert recipe is not None
+        for value in recipe:
+            if value in ["steps"]:
+                if "created" in kwargs:
+                    for i, step in enumerate(recipe["steps"]):
+                        assert step["description"] == self.__getattribute__(value)[i]
+                elif "updated" in kwargs:
+                    for i, step in enumerate(recipe["steps"]):
+                        if isinstance(self.__getattribute__(value)[i], str):  # if it's and updated step
+                            assert step["description"] == self.__getattribute__(value)[i]
+                        else:
+                            assert mongo.to_json(step) == self.__getattribute__(value)[i]
+                else:
+                    assert recipe[value] == self.__getattribute__(value)
+            elif value not in ["_id"]:
+                assert recipe[value] == self.__getattribute__(value)
+
+    def check_doesnt_exist_by_id(self):
+        """ Check if RecipeTest doesn't exist.
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        result = db.count_documents({"_id": ObjectId(self.get_id())})
+        client.close()
+        assert result == 0
+
+    def check_doesnt_exist_by_title(self):
+        """ Check if RecipeTest doesn't exist by title.
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        result = db.count_documents({"title": self.title})
+        client.close()
+        assert result == 0
+
+    def check_doesnt_exist_by_slug(self):
+        """ Check if RecipeTest doesn't exist by slug.
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        result = db.count_documents({"slug": self.slug})
+        client.close()
+        assert result == 0
 
     @staticmethod
     def clean():
@@ -224,6 +227,7 @@ class RecipeTest(object):
         client.close()
         return
 
+    """ steps """
     def add_step(self, _id_step, description):
         """ Insert a Step.
 
@@ -258,6 +262,47 @@ class RecipeTest(object):
         """
         del self.steps[position]
 
+    """ ingredients """
+    def add_ingredient(self, _id, quantity, unit):
+        """ Add a IngredientTest to RecipeTest.
+
+        Parameters
+        ----------
+        _id : str
+            IngredientTest's ObjectId.
+        quantity : int
+            IngredientTest's quantity.
+        unit : str
+            IngredientTest's unit
+
+        Returns
+        -------
+        RecipeTest
+            RecipeTest.
+        """
+        self.ingredients.append({"_id": _id, "quantity": quantity, "unit": unit})
+        return self
+
+    def delete_ingredient(self, _id):
+        """ Delete a IngredientTest to RecipeTest.
+
+        Parameters
+        ----------
+        _id : str
+            IngredientTest's ObjectId.
+
+        Returns
+        -------
+        RecipeTest
+            RecipeTest.
+        """
+        for ingredient in self.ingredients:
+            if ingredient["_id"] == _id:
+                self.ingredients.remove(ingredient)
+                break
+        return self
+
+    """ files """
     def add_file_recipe(self, filename, is_main, **kwargs):
         """ Add a file to RecipeTest.
 
@@ -272,13 +317,13 @@ class RecipeTest(object):
 
         Returns
         -------
-        Any
+        FileTest
             FileTest added.
         """
-        file = file_model.FileTest().custom({"filename": filename,
-                                             "metadata": {"kind": "recipe",
-                                                          "_id_parent": ObjectId(self._id),
-                                                          "is_main": is_main}}).insert()
+        file = filetest_model.FileTest().custom({"filename": filename,
+                                                 "metadata": {"kind": "recipe",
+                                                              "_id_parent": ObjectId(self._id),
+                                                              "is_main": is_main}}).insert()
         if "identifier" in kwargs.keys():
             file.custom({"_id": kwargs["identifier"]})
         return file
@@ -300,13 +345,13 @@ class RecipeTest(object):
 
         Returns
         -------
-        Any
+        FileTest
             FileTest added.
         """
-        file = file_model.FileTest().custom({"filename": filename,
-                                             "metadata": {"kind": "step",
-                                                          "_id_parent": ObjectId(_id_step),
-                                                          "is_main": is_main}}).insert()
+        file = filetest_model.FileTest().custom({"filename": filename,
+                                                 "metadata": {"kind": "step",
+                                                              "_id_parent": ObjectId(_id_step),
+                                                              "is_main": is_main}}).insert()
         if "identifier" in kwargs.keys():
             file.custom({"_id": kwargs["identifier"]})
         return file

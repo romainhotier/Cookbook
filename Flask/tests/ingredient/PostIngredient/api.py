@@ -12,15 +12,15 @@ class PostIngredient(object):
 
     def __init__(self):
         self.url = 'ingredient'
-        self.param_name = "name"
-        self.param_slug = "slug"
         self.param_categories = "categories"
+        self.param_name = "name"
         self.param_nutriments = "nutriments"
-        self.param_calories = "calories"
-        self.param_carbohydrates = "carbohydrates"
-        self.param_fats = "fats"
-        self.param_proteins = "proteins"
-        self.param_info = "info"
+        self.param_nutriments_calories = "calories"
+        self.param_nutriments_carbohydrates = "carbohydrates"
+        self.param_nutriments_fats = "fats"
+        self.param_nutriments_proteins = "proteins"
+        self.param_nutriments_portion = "portion"
+        self.param_slug = "slug"
         self.rep_code_msg_created = server.rep_code_msg_created.replace("xxx", "ingredient")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "ingredient")
         self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
@@ -64,11 +64,11 @@ class PostIngredient(object):
         if self.param_categories not in body.keys():
             data["categories"] = []
         if self.param_nutriments not in body.keys():
-            data["nutriments"] = {self.param_calories: 0,
-                                  self.param_carbohydrates: 0,
-                                  self.param_fats: 0,
-                                  self.param_proteins: 0,
-                                  self.param_info: "per 100g"}
+            data["nutriments"] = {self.param_nutriments_calories: 0,
+                                  self.param_nutriments_carbohydrates: 0,
+                                  self.param_nutriments_fats: 0,
+                                  self.param_nutriments_proteins: 0,
+                                  self.param_nutriments_portion: 1}
         return data
 
     @staticmethod
@@ -88,11 +88,11 @@ class PostIngredient(object):
         return {"type": "object",
                 "properties": {
                     "_id": {"type": "string"},
-                    "name": {"enum": [ingredient.name]},
-                    "slug": {"enum": [ingredient.slug]},
                     "categories": {"enum": [ingredient.categories]},
-                    "nutriments": {"enum": [ingredient.nutriments]}},
-                "required": ["_id", "name", "slug", "categories", "nutriments"],
+                    "name": {"enum": [ingredient.name]},
+                    "nutriments": {"enum": [ingredient.nutriments]},
+                    "slug": {"enum": [ingredient.slug]}},
+                "required": ["_id", "categories", "name", "nutriments", "slug"],
                 "additionalProperties": False}
 
     def json_check(self, data, data_expected):

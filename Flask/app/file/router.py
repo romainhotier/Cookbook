@@ -107,10 +107,7 @@ def post_ingredient_file(_id):
     {
         'codeMsg': 'cookbook.file.success.created',
         'codeStatus': 201,
-        'data': {'_id': '5e622b52c49ed1e0df987e55',
-                'name': 'qa_rhr',
-                'files': [{'_id': '5e622b537aa097121df95d93', 'is_main': False}]},
-        'detail': 'added file ObjectId: 5e622b537aa097121df95d93'
+        'data': 'added file ObjectId: 5e622b537aa097121df95d93'
     }
 
     @apiErrorExample {json} Error response:
@@ -132,9 +129,8 @@ def post_ingredient_file(_id):
     """ insert file """
     inserted_id = file.insert(kind="ingredient", _id_parent=_id, metadata=body_filled)
     """ return response """
-    data = ingredient.select_one(_id=_id).add_enrichment_file_for_one()
-    detail = api.detail_information(_id_file=inserted_id)
-    return server.return_response(data=data.result, api=apis.name, http_code=201, detail=detail)
+    data = api.detail_information(_id_file=inserted_id)
+    return server.return_response(data=data, api=apis.name, http_code=201)
 
 
 @apis.route('/recipe/<_id>', methods=['POST'])
@@ -162,11 +158,7 @@ def post_recipe_file(_id):
     {
         'codeMsg': 'cookbook.file.success.created',
         'codeStatus': 201,
-        'data': {'_id': '5e67a99745378d7c10124235', 'cooking_time': 0,
-                 'files': [{'_id': '5e67a997ed11fd9361b2e374', 'is_main': False}], 'level': 0, 'nb_people': 0,
-                 'note': '', 'preparation_time': 0, 'resume': '', 'steps': [], 'title': 'qa_rhr', 'slug': 'x',
-                 'categories': []},
-        'detail': 'added file ObjectId: 5e67a997ed11fd9361b2e374'
+        'data': 'added file ObjectId: 5e67a997ed11fd9361b2e374'
     }
 
     @apiErrorExample {json} Error response:
@@ -188,9 +180,8 @@ def post_recipe_file(_id):
     """ insert file """
     inserted_id = file.insert(kind="recipe", _id_parent=_id, metadata=body_filled)
     """ return response """
-    data = recipe.select_one(_id=_id).add_enrichment_file_for_one()
-    detail = api.detail_information(_id_file=inserted_id)
-    return server.return_response(data=data.result, api=apis.name, http_code=201, detail=detail)
+    data = api.detail_information(_id_file=inserted_id)
+    return server.return_response(data=data, api=apis.name, http_code=201)
 
 
 @apis.route('/recipe/<_id_recipe>/step/<_id_step>', methods=['POST'])
@@ -219,12 +210,7 @@ def post_step_file(_id_recipe, _id_step):
     {
         'codeMsg': 'cookbook.file.success.created',
         'codeStatus': 201,
-        'data': {'_id': '5e6a4223e664b60da7cd8626', 'cooking_time': 0, 'files': [], 'level': 0, 'nb_people': 0,
-                 'note': '', 'preparation_time': 0, 'resume': '',
-                 'steps': [{'_id': '111111111111111111111111', 'files': [{'_id': '5e6a42237e59e8439a883d99',
-                 'is_main': False}], 'description': 'a'}, {'_id': '222222222222222222222222', 'files': [],
-                 'description': 'b'}], 'title': 'qa_rhr', 'slug': 'x', 'categories': []},
-        'detail': 'added file ObjectId: 5e6a42237e59e8439a883d99'
+        'data': 'added file ObjectId: 5e6a42237e59e8439a883d99'
     }
 
     @apiErrorExample {json} Error response:
@@ -247,9 +233,8 @@ def post_step_file(_id_recipe, _id_step):
     """ insert file """
     inserted_id = file.insert(kind="step", _id_parent=_id_step, metadata=body_filled)
     """ return response """
-    data = recipe.select_one(_id=_id_recipe).add_enrichment_file_for_one()
-    detail = api.detail_information(_id_file=inserted_id)
-    return server.return_response(data=data.result, api=apis.name, http_code=201, detail=detail)
+    data = api.detail_information(_id_file=inserted_id)
+    return server.return_response(data=data, api=apis.name, http_code=201)
 
 
 @apis.route('/is_main/<_id>', methods=['PUT'])

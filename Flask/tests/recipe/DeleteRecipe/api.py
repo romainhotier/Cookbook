@@ -38,6 +38,22 @@ class DeleteRecipe(object):
         return detail
 
     @staticmethod
+    def data_expected(_id):
+        """ Format data's response.
+
+        Parameters
+        ----------
+        _id : str
+           RecipeTest's ObjectId.
+
+        Returns
+        -------
+        str
+            Data's response.
+        """
+        return "Deleted Recipe: {}".format(_id)
+
+    @staticmethod
     def check_not_present(value, rep):
         """ Check if data/detail is not present in Server's response.
 

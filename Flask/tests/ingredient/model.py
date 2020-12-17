@@ -7,7 +7,8 @@ import utils
 import app.ingredient.model as ingredient_model
 import app.recipe.model as recipe_model
 
-import tests.file.model as file_model
+import tests.file.model as filetest_model
+FileTest = filetest_model.FileTest()
 
 mongo = utils.Mongo()
 ingredient = ingredient_model.Ingredient()
@@ -20,10 +21,10 @@ class IngredientTest(object):
         """ IngredientTest model.
 
         - _id = ObjectId in mongo
-        - name = Ingredient's name (Unique)
-        - slug = Ingredient's slug (Unique)
         - categories = Ingredient's categories
+        - name = Ingredient's name (Unique)
         - nutriments = Ingredient's nutriments
+        - slug = Ingredient's slug (Unique)
         """
         self._id = ObjectId()
         self.name = "qa_rhr_name"
@@ -33,7 +34,7 @@ class IngredientTest(object):
                            "carbohydrates": 40,
                            "fats": 10,
                            "proteins": 30,
-                           "info": "per 100g"}
+                           "portion": 1}
 
     def display(self):
         """ Print IngredientTest model.
@@ -75,18 +76,6 @@ class IngredientTest(object):
         """
         return copy.deepcopy(self.__dict__)
 
-    def get_without_id(self):
-        """ Get IngredientTest without _id attribute.
-
-        Returns
-        -------
-        dict
-            Copy of IngredientTest without _id.
-        """
-        data = self.get()
-        data.pop("_id")
-        return data
-
     def get_stringify(self):
         """ Get IngredientTest with ObjectId stringify.
 
@@ -97,17 +86,22 @@ class IngredientTest(object):
         """
         return mongo.to_json(self.get())
 
-    def get_stringify_with_files(self, files):
-        """ Get IngredientTest with ObjectId stringify and files.
+    def insert(self):
+        """ Insert IngredientTest.
 
         Returns
         -------
-        dict
-            Copy of IngredientTest with ObjectId stringify with files.
+        IngredientTest
+            Self
         """
-        data = mongo.to_json(self.get())
-        data["files"] = [file.get_for_enrichment() for file in files]
-        return mongo.to_json(data)
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_ingredient]
+        data = self.get()
+        data.pop("_id")
+        query = db.insert_one(data)
+        client.close()
+        self.__setattr__("_id", query.inserted_id)
+        return self
 
     def custom(self, data):
         """ Update IngredientTest.
@@ -119,7 +113,7 @@ class IngredientTest(object):
 
         Returns
         -------
-        Any
+        IngredientTest
             Self
         """
         for i, j in data.items():
@@ -129,7 +123,7 @@ class IngredientTest(object):
                 if i == "nutriments":
                     try:
                         for k, v in data[i].items():
-                            if k in ["calories", "carbohydrates", "fats", "proteins", "info"]:
+                            if k in ["calories", "carbohydrates", "fats", "proteins", "portion"]:
                                 self.nutriments[k] = v
                     except AttributeError:
                         pass
@@ -137,7 +131,32 @@ class IngredientTest(object):
                     self.__setattr__(i, j)
         return self
 
-    def select_ok(self):
+    def custom_id_from_body(self, data):
+        """ Update IngredientTest's _id from PostIngredient's body.
+
+        Parameters
+        ----------
+        data : dict
+            PostIngredient's body.
+
+        Returns
+        -------
+        IngredientTest
+            Self
+        """
+        self.__setattr__("_id", ObjectId(data["data"]["_id"]))
+        return self
+
+    def delete(self):
+        """ Delete IngredientTest.
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_ingredient]
+        db.delete_one({"_id": ObjectId(self.get_id())})
+        client.close()
+        return
+
+    def check_bdd_data(self):
         """ Check if IngredientTest is correct.
         """
         client = MongoClient(mongo.ip, mongo.port)
@@ -149,19 +168,7 @@ class IngredientTest(object):
             if value not in ["_id"]:
                 assert result[value] == self.__getattribute__(value)
 
-    def select_ok_by_name(self):
-        """ Check if IngredientTest is correct by name.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_ingredient]
-        result = db.find_one({"name": self.name})
-        client.close()
-        assert result is not None
-        for value in result:
-            if value not in ["_id"]:
-                assert result[value] == self.__getattribute__(value)
-
-    def select_nok(self):
+    def check_doesnt_exist_by_id(self):
         """ Check if IngredientTest doesn't exist.
         """
         client = MongoClient(mongo.ip, mongo.port)
@@ -170,7 +177,7 @@ class IngredientTest(object):
         client.close()
         assert result == 0
 
-    def select_nok_by_name(self):
+    def check_doesnt_exist_by_name(self):
         """ Check if IngredientTest doesn't exist by name.
         """
         client = MongoClient(mongo.ip, mongo.port)
@@ -178,30 +185,6 @@ class IngredientTest(object):
         result = db.count_documents({"name": self.name})
         client.close()
         assert result == 0
-
-    def insert(self):
-        """ Insert IngredientTest.
-
-        Returns
-        -------
-        Any
-            Self
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_ingredient]
-        query = db.insert_one(self.get_without_id())
-        client.close()
-        self.__setattr__("_id", query.inserted_id)
-        return self
-
-    def delete(self):
-        """ Delete IngredientTest.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_ingredient]
-        db.delete_one({"_id": ObjectId(self.get_id())})
-        client.close()
-        return
 
     @staticmethod
     def clean():
@@ -214,6 +197,7 @@ class IngredientTest(object):
         client.close()
         return
 
+    """ files """
     def add_file(self, filename, is_main, **kwargs):
         """ Add a file to IngredientTest.
 
@@ -228,247 +212,14 @@ class IngredientTest(object):
 
         Returns
         -------
-        Any
-            FileTest added.
+        FileTest
+            Response server if validation failed, True otherwise.
+
         """
-        file = file_model.FileTest().custom({"filename": filename,
-                                             "metadata": {"kind": "ingredient",
-                                                          "_id_parent": ObjectId(self._id),
-                                                          "is_main": is_main}}).insert()
+        file = FileTest.custom({"filename": filename,
+                                "metadata": {"kind": "ingredient",
+                                             "_id_parent": ObjectId(self._id),
+                                             "is_main": is_main}}).insert()
         if "identifier" in kwargs.keys():
             file.custom({"_id": kwargs["identifier"]})
         return file
-
-
-class IngredientRecipeTest(object):
-
-    def __init__(self):
-        """ IngredientTest model.
-
-        - _id = ObjectId in mongo
-        - _id_recipe = Recipe's ObjectId (Unique)
-        - _id_ingredient = Ingredient's ObjectId (Unique)
-        - quantity = Quantity of the ingredient in this recipe.
-        - unit = Unit of the quantity.
-        """
-        self._id = ObjectId()
-        self.quantity = 0
-        self.unit = "qa_rhr_unit"
-        self._id_ingredient = ObjectId()
-        self._id_recipe = ObjectId()
-
-    def display(self):
-        """ Print IngredientRecipeTest model.
-
-        Returns
-        -------
-        Any
-            Display IngredientRecipeTest
-        """
-        print(self.__dict__)
-
-    def get_param(self):
-        """ Get IngredientRecipeTest parameters.
-
-        Returns
-        -------
-        list
-            IngredientRecipeTest parameters.
-        """
-        return [attr for attr in dir(self) if not callable(getattr(self, attr)) and not attr.startswith("__")]
-
-    def get_id(self):
-        """ Get _id of IngredientRecipeTest.
-
-        Returns
-        -------
-        str
-            IngredientRecipeTest's _id.
-        """
-        return str(self._id)
-
-    def get_id_ingredient(self):
-        """ Get _id_ingredient of IngredientRecipeTest.
-
-        Returns
-        -------
-        str
-            IngredientRecipeTest's _id_ingredient.
-        """
-        return str(self._id_ingredient)
-
-    def get_id_recipe(self):
-        """ Get _id_recipe of IngredientRecipeTest.
-
-        Returns
-        -------
-        str
-            IngredientRecipeTest's _id_recipe.
-        """
-        return str(self._id_recipe)
-
-    def get(self):
-        """ Get IngredientRecipeTest.
-
-        Returns
-        -------
-        dict
-            Copy of IngredientRecipeTest.
-        """
-        return copy.deepcopy(self.__dict__)
-
-    def get_without_id(self):
-        """ Get IngredientRecipeTest without _id attribute.
-
-        Returns
-        -------
-        dict
-            Copy of IngredientRecipeTest without _id.
-        """
-        data = self.get()
-        data.pop("_id")
-        return data
-
-    def get_stringify(self):
-        """ Get IngredientRecipeTest with ObjectId stringify.
-
-        Returns
-        -------
-        dict
-            Copy of IngredientRecipeTest with ObjectId stringify.
-        """
-        return mongo.to_json(self.get())
-
-    def custom(self, data):
-        """ Update IngredientRecipeTest.
-
-        Parameters
-        ----------
-        data : dict
-            Data to be updated for IngredientRecipeTest.
-
-        Returns
-        -------
-        Any
-            Self
-        """
-        for i, j in data.items():
-            if i in self.get_param():
-                if i == '_id':
-                    self.__setattr__(i, ObjectId(j))
-                else:
-                    self.__setattr__(i, j)
-        return self
-
-    def select_ok(self):
-        """ Check if IngredientRecipeTest is correct.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_ingredient_recipe]
-        ingredient_recipe = db.find_one({"_id": ObjectId(self.get_id())})
-        client.close()
-        assert ingredient_recipe is not None
-        for value in ingredient_recipe:
-            if value not in ["_id"]:
-                assert ingredient_recipe[value] == self.__getattribute__(value)
-
-    def select_nok(self):
-        """ Check if IngredientRecipeTest doesn't exist.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_ingredient_recipe]
-        result = db.count_documents({"_id": ObjectId(self.get_id())})
-        client.close()
-        assert result == 0
-
-    def select_nok_by_unit(self):
-        """ Check if IngredientRecipeTest doesn't exist by unit.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_ingredient_recipe]
-        result = db.count_documents({"unit": self.unit})
-        client.close()
-        assert result == 0
-
-    def select_nok_by_linked(self):
-        """ Check if IngredientRecipeTest doesn't exist by both parent _ids.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_ingredient_recipe]
-        result = db.count_documents({'$and': [{"_id_ingredient": self._id_ingredient},
-                                              {"_id_recipe": self._id_recipe}]})
-        client.close()
-        assert result == 0
-
-    def select_nok_by_id_recipe(self):
-        """ Check if IngredientRecipeTest doesn't exist by id_recipe.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_ingredient_recipe]
-        result = db.count_documents({"_id_recipe": self._id_recipe})
-        client.close()
-        assert result == 0
-
-    def insert(self):
-        """ Insert IngredientRecipeTest.
-
-        Returns
-        -------
-        Any
-            Self
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_ingredient_recipe]
-        query = db.insert_one(self.get_without_id())
-        client.close()
-        self.__setattr__("_id", query.inserted_id)
-        return self
-
-    def delete(self):
-        """ Delete IngredientRecipeTest.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_ingredient_recipe]
-        db.delete_one({"_id": ObjectId(self.get_id())})
-        client.close()
-        return
-
-    @staticmethod
-    def clean():
-        """ Clean IngredientRecipeTest by unit.
-        """
-        rgx = re.compile('.*qa_rhr.*', re.IGNORECASE)
-        rgx2 = re.compile('.*invalid.*', re.IGNORECASE)
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_ingredient_recipe]
-        db.delete_many({"unit": {"$regex": rgx}})
-        db.delete_many({"unit": {"$regex": rgx2}})
-        client.close()
-
-    @staticmethod
-    def clean_complete():
-        """ Clean IngredientRecipeTest by searching orphan (may be long).
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db_link = client[mongo.name][mongo.collection_ingredient_recipe]
-        db_recipe = client[mongo.name][mongo.collection_recipe]
-        db_ingredient = client[mongo.name][mongo.collection_ingredient]
-        results = db_link.find({})
-        for link in results:
-            tmp_recipe = db_recipe.find_one({"_id": ObjectId(link["_id_recipe"])})
-            tmp_ingredient = db_ingredient.find_one({"_id": ObjectId(link["_id_ingredient"])})
-            if tmp_recipe is None or tmp_ingredient is None:
-                db_link.delete_one({"_id": link["_id"]})
-        client.close()
-
-    def add_name(self):
-        """ Add IngredientRecipeTest's name for Ingredient.
-        """
-        self.__setattr__("name", ingredient.get_name_by_id(str(self._id_ingredient)))
-        return self
-
-    def add_title(self):
-        """ Add IngredientRecipeTest's title for Recipe.
-        """
-        self.__setattr__("title", recipe.get_title_by_id(str(self._id_recipe)))
-        return self

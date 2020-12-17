@@ -30,8 +30,8 @@ class Mongo(object):
         self.name = 'cookbook'
         self.collection_user = 'user'
         self.collection_ingredient = 'ingredient'
-        self.collection_ingredient_recipe = "ingredient_recipe"
         self.collection_recipe = 'recipe'
+        self.collection_link = "link"
         self.collection_step = 'step'
         self.collection_fs_files = 'fs.files'
         self.collection_fs_chunks = 'fs.chunks'

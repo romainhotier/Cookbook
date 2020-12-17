@@ -15,9 +15,9 @@ class PostIngredientFile(object):
     def __init__(self):
         self.url = 'file/ingredient'
         self.param_id = "_id"
-        self.param_path = "path"
-        self.param_filename = "filename"
         self.param_is_main = "is_main"
+        self.param_filename = "filename"
+        self.param_path = "path"
         self.rep_code_msg_created = server.rep_code_msg_created.replace("xxx", "file")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "file")
         self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
@@ -66,28 +66,8 @@ class PostIngredientFile(object):
             return True
 
     @staticmethod
-    def data_expected(ingredient, files):
+    def data_expected(new_id):
         """ Format data's response.
-
-        Parameters
-        ----------
-        ingredient : Any
-            IngredientTest.
-        files : Array
-            FileTests.
-
-        Returns
-        -------
-        str
-            Data's response.
-        """
-        data_expected = ingredient.get_stringify()
-        data_expected["files"] = [{"_id": f.get_id(), "is_main": f.get_is_main()} for f in files]
-        return data_expected
-
-    @staticmethod
-    def detail_expected(new_id):
-        """ Format detail's response.
 
         Parameters
         ----------
@@ -97,7 +77,7 @@ class PostIngredientFile(object):
         Returns
         -------
         str
-            Detail's response.
+            Data's response.
         """
         return "added file ObjectId: {0}".format(str(new_id))
 
@@ -115,7 +95,7 @@ class PostIngredientFile(object):
         str
             File's ObjectId.
         """
-        return ObjectId(response["detail"].split(": ")[1])
+        return ObjectId(response["data"].split(": ")[1])
 
     @staticmethod
     def get_file_path_for_test():

@@ -11,7 +11,6 @@ import app.user.model as user_model
 server = utils.Server()
 mongo = utils.Mongo()
 ingredient = ingredient_model.Ingredient()
-ingredient_recipe = ingredient_model.IngredientRecipe()
 recipe = recipe_model.Recipe()
 user = user_model.User()
 
@@ -170,52 +169,6 @@ class Validator(object):
         return True
 
     @staticmethod
-    def is_unique_ingredient_recipe(_id_ingredient, _id_recipe):
-        """ Check if IngredientRecipe already exist.
-
-        Parameters
-        ----------
-        _id_ingredient : str
-            ObjectId of Ingredient.
-        _id_recipe : str
-            ObjectId of Recipe.
-
-        Returns
-        -------
-        Any
-            Raise an "abort 400" if validation failed.
-        """
-        if not ingredient_recipe.check_link_is_unique(_id_ingredient=_id_ingredient, _id_recipe=_id_recipe):
-            detail = "link between {} and {} ".format(_id_ingredient, _id_recipe) + server.detail_already_exist.lower()
-            return abort(status=400, description=detail)
-        return True
-
-    @staticmethod
-    def is_unique_ingredient_recipe_multi(param, data):
-        """ Check if the key/value is unique.
-
-        Parameters
-        ----------
-        param : str
-            Parameter's name.
-        data : dict
-            PostIngredientRecipeMulti's body.
-
-        Returns
-        -------
-        Any
-            Raise an "abort 400" if validation failed.
-        """
-        len_default = len(data["ingredients"])
-        len_unicity = len(set([ingr["_id_ingredient"] for ingr in data["ingredients"]]))
-        if len_default != len_unicity:
-            detail = server.format_detail(param=param, msg=server.detail_must_be_unique,
-                                          value=[ingr["_id_ingredient"] for ingr in data["ingredients"]])
-            return abort(status=400, description=detail)
-        else:
-            return True
-
-    @staticmethod
     def is_unique_recipe(param, value):
         """ Check if the key/value is unique.
 
@@ -235,6 +188,31 @@ class Validator(object):
             detail = server.format_detail(param=param, msg=server.detail_already_exist, value=value)
             return abort(status=400, description=detail)
         return True
+
+    @staticmethod
+    def is_unique_link_multi(param, data):
+        """ Check if ingredients are unique.
+
+        Parameters
+        ----------
+        param : str
+            Parameter's name.
+        data : dict
+            PostLinks's body.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        len_default = len(data["ingredients"])
+        len_unique = len(set([ingr["_id"] for ingr in data["ingredients"]]))
+        if len_default != len_unique:
+            detail = server.format_detail(param=param, msg=server.detail_must_be_unique,
+                                          value=[ingr["_id"] for ingr in data["ingredients"]])
+            return abort(status=400, description=detail)
+        else:
+            return True
 
     @staticmethod
     def is_string(param, value):
@@ -399,6 +377,28 @@ class Validator(object):
             return True
 
     @staticmethod
+    def is_array_of_string(param, value):
+        """ Check if the value is an array of string.
+
+        Parameters
+        ----------
+        param : str
+            Name of the tested parameter.
+        value : Any
+            Value of the tested parameter.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        for element in value:
+            if not isinstance(element, str):
+                detail = server.format_detail(param=param, msg=server.detail_must_be_an_array_of_string, value=value)
+                return abort(status=400, description=detail)
+        return True
+
+    @staticmethod
     def is_array_of_object(param, value):
         """ Check if the value is an array of object.
 
@@ -419,6 +419,28 @@ class Validator(object):
                 detail = server.format_detail(param=param, msg=server.detail_must_be_an_array_of_object, value=value)
                 return abort(status=400, description=detail)
         return True
+
+    @staticmethod
+    def is_object_or_string(param, value):
+        """ Check if the value is an object or a string.
+
+        Parameters
+        ----------
+        param : str
+            Name of the tested parameter.
+        value : Any
+            Value of the tested parameter.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        if isinstance(value, dict) or isinstance(value, str):
+            return True
+        else:
+            detail = server.format_detail(param=param, msg=server.detail_must_be_an_object_or_string, value=value)
+            return abort(status=400, description=detail)
 
     @staticmethod
     def is_object(param, value):
@@ -562,13 +584,15 @@ class Validator(object):
             return abort(status=400, description=detail)
 
     @staticmethod
-    def is_mandatory(param, data):
+    def is_mandatory(name, param, data):
         """ Check if the param is present in body.
 
         Parameters
         ----------
-        param : str
+        name : str
             Name of the tested parameter.
+        param : str
+            Value of the tested parameter.
         data : dict
             Dict to be tested.
 
@@ -580,7 +604,7 @@ class Validator(object):
         if param in data:
             return True
         else:
-            detail = server.format_detail(param=param, msg=server.detail_is_required)
+            detail = server.format_detail(param=name, msg=server.detail_is_required)
             return abort(status=400, description=detail)
 
     @staticmethod

@@ -74,18 +74,6 @@ class UserTest(object):
         """
         return copy.deepcopy(self.__dict__)
 
-    def get_without_id(self):
-        """ Get UserTest without _id attribute.
-
-        Returns
-        -------
-        dict
-            Copy of UserTest without _id.
-        """
-        data = self.get()
-        data.pop("_id")
-        return data
-
     def get_stringify(self):
         """ Get UserTest with ObjectId stringify.
 
@@ -95,6 +83,24 @@ class UserTest(object):
             Copy of UserTest with ObjectId stringify.
         """
         return mongo.to_json(self.get())
+
+    def insert(self):
+        """ Insert UserTest.
+
+        Returns
+        -------
+        UserTest
+            Self
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_user]
+        data = self.get()
+        data.pop("_id")
+        data["password"] = user.hash_password(password=self.password)
+        query = db.insert_one(data)
+        client.close()
+        self.__setattr__("_id", query.inserted_id)
+        return self
 
     def custom(self, data):
         """ Update UserTest.
@@ -106,7 +112,7 @@ class UserTest(object):
 
         Returns
         -------
-        Any
+        UserTest
             Self
         """
         for i, j in data.items():
@@ -117,7 +123,23 @@ class UserTest(object):
                     self.__setattr__(i, j)
         return self
 
-    def select_ok(self):
+    def custom_id_from_body(self, data):
+        """ Update UserTest's _id from PostUserLogin's body.
+
+        Parameters
+        ----------
+        data : dict
+            PostUserLogin's body.
+
+        Returns
+        -------
+        RecipeTest
+            Self
+        """
+        self.__setattr__("_id", ObjectId(data["data"]["_id"]))
+        return self
+
+    def check_bdd_data(self):
         """ Check if UserTest is correct.
         """
         client = MongoClient(mongo.ip, mongo.port)
@@ -130,7 +152,7 @@ class UserTest(object):
             if value not in ["_id", "password"]:
                 assert result[value] == self.__getattribute__(value)
 
-    def select_ok_by_email(self):
+    def check_bdd_data_by_email(self):
         """ Check if UserTest is correct by email.
         """
         client = MongoClient(mongo.ip, mongo.port)
@@ -143,7 +165,7 @@ class UserTest(object):
             if value not in ["_id", "password"]:
                 assert result[value] == self.__getattribute__(value)
 
-    def select_nok(self):
+    def check_doesnt_exist_by_id(self):
         """ Check if UserTest doesn't exist.
         """
         client = MongoClient(mongo.ip, mongo.port)
@@ -152,7 +174,7 @@ class UserTest(object):
         client.close()
         assert result == 0
 
-    def select_nok_by_email(self):
+    def check_doesnt_exist_by_email(self):
         """ Check if UserTest doesn't exist by email.
         """
         client = MongoClient(mongo.ip, mongo.port)
@@ -161,7 +183,7 @@ class UserTest(object):
         client.close()
         assert result == 0
 
-    def select_nok_by_display_name(self):
+    def check_doesnt_exist_by_display_name(self):
         """ Check if UserTest doesn't exist by display_name.
         """
         client = MongoClient(mongo.ip, mongo.port)
@@ -169,23 +191,6 @@ class UserTest(object):
         result = db.count_documents({"display_name": self.display_name})
         client.close()
         assert result == 0
-
-    def insert(self):
-        """ Insert UserTest.
-        
-        Returns
-        -------
-        Any
-            Self
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_user]
-        data = self.get_without_id()
-        data["password"] = user.hash_password(password=self.password)
-        query = db.insert_one(data)
-        client.close()
-        self.__setattr__("_id", query.inserted_id)
-        return self
 
     def delete(self):
         """ Delete UserTest.

@@ -4,13 +4,14 @@ import utils
 import app.ingredient.factory as factory
 import app.ingredient.validator as validator
 import app.ingredient.model as ingredient_model
+import app.recipe.model as recipe_model
 import app.file.model as file_model
 
 apis = Blueprint('ingredient', __name__, url_prefix='/ingredient')
 
 server = utils.Server()
 ingredient = ingredient_model.Ingredient()
-ingredient_recipe = ingredient_model.IngredientRecipe()
+recipe = recipe_model.Recipe()
 file = file_model.File()
 
 
@@ -27,7 +28,12 @@ def delete_ingredient(_id):
     DELETE http://127.0.0.1:5000/ingredient/<_id_ingredient>
 
     @apiSuccessExample {json} Success response:
-    HTTPS 204
+    HTTPS 200
+    {
+        'codeMsg': 'cookbook.ingredient.success.ok',
+        'codeStatus': 200,
+        'data': 'Deleted Ingredient: 5fd770e1a9888551191a8743'
+    }
 
     @apiErrorExample {json} Error response:
     HTTPS 400
@@ -38,47 +44,17 @@ def delete_ingredient(_id):
     }
     """
     validation = validator.DeleteIngredient.Validator()
+    api = factory.DeleteIngredient.Factory()
     """ check param """
     validation.is_object_id_valid(value=_id)
     """ clean files and link """
     file.clean_file_by_id_parent(_id_parent=_id)
-    ingredient_recipe.clean_link_by_id_ingredient(_id_ingredient=_id)
+    recipe.clean_ingredients_by_id(_id_ingredient=_id)
     """ delete ingredient """
     ingredient.delete(_id=_id)
     """ return response """
-    return server.return_response(data=None, api=apis.name, http_code=204)
-
-
-@apis.route('/recipe/<_id>', methods=['DELETE'])
-def delete_ingredient_recipe(_id):
-    """
-    @api {delete} /ingredient/recipe/<_id_ingredient_recipe>  DeleteIngredientRecipe
-    @apiGroup Ingredient
-    @apiDescription Delete an association ingredient-recipe
-
-    @apiParam (Query param) {String} _id Link's ObjectId
-
-    @apiExample {json} Example usage:
-    DELETE http://127.0.0.1:5000/ingredient/recipe/<_id_ingredient_recipe>
-
-    @apiSuccessExample {json} Success response:
-    HTTPS 204
-
-    @apiErrorExample {json} Error response:
-    HTTPS 400
-    {
-        'codeMsg': 'cookbook.ingredient.error.bad_request',
-        'codeStatus': 400,
-        'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
-    }
-    """
-    validation = validator.DeleteIngredientRecipe.Validator()
-    """ check param """
-    validation.is_object_id_valid(value=_id)
-    """ delete link """
-    ingredient_recipe.delete(_id=_id)
-    """ return response """
-    return server.return_response(data=None, api=apis.name, http_code=204)
+    data = api.data_information(_id=_id)
+    return server.return_response(data=data, api=apis.name, http_code=200)
 
 
 @apis.route('', methods=['GET'])
@@ -88,8 +64,6 @@ def get_all_ingredient():
     @apiGroup Ingredient
     @apiDescription Get file ingredients
 
-    @apiParam (Query param) {String} [with_files] if "true", add ingredient's files
-
     @apiExample {json} Example usage:
     GET http://127.0.0.1:5000/ingredient
 
@@ -98,24 +72,16 @@ def get_all_ingredient():
     {
         'codeMsg': 'cookbook.ingredient.success.ok',
         'codeStatus': 200,
-        'data': [{'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr', 'categories': [],
-                  'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'proteins': '0',
-                                 'info': 'per 100g'}},
-                 {'_id': '5e583de9b0fcef0a922a7bc2', 'name': 'bqa_rhr', 'categories': [],
-                  'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'proteins': '0',
-                                 'info': 'per 100g'}}]
+        'data': [{'_id': '5e583de9b0fcef0a922a7bc0', 'categories': [], 'name': 'aqa_rhr',
+                  'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'portion': 1, 'proteins': '0'},
+                  'slug': 'slug_ex1'},
+                 {'_id': '5e583de9b0fcef0a922a7bc2', 'categories': [], 'name': 'bqa_rhr',
+                  'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'portion': 1, 'proteins': '0'},
+                  'slug': 'slug_ex2'}]
     }
     """
-    api = factory.GetAllIngredient.Factory()
-    validation = validator.GetAllIngredient.Validator()
-    with_files = request.args.get(api.param_with_files)
-    """ check param """
-    validation.is_with_files_valid(value=with_files)
     """ get all ingredient """
     data = ingredient.select_all()
-    """ add enrichment if needed """
-    if with_files == "true":
-        data.add_enrichment_file_for_all()
     """ return response """
     return server.return_response(data=data.result, api=apis.name, http_code=200)
 
@@ -128,7 +94,6 @@ def get_ingredient(_id):
     @apiDescription Get an ingredient by it's ObjectId
 
     @apiParam (Query param) {String} _id Ingredient's ObjectId
-    @apiParam (Query param) {String} [with_files] if "true", add ingredient's files
 
     @apiExample {json} Example usage:
     GET http://127.0.0.1:5000/ingredient/<_id_ingredient>
@@ -138,9 +103,9 @@ def get_ingredient(_id):
     {
         'codeMsg': 'cookbook.ingredient.success.ok',
         'codeStatus': 200,
-        'data': {'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr', 'categories': [],
-                 'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'proteins': '0',
-                                'info': 'per 100g'}}
+        'data': {'_id': '5e583de9b0fcef0a922a7bc0', 'categories': [], 'name': 'aqa_rhr',
+                 'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'portion': 1, 'proteins': '0'},
+                 'slug': 'slug_ex'}}
     }
 
     @apiErrorExample {json} Error response:
@@ -151,64 +116,11 @@ def get_ingredient(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
-    api = factory.GetIngredient.Factory()
     validation = validator.GetIngredient.Validator()
-    with_files = request.args.get(api.param_with_files)
     """ check param """
-    validation.is_with_files_valid(value=with_files)
     validation.is_object_id_valid(value=_id)
     """ get ingredient """
     data = ingredient.select_one(_id=_id)
-    """ add enrichment if needed """
-    if with_files == "true":
-        data.add_enrichment_file_for_one()
-    """ return response """
-    return server.return_response(data=data.result, api=apis.name, http_code=200)
-
-
-@apis.route('/<_id>/recipe', methods=['GET'])
-def get_recipe_for_ingredient(_id):
-    """
-    @api {get} /ingredient/<_id_ingredient>/recipe  GetRecipeForIngredient
-    @apiGroup Ingredient
-    @apiDescription Get all recipes for an ingredient by it's ObjectId
-
-    @apiParam (Query param) {String} _id Ingredient's ObjectId
-    @apiParam (Query param) {String} [with_titles] if "true", add recipe's title
-
-    @apiExample {json} Example usage:
-    GET http://127.0.0.1:5000/ingredient/<_id_ingredient>/recipe
-
-    @apiSuccessExample {json} Success response:
-    HTTPS 200
-    {
-        'codeMsg': 'cookbook.ingredient.success.ok',
-        'codeStatus': 200,
-        'data': [{'_id': '5e7347c82222535ac818942b', '_id_ingredient': '5e7347c82222535ac8189425',
-                  '_id_recipe': '5e7347c82222535ac8189423', 'quantity': 0, 'unit': 'qa_rhr_unit_qa_rhr'},
-                {'_id': '5e7347c82222535ac818942f', '_id_ingredient': '5e7347c82222535ac8189427',
-                 '_id_recipe': '5e7347c82222535ac8189423', 'quantity': 0, 'unit': 'qa_rhr_unit_qa_rhr'}]
-    }
-
-    @apiErrorExample {json} Error response:
-    HTTPS 400
-    {
-        'codeMsg': 'cookbook.ingredient.error.bad_request',
-        'codeStatus': 400,
-        'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
-    }
-    """
-    api = factory.GetRecipeForIngredient.Factory()
-    validation = validator.GetRecipeForIngredient.Validator()
-    with_titles = request.args.get(api.param_with_titles)
-    """ check param """
-    validation.is_with_titles_valid(value=with_titles)
-    validation.is_object_id_valid(value=_id)
-    """ get all """
-    data = ingredient_recipe.select_all_by_id_ingredient(_id_ingredient=_id)
-    """ add enrichment if needed """
-    if with_titles == "true":
-        data.add_enrichment_title_for_all()
     """ return response """
     return server.return_response(data=data.result, api=apis.name, http_code=200)
 
@@ -220,16 +132,15 @@ def post_ingredient():
     @apiGroup Ingredient
     @apiDescription Create an ingredient
 
-    @apiParam (Body param) {String} name Ingredient's name
-    @apiParam (Body param) {String} slug Ingredient's slug
     @apiParam (Body param) {Array} [categories=Empty_Array] Ingredient's categories
+    @apiParam (Body param) {String} name Ingredient's name
     @apiParam (Body param) {Object} [nutriments] Ingredient's nutriments
     @apiParam (Body param) {Number} nutriments[calories]=0 Ingredient's calories
     @apiParam (Body param) {Number} nutriments[carbohydrates]=0 Ingredient's carbohydrates
     @apiParam (Body param) {Number} nutriments[fats]=0 Ingredient's fats
+    @apiParam (Body param) {String} nutriments[portion]=1 Ingredient's portion
     @apiParam (Body param) {Number} nutriments[proteins=0] Ingredient's proteins
-    @apiParam (Body param) {String} [nutriments[info]="per 100g"] Ingredient's info
-
+    @apiParam (Body param) {String} slug Ingredient's slug
 
     @apiExample {json} Example usage:
     POST http://127.0.0.1:5000/ingredient
@@ -237,7 +148,7 @@ def post_ingredient():
         'name': <name>
         'slug': <slug>
         'categories': [<category1>, <category2>],
-        'nutriments': {'calories': 10, 'carbohydrates': 20, 'fats': 30, 'proteins': 40, 'info': 'peer 100g'}
+        'nutriments': {'calories': 10, 'carbohydrates': 20, 'fats': 30, 'portion': 1, 'proteins': 40}
     }
 
     @apiSuccessExample {json} Success response:
@@ -247,8 +158,7 @@ def post_ingredient():
         'codeStatus': 201,
         'data': {'_id': '5e5840e63ed55d9119064649', 'name': 'qa_rhr_name', 'slug': 'qa_rhr_slug',
                  'categories': ['qa_rhr_category'],
-                 'nutriments': {'calories': '10', 'carbohydrates': '20', 'fats': '30', 'proteins': '40',
-                                'info': 'per 100g'}}
+                 'nutriments': {'calories': '10', 'carbohydrates': '20', 'fats': '30', portion: 1, 'proteins': '40'}}
     }
 
     @apiErrorExample {json} Error response:
@@ -271,105 +181,6 @@ def post_ingredient():
     return server.return_response(data=data.result, api=apis.name, http_code=201)
 
 
-@apis.route('/recipe', methods=['POST'])
-def post_ingredient_recipe():
-    """
-    @api {post} /ingredient/recipe  PostIngredientRecipe
-    @apiGroup Ingredient
-    @apiDescription Associate an ingredient to a recipe
-
-    @apiParam (Body param) {String} _id_ingredient Ingredient's ObjectId to link
-    @apiParam (Body param) {String} _id_recipe Recipe's ObjectId to link
-    @apiParam (Body param) {Integer} quantity Ingredient's quantity for the recipe
-    @apiParam (Body param) {String} unit Ingredient's unit for the recipe
-
-    @apiExample {json} Example usage:
-    POST http://127.0.0.1:5000/ingredient/recipe
-    {
-        '_id_ingredient': <_id_ingredient>,
-        '_id_recipe': <_id_recipe>,
-        'quantity': <quantity>,
-        'unit': <unit>,
-    }
-
-    @apiSuccessExample {json} Success response:
-    HTTPS 201
-    {
-        'codeMsg': 'cookbook.ingredient.success.created',
-        'codeStatus': 201,
-        'data': {'_id': '5e722e87f94648b72c7d8f03', '_id_ingredient': '5e722e875754d5e780a8f1e5',
-                 '_id_recipe': '5e722e875754d5e780a8f1e3', 'quantity': 5, 'unit': 'qa_rhr_unit'}
-    }
-
-    @apiErrorExample {json} Error response:
-    HTTPS 400
-    {
-        'codeMsg': 'cookbook.ingredient.error.bad_request',
-        'codeStatus': 400,
-        'detail': {'msg': 'Must be an ObjectId', 'param': '_id_ingredient', 'value': 'invalid'}
-    }
-    """
-    api = factory.PostIngredientRecipe.Factory()
-    validation = validator.PostIngredientRecipe.Validator()
-    """ check body """
-    body = api.clean_body(data=request.json)
-    validation.is_body_valid(data=body)
-    """ add link """
-    data = ingredient_recipe.insert(data=body)
-    """ return response """
-    return server.return_response(data=data.result, api=apis.name, http_code=201)
-
-
-@apis.route('/recipe/multi', methods=['POST'])
-def post_ingredient_recipe_multi():
-    """
-    @api {post} /ingredient/recipe/multi  PostIngredientRecipeMulti
-    @apiGroup Ingredient
-    @apiDescription Associate multiple ingredients to a recipe
-
-    @apiParam (Body param) {String} _id_recipe Recipe's ObjectId to link
-    @apiParam (Body param) {String} _id_ingredient Ingredient's ObjectId to link
-    @apiParam (Body param) {Integer} quantity Ingredient's quantity for the recipe
-    @apiParam (Body param) {String} unit Ingredient's unit for the recipe
-
-    @apiExample {json} Example usage:
-    POST http://127.0.0.1:5000/ingredient/recipe/multi
-    {
-        '_id_recipe': <_id_recipe>,
-        'ingredients': [{'_id_ingredient': <_id_ingredient1>, 'quantity': <quantity1>, 'unit': <unit1>},
-                        {'_id_ingredient': <_id_ingredient2>, 'quantity': <quantity2>, 'unit': <unit2>}]
-    }
-
-    @apiSuccessExample {json} Success response:
-    HTTPS 201
-    {
-        'codeMsg': 'cookbook.ingredient.success.created',
-        'codeStatus': 201,
-        'data': [{'_id': '5e722e87f94648b72c7d8f03', '_id_ingredient': '5e722e875754d5e780a8f1e5',
-                 '_id_recipe': '5e722e875754d5e780a8f1e3', 'quantity': 5, 'unit': 'qa_rhr_unit'},
-                 {'_id': '5e722e87f94648b72c7d8f04', '_id_ingredient': '5e722e875754d5e780a8f1e6',
-                 '_id_recipe': '5e722e875754d5e780a8f1e4', 'quantity': 7, 'unit': 'qa_rhr_unit2'}]
-    }
-
-    @apiErrorExample {json} Error response:
-    HTTPS 400
-    {
-        'codeMsg': 'cookbook.ingredient.error.bad_request',
-        'codeStatus': 400,
-        'detail': {'msg': 'Must be an ObjectId', 'param': '_id_ingredient', 'value': 'invalid'}
-    }
-    """
-    api = factory.PostIngredientRecipeMulti.Factory()
-    validation = validator.PostIngredientRecipeMulti.Validator()
-    """ check body """
-    body = api.clean_body(data=request.json)
-    validation.is_body_valid(data=body)
-    """ add link """
-    data = ingredient_recipe.insert_multi(data=body)
-    """ return response """
-    return server.return_response(data=data.result, api=apis.name, http_code=201)
-
-
 @apis.route('/<_id>', methods=['PUT'])
 def put_ingredient(_id):
     """
@@ -378,16 +189,15 @@ def put_ingredient(_id):
     @apiDescription Update an ingredient by it's ObjectId
 
     @apiParam (Query param) {String} _id Ingredient's ObjectId
-    @apiParam (Query param) {String} [with_files] if "true", add ingredient's files
-    @apiParam (Body param) {String} [name] Ingredient's name
-    @apiParam (Body param) {String} [slug] Ingredient's slug
     @apiParam (Body param) {Array} [categories] Ingredient's categories
+    @apiParam (Body param) {String} [name] Ingredient's name
     @apiParam (Body param) {Object} [nutriments] Ingredient's nutriments
     @apiParam (Body param) {Number} [nutriments[calories]] Ingredient's calories
     @apiParam (Body param) {Number} [nutriments[carbohydrates]] Ingredient's carbohydrates
     @apiParam (Body param) {Number} [nutriments[fats]] Ingredient's fats
+    @apiParam (Body param) {String} [nutriments[portions]] Ingredient's portion
     @apiParam (Body param) {Number} [nutriments[proteins]] Ingredient's proteins
-    @apiParam (Body param) {String} [nutriments[info]] Ingredient's info
+    @apiParam (Body param) {String} [slug] Ingredient's slug
 
     @apiExample {json} Example usage:
     PUT http://127.0.0.1:5000/ingredient/<_id_ingredient>
@@ -400,7 +210,9 @@ def put_ingredient(_id):
     {
         'codeMsg': 'cookbook.ingredient.success.ok',
         'codeStatus': 20O,
-        'data': {'_id': '5e5840e63ed55d9119064649', 'name': 'qa_rhr_name_update'}
+        'data': {'_id': '5e583de9b0fcef0a922a7bc0', 'categories': [], 'name': 'aqa_rhr_update',
+                 'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'portion': 1, 'proteins': '0'},
+                 'slug': 'slug_ex'}
     }
 
     @apiErrorExample {json} Error response:
@@ -413,66 +225,13 @@ def put_ingredient(_id):
     """
     api = factory.PutIngredient.Factory()
     validation = validator.PutIngredient.Validator()
-    with_files = request.args.get(api.param_with_files)
     """ check params """
     validation.is_object_id_valid(value=_id)
-    validation.is_with_files_valid(value=with_files)
     """ check body """
     body = api.clean_body(data=request.json)
     validation.is_body_valid(data=body)
     """ update ingredient """
     data = ingredient.update(_id=_id, data=body)
-    """ add enrichment if needed """
-    if with_files == "true":
-        data.add_enrichment_file_for_one()
-    """ return response """
-    return server.return_response(data=data.result, api=apis.name, http_code=200)
-
-
-@apis.route('/recipe/<_id>', methods=['PUT'])
-def put_ingredient_recipe(_id):
-    """
-    @api {put} /ingredient/recipe/<_id_ingredient_recipe>  PutIngredientRecipe
-    @apiGroup Ingredient
-    @apiDescription Update quantity and unit of an association ingredient-recipe
-
-    @apiParam (Query param) {String} _id Link's ObjectId
-    @apiParam (Body param) {Integer} [quantity] Ingredient's quantity for the recipe
-    @apiParam (Body param) {String} [unit] Ingredient's unit for the recipe
-
-    @apiExample {json} Example usage:
-    PUT http://127.0.0.1:5000/ingredient/recipe/<_id_ingredient_recipe>
-    {
-        'quantity': <quantity>,
-        'unit': <unit>,
-    }
-
-    @apiSuccessExample {json} Success response:
-    HTTPS 200
-    {
-        'codeMsg': 'cookbook.ingredient.success.created',
-        'codeStatus': 201,
-        'data': {'_id': '5e722e87f94648b72c7d8f03', '_id_ingredient': '5e722e875754d5e780a8f1e5',
-                 '_id_recipe': '5e722e875754d5e780a8f1e3', 'quantity': 10, 'unit': 'qa_rhr_unit_update'}
-    }
-
-    @apiErrorExample {json} Error response:
-    HTTPS 400
-    {
-        'codeMsg': 'cookbook.ingredient.error.bad_request',
-        'codeStatus': 400,
-        'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
-    }
-    """
-    api = factory.PutIngredientRecipe.Factory()
-    validation = validator.PutIngredientRecipe.Validator()
-    """ check param """
-    validation.is_object_id_valid(value=_id)
-    """ check body """
-    body = api.clean_body(data=request.json)
-    validation.is_body_valid(data=body)
-    """ update link """
-    data = ingredient_recipe.update(_id=_id, data=body)
     """ return response """
     return server.return_response(data=data.result, api=apis.name, http_code=200)
 
@@ -484,10 +243,10 @@ def search_ingredient():
     @apiGroup Ingredient
     @apiDescription Search an ingredient by key/value
 
+    @apiParam (Query param) {String} [categories] ingredient's categories
     @apiParam (Query param) {String} [name] ingredient's name
     @apiParam (Query param) {String} [slug] ingredient's slug
-    @apiParam (Query param) {String} [categories] ingredient's categories
-    @apiParam (Query param) {String} [with_files] if "true", add ingredient's files
+
 
     @apiExample {json} Example usage:
     GET http://127.0.0.1:5000/ingredient/search?name=<ingredient_name>
@@ -497,7 +256,9 @@ def search_ingredient():
     {
         'codeMsg': 'cookbook.ingredient.success.ok',
         'codeStatus': 200,
-        'data': [{'_id': '5e583de9b0fcef0a922a7bc0', 'name': 'aqa_rhr'}]
+        'data': [{'_id': '5e583de9b0fcef0a922a7bc0', 'categories': [], 'name': 'aqa_rhr',
+                 'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'portion': 1, 'proteins': '0'},
+                 'slug': 'slug_ex'}]
     }
 
     @apiErrorExample {json} Error response:
@@ -510,17 +271,11 @@ def search_ingredient():
     """
     api = factory.SearchIngredient.Factory()
     validation = validator.SearchIngredient.Validator()
-    with_files = request.args.get(api.param_with_files)
-    """ check param """
-    validation.is_with_files_valid(value=request.args.get(api.param_with_files))
     """ check search """
     search = api.format_body(data=request.args)
     validation.is_search_valid(data=search)
     """ get all recipe """
     data = ingredient.search(data=search)
-    """ add enrichment if needed """
-    if with_files == "true":
-        data.add_enrichment_file_for_all()
     """ return response """
     return server.return_response(data=data.result, api=apis.name, http_code=200)
 

@@ -74,22 +74,6 @@ class File(object):
         client.close()
         return f
 
-    @staticmethod
-    def erase_is_main_if_exist(_id_parent):
-        """ Set is_main to False if there was a primary File.
-
-        Parameters
-        ----------
-        _id_parent : str
-            Parent's ObjectId.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_fs_files]
-        db.update_one({'$and': [{"metadata._id_parent": ObjectId(_id_parent)}, {"metadata.is_main": True}]},
-                      {'$set': {"metadata.is_main": False}})
-        client.close()
-        return
-
     def get_all_file_by_id_parent(self, _id_parent):
         """ Get all Files for a parent.
 
@@ -165,3 +149,19 @@ class File(object):
         db.update_one({"_id": ObjectId(_id)}, {'$set': {"metadata.is_main": True}})
         client.close()
         return str(_id_parent)
+
+    @staticmethod
+    def erase_is_main_if_exist(_id_parent):
+        """ Set is_main to False if there was a primary File.
+
+        Parameters
+        ----------
+        _id_parent : str
+            Parent's ObjectId.
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_fs_files]
+        db.update_one({'$and': [{"metadata._id_parent": ObjectId(_id_parent)}, {"metadata.is_main": True}]},
+                      {'$set': {"metadata.is_main": False}})
+        client.close()
+        return

@@ -15,9 +15,9 @@ class FileTest(object):
         """ FileTest model.
 
         - _id = ObjectId in mongo
-        - filename = File's name
         - content_type = File's content_type
         - data = File's raw data
+        - filename = File's name
         - metadata = File's information
         """
         self._id = ""
@@ -78,17 +78,20 @@ class FileTest(object):
         """
         return copy.deepcopy(self.data[0].decode("utf-8"))
 
-    def get_for_enrichment(self):
-        """ Get FileTest's _id and is_main for enrichment.
+    def insert(self):
+        """ Insert FileTest.
 
         Returns
         -------
-        dict
-            FileTest's info for enrichment.
-            - _id
-            - is_main
+        FileTest
+            Self
         """
-        return copy.deepcopy({"_id": self._id, "is_main": self.metadata["is_main"]})
+        client = MongoClient(mongo.ip, mongo.port)
+        fs = gridfs.GridFS(client[mongo.name])
+        _id = fs.put(self.data[0], content_type=self.content_type, filename=self.filename, metadata=self.metadata)
+        self._id = _id
+        client.close()
+        return self
 
     def custom(self, data):
         """ Update FileTest.
@@ -100,7 +103,7 @@ class FileTest(object):
 
         Returns
         -------
-        Any
+        FileTest
             Self
         """
         for i, j in data.items():
@@ -121,28 +124,29 @@ class FileTest(object):
 
         Returns
         -------
-        Any
+        FileTest
             Self
         """
         self.metadata["is_main"] = is_main
         return self
 
-    def insert(self):
-        """ Insert FileTest.
+    def custom_id_from_body(self, data):
+        """ Update FileTest's filename from PostIngredientFile's body.
+
+        Parameters
+        ----------
+        data : dict
+            PostIngredientFile's body.
 
         Returns
         -------
-        Any
+        FileTest
             Self
         """
-        client = MongoClient(mongo.ip, mongo.port)
-        fs = gridfs.GridFS(client[mongo.name])
-        _id = fs.put(self.data[0], content_type=self.content_type, filename=self.filename, metadata=self.metadata)
-        self._id = _id
-        client.close()
+        self.__setattr__("filename", data["filename"])
         return self
 
-    def select_if_present_by_id(self):
+    def check_exist_by_id(self):
         """ Check if FileTest exist by ObjectId.
         """
         client = MongoClient(mongo.ip, mongo.port)
@@ -150,12 +154,12 @@ class FileTest(object):
         client.close()
         assert fs.exists(_id=ObjectId(self._id))
 
-    def select_ok(self):
+    def check_bdd_data(self):
         """ Check if FileTest.
         """
         client = MongoClient(mongo.ip, mongo.port)
         """ check file file exist """
-        self.select_if_present_by_id()
+        self.check_exist_by_id()
         """ check metadata and more """
         db = client[mongo.name][mongo.collection_fs_files]
         file = db.find_one({"_id": ObjectId(self.get_id())})
@@ -163,7 +167,7 @@ class FileTest(object):
         assert file["filename"] == self.filename
         assert file["metadata"] == self.metadata
 
-    def select_nok(self):
+    def check_doesnt_exist_by_id(self):
         """ Check if FileTest doesn't exist.
         """
         client = MongoClient(mongo.ip, mongo.port)
@@ -171,7 +175,7 @@ class FileTest(object):
         client.close()
         assert not fs.exists({"_id": ObjectId(self.get_id())})
 
-    def select_nok_by_filename(self):
+    def check_doesnt_exist_by_filename(self):
         """ Check if FileTest doesn't exist by filename.
         """
         client = MongoClient(mongo.ip, mongo.port)
