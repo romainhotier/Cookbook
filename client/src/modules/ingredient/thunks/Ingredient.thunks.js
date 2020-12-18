@@ -85,12 +85,12 @@ export const deleteIngredient = id => dispatch => {
   fetch(deleteIngredientURL(id), {
     method: 'DELETE',
   })
+    .then(res => res.json())
     .then(response => {
-      if (response.status === 204) {
-        dispatch(deleteIngredientSuccess())
+      if (response.codeStatus === 200) {
+        dispatch(deleteIngredientSuccess(response.data))
         notification['success']({
           message: 'Ingrédient Supprimé !',
-          description: `${get(codeMsg, `${response.codeMsg}`)}`,
         })
       } else {
         dispatch(dispatch(deleteIngredientFailed(response.detail)))
