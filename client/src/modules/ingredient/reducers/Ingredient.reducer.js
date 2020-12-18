@@ -1,5 +1,6 @@
 import { handleActions } from 'redux-actions'
 import omitBy from 'lodash/omitBy'
+import findKey from 'lodash/findKey'
 
 import {
   getAllIngredientsRequest,
@@ -57,7 +58,7 @@ const IngredientReducer = handleActions(
       return {
         ...state,
         loadingFetchIngredients: false,
-        error: true,
+        error: `${action.payload}`,
       }
     },
 
@@ -90,7 +91,7 @@ const IngredientReducer = handleActions(
       return {
         ...state,
         loadingPostIngredient: false,
-        error: true,
+        error: `${action.payload}`,
       }
     },
 
@@ -121,11 +122,11 @@ const IngredientReducer = handleActions(
       }
     },
 
-    [putIngredientFailed](state) {
+    [putIngredientFailed](state, action) {
       return {
         ...state,
         loadingPutIngredient: false,
-        error: true,
+        error: `${action.payload}`,
       }
     },
 
@@ -142,22 +143,22 @@ const IngredientReducer = handleActions(
 
     [deleteIngredientSuccess](state, action) {
       let { content } = state
-      const { id } = action.payload
+
+      const ingSlug = findKey(content, ing => ing._id === action.payload)
+      delete content[ingSlug]
 
       return {
         ...state,
-        content: {
-          ...content,
-        },
+        content,
         loadingDeleteIngredient: false,
       }
     },
 
-    [deleteIngredientFailed](state) {
+    [deleteIngredientFailed](state, action) {
       return {
         ...state,
         loadingDeleteIngredient: false,
-        error: true,
+        error: `${action.payload}`,
       }
     },
   },
