@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Button, Form, Row, Col } from 'antd'
+import PropTypes from 'prop-types'
 
 import { slugify } from 'constants/functions.constants'
 import { Input } from 'components/Form/Input.component'
@@ -40,7 +41,7 @@ const IngredientForm = ({ createIngredient, loading, updateIngredient, values = 
     const ingredient = {
       name: values.name,
       slug: slugify(values.name),
-      categories: values.categories ? values.categories.split(',') : [''],
+      categories: values.categories && values.categories.length > 0 ? values.categories.toString().split(',') : [''],
       unit: values.unit,
       ...nutriments,
     }
@@ -159,6 +160,13 @@ const IngredientForm = ({ createIngredient, loading, updateIngredient, values = 
       </Form.Item>
     </Form>
   )
+}
+
+IngredientForm.propTypes = {
+  values: PropTypes.object,
+  loading: PropTypes.bool,
+  createIngredient: PropTypes.func,
+  updateIngredient: PropTypes.func,
 }
 
 export default IngredientForm

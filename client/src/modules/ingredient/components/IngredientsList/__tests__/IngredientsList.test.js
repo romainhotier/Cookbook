@@ -2,7 +2,7 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import { Table } from 'antd'
 
-import IngredientsList from './IngredientsList.component'
+import IngredientsList from '../IngredientsList.component'
 
 describe('IngredientsList.component', () => {
   it('should if Table is present in IngredientsList', () => {
