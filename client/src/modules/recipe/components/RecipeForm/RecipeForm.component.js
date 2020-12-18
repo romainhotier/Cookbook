@@ -17,23 +17,11 @@ const RecipeForm = ({ recipe = {}, createRecipe, slugRecipe, setSlugRecipe }) =>
 
   const recipeExist = !!slugRecipe && Object.keys(recipe).length > 0 && !!recipe[slugRecipe]._id
 
-  console.log('!!slugRecipe', !!slugRecipe)
-  console.log('Object.keys(recipe).length', Object.keys(recipe).length)
-
   if (recipeExist && Object.keys(recipeState).length === 0) {
-    console.log('if set recipe state')
-    console.log(recipe[slugRecipe])
     setRecipeState(recipe[slugRecipe])
   }
 
-  console.log('recipeExist', recipeExist)
-  console.log('Object.keys(recipeState)', Object.keys(recipeState))
-  console.log('Object.keys(recipeState)', Object.keys(recipeState).length)
-  console.log('recipeState', recipeState)
-
   const onFinish = values => {
-    console.log('Success:', values)
-
     if (Object.keys(recipeState).length === 0) {
       const slug = slugify(values.title)
       setSlugRecipe(slug)
@@ -47,14 +35,9 @@ const RecipeForm = ({ recipe = {}, createRecipe, slugRecipe, setSlugRecipe }) =>
     }
 
     const recipe = omit(values, 'ingredients')
-    console.log('ingredientsList:', ingredientsList)
-    console.log('values:', values)
-    console.log('listSteps:', listSteps)
   }
 
-  const onChange = data => {
-    console.log('checked:', data)
-  }
+  const onChange = data => {}
 
   return (
     <>

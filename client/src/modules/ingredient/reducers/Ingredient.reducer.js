@@ -1,4 +1,6 @@
 import { handleActions } from 'redux-actions'
+import omitBy from 'lodash/omitBy'
+import findKey from 'lodash/findKey'
 
 import {
   getAllIngredientsRequest,
@@ -7,12 +9,20 @@ import {
   postIngredientRequest,
   postIngredientSuccess,
   postIngredientFailed,
+  putIngredientRequest,
+  putIngredientSuccess,
+  putIngredientFailed,
+  deleteIngredientRequest,
+  deleteIngredientSuccess,
+  deleteIngredientFailed,
 } from './../actions'
 
 const defaultState = {
   content: {},
   loadingFetchIngredients: false,
+  loadingDeleteIngredient: false,
   loadingPostIngredient: false,
+  loadingPutIngredient: false,
   error: null,
 }
 
@@ -48,7 +58,7 @@ const IngredientReducer = handleActions(
       return {
         ...state,
         loadingFetchIngredients: false,
-        error: true,
+        error: `${action.payload}`,
       }
     },
 
@@ -81,7 +91,74 @@ const IngredientReducer = handleActions(
       return {
         ...state,
         loadingPostIngredient: false,
-        error: true,
+        error: `${action.payload}`,
+      }
+    },
+
+    /*
+     ** PUT INGREDIENT
+     */
+    [putIngredientRequest](state, action) {
+      return {
+        ...state,
+        loadingPutIngredient: true,
+        error: null,
+      }
+    },
+
+    [putIngredientSuccess](state, action) {
+      let { content } = state
+      let { data } = action.payload
+
+      const newContent = omitBy(content, recipe => recipe._id === data._id)
+
+      return {
+        ...state,
+        content: {
+          ...newContent,
+          [data.slug]: data,
+        },
+        loadingPutIngredient: false,
+      }
+    },
+
+    [putIngredientFailed](state, action) {
+      return {
+        ...state,
+        loadingPutIngredient: false,
+        error: `${action.payload}`,
+      }
+    },
+
+    /*
+     ** DELETE INGREDIENT
+     */
+    [deleteIngredientRequest](state) {
+      return {
+        ...state,
+        loadingDeleteIngredient: true,
+        error: null,
+      }
+    },
+
+    [deleteIngredientSuccess](state, action) {
+      let { content } = state
+
+      const ingSlug = findKey(content, ing => ing._id === action.payload)
+      delete content[ingSlug]
+
+      return {
+        ...state,
+        content,
+        loadingDeleteIngredient: false,
+      }
+    },
+
+    [deleteIngredientFailed](state, action) {
+      return {
+        ...state,
+        loadingDeleteIngredient: false,
+        error: `${action.payload}`,
       }
     },
   },

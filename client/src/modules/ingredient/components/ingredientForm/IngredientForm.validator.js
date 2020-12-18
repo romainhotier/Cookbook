@@ -2,29 +2,39 @@ export const IngredientValidator = {
   name: {
     required: true,
     errorMessage: "Le nom de l'ingrédient est obligatoire.",
-    placeholder: 'ex: Beurre de cacahuètes',
+    placeholder: 'ex: Banane',
   },
   categories: {
     required: false,
     errorMessage: '',
     placeholder: 'ex: Purée oléagineux',
   },
+  unit: {
+    required: true,
+    errorMessage: '',
+    placeholder: 'grammes',
+  },
+  portion: {
+    required: false,
+    errorMessage: '',
+    placeholder: 'ex: 120',
+  },
   calories: {
     required: false,
     errorMessage: '',
     placeholder: 'ex: 300',
   },
-  proteine: {
+  proteins: {
     required: false,
     errorMessage: '',
     placeholder: 'ex: 30',
   },
-  glucide: {
+  carbohydrates: {
     required: false,
     errorMessage: '',
     placeholder: 'ex: 45',
   },
-  lipide: {
+  fats: {
     required: false,
     errorMessage: '',
     placeholder: 'ex: 30',

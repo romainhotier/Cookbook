@@ -13,6 +13,7 @@ export const codeMsg = {
     ingredient: {
       success: {
         created: `L'ingrédient vient d'être ajouté à la liste !`,
+        ok: `Bien enregisté en base ;)`,
       },
       error: {
         bad_request: {
