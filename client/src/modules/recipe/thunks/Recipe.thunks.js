@@ -88,7 +88,7 @@ export const postRecipe = data => dispatch => {
     })
 }
 
-export const putRecipe = (id, data, isComplete = false) => dispatch => {
+export const putRecipe = (id, data) => dispatch => {
   dispatch(putRecipeRequest())
 
   fetch(updateRecipeURL(id), {
@@ -100,10 +100,10 @@ export const putRecipe = (id, data, isComplete = false) => dispatch => {
   })
     .then(res => res.json())
     .then(response => {
-      if (response.codeStatus === 201) {
+      if (response.codeStatus === 200) {
         dispatch(putRecipeSuccess(response.data))
         notification['success']({
-          message: isComplete ? 'Recette complétée !' : 'Recette modifiée !',
+          message: 'Recette modifiée !',
           description: `${get(codeMsg, `${response.codeMsg}`)}`,
         })
       } else {

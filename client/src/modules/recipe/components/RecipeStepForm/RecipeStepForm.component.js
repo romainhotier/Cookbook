@@ -14,13 +14,13 @@ import './_RecipeStepForm.scss'
 const RecipeStepForm = ({ listSteps, setListSteps }) => {
   const addStep = () => {
     const lastIndex = listSteps.length - 1
-    const lastId = listSteps[lastIndex].id
-    setListSteps([...listSteps, { id: lastId + 1, description: '' }])
+    const lastIdFront = listSteps[lastIndex].idFront
+    setListSteps([...listSteps, { idFront: lastIdFront + 1, description: '' }])
   }
 
   const removeStep = key => {
     const newListSteps = Array.from(listSteps)
-    remove(newListSteps, elem => elem.id === key)
+    remove(newListSteps, elem => elem.idFront === key)
     setListSteps(newListSteps)
   }
 
@@ -34,9 +34,9 @@ const RecipeStepForm = ({ listSteps, setListSteps }) => {
     setListSteps(items)
   }
 
-  const changeDescription = ({ target: { value } }, id) => {
+  const changeDescription = ({ target: { value } }, idFront) => {
     const newListSteps = Array.from(listSteps)
-    const index = findIndex(newListSteps, elem => elem.id === id)
+    const index = findIndex(newListSteps, elem => elem.idFront === idFront)
     newListSteps[index].description = value
     setListSteps(newListSteps)
   }
@@ -51,21 +51,21 @@ const RecipeStepForm = ({ listSteps, setListSteps }) => {
               ref={droppableProvided.innerRef}
               style={getListStyle(droppableSnapshot.isDraggingOver, listSteps.length)}
             >
-              {map(listSteps, ({ id, description }, index) => (
+              {map(listSteps, ({ idFront, description }, index) => (
                 <article className="step_item" key={`${index}-step`}>
-                  <Draggable key={`Draggable-${id}`} draggableId={`${id}-step`} index={index}>
+                  <Draggable key={`Draggable-${idFront}`} draggableId={`${idFront}-step`} index={index}>
                     {(draggableProvided, draggableSnapshot) => (
                       <div
                         ref={draggableProvided.innerRef}
                         {...draggableProvided.draggableProps}
                         {...draggableProvided.dragHandleProps}
                       >
-                        <label key={`${index}-label`} className={`${id}-recipeStep`}>
+                        <label key={`${index}-label`} className={`${idFront}-recipeStep`}>
                           Etape {index + 1}
                         </label>
                         <RecipeStepElement
-                          key={`${id}-recipeStep`}
-                          id={id}
+                          key={`${idFront}-recipeStep`}
+                          id={idFront}
                           description={description}
                           removeStep={removeStep}
                           changeDescription={changeDescription}

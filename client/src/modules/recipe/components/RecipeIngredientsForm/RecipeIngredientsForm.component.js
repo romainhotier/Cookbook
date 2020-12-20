@@ -2,6 +2,8 @@ import { connect } from 'react-redux'
 import React, { Component } from 'react'
 import { Select, Form, Input, Button, Spin } from 'antd'
 import find from 'lodash/find'
+import keyBy from 'lodash/keyBy'
+import forEach from 'lodash/forEach'
 
 import { fetchAllIngredients } from 'modules/ingredient/thunks'
 import { RecipeIngredientsValidator } from './RecipeIngredientsForm.validator'
@@ -18,11 +20,32 @@ class RecipeIngredientsForm extends Component {
     this.state = {
       researchIngredients: [],
       selectedIngredients: [],
+      initializeComponent: false,
     }
   }
 
   componentDidMount() {
     this.props.fetchAllIngredients()
+  }
+
+  componentDidUpdate(prevProps) {
+    const { ingredients, ingredientsRecipe } = this.props
+    if (
+      (Object.keys(prevProps.ingredients).length === 0 && Object.keys(ingredients).length > 0) ||
+      !this.state.initializeComponent
+    ) {
+      const ingredientsById = keyBy(ingredients, '_id')
+      let ingredientsInForm = []
+      if (Object.keys(ingredientsRecipe[0]).length > 0) {
+        ingredientsInForm = ingredientsRecipe.map(elem => ingredientsById[elem._id])
+      }
+
+      this.setState({
+        researchIngredients: Object.values(ingredients),
+        selectedIngredients: ingredientsInForm,
+        initializeComponent: true,
+      })
+    }
   }
 
   handleSearch = value => {
@@ -46,6 +69,7 @@ class RecipeIngredientsForm extends Component {
 
   createUnitOption = index => {
     const ingredient = this.state.selectedIngredients[index]
+
     if (!ingredient) {
       return
     }
@@ -91,6 +115,7 @@ class RecipeIngredientsForm extends Component {
             sizeButton={'small'}
           />
         </div>
+
         <Form.List name="ingredients">
           {(fields, { add, remove }) => (
             <>
@@ -113,13 +138,12 @@ class RecipeIngredientsForm extends Component {
                       <Select
                         showSearch
                         placeholder={RecipeIngredientsValidator['name'].placeholder}
-                        defaultActiveFirstOption={false}
+                        defaultActiveFirstOption={true}
                         showArrow={false}
                         filterOption={false}
                         onSearch={this.handleSearch}
                         onChange={this.handleChange}
                         notFoundContent={null}
-                        value={field.name}
                       >
                         {options}
                       </Select>

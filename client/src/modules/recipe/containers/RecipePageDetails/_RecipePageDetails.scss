@@ -11,3 +11,11 @@
     background-color: $green-300;
   }
 }
+
+.RecipeDetails {
+  &_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}

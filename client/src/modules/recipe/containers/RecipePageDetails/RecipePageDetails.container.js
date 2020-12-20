@@ -1,7 +1,9 @@
 import { connect } from 'react-redux'
 import React, { Component } from 'react'
-import { Col, Row } from 'antd'
+import { Col, Row, Spin, Button } from 'antd'
+import { NavLink } from 'react-router-dom'
 
+import Routes from '../../RecipeRoutes'
 import { fetchRecipe } from '../../thunks'
 
 import './_RecipePageDetails.scss'
@@ -10,7 +12,7 @@ class RecipePageDetails extends Component {
   componentDidMount() {
     const { recipes, match, fetchRecipe } = this.props
     const { slug } = match.params
-    console.log('recipes[slug]', recipes[slug])
+
     if (recipes[slug] === undefined) {
       fetchRecipe(slug)
     }
@@ -22,14 +24,21 @@ class RecipePageDetails extends Component {
     const recipe = recipes[slug]
 
     if (recipe === undefined) {
-      return 'loader'
+      return <Spin />
     }
 
     return (
       <>
-        <Row>
-          <Col xs={24} sm={24} md={18} lg={20} xl={20}>
-            <h1>{recipe.title}</h1>
+        <Row className="RecipeDetails">
+          <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+            <div className="RecipeDetails_header">
+              <h1>{recipe.title}</h1>
+              <NavLink to={Routes.recipeEdit(slug)} exact>
+                <div className="RecipeDetails_button_edit">
+                  <i className="fas fa-edit"></i>
+                </div>
+              </NavLink>
+            </div>
             <Row>
               <Col xs={4} sm={4} md={6} lg={6} xl={6}>
                 <h3>Ingrédients</h3>
@@ -44,16 +53,6 @@ class RecipePageDetails extends Component {
                 ))}
               </Col>
             </Row>
-          </Col>
-          <Col xs={0} sm={0} md={6} lg={4} xl={4}>
-            <ul>
-              <li>az</li>
-              <li>az</li>
-              <li>az</li>
-              <li>az</li>
-              <li>az</li>
-              <li>az</li>
-            </ul>
           </Col>
         </Row>
       </>

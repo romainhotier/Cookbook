@@ -10,8 +10,8 @@ import RecipeIngredientsForm from '../RecipeIngredientsForm'
 import RecipeStepForm from '../RecipeStepForm'
 import { RecipeValidator } from './RecipeForm.validator'
 
-const RecipeForm = ({ createRecipe }) => {
-  const [listSteps, setListSteps] = useState([{ id: 0, description: '' }])
+const RecipeForm = ({ sendRecipe, values }) => {
+  const [listSteps, setListSteps] = useState(values.steps)
   const [formRecipe] = Form.useForm()
 
   const validateForm = state => {
@@ -21,16 +21,18 @@ const RecipeForm = ({ createRecipe }) => {
 
   const onFinish = values => {
     const slug = slugify(values.title)
-    createRecipe({ ...values, slug, steps: listSteps })
+    sendRecipe({ ...values, slug, steps: listSteps })
   }
 
   return (
     <>
-      <Form layout="vertical" form={formRecipe} onFinish={onFinish} initialValues={{ ingredients: [{}] }}>
+      <Form layout="vertical" form={formRecipe} onFinish={onFinish} initialValues={values}>
         {/* Catégories */}
         <CheckboxWithImage label="Catégories" name="categories" datas={categories} />
         {/* Status */}
         <Input name="status" hidden={true} />
+        {/* _id */}
+        <Input name="_id" hidden={true} />
         {/* Titre de la recette */}
         <Input
           label="Titre de la recette"
@@ -80,7 +82,7 @@ const RecipeForm = ({ createRecipe }) => {
         <Row gutter={32}>
           {/* Ingrédients */}
           <Col lg={12} md={12} sm={24} xs={24}>
-            <RecipeIngredientsForm />
+            <RecipeIngredientsForm ingredientsRecipe={values.ingredients} />
           </Col>
 
           {/* Steps */}
