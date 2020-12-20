@@ -1,5 +1,6 @@
 import utils
 import copy
+import re
 
 server = utils.Server()
 
@@ -134,11 +135,17 @@ class PutRecipe(object):
     def check_steps(recipe, response_data):
         recipe_steps = (copy.deepcopy(recipe.get_stringify())).pop("steps")
         response_steps = (copy.deepcopy(response_data)).pop("steps")
+        # regx_1 = re.compile('.*aaaaaa.*', re.IGNORECASE)
+        # regx_2 = re.compile('.*bbbbbb.*', re.IGNORECASE)
+        # regx_3 = re.compile('.*cccccc.*', re.IGNORECASE)
         for i, step in enumerate(recipe_steps):
-            if isinstance(step, dict):
-                assert step == response_steps[i]
-            elif isinstance(step, str):
-                assert step == response_steps[i]["description"]
+            # print(step["description"])
+            # print(response_steps[i]["description"])
+            assert step["description"] == response_steps[i]["description"]
+            # if re.search(regx_1, step["_id"]) or re.search(regx_2, step["_id"]) or re.search(regx_3, step["_id"]):
+            #     assert step == response_steps[i]["description"]
+            #else:
+            #    assert step == response_steps[i]["description"]
 
     def clean_body(self, data):
         """ Clean body.
@@ -178,7 +185,7 @@ class PutRecipe(object):
                     if key not in ["_id", "quantity", "unit"]:
                         ingr.pop(key)
             return data
-        except (TypeError, AttributeError):
+        except (TypeError, AttributeError, KeyError):
             return data
 
     @staticmethod
@@ -202,5 +209,5 @@ class PutRecipe(object):
                         if key not in ["_id", "description"]:
                             step.pop(key)
             return data
-        except (TypeError, AttributeError):
+        except (TypeError, AttributeError, KeyError):
             return data

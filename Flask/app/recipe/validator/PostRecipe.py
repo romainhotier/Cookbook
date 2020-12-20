@@ -322,10 +322,11 @@ class Validator(object):
         """
         if api.param_steps in data:
             validator.is_array(param=api.param_steps, value=data[api.param_steps])
-            validator.is_array_non_empty(param=api.param_steps, value=data[api.param_steps])
-            validator.is_array_of_string(param=api.param_steps, value=data[api.param_steps])
-            for step in data[api.param_steps]:
-                self.is_description_valid(data=step)
+            if len(data[api.param_steps]) != 0:
+                validator.is_array_of_object(param=api.param_steps, value=data[api.param_steps])
+                for step in data[api.param_steps]:
+                    self.is_description_valid(data=step)
+                return True
             return True
         return True
 
@@ -336,8 +337,8 @@ class Validator(object):
 
         Parameters
         ----------
-        data : str
-            PostRecipe's body.
+        data : dict
+            PostRecipe's step body.
 
         Returns
         -------
@@ -345,8 +346,9 @@ class Validator(object):
             Response server if validation failed, True otherwise.
         """
         param_name = api.param_step+"."+api.param_step_description
-        validator.is_string(param=param_name, value=data)
-        validator.is_string_non_empty(param=param_name, value=data)
+        validator.is_mandatory(name=param_name, param=api.param_step_description, data=data)
+        validator.is_string(param=param_name, value=data[api.param_step_description])
+        validator.is_string_non_empty(param=param_name, value=data[api.param_step_description])
         return True
 
     # use in is_body_valid

@@ -174,14 +174,27 @@ class RecipeTest(object):
         assert recipe is not None
         for value in recipe:
             if value in ["steps"]:
-                if "created" in kwargs:
+                if "created" in kwargs:  # only check description
                     for i, step in enumerate(recipe["steps"]):
-                        assert step["description"] == self.__getattribute__(value)[i]
+                        assert step["description"] == self.__getattribute__(value)[i]["description"]
                 elif "updated" in kwargs:
                     for i, step in enumerate(recipe["steps"]):
-                        if isinstance(self.__getattribute__(value)[i], str):  # if it's and updated step
-                            assert step["description"] == self.__getattribute__(value)[i]
+                        if "_id" not in self.__getattribute__(value)[i]:  # update nouveau
+                            print("je suis dans l'update")
+                            print(self.__getattribute__(value)[i]["_id"])
+                        pass
+                            
+
+                        if self.__getattribute__(value)[i]["_id"] in ["aaaaaaaaaaaaaaaaaaaaaaaa",
+                                                                          "bbbbbbbbbbbbbbbbbbbbbbbb",
+                                                                          "cccccccccccccccccccccccc"]:
+                            print("je suis la")
+                            #assert step["description"] == self.__getattribute__(value)[i]["description"]
+                            print(mongo.to_json(step))
+                            print(self.__getattribute__(value)[i])
+                            assert mongo.to_json(step) == self.__getattribute__(value)[i]
                         else:
+                            print("je suis nouveau")
                             assert mongo.to_json(step) == self.__getattribute__(value)[i]
                 else:
                     assert recipe[value] == self.__getattribute__(value)

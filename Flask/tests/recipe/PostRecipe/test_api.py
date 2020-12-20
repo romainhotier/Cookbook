@@ -71,7 +71,8 @@ class PostRecipe(unittest.TestCase):
                 api.param_resume: "resume_ex",
                 api.param_slug: "slug",
                 api.param_status: "in_progress",
-                api.param_steps: ["description_ex1", "description_ex2"],
+                api.param_steps: [{api.param_step_description: "description_ex1"},
+                                  {api.param_step_description: "description_ex2", "invalid": "invalid"}],
                 api.param_title: "qa_rhr_title",
                 "invalid": "invalid"}
         """ call api """
@@ -80,7 +81,6 @@ class PostRecipe(unittest.TestCase):
         response_body = response.json()
         """ change """
         tc_recipe = recipe_model.RecipeTest().custom(api.add_default_value(body=body))
-        tc_recipe.display()
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], "application/json")
