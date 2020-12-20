@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import { Form, Button, Row, Col, Divider } from 'antd'
-import omit from 'lodash/omit'
+import { Form, Button, Row, Col, Divider, Space } from 'antd'
 
 import { Input } from 'components/Form/Input.component'
 import { CheckboxWithImage } from 'components/Form/CheckboxWithImage.component'
@@ -11,39 +10,25 @@ import RecipeIngredientsForm from '../RecipeIngredientsForm'
 import RecipeStepForm from '../RecipeStepForm'
 import { RecipeValidator } from './RecipeForm.validator'
 
-const RecipeForm = ({ recipe = {}, createRecipe, slugRecipe, setSlugRecipe }) => {
-  const [recipeState, setRecipeState] = useState({})
+const RecipeForm = ({ createRecipe }) => {
   const [listSteps, setListSteps] = useState([{ id: 0, description: '' }])
+  const [formRecipe] = Form.useForm()
 
-  const recipeExist = !!slugRecipe && Object.keys(recipe).length > 0 && !!recipe[slugRecipe]._id
-
-  if (recipeExist && Object.keys(recipeState).length === 0) {
-    setRecipeState(recipe[slugRecipe])
+  const validateForm = state => {
+    formRecipe.setFieldsValue({ status: state })
+    formRecipe.submit()
   }
 
   const onFinish = values => {
-    if (Object.keys(recipeState).length === 0) {
-      const slug = slugify(values.title)
-      setSlugRecipe(slug)
-      createRecipe({ ...values, slug })
-      return
-    }
-
-    const ingredientsList = {
-      _id_recipe: recipeState._id,
-      ingredients: values.ingredients,
-    }
-
-    const recipe = omit(values, 'ingredients')
+    const slug = slugify(values.title)
+    createRecipe({ ...values, slug, steps: listSteps })
   }
-
-  const onChange = data => {}
 
   return (
     <>
-      <Form layout="vertical" name="basic" onFinish={onFinish}>
+      <Form layout="vertical" form={formRecipe} onFinish={onFinish} initialValues={{ ingredients: [{}] }}>
         {/* Catégories */}
-        <CheckboxWithImage label="Catégories" name="categories" datas={categories} onChange={onChange} />
+        <CheckboxWithImage label="Catégories" name="categories" datas={categories} />
 
         {/* Titre de la recette */}
         <Input
@@ -89,43 +74,29 @@ const RecipeForm = ({ recipe = {}, createRecipe, slugRecipe, setSlugRecipe }) =>
           </Col>
         </Row>
 
-        {recipeExist ? (
-          ''
-        ) : (
-          <Divider>
-            <Button type="primary" htmlType="submit">
-              Continuer <i style={{ paddingLeft: '10px' }} className="fas fa-angle-down"></i>
-            </Button>
-          </Divider>
-        )}
+        <Divider />
 
         <Row gutter={32}>
           {/* Ingrédients */}
-          <Col lg={10} md={12} sm={24} xs={24}>
-            <RecipeIngredientsForm
-              //disabled={!recipeExist}
-              _id_recipe={recipe._id}
-            />
+          <Col lg={12} md={12} sm={24} xs={24}>
+            <RecipeIngredientsForm />
           </Col>
+
           {/* Steps */}
-          <Col lg={14} md={12} sm={24} xs={24}>
-            <RecipeStepForm
-              disabled={!recipeExist}
-              _id_recipe={recipe._id}
-              listSteps={listSteps}
-              setListSteps={setListSteps}
-            />
+          <Col lg={12} md={12} sm={24} xs={24} style={{ borderLeft: '1px solid rgba(0, 0, 0, 0.06)' }}>
+            <RecipeStepForm listSteps={listSteps} setListSteps={setListSteps} />
           </Col>
         </Row>
 
-        <Row style={{ justifyContent: 'flex-end' }}>
-          <Button
-            type="primary"
-            htmlType="submit"
-            // disabled={!recipeExist}
-          >
-            Ajoutée la recette
-          </Button>
+        <Row style={{ justifyContent: 'center', marginTop: '45px' }}>
+          <Space>
+            <Button type="default" size="large" htmlType="button" onClick={() => validateForm('in_progress')}>
+              Sauvegarder la recette
+            </Button>
+            <Button type="primary" size="large" htmlType="button" onClick={() => validateForm('finished')}>
+              Publier la recette
+            </Button>
+          </Space>
         </Row>
       </Form>
     </>

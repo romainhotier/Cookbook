@@ -16,7 +16,7 @@ const Layout = () => {
         xs={{ span: 24, offset: 0 }}
         sm={{ span: 24, offset: 0 }}
         md={{ span: 24, offset: 0 }}
-        lg={{ span: 20, offset: 2 }}
+        lg={{ span: 24, offset: 0 }}
         xl={{ span: 20, offset: 2 }}
       >
         <div className="layout">

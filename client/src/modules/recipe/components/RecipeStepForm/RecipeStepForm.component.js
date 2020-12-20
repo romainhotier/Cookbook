@@ -11,7 +11,7 @@ import RecipeStepElement from './RecipeStepElement.component'
 
 import './_RecipeStepForm.scss'
 
-const RecipeStepForm = ({ recipeExist, listSteps, setListSteps, disabled }) => {
+const RecipeStepForm = ({ listSteps, setListSteps }) => {
   const addStep = () => {
     const lastIndex = listSteps.length - 1
     const lastId = listSteps[lastIndex].id
@@ -42,7 +42,7 @@ const RecipeStepForm = ({ recipeExist, listSteps, setListSteps, disabled }) => {
   }
 
   return (
-    <div className={recipeExist ? '' : 'blockDisabled'}>
+    <div>
       <h2>Préparation</h2>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
@@ -53,7 +53,7 @@ const RecipeStepForm = ({ recipeExist, listSteps, setListSteps, disabled }) => {
             >
               {map(listSteps, ({ id, description }, index) => (
                 <article className="step_item" key={`${index}-step`}>
-                  <Draggable key={id} draggableId={`${id}-step`} index={index}>
+                  <Draggable key={`Draggable-${id}`} draggableId={`${id}-step`} index={index}>
                     {(draggableProvided, draggableSnapshot) => (
                       <div
                         ref={draggableProvided.innerRef}
@@ -64,7 +64,6 @@ const RecipeStepForm = ({ recipeExist, listSteps, setListSteps, disabled }) => {
                           Etape {index + 1}
                         </label>
                         <RecipeStepElement
-                          disabled={disabled}
                           key={`${id}-recipeStep`}
                           id={id}
                           description={description}
@@ -82,7 +81,7 @@ const RecipeStepForm = ({ recipeExist, listSteps, setListSteps, disabled }) => {
         </Droppable>
       </DragDropContext>
       <div className="button_add_step">
-        <Button type="primary" onClick={addStep} disabled={disabled}>
+        <Button type="default" onClick={addStep}>
           Ajouter une étape
         </Button>
       </div>

@@ -22,11 +22,7 @@
     }
 
     &.ant-checkbox-wrapper-checked {
-      background-color: rgba($primary, 0.7);
-      span {
-        // color: $primary;
-      }
+      border: 5px solid rgba($primary, 0.7);
     }
   }
-
 }
