@@ -29,7 +29,8 @@ const RecipeForm = ({ createRecipe }) => {
       <Form layout="vertical" form={formRecipe} onFinish={onFinish} initialValues={{ ingredients: [{}] }}>
         {/* Catégories */}
         <CheckboxWithImage label="Catégories" name="categories" datas={categories} />
-
+        {/* Status */}
+        <Input name="status" hidden={true} />
         {/* Titre de la recette */}
         <Input
           label="Titre de la recette"
