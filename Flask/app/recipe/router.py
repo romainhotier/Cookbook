@@ -135,7 +135,7 @@ def post_recipe():
     @apiParam (Body param) {Array} [ingredients]=Empty_Array Recipe's Ingredients
     @apiParam (Body param) {String} ingredients[_id] Ingredient's ObjectId
     @apiParam (Body param) {Integer} ingredients[quantity] Ingredient's quantity
-    @apiParam (Body param) {String} [ingredients[unit]=""] Ingredient's unit
+    @apiParam (Body param) {String} ingredients[unit] Ingredient's unit
     @apiParam (Body param) {Integer} [level]=0 Recipe's level (between 0 and 3)
     @apiParam (Body param) {String} [nb_people]=0 Recipe's number of people
     @apiParam (Body param) {String} [note]="" Recipe's note
@@ -197,7 +197,7 @@ def put_recipe(_id):
     @apiParam (Body param) {Array} [ingredients]=Empty_Array Recipe's Ingredients
     @apiParam (Body param) {String} ingredients[_id] Ingredient's ObjectId
     @apiParam (Body param) {Integer} ingredients[quantity] Ingredient's quantity
-    @apiParam (Body param) {String} [ingredients[unit]=""] Ingredient's unit
+    @apiParam (Body param) {String} ingredients[unit]= Ingredient's unit
     @apiParam (Body param) {Integer} [level]=0 Recipe's level (between 0 and 3)
     @apiParam (Body param) {String} [nb_people]=0 Recipe's number of people
     @apiParam (Body param) {String} [note]="" Recipe's note
