@@ -10,9 +10,11 @@ class GetRecipe(object):
     def __init__(self):
         self.url = 'recipe'
         self.param_slug = "slug"
+        self.param_with_files = "with_files"
         self.rep_code_msg_ok = server.rep_code_msg_ok.replace("xxx", "recipe")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "recipe")
         self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
+        self.detail_with_files = " ['true', 'false']"
 
     @staticmethod
     def create_detail(param, msg, **kwargs):

@@ -78,6 +78,16 @@ class FileTest(object):
         """
         return copy.deepcopy(self.data[0].decode("utf-8"))
 
+    def get_enrichment(self):
+        """ Get FileTest's enrichment data.
+
+        Returns
+        -------
+        str
+            FileTest's enrichment data.
+        """
+        return {"_id": str(self._id), "is_main": self.get_is_main()}
+
     def insert(self):
         """ Insert FileTest.
 

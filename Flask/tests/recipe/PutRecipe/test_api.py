@@ -96,7 +96,7 @@ class PutRecipe(unittest.TestCase):
                 api.param_title: "qa_rhr_title_update",
                 "invalid": "invalid"}
         """ call api """
-        url = server.main_url + "/" + api.url + "/" + tc_id
+        url = server.main_url + "/" + api.url + "/" + tc_id + "?invalid=invalid"
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
         """ change """

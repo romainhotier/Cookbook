@@ -10,9 +10,11 @@ class GetIngredient(object):
     def __init__(self):
         self.url = 'ingredient'
         self.param_id = "_id"
+        self.param_with_files = "with_files"
         self.rep_code_msg_ok = server.rep_code_msg_ok.replace("xxx", "ingredient")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "ingredient")
         self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
+        self.detail_with_files = " ['true', 'false']"
 
     @staticmethod
     def create_detail(param, msg, **kwargs):
@@ -38,13 +40,15 @@ class GetIngredient(object):
         return detail
 
     @staticmethod
-    def data_expected(ingredient):
+    def data_expected(ingredient, **kwargs):
         """ Format data's response.
 
         Parameters
         ----------
         ingredient : Any
             IngredientTest.
+        kwargs : Any
+            files: [FileTests].
 
         Returns
         -------
@@ -52,6 +56,8 @@ class GetIngredient(object):
             Data's response.
         """
         data_expected = ingredient.get_stringify()
+        if "files" in kwargs:
+            data_expected["files"] = [file.get_enrichment() for file in kwargs["files"]]
         return data_expected
 
     @staticmethod

@@ -199,7 +199,7 @@ class IngredientTest(object):
         return
 
     """ files """
-    def add_file(self, filename, is_main, **kwargs):
+    def add_file(self, filename, is_main):
         """ Add a file to IngredientTest.
 
         Parameters
@@ -208,8 +208,6 @@ class IngredientTest(object):
             Name of File.
         is_main : bool
             Is primary or not.
-        kwargs : Any
-            identifier : force ObjectId
 
         Returns
         -------
@@ -217,10 +215,8 @@ class IngredientTest(object):
             Response server if validation failed, True otherwise.
 
         """
-        file = FileTest.custom({"filename": filename,
-                                "metadata": {"kind": "ingredient",
-                                             "_id_parent": ObjectId(self._id),
-                                             "is_main": is_main}}).insert()
-        if "identifier" in kwargs.keys():
-            file.custom({"_id": kwargs["identifier"]})
+        file = filetest_model.FileTest().custom({"filename": filename,
+                                                 "metadata": {"kind": "ingredient",
+                                                              "_id_parent": ObjectId(self._id),
+                                                              "is_main": is_main}}).insert()
         return file

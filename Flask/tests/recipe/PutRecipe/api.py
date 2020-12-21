@@ -133,19 +133,29 @@ class PutRecipe(object):
 
     @staticmethod
     def check_steps(recipe, response_data):
+        """ Check steps information.
+
+        Parameters
+        ----------
+        recipe : Any
+            RecipeTest.
+        response_data : dict
+            Server's response.
+        """
         recipe_steps = (copy.deepcopy(recipe.get_stringify())).pop("steps")
         response_steps = (copy.deepcopy(response_data)).pop("steps")
-        # regx_1 = re.compile('.*aaaaaa.*', re.IGNORECASE)
-        # regx_2 = re.compile('.*bbbbbb.*', re.IGNORECASE)
-        # regx_3 = re.compile('.*cccccc.*', re.IGNORECASE)
+        regx_1 = re.compile('.*aaaaaa.*', re.IGNORECASE)
+        regx_2 = re.compile('.*bbbbbb.*', re.IGNORECASE)
+        regx_3 = re.compile('.*cccccc.*', re.IGNORECASE)
         for i, step in enumerate(recipe_steps):
-            # print(step["description"])
-            # print(response_steps[i]["description"])
-            assert step["description"] == response_steps[i]["description"]
-            # if re.search(regx_1, step["_id"]) or re.search(regx_2, step["_id"]) or re.search(regx_3, step["_id"]):
-            #     assert step == response_steps[i]["description"]
-            #else:
-            #    assert step == response_steps[i]["description"]
+            try:
+                if re.search(regx_1, step["_id"]) or re.search(regx_2, step["_id"]) or re.search(regx_3, step["_id"]):
+                    assert step["description"] == response_steps[i]["description"]
+                    assert step["_id"] == response_steps[i]["_id"]
+                else:
+                    assert step["description"] == response_steps[i]["description"]
+            except KeyError:
+                assert step["description"] == response_steps[i]["description"]
 
     def clean_body(self, data):
         """ Clean body.

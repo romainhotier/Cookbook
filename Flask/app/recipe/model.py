@@ -3,6 +3,7 @@ from bson import ObjectId
 import re
 
 import utils
+import app.file.model as file_model
 
 mongo = utils.Mongo()
 
@@ -233,3 +234,82 @@ class Recipe(object):
         steps_ids = [step["_id"] for step in result["steps"]]
         client.close()
         return steps_ids
+
+    def add_enrichment_files(self):
+        """ Add files information for Recipes.
+        Returns
+        -------
+        Any
+            Recipes with Files information.
+        """
+        if isinstance(self.result, dict):
+            self.add_enrichment_files_recipe(recipe=self.result)
+            self.add_enrichment_files_ingredients(recipe=self.result)
+            self.add_enrichment_files_steps(recipe=self.result)
+        elif isinstance(self.result, list):
+            for recipe in self.result:
+                self.add_enrichment_files_recipe(recipe=recipe)
+                self.add_enrichment_files_ingredients(recipe=recipe)
+                self.add_enrichment_files_steps(recipe=recipe)
+            return self
+
+    # def add_enrichment_files_recipe(self, recipe):
+    #     for recipe in self.result:
+    #         recipe["files"] = []
+    #         """ get files """
+    #         files = file_model.File().get_all_file_by_id_parent(_id_parent=recipe["_id"]).result
+    #         for file in files:
+    #             file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
+    #             recipe["files"].append(file_enrichment)
+    #     return self
+
+    def add_enrichment_files_recipe(self, recipe):
+        recipe["files"] = []
+        """ get files """
+        files = file_model.File().get_all_file_by_id_parent(_id_parent=recipe["_id"]).result
+        for file in files:
+            file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
+            recipe["files"].append(file_enrichment)
+        return self
+
+    # def add_enrichment_files_steps(self, recipe):
+    #     for recipe in self.result:
+    #         for step in recipe["steps"]:
+    #             step["files"] = []
+    #             """ get files """
+    #             files = file_model.File().get_all_file_by_id_parent(_id_parent=step["_id"]).result
+    #             for file in files:
+    #                 file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
+    #                 step["files"].append(file_enrichment)
+    #     return self
+
+    def add_enrichment_files_steps(self, recipe):
+        for step in recipe["steps"]:
+            step["files"] = []
+            """ get files """
+            files = file_model.File().get_all_file_by_id_parent(_id_parent=step["_id"]).result
+            for file in files:
+                file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
+                step["files"].append(file_enrichment)
+        return self
+
+    # def add_enrichment_files_ingredients(self, recipe):
+    #     for recipe in self.result:
+    #         for ingredient in recipe["ingredients"]:
+    #             ingredient["files"] = []
+    #             """ get files """
+    #             files = file_model.File().get_all_file_by_id_parent(_id_parent=ingredient["_id"]).result
+    #             for file in files:
+    #                 file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
+    #                 ingredient["files"].append(file_enrichment)
+    #     return self
+
+    def add_enrichment_files_ingredients(self, recipe):
+        for ingredient in recipe["ingredients"]:
+            ingredient["files"] = []
+            """ get files """
+            files = file_model.File().get_all_file_by_id_parent(_id_parent=ingredient["_id"]).result
+            for file in files:
+                file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
+                ingredient["files"].append(file_enrichment)
+        return self

@@ -9,9 +9,11 @@ class GetAllRecipe(object):
 
     def __init__(self):
         self.url = 'recipe'
+        self.param_with_files = "with_files"
         self.rep_code_msg_ok = server.rep_code_msg_ok.replace("xxx", "recipe")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "recipe")
         self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
+        self.detail_with_files = " ['true', 'false']"
 
     @staticmethod
     def create_detail(param, msg, **kwargs):
@@ -37,13 +39,15 @@ class GetAllRecipe(object):
         return detail
 
     @staticmethod
-    def data_expected(recipe):
+    def data_expected(recipe, **kwargs):
         """ Format data's response.
 
         Parameters
         ----------
         recipe : Any
             RecipeTest.
+        kwargs : Any
+            files: [FileTests].
 
         Returns
         -------
@@ -51,6 +55,8 @@ class GetAllRecipe(object):
             Data's response.
         """
         data_expected = recipe.get_stringify()
+        if "files" in kwargs:
+            data_expected["files"] = [file.get_enrichment() for file in kwargs["files"]]
         return data_expected
 
     @staticmethod
