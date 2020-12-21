@@ -177,7 +177,7 @@ class PutRecipe(unittest.TestCase):
         api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
-        tc_recipe.check_bdd_data(updated=True)
+        tc_recipe.check_bdd_data()
 
     def test_steps_tab_reset(self):
         """ BodyParameter steps is a tab reset.
@@ -208,7 +208,7 @@ class PutRecipe(unittest.TestCase):
         api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
-        tc_recipe.check_bdd_data(updated=True)
+        tc_recipe.check_bdd_data()
 
     def test_steps_tab_null(self):
         """ BodyParameter steps is a tab null.
@@ -318,7 +318,7 @@ class PutRecipe(unittest.TestCase):
         api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
-        tc_recipe.check_bdd_data(updated=True)
+        tc_recipe.check_bdd_data()
 
     def test_steps_id_null(self):
         """ BodyParameter step.id is null.
@@ -432,7 +432,7 @@ class PutRecipe(unittest.TestCase):
         api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
-        tc_recipe.check_bdd_data(updated=True)
+        tc_recipe.check_bdd_data()
 
     def test_steps_description_without(self):
         """ BodyParameter step.description is missing.
@@ -546,7 +546,7 @@ class PutRecipe(unittest.TestCase):
         api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
-        tc_recipe.check_bdd_data(updated=True)
+        tc_recipe.check_bdd_data()
 
     def test_steps_complexe(self):
         """ Special case : complexe update
@@ -563,7 +563,7 @@ class PutRecipe(unittest.TestCase):
         tc_id = tc_recipe.get_id()
         body = {api.param_steps: [{api.param_step_id: "aaaaaaaaaaaaaaaaaaaaaaaa",
                                    api.param_step_description: "step1"},
-                                  "step_new",
+                                  {api.param_step_description: "step_new"},
                                   {api.param_step_id: "cccccccccccccccccccccccc",
                                    api.param_step_description: "step_new_fake"},
                                   {api.param_step_id: "bbbbbbbbbbbbbbbbbbbbbbbb",
@@ -584,7 +584,7 @@ class PutRecipe(unittest.TestCase):
         api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
-        tc_recipe.check_bdd_data(updated=True)
+        tc_recipe.check_bdd_data()
 
     def test_steps_clean_files(self):
         """ Special case : File to be cleaned
@@ -602,7 +602,9 @@ class PutRecipe(unittest.TestCase):
         tc_file3 = tc_recipe.add_file_step(_id_step="bbbbbbbbbbbbbbbbbbbbbbbb", filename="file2", is_main=False)
         """ param """
         tc_id = tc_recipe.get_id()
-        body = {api.param_steps: ["new", {"_id": "bbbbbbbbbbbbbbbbbbbbbbbb", "description": "step2up"}]}
+        body = {api.param_steps: [{api.param_step_description: "step_new"},
+                                  {api.param_step_id: "bbbbbbbbbbbbbbbbbbbbbbbb",
+                                   api.param_step_description: "step2up"}]}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
@@ -619,7 +621,7 @@ class PutRecipe(unittest.TestCase):
         api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
-        tc_recipe.check_bdd_data(updated=True)
+        tc_recipe.check_bdd_data()
         tc_file1.check_doesnt_exist_by_id()
         tc_file2.check_doesnt_exist_by_id()
         tc_file3.check_bdd_data()

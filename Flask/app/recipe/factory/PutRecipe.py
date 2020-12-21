@@ -146,7 +146,7 @@ class Factory(object):
         formated_steps = []
         try:
             for step in self.body[self.param_steps]:
-                if self.param_step_id in step:
+                if self.param_step_id not in step:
                     formated_steps.append({self.param_step_id: ObjectId(),
                                            self.param_step_description: step[self.param_step_description]})
                 else:

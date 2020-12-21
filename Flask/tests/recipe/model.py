@@ -158,14 +158,8 @@ class RecipeTest(object):
         client.close()
         return
 
-    def check_bdd_data(self, **kwargs):
+    def check_bdd_data(self):
         """ Check if RecipeTest is correct.
-
-        Parameters
-        ----------
-        kwargs : bool
-            created/updated
-
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
@@ -173,31 +167,12 @@ class RecipeTest(object):
         client.close()
         assert recipe is not None
         for value in recipe:
-            if value in ["steps"]:
-                if "created" in kwargs:  # only check description
-                    for i, step in enumerate(recipe["steps"]):
+            if value in ["steps"]:  # check for steps
+                for i, step in enumerate(recipe["steps"]):
+                    if "_id" not in self.__getattribute__(value)[i]:  # new step
                         assert step["description"] == self.__getattribute__(value)[i]["description"]
-                elif "updated" in kwargs:
-                    for i, step in enumerate(recipe["steps"]):
-                        if "_id" not in self.__getattribute__(value)[i]:  # update nouveau
-                            print("je suis dans l'update")
-                            print(self.__getattribute__(value)[i]["_id"])
-                        pass
-                            
-
-                        if self.__getattribute__(value)[i]["_id"] in ["aaaaaaaaaaaaaaaaaaaaaaaa",
-                                                                          "bbbbbbbbbbbbbbbbbbbbbbbb",
-                                                                          "cccccccccccccccccccccccc"]:
-                            print("je suis la")
-                            #assert step["description"] == self.__getattribute__(value)[i]["description"]
-                            print(mongo.to_json(step))
-                            print(self.__getattribute__(value)[i])
-                            assert mongo.to_json(step) == self.__getattribute__(value)[i]
-                        else:
-                            print("je suis nouveau")
-                            assert mongo.to_json(step) == self.__getattribute__(value)[i]
-                else:
-                    assert recipe[value] == self.__getattribute__(value)
+                    else:  # old step
+                        assert mongo.to_json(step) == mongo.to_json(self.__getattribute__(value)[i])
             elif value not in ["_id"]:
                 assert recipe[value] == self.__getattribute__(value)
 

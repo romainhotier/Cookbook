@@ -107,9 +107,6 @@ class DeleteRecipe(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.delete(url, verify=False)
         response_body = response.json()
-        """ change """
-        #tc_file_recipe11.delete()
-        #tc_f
         """ assert """
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"],  "application/json")

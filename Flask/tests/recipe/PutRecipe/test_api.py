@@ -87,7 +87,7 @@ class PutRecipe(unittest.TestCase):
                 api.param_status: "in_progress",
                 api.param_steps: [{api.param_step_id: "aaaaaaaaaaaaaaaaaaaaaaaa",
                                    api.param_step_description: "step1_up"},
-                                  "step_new",
+                                  {api.param_step_description: "step1_up"},
                                   {api.param_step_id: "cccccccccccccccccccccccc",
                                    api.param_step_description: "step_new_fake"},
                                   {api.param_step_id: "bbbbbbbbbbbbbbbbbbbbbbbb",
@@ -111,7 +111,7 @@ class PutRecipe(unittest.TestCase):
         api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
-        tc_recipe.check_bdd_data(updated=True)
+        tc_recipe.check_bdd_data()
 
     def test_api_url_not_found(self):
         """ Wrong url.
