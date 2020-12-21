@@ -475,28 +475,6 @@ class Validator(object):
         return True
 
     @staticmethod
-    def is_object_or_string(param, value):
-        """ Check if the value is an object or a string.
-
-        Parameters
-        ----------
-        param : str
-            Name of the tested parameter.
-        value : Any
-            Value of the tested parameter.
-
-        Returns
-        -------
-        Any
-            Raise an "abort 400" if validation failed.
-        """
-        if isinstance(value, dict) or isinstance(value, str):
-            return True
-        else:
-            detail = server.format_detail(param=param, msg=server.detail_must_be_an_object_or_string, value=value)
-            return abort(status=400, description=detail)
-
-    @staticmethod
     def is_object(param, value):
         """ Check if the value is an object.
 

@@ -165,15 +165,48 @@ class PutRecipe(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
+        tc_recipe.custom(api.clean_body(data=body))
         """ assert """
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body["codeStatus"], 400)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_steps, msg=server.detail_must_be_not_empty,
-                                   value=body[api.param_steps])
-        self.assertEqual(response_body["detail"], detail)
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertEqual(api.response_without_steps(data=response_body["data"]),
+                         api.data_expected_without_steps(recipe=tc_recipe))
+        api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        """ check """
+        tc_recipe.check_bdd_data()
+
+    def test_steps_tab_reset(self):
+        """ BodyParameter steps is a tab reset.
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
+        tc_recipe = recipe_model.RecipeTest()
+        tc_recipe.add_step(_id_step="aaaaaaaaaaaaaaaaaaaaaaaa", description="step")
+        tc_recipe.insert()
+        """ param """
+        tc_id = tc_recipe.get_id()
+        body = {api.param_steps: []}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        """ change """
+        tc_recipe.custom(api.clean_body(data=body))
+        """ assert """
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertEqual(api.response_without_steps(data=response_body["data"]),
+                         api.data_expected_without_steps(recipe=tc_recipe))
+        api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
         tc_recipe.check_bdd_data()
 
@@ -198,8 +231,8 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_step, msg=server.detail_must_be_an_object_or_string,
-                                   value=body[api.param_steps][0])
+        detail = api.create_detail(param=api.param_steps, msg=server.detail_must_be_an_array_of_object,
+                                   value=body[api.param_steps])
         self.assertEqual(response_body["detail"], detail)
         """ check """
         tc_recipe.check_bdd_data()
@@ -225,9 +258,8 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_step+"."+api.param_step_description,
-                                   msg=server.detail_must_be_not_empty,
-                                   value=body[api.param_steps][0])
+        detail = api.create_detail(param=api.param_steps, msg=server.detail_must_be_an_array_of_object,
+                                   value=body[api.param_steps])
         self.assertEqual(response_body["detail"], detail)
         """ check """
         tc_recipe.check_bdd_data()
@@ -247,19 +279,17 @@ class PutRecipe(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
-        """ change """
-        tc_recipe.custom(body)
         """ assert """
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body["codeStatus"], 200)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertEqual(api.response_without_steps(data=response_body["data"]),
-                         api.data_expected_without_steps(recipe=tc_recipe))
-        api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        self.assertEqual(response_body["codeStatus"], 400)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        detail = api.create_detail(param=api.param_steps, msg=server.detail_must_be_an_array_of_object,
+                                   value=body[api.param_steps])
+        self.assertEqual(response_body["detail"], detail)
         """ check """
-        tc_recipe.check_bdd_data(updated=True)
+        tc_recipe.check_bdd_data()
 
     def test_steps_id_without(self):
         """ BodyParameter step.id is missing.
@@ -271,19 +301,22 @@ class PutRecipe(unittest.TestCase):
         tc_recipe = recipe_model.RecipeTest().insert()
         """ param """
         tc_id = tc_recipe.get_id()
-        body = {api.param_steps: [{}]}
+        body = {api.param_steps: [{api.param_step_description: "step"}]}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
+        """ change """
+        tc_recipe.custom(api.clean_body(data=body))
         """ assert """
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
-        self.assertEqual(response_body["codeStatus"], 400)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_steps+"."+api.param_step_id, msg=server.detail_is_required)
-        self.assertEqual(response_body["detail"], detail)
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertEqual(api.response_without_steps(data=response_body["data"]),
+                         api.data_expected_without_steps(recipe=tc_recipe))
+        api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
+        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
         tc_recipe.check_bdd_data()
 
@@ -399,7 +432,7 @@ class PutRecipe(unittest.TestCase):
         api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
-        tc_recipe.check_bdd_data(updated=True)
+        tc_recipe.check_bdd_data()
 
     def test_steps_description_without(self):
         """ BodyParameter step.description is missing.
@@ -513,7 +546,7 @@ class PutRecipe(unittest.TestCase):
         api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
-        tc_recipe.check_bdd_data(updated=True)
+        tc_recipe.check_bdd_data()
 
     def test_steps_complexe(self):
         """ Special case : complexe update
@@ -530,7 +563,7 @@ class PutRecipe(unittest.TestCase):
         tc_id = tc_recipe.get_id()
         body = {api.param_steps: [{api.param_step_id: "aaaaaaaaaaaaaaaaaaaaaaaa",
                                    api.param_step_description: "step1"},
-                                  "step_new",
+                                  {api.param_step_description: "step_new"},
                                   {api.param_step_id: "cccccccccccccccccccccccc",
                                    api.param_step_description: "step_new_fake"},
                                   {api.param_step_id: "bbbbbbbbbbbbbbbbbbbbbbbb",
@@ -551,7 +584,7 @@ class PutRecipe(unittest.TestCase):
         api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
-        tc_recipe.check_bdd_data(updated=True)
+        tc_recipe.check_bdd_data()
 
     def test_steps_clean_files(self):
         """ Special case : File to be cleaned
@@ -569,7 +602,9 @@ class PutRecipe(unittest.TestCase):
         tc_file3 = tc_recipe.add_file_step(_id_step="bbbbbbbbbbbbbbbbbbbbbbbb", filename="file2", is_main=False)
         """ param """
         tc_id = tc_recipe.get_id()
-        body = {api.param_steps: ["new", {"_id": "bbbbbbbbbbbbbbbbbbbbbbbb", "description": "step2up"}]}
+        body = {api.param_steps: [{api.param_step_description: "step_new"},
+                                  {api.param_step_id: "bbbbbbbbbbbbbbbbbbbbbbbb",
+                                   api.param_step_description: "step2up"}]}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.put(url, json=body, verify=False)
@@ -586,7 +621,7 @@ class PutRecipe(unittest.TestCase):
         api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
         """ check """
-        tc_recipe.check_bdd_data(updated=True)
+        tc_recipe.check_bdd_data()
         tc_file1.check_doesnt_exist_by_id()
         tc_file2.check_doesnt_exist_by_id()
         tc_file3.check_bdd_data()

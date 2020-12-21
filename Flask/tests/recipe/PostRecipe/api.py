@@ -27,6 +27,7 @@ class PostRecipe(object):
         self.param_slug = "slug"
         self.param_status = "status"
         self.param_steps = "steps"
+        self.param_step_description = "description"
         self.param_title = "title"
         self.rep_detail_status = " ['in_progress', 'finished']"
         self.rep_code_msg_created = server.rep_code_msg_created.replace("xxx", "recipe")
@@ -92,9 +93,10 @@ class PostRecipe(object):
             filled_body["status"] = "in_progress"
         if self.param_steps not in filled_body:
             filled_body["steps"] = []
-        """ clean value for ingredients param """
+        """ clean value for ingredients and steps param """
         cleaned_ingredient = self.clean_value_ingredients(filled_body)
-        return cleaned_ingredient
+        cleaned_step = self.clean_value_steps(cleaned_ingredient)
+        return cleaned_step
 
     @staticmethod
     def clean_value_ingredients(data):
@@ -120,6 +122,29 @@ class PostRecipe(object):
             return data
 
     @staticmethod
+    def clean_value_steps(data):
+        """ Clean steps values.
+
+        Parameters
+        ----------
+        data : dict
+            Body's request.
+
+        Returns
+        -------
+        dict
+            Cleaned step parameter.
+        """
+        try:
+            for step in data["steps"]:
+                for key in list(step):
+                    if key not in ["_id", "description"]:
+                        step.pop(key)
+            return data
+        except (TypeError, AttributeError):
+            return data
+
+    @staticmethod
     def create_schema(recipe):
         """ Format schema's response.
 
@@ -140,7 +165,7 @@ class PostRecipe(object):
                 "properties": {
                     "_id": {"type": "string"},
                     "description": {"type": "string",
-                                    "enum": recipe.steps}},
+                                    "enum": [step["description"] for step in recipe.steps]}},
                 "required": ["_id", "description"],
                 "additionalProperties": False}}},
 
@@ -188,7 +213,6 @@ class PostRecipe(object):
             "required": ["calories_per_100g", "carbohydrates_per_100g", "fats_per_100g", "proteins_per_100g"],
             "additionalProperties": False}
         self.__setattr__("schema", schema)
-
 
     def json_check(self, data, data_expected):
         """ Format schema's response.

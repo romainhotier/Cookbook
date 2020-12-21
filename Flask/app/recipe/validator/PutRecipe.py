@@ -346,36 +346,18 @@ class Validator(object):
         """
         if api.param_steps in data:
             validator.is_array(param=api.param_steps, value=data[api.param_steps])
-            validator.is_array_non_empty(param=api.param_steps, value=data[api.param_steps])
-            for step in data[api.param_steps]:
-                validator.is_object_or_string(param=api.param_step, value=step)
-                if isinstance(step, str):
-                    self.is_step_valid_string(data=step)
-                elif isinstance(step, dict):
-                    self.is_step_valid_object(data=step)
+            if len(data[api.param_steps]) != 0:
+                for step in data[api.param_steps]:
+                    validator.is_array_of_object(param=api.param_steps, value=data[api.param_steps])
+                    self.is_step_id_valid(data=step)
+                    self.is_step_description_valid(data=step)
             return True
         return True
 
-    # use in is_steps_valid
-    def is_step_valid_string(self, data):
-        """ Check if step is correct if it's a string.
-
-        Parameters
-        ----------
-        data : str
-            Step.
-
-        Returns
-        -------
-        Any
-            Response server if validation failed, True otherwise.
-        """
-        self.is_step_description_valid(value=data)
-        return True
-
-    # use in is_steps_valid
-    def is_step_valid_object(self, data):
-        """ Check if step is correct if it's a string.
+    # use in is_step_valid
+    @staticmethod
+    def is_step_id_valid(data):
+        """ Check if step._id is correct.
 
         Parameters
         ----------
@@ -387,21 +369,19 @@ class Validator(object):
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_mandatory(name=api.param_steps+"."+api.param_step_id, param=api.param_step_id, data=data)
-        self.is_step_id_valid(value=data[api.param_step_id])
-        validator.is_mandatory(name=api.param_steps+"."+api.param_step_description, param=api.param_step_description,
-                               data=data)
-        self.is_step_description_valid(value=data[api.param_step_description])
+        if api.param_step_id in data:
+            param_name = api.param_steps+"."+api.param_step_id
+            validator.is_object_id(param=param_name, value=data[api.param_step_id])
         return True
 
     # use in is_step_valid_x
     @staticmethod
-    def is_step_description_valid(value):
+    def is_step_description_valid(data):
         """ Check if step.description is correct.
 
         Parameters
         ----------
-        value : str
+        data : dict
             Step.
 
         Returns
@@ -410,27 +390,10 @@ class Validator(object):
             Response server if validation failed, True otherwise.
         """
         param_name = api.param_step + "." + api.param_step_description
-        validator.is_string(param=param_name, value=value)
-        validator.is_string_non_empty(param=param_name, value=value)
-        return True
-
-    # use in is_step_valid_x
-    @staticmethod
-    def is_step_id_valid(value):
-        """ Check if step._id is correct.
-
-        Parameters
-        ----------
-        value : str
-            Step.
-
-        Returns
-        -------
-        Any
-            Response server if validation failed, True otherwise.
-        """
-        param_name = api.param_steps+"."+api.param_step_id
-        validator.is_object_id(param=param_name, value=value)
+        validator.is_mandatory(name=api.param_steps + "." + api.param_step_description,
+                               param=api.param_step_description, data=data)
+        validator.is_string(param=param_name, value=data[api.param_step_description])
+        validator.is_string_non_empty(param=param_name, value=data[api.param_step_description])
         return True
 
     # use in is_body_valid

@@ -158,14 +158,8 @@ class RecipeTest(object):
         client.close()
         return
 
-    def check_bdd_data(self, **kwargs):
+    def check_bdd_data(self):
         """ Check if RecipeTest is correct.
-
-        Parameters
-        ----------
-        kwargs : bool
-            created/updated
-
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
@@ -173,18 +167,12 @@ class RecipeTest(object):
         client.close()
         assert recipe is not None
         for value in recipe:
-            if value in ["steps"]:
-                if "created" in kwargs:
-                    for i, step in enumerate(recipe["steps"]):
-                        assert step["description"] == self.__getattribute__(value)[i]
-                elif "updated" in kwargs:
-                    for i, step in enumerate(recipe["steps"]):
-                        if isinstance(self.__getattribute__(value)[i], str):  # if it's and updated step
-                            assert step["description"] == self.__getattribute__(value)[i]
-                        else:
-                            assert mongo.to_json(step) == self.__getattribute__(value)[i]
-                else:
-                    assert recipe[value] == self.__getattribute__(value)
+            if value in ["steps"]:  # check for steps
+                for i, step in enumerate(recipe["steps"]):
+                    if "_id" not in self.__getattribute__(value)[i]:  # new step
+                        assert step["description"] == self.__getattribute__(value)[i]["description"]
+                    else:  # old step
+                        assert mongo.to_json(step) == mongo.to_json(self.__getattribute__(value)[i])
             elif value not in ["_id"]:
                 assert recipe[value] == self.__getattribute__(value)
 
