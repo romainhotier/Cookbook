@@ -3,7 +3,6 @@ import React, { Component } from 'react'
 import { Select, Form, Input, Button, Spin } from 'antd'
 import find from 'lodash/find'
 import keyBy from 'lodash/keyBy'
-import forEach from 'lodash/forEach'
 
 import { fetchAllIngredients } from 'modules/ingredient/thunks'
 import { RecipeIngredientsValidator } from './RecipeIngredientsForm.validator'

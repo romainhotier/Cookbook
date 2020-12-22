@@ -1,0 +1,16 @@
+.RecipeDetails_information {
+  text-align: center;
+  &_icon {
+    font-size: 35px;
+    font-weight: 300;
+    margin-bottom: 15px;
+    color: #333333;
+  }
+  &_label {
+    font-size: 16px;
+    font-weight: 600;
+  }
+  &_value {
+    font-size: 16px;
+  }
+}
