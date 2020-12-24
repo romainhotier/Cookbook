@@ -40,8 +40,7 @@ class PostIngredientFile(unittest.TestCase):
         response_body = response.json()
         """ change """
         new_id = api.return_new_file_id(response_body)
-        tc_file = tc_ingredient.add_file(filename=body[api.param_filename], is_main=body[api.param_is_main],
-                                         identifier=new_id)
+        tc_file = tc_ingredient.add_file(filename=body[api.param_filename], is_main=body[api.param_is_main])
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], "application/json")
@@ -71,8 +70,7 @@ class PostIngredientFile(unittest.TestCase):
         response_body = response.json()
         """ change """
         new_id = api.return_new_file_id(response_body)
-        tc_file = tc_ingredient.add_file(filename=body[api.param_filename], is_main=body[api.param_is_main],
-                                         identifier=new_id)
+        tc_file = tc_ingredient.add_file(filename=body[api.param_filename], is_main=body[api.param_is_main])
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], "application/json")
