@@ -3,6 +3,7 @@ from bson import ObjectId
 import re
 
 import utils
+import app.file.model as file_model
 
 mongo = utils.Mongo()
 
@@ -182,3 +183,28 @@ class Ingredient(object):
             return True
         else:
             return False
+
+    def add_enrichment_files(self):
+        """ Add files information for Ingredients.
+        Returns
+        -------
+        Any
+            Ingredients with Files information.
+        """
+        if isinstance(self.result, dict):
+            self.result["files"] = []
+            """ get files """
+            files = file_model.File().get_all_file_by_id_parent(_id_parent=self.result["_id"]).result
+            for file in files:
+                file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
+                self.result["files"].append(file_enrichment)
+            return self
+        elif isinstance(self.result, list):
+            for ingredient in self.result:
+                ingredient["files"] = []
+                """ get files """
+                files = file_model.File().get_all_file_by_id_parent(_id_parent=ingredient["_id"]).result
+                for file in files:
+                    file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
+                    ingredient["files"].append(file_enrichment)
+            return self

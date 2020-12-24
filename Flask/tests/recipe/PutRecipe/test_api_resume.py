@@ -37,7 +37,7 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail("body", msg=server.detail_must_contain_at_least_one_key, value=body)
+        detail = api.create_detail(param="body", msg=server.detail_must_contain_at_least_one_key, value=body)
         self.assertEqual(response_body["detail"], detail)
         """ check """
         tc_recipe.check_bdd_data()

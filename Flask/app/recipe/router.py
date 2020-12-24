@@ -62,6 +62,8 @@ def get_all_recipe():
     @apiGroup Recipe
     @apiDescription Get all recipes
 
+    @apiParam (Query param) {String} [with_files] if "true", add recipe's files
+
     @apiExample {json} Example usage:
     GET http://127.0.0.1:5000/recipe
 
@@ -78,8 +80,16 @@ def get_all_recipe():
                   'status': 'in_progress'}]
     }
     """
+    api = factory.GetAllRecipe.Factory()
+    validation = validator.GetAllRecipe.Validator()
+    with_files = request.args.get(api.param_with_files)
+    """ check param """
+    validation.is_with_files_valid(value=with_files)
     """ get all recipe """
     data = recipe.select_all()
+    """ add enrichment if needed """
+    if with_files == "true":
+        data.add_enrichment_files()
     """ return response """
     return server.return_response(data=data.result, api=apis.name, http_code=200)
 
@@ -92,6 +102,7 @@ def get_recipe(slug):
     @apiDescription Get a recipe by it's slug
 
     @apiParam (Query param) {String} slug Recipe's slug
+    @apiParam (Query param) {String} [with_files] if "true", add ingredient's files
 
     @apiExample {json} Example usage:
     GET http://127.0.0.1:5000/recipe/<slug>
@@ -114,11 +125,17 @@ def get_recipe(slug):
         'detail': {'msg': 'Must be not empty', 'param': 'slug', 'value': ''}
     }
     """
+    api = factory.GetRecipe.Factory()
     validation = validator.GetRecipe.Validator()
+    with_files = request.args.get(api.param_with_files)
     """ check param """
     validation.is_slug_valid(value=slug)
+    validation.is_with_files_valid(value=with_files)
     """ get recipe """
     data = recipe.select_one_by_slug(slug=slug)
+    """ add enrichment if needed """
+    if with_files == "true":
+        data.add_enrichment_files()
     """ return response """
     return server.return_response(data=data.result, api=apis.name, http_code=200)
 
