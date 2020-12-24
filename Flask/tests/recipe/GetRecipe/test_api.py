@@ -36,7 +36,7 @@ class GetRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe1))
+        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe1).get_data_expected())
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_api_ok_more_param(self):
@@ -59,7 +59,7 @@ class GetRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe1))
+        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe1).get_data_expected())
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_api_url_not_found(self):

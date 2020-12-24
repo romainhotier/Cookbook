@@ -35,8 +35,8 @@ class GetRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertIn(api.data_expected(recipe=tc_recipe1), response_body["data"])
-        self.assertIn(api.data_expected(recipe=tc_recipe2), response_body["data"])
+        self.assertIn(api.data_expected(recipe=tc_recipe1).get_data_expected(), response_body["data"])
+        self.assertIn(api.data_expected(recipe=tc_recipe2).get_data_expected(), response_body["data"])
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
     def test_slug_string(self):

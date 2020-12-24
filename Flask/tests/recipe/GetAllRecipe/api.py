@@ -14,6 +14,7 @@ class GetAllRecipe(object):
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "recipe")
         self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
         self.detail_with_files = " ['true', 'false']"
+        self.formated_data = {}
 
     @staticmethod
     def create_detail(param, msg, **kwargs):
@@ -38,8 +39,7 @@ class GetAllRecipe(object):
             detail["value"] = kwargs["value"]
         return detail
 
-    @staticmethod
-    def data_expected(recipe, **kwargs):
+    def data_expected(self, recipe, **kwargs):
         """ Format data's response.
 
         Parameters
@@ -51,13 +51,72 @@ class GetAllRecipe(object):
 
         Returns
         -------
-        str
+        GetAllRecipe
             Data's response.
         """
         data_expected = recipe.get_stringify()
         if "files" in kwargs:
             data_expected["files"] = [file.get_enrichment() for file in kwargs["files"]]
-        return data_expected
+        self.formated_data = data_expected
+        return self
+
+    def get_data_expected(self):
+        """ Format data's response.
+
+        Returns
+        -------
+        dict
+            Data's expected.
+        """
+        return self.formated_data
+
+    def add_ingredient_files(self, ingredient, files):
+        """ Format data's response.
+
+        Parameters
+        ----------
+        ingredient : Any
+            IngredientTest.
+        files : list
+            files: [FileTests].
+
+        Returns
+        -------
+        GetAllRecipe
+            Data's response.
+        """
+        try:
+            for ingr in self.formated_data["ingredients"]:
+                if ingr["_id"] == ingredient.get_id():
+                    ingr["files"] = [file.get_enrichment() for file in files]
+                    break
+        except KeyError:
+            pass
+        return self.formated_data
+
+    def add_steps_files(self, _id, files):
+        """ Format data's response.
+
+        Parameters
+        ----------
+        _id : str
+            Step's ObjectId.
+        files : list
+            files: [FileTests].
+
+        Returns
+        -------
+        GetAllRecipe
+            Data's response.
+        """
+        try:
+            for step in self.formated_data["steps"]:
+                if step["_id"] == _id:
+                    step["files"] = [file.get_enrichment() for file in files]
+                    break
+        except KeyError:
+            pass
+        return self.formated_data
 
     @staticmethod
     def check_not_present(value, rep):
