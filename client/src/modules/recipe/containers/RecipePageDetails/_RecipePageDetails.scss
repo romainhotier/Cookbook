@@ -56,8 +56,26 @@
     > div {
       padding: 5px 15px;
       margin: 0 10px;
-      border: 1px solid rgba(0, 0, 0, 0.18);
+      border: 1px solid $green-600;
       border-radius: 15px;
+      background-color: $green-300;
+    }
+  }
+
+  ul.listIngredients {
+    list-style: none;
+    padding: 0;
+    padding-right: 15%;
+    li {
+      img {
+        margin-right: 20px;
+      }
+      line-height: 30px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+
+      font-size: 14px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     }
   }
 }

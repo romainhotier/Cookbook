@@ -22,7 +22,7 @@ export const IngredientsListColumns = deleteIngredient => [
     dataIndex: 'icon',
     key: 'icon',
     align: 'left',
-    render: (_text, { slug, name }) => <img src={searchInListIcons(slug)} /*alt={name}*/ width="40" height="40" />,
+    render: (_text, { slug, name }) => <img src={searchInListIcons(slug)} alt={name} width="40" height="40" />,
   },
   {
     title: 'Ingrédients',

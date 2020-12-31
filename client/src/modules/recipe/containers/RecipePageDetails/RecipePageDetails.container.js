@@ -1,11 +1,12 @@
 import { connect } from 'react-redux'
 import React, { Component } from 'react'
-import { Col, Row, Spin, Menu, Dropdown, Carousel, Divider } from 'antd'
-import { NavLink } from 'react-router-dom'
+import { Col, Row, Spin, Dropdown, Carousel, Divider } from 'antd'
 
-import Routes from '../../RecipeRoutes'
-import { fetchRecipe } from '../../thunks'
-import { RecipeInformations } from '../../components/RecipeDetails/RecipeInformations.component'
+import { fetchRecipe } from 'modules/recipe/thunks'
+import { fetchAllIngredients } from 'modules/ingredient/thunks'
+import { RecipeInformations } from 'modules/recipe/components/RecipeDetails/RecipeInformations.component'
+import { menuActions } from 'modules/recipe/components/RecipeDetails/RecipeMenu.component'
+import { BuildListIngredients } from './RecipePageDetails.helpers'
 
 import './_RecipePageDetails.scss'
 
@@ -19,34 +20,28 @@ class RecipePageDetails extends Component {
     }
   }
 
+  componentDidUpdate() {
+    const { allIngredients, fetchAllIngredients, loadingFetchIngredients } = this.props
+    if (Object.keys(allIngredients).length === 0 && !loadingFetchIngredients) {
+      fetchAllIngredients()
+    }
+  }
+
   render() {
-    const { recipes, match } = this.props
+    const { recipes, match, loadingFetchIngredients, loadingFetchRecipes, allIngredients } = this.props
     const { slug } = match.params
     const recipe = recipes[slug]
 
-    if (recipe === undefined) {
+    if (recipe === undefined || loadingFetchIngredients || loadingFetchRecipes) {
       return <Spin />
     }
 
-    const menuActions = (
-      <Menu>
-        <Menu.Item key="edit">
-          <NavLink to={Routes.recipeEdit(slug)} exact>
-            <i className="fas fa-edit icons"></i> Modifier la recette
-          </NavLink>
-        </Menu.Item>
-        <Menu.Item key="delete">
-          <i className="fas fa-trash-alt icons"></i> Supprimer
-        </Menu.Item>
-      </Menu>
-    )
+    const { title, steps, preparation_time, cooking_time, nb_people, categories, ingredients } = recipe
 
-    const { title, steps, preparation_time, cooking_time, nb_people, categories } = recipe
-    console.log(recipe)
     return (
       <section className="RecipeDetails">
         <div className="RecipeDetails_actions">
-          <Dropdown.Button overlay={menuActions}>
+          <Dropdown.Button overlay={menuActions(slug)}>
             <i className="fas fa-play-circle icons"></i> Démarer la recette
           </Dropdown.Button>
         </div>
@@ -70,11 +65,7 @@ class RecipePageDetails extends Component {
             <div className="RecipeDetails_informations">
               {preparation_time ? (
                 <>
-                  <RecipeInformations
-                    label="Temps de préparation"
-                    value={`${preparation_time} min`}
-                    icon="far fa-clock"
-                  />
+                  <RecipeInformations label="Temps de préparation" value={`${preparation_time} min`} icon="times" />
                   <Divider type="vertical" />
                 </>
               ) : (
@@ -83,33 +74,30 @@ class RecipePageDetails extends Component {
 
               {cooking_time ? (
                 <>
-                  <RecipeInformations label="Temps de cuisson" value={`${cooking_time} min`} icon="far fa-clock" />
+                  <RecipeInformations label="Temps de cuisson" value={`${cooking_time} min`} icon="cook_times" />
                   <Divider type="vertical" />
                 </>
               ) : (
                 ''
               )}
 
-              {nb_people ? (
-                <RecipeInformations label="Nombre de part" value={`${nb_people}`} icon="fas fa-cookie" />
-              ) : (
-                ''
-              )}
+              {nb_people ? <RecipeInformations label="Nombre de part" value={`${nb_people}`} icon="portion" /> : ''}
             </div>
             {categories && (
               <div className="RecipeDetails_categories">
                 {categories.map(category => (
-                  <div>{category}</div>
+                  <div key={category}>{category}</div>
                 ))}
               </div>
             )}
           </Col>
         </Row>
         <Row>
-          <Col xs={12} sm={12} md={12} lg={12} xl={12}>
+          <Col xs={12} sm={12} md={12} lg={8} xl={8}>
             <h3>Ingrédients</h3>
+            <ul className="listIngredients">{BuildListIngredients(allIngredients, ingredients)}</ul>
           </Col>
-          <Col xs={12} sm={12} md={12} lg={12} xl={12}>
+          <Col xs={12} sm={12} md={12} lg={16} xl={16}>
             <h3>Instructions</h3>
             {steps.map((element, index) => (
               <div className="step" key={index}>
@@ -126,11 +114,14 @@ class RecipePageDetails extends Component {
 
 const mapDispatchToProps = {
   fetchRecipe,
+  fetchAllIngredients,
 }
 
-const mapStateToProps = ({ recipes: { content, loadingFetchRecipes } }) => ({
-  recipes: content,
-  loadingFetchRecipes,
+const mapStateToProps = ({ recipes, ingredients }) => ({
+  recipes: recipes.content,
+  loadingFetchRecipes: recipes.loadingFetchRecipes,
+  allIngredients: ingredients.content,
+  loadingFetchIngredients: ingredients.loadingFetchIngredients,
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(RecipePageDetails)
