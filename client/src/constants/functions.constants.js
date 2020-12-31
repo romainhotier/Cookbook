@@ -63,3 +63,17 @@ export const searchInListIcons = slug => {
     return data.length > 0 ? data[0] : ''
   }
 }
+
+export const worldConnector = name => {
+  const firstLetter = name.substr(0, 1)
+
+  return firstLetter === 'a' ||
+    firstLetter === 'h' ||
+    firstLetter === 'e' ||
+    firstLetter === 'y' ||
+    firstLetter === 'u' ||
+    firstLetter === 'i' ||
+    firstLetter === 'o'
+    ? `d'${name}`
+    : `de ${name}`
+}

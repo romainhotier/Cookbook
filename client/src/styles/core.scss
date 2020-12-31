@@ -1,14 +1,17 @@
+@import './fontAwesome/scss/fontawesome.scss';
+@import './fontAwesome/scss/solid.scss';
+@import './fontAwesome/scss/brands.scss';
+@import './fontAwesome/scss/regular.scss';
+
+@import './sansation/stylesheet.css';
+
 body {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
   background-color: $white-600;
+  font-family: 'Sansation';
 }
-
-@import './fontAwesome/scss/fontawesome.scss';
-@import './fontAwesome/scss/solid.scss';
-@import './fontAwesome/scss/brands.scss';
-@import './fontAwesome/scss/regular.scss';
 
 a {
   color: inherit;
@@ -19,8 +22,17 @@ h1 {
 }
 
 h2 {
-  font-size: 40px;
+  font-size: 50px;
+  line-height: 50px;
   color: $primary;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 25px;
+  font-weight: 600;
+  color: $primary;
+  text-transform: uppercase;
 }
 
 .page {
