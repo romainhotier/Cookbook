@@ -6,11 +6,20 @@ import { fetchRecipe } from 'modules/recipe/thunks'
 import { fetchAllIngredients } from 'modules/ingredient/thunks'
 import { RecipeInformations } from 'modules/recipe/components/RecipeDetails/RecipeInformations.component'
 import { menuActions } from 'modules/recipe/components/RecipeDetails/RecipeMenu.component'
-import { BuildListIngredients } from './RecipePageDetails.helpers'
+import { BuildListIngredients } from '../../components/RecipeDetails/BuildListIngredients.component'
+import { EditPortion } from '../../components/RecipeDetails/EditPortion.component'
 
 import './_RecipePageDetails.scss'
 
 class RecipePageDetails extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      portionEdited: null,
+    }
+  }
+
   componentDidMount() {
     const { recipes, match, fetchRecipe } = this.props
     const { slug } = match.params
@@ -22,13 +31,26 @@ class RecipePageDetails extends Component {
 
   componentDidUpdate() {
     const { allIngredients, fetchAllIngredients, loadingFetchIngredients } = this.props
+
     if (Object.keys(allIngredients).length === 0 && !loadingFetchIngredients) {
       fetchAllIngredients()
     }
   }
 
+  updatePortionEdited = newPortion => {
+    if (isNaN(newPortion)) {
+      return this.setState({
+        portionEdited: 0,
+      })
+    }
+    this.setState({
+      portionEdited: newPortion,
+    })
+  }
+
   render() {
     const { recipes, match, loadingFetchIngredients, loadingFetchRecipes, allIngredients } = this.props
+    const { portionEdited } = this.state
     const { slug } = match.params
     const recipe = recipes[slug]
 
@@ -42,7 +64,7 @@ class RecipePageDetails extends Component {
       <section className="RecipeDetails">
         <div className="RecipeDetails_actions">
           <Dropdown.Button overlay={menuActions(slug)}>
-            <i className="fas fa-play-circle icons"></i> Démarer la recette
+            <i className="fas fa-play-circle icons"></i> Démarrer la recette
           </Dropdown.Button>
         </div>
         <Row className="RecipeDetails_header" gutter={16}>
@@ -92,18 +114,34 @@ class RecipePageDetails extends Component {
             )}
           </Col>
         </Row>
+
         <Row>
-          <Col xs={12} sm={12} md={12} lg={8} xl={8}>
+          {/* INGREDIENTS  */}
+          <Col xs={12} sm={12} md={12} lg={8} xl={8} className="listIngredients">
             <h3>Ingrédients</h3>
-            <ul className="listIngredients">{BuildListIngredients(allIngredients, ingredients)}</ul>
+            <EditPortion
+              portion={parseInt(nb_people)}
+              portionEdited={portionEdited}
+              updatePortionEdited={this.updatePortionEdited}
+            />
+            <ul>
+              <BuildListIngredients
+                allIngredients={allIngredients}
+                ingredients={ingredients}
+                portion={parseInt(nb_people)}
+                portionEdited={portionEdited}
+              />
+            </ul>
           </Col>
+
+          {/* ETAPES  */}
           <Col xs={12} sm={12} md={12} lg={16} xl={16}>
             <h3>Instructions</h3>
             {steps.map((element, index) => (
-              <div className="step" key={index}>
+              <article className="step" key={index}>
                 <div className="step_index">{index + 1}</div>
-                {element.step}
-              </div>
+                <div className="step_describe">{element.description}</div>
+              </article>
             ))}
           </Col>
         </Row>
