@@ -50,7 +50,7 @@ def post_recipe_file(_id):
     """ check param """
     validation.is_object_id_valid(kind="recipe", value=_id)
     """ save files """
-    urls = api.save_files(kind="ingredient", _id=_id, files=request.files.getlist('files'))
+    urls = api.save_files(kind="recipe", _id=_id, files=request.files.getlist('files'))
     """ update ingredient """
     recipe.add_fs(_id=_id, data=urls)
     """ return response """
