@@ -30,6 +30,7 @@ class Recipe(object):
         - steps = Recipe's steps
         - steps.description = Step's description
         - title = Recipe's name (Unique)
+        - fs = Recipe's files
         """
         self.result = {}
 
@@ -180,6 +181,30 @@ class Recipe(object):
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
         db.update_one({"_id": ObjectId(_id)}, {'$set': data})
+        result = db.find_one({"_id": ObjectId(_id)})
+        client.close()
+        self.result = mongo.to_json(result)
+        return self
+
+    def add_fs(self, _id, data):
+        """ add files to a recipe.
+
+        Parameters
+        ----------
+        _id : str
+            Recipe's ObjectId.
+        data : list
+            Files's urls.
+
+        Returns
+        -------
+        Recipe
+            Updated Recipe.
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        for url in data:
+            db.update_one({"_id": ObjectId(_id)}, {'$push': {"fs": url}})
         result = db.find_one({"_id": ObjectId(_id)})
         client.close()
         self.result = mongo.to_json(result)

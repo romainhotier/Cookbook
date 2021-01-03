@@ -1,5 +1,7 @@
 from flask import make_response
 import re
+import os
+import platform
 
 import logging
 
@@ -17,6 +19,7 @@ class Server(object):
         self.ip = 'localhost'
         self.port = '5000'
         self.main_url = "{0}://{1}:{2}".format(self.secure, self.ip, self.port)
+        self.path_file_storage = self.set_path_file_storage()
         self.rep_code_msg_ok = "cookbook.xxx.success.ok"
         self.rep_code_msg_created = "cookbook.xxx.success.created"
         self.rep_code_msg_error_400 = "cookbook.xxx.error.bad_request"
@@ -204,3 +207,23 @@ class Server(object):
                 return {"env": "production", "debug": False, "testing": False}
         except IndexError:
             return {"env": "production", "debug": False, "testing": False}
+
+    @staticmethod
+    def set_path_file_storage():
+        """ Set path for files to be saved locally.
+
+        Returns
+        -------
+        dict
+            Storage path.
+        """
+        sys = platform.system()
+        usr = os.getlogin()
+        if usr == "rhr" and sys == "Linux":  # Desktop pc for dev
+            return "/home/rhr/Workspace/Cookbook/Flask/_files"
+        elif usr == "ubuntu" and sys == "Linux":  # Raspberry prod
+            return "/home/ubuntu/Workspace/Storage/cookbook/"
+        # elif usr == "xxx" and sys == "Darwin":  # Mac pc for dev
+        #     return "/home/rhr/Workspace/Cookbook/Flask/_files"
+        # elif usr == "xxx" and sys == "Windows":  # windows for dev
+        #     return "/home/rhr/Workspace/Cookbook/Flask/_files"

@@ -29,6 +29,7 @@ class RecipeTest(object):
         - status = Recipe's status
         - steps = Recipe's steps
         - title = Recipe's name (Unique)
+        - fs = Recipe's Files
         """
         self._id = ObjectId()
         self.categories = ["qa_rhr_category"]
@@ -43,6 +44,7 @@ class RecipeTest(object):
         self.status = "in_progress"
         self.steps = []
         self.title = "qa_rhr_title"
+        self.fs = []
 
     """ recipe """
     def display(self):
