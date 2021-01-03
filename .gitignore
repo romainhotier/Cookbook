@@ -58,7 +58,8 @@ target/
 
 #perso
 .idea
-Flask/venv
+Flask/venv # venv windows
+Flask/_files # file storage
 
 # client
 client/node_modules/*
