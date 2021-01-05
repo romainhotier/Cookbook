@@ -107,7 +107,7 @@ class RecipeIngredientsForm extends Component {
     return (
       <>
         <div className="ingredientForm_head">
-          <h2>Ingrédients</h2>
+          <h3>Ingrédients</h3>
           <IngredientModalAdd
             contentButton={<i className="fas fa-plus"></i>}
             shapeButton="circle"
@@ -118,8 +118,11 @@ class RecipeIngredientsForm extends Component {
         <Form.List name="ingredients">
           {(fields, { add, remove }) => (
             <>
-              {fields.map(field => (
-                <div className="IngredientsForm" key={`IngredientsForm-${field.key}`}>
+              {fields.map((field, index) => (
+                <div
+                  className={`IngredientsForm IngredientsForm-${index % 2 ? 'odd' : 'even'}`}
+                  key={`IngredientsForm-${field.key}`}
+                >
                   <div>
                     <Form.Item
                       {...field}
@@ -149,6 +152,7 @@ class RecipeIngredientsForm extends Component {
                     </Form.Item>
                     <Form.Item
                       {...field}
+                      className="quantity-form"
                       key={`fieldquantity-${field.key}`}
                       name={[field.name, 'quantity']}
                       label="Quantité"
@@ -180,11 +184,21 @@ class RecipeIngredientsForm extends Component {
                         {this.createUnitOption(field.name)}
                       </Select>
                     </Form.Item>
+                    <Button
+                      key={`buttonRemoveIngredientsfield-${field.name}`}
+                      htmlType="button"
+                      type="text"
+                      onClick={() => remove(field.name)}
+                      className="button_remove"
+                    >
+                      <i className="fas fa-trash"></i>
+                    </Button>
                   </div>
                   <Button
                     key={`buttonRemoveIngredientsfield-${field.name}`}
                     htmlType="button"
                     type="text"
+                    size={'large'}
                     onClick={() => remove(field.name)}
                     className="button_remove"
                   >

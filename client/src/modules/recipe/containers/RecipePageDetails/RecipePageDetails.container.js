@@ -21,17 +21,19 @@ class RecipePageDetails extends Component {
   }
 
   componentDidMount() {
-    const { recipes, match, fetchRecipe } = this.props
+    const { recipes, match, fetchRecipe, allIngredients, loadingFetchIngredients, fetchAllIngredients } = this.props
     const { slug } = match.params
-
     if (recipes[slug] === undefined) {
       fetchRecipe(slug)
+    }
+
+    if (recipes[slug] !== undefined && Object.keys(allIngredients).length === 0 && !loadingFetchIngredients) {
+      fetchAllIngredients()
     }
   }
 
   componentDidUpdate() {
     const { allIngredients, fetchAllIngredients, loadingFetchIngredients } = this.props
-
     if (Object.keys(allIngredients).length === 0 && !loadingFetchIngredients) {
       fetchAllIngredients()
     }
@@ -54,11 +56,16 @@ class RecipePageDetails extends Component {
     const { slug } = match.params
     const recipe = recipes[slug]
 
-    if (recipe === undefined || loadingFetchIngredients || loadingFetchRecipes) {
+    if (
+      recipe === undefined ||
+      loadingFetchIngredients ||
+      loadingFetchRecipes ||
+      Object.keys(allIngredients).length === 0
+    ) {
       return <Spin />
     }
 
-    const { title, steps, preparation_time, cooking_time, nb_people, categories, ingredients } = recipe
+    const { title, steps, preparation_time, cooking_time, nb_people, categories, ingredients, fs } = recipe
 
     return (
       <section className="RecipeDetails">
@@ -70,6 +77,9 @@ class RecipePageDetails extends Component {
         <Row className="RecipeDetails_header" gutter={16}>
           <Col xs={24} sm={24} md={24} lg={24} xl={12}>
             <Carousel>
+              {/* {fs.map((image, index) => (
+                <img key={`img-${index}`} src={image} alt={`img-${index}`} />
+              ))} */}
               <div>
                 <h6 className="carrousel">1</h6>
               </div>

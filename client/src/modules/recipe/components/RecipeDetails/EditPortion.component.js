@@ -5,10 +5,7 @@ import './_RecipeDetails.scss'
 
 export const EditPortion = ({ portion = 0, portionEdited, updatePortionEdited }) => {
   const value = portionEdited ?? portion
-  console.log('value', value)
   const suffix = value > 1 ? 'portions' : 'portion'
-  console.log('portion', portion)
-  console.log('portionEdited', portionEdited)
 
   const addOrRemoveANumber = number => {
     if (portionEdited === null) {

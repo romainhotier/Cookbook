@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 import { Form, Button, Row, Col, Divider, Space } from 'antd'
+import omit from 'lodash/omit'
 
 import { Input } from 'components/Form/Input.component'
+import { Upload } from 'components/Form/Upload.component'
 import { CheckboxWithImage } from 'components/Form/CheckboxWithImage.component'
 import { categories } from 'constants/categories.constants'
 import { slugify } from 'constants/functions.constants'
@@ -9,6 +12,8 @@ import { slugify } from 'constants/functions.constants'
 import RecipeIngredientsForm from '../RecipeIngredientsForm'
 import RecipeStepForm from '../RecipeStepForm'
 import { RecipeValidator } from './RecipeForm.validator'
+
+import './_RecipeForm.scss'
 
 const RecipeForm = ({ sendRecipe, values }) => {
   const [listSteps, setListSteps] = useState(values.steps)
@@ -21,16 +26,16 @@ const RecipeForm = ({ sendRecipe, values }) => {
 
   const onFinish = values => {
     const slug = slugify(values.title)
-    sendRecipe({ ...values, slug, steps: listSteps })
+    const file = values.filesRecipe
+
+    console.log('file', file)
+    const recipeWithoutFile = omit(values, ['filesRecipe'])
+    sendRecipe({ ...recipeWithoutFile, slug, steps: listSteps }, { path: file[0].thumbUrl, filename: file[0].name })
   }
 
   return (
     <>
       <Form layout="vertical" form={formRecipe} onFinish={onFinish} initialValues={values}>
-        {/* Catégories */}
-        <CheckboxWithImage label="Catégories" name="categories" datas={categories} />
-        {/* Status */}
-        <Input name="status" hidden={true} />
         {/* _id */}
         <Input name="_id" hidden={true} />
         {/* Titre de la recette */}
@@ -41,7 +46,10 @@ const RecipeForm = ({ sendRecipe, values }) => {
           error={RecipeValidator['title'].errorMessage}
           placeholder={RecipeValidator['title'].placeholder}
         />
+        {/* Status */}
+        <Input name="status" hidden={true} />
 
+        {/* Temps préparation / temps cuisson / portions */}
         <Row gutter="32">
           {/* Temps de préparation */}
           <Col lg={8} md={8} sm={24} xs={24}>
@@ -73,15 +81,27 @@ const RecipeForm = ({ sendRecipe, values }) => {
               required={RecipeValidator['nb_people'].required}
               error={RecipeValidator['nb_people'].errorMessage}
               placeholder={RecipeValidator['nb_people'].placeholder}
+              addonAfter="portion(s)"
             />
           </Col>
         </Row>
 
+        {/* Catégories + images */}
+        <Row gutter="32">
+          <Col lg={12} md={12} sm={24} xs={24}>
+            {/* Catégories */}
+            <CheckboxWithImage label="Catégories" name="categories" datas={categories} />
+          </Col>
+          <Col lg={12} md={12} sm={24} xs={24}>
+            {/* Images */}
+            <Upload label="Images / Photos" name="filesRecipe" files={values.filesRecipe} />
+          </Col>
+        </Row>
         <Divider />
 
         <Row gutter={32}>
           {/* Ingrédients */}
-          <Col lg={12} md={12} sm={24} xs={24}>
+          <Col lg={12} md={12} sm={24} xs={24} className="RecipeIngredientsForm">
             <RecipeIngredientsForm ingredientsRecipe={values.ingredients} />
           </Col>
 
@@ -104,6 +124,11 @@ const RecipeForm = ({ sendRecipe, values }) => {
       </Form>
     </>
   )
+}
+
+RecipeForm.propTypes = {
+  sendRecipe: PropTypes.func,
+  values: PropTypes.object,
 }
 
 export default RecipeForm

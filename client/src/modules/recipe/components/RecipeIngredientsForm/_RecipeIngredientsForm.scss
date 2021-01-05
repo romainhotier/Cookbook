@@ -5,10 +5,21 @@ div.IngredientsForm {
   justify-content: space-between;
   border-bottom: 1px solid $greyBorder;
   padding-bottom: 10px;
-  margin-bottom: 10px;
+  padding-top: 10px;
+
+  &-even {
+    background-color: $green-100;
+  }
 
   > div {
+    width: 80%;
     border-right: 1px solid $greyBorder;
+    button {
+      display: none;
+    }
+  }
+  button {
+    display: inline-block;
   }
 
   div.ant-row.ant-form-item {
@@ -19,14 +30,43 @@ div.IngredientsForm {
   }
 
   @media (min-width: 665px) {
+    &:nth-last-child(2) {
+      border-bottom: 0;
+    }
     > div {
       display: flex;
+      align-items: center;
       width: 100%;
       border-right: 0;
+      button {
+        display: inline-block;
+        margin-top: 10px;
+      }
+    }
+    button {
+      display: none;
     }
     div.ant-row.ant-form-item {
       margin-right: 8px;
       flex-direction: column;
+      width: 30%;
+    }
+    div.ant-row.ant-form-item.quantity-form {
+      width: 20%;
+    }
+  }
+
+  @media (min-width: 1000px) {
+    div.ant-row.ant-form-item {
+      width: 30%;
+    }
+    div.ant-row.ant-form-item.quantity-form {
+      width: 20%;
+    }
+  }
+  @media (min-width: 1500px) {
+    div.ant-row.ant-form-item,
+    div.ant-row.ant-form-item.quantity-form {
       width: 30%;
     }
   }
@@ -40,7 +80,7 @@ div.IngredientsForm {
   display: flex;
   align-items: center;
   margin-bottom: 15px;
-  h2 {
+  h3 {
     margin: 0 15px 0 0;
   }
 }

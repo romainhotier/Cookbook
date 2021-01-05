@@ -17,6 +17,6 @@ export const RecipeValidator = {
   nb_people: {
     required: false,
     errorMessage: '',
-    placeholder: 'ex: 26 barres de céréales',
+    placeholder: 'ex: 26',
   },
 }

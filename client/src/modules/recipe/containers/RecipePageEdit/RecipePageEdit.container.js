@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Col, Row, Spin } from 'antd'
 
@@ -16,8 +17,10 @@ const RecipePageEdit = ({ recipes, putRecipe, match, fetchRecipe }) => {
 
   const recipe = recipes[slug]
 
-  const updateRecipe = data => {
-    putRecipe(data._id, data)
+  const updateRecipe = (data, file) => {
+    console.log('data', data)
+    console.log('file', file)
+    //putRecipe(data._id, data)
   }
 
   if (recipe === undefined) {
@@ -29,7 +32,7 @@ const RecipePageEdit = ({ recipes, putRecipe, match, fetchRecipe }) => {
   return (
     <Row>
       <Col span={24}>
-        <h1>Modifier une recette</h1>
+        <h2>Modifier une recette</h2>
         <RecipeForm sendRecipe={updateRecipe} values={{ ...recipe, steps: stepsWithIdFront }} />
       </Col>
     </Row>
@@ -45,5 +48,12 @@ const mapStateToProps = ({ recipes: { content, loadingPutRecipes } }) => ({
   recipes: content,
   loadingPutRecipes,
 })
+
+RecipePageEdit.propTypes = {
+  recipes: PropTypes.object,
+  putRecipe: PropTypes.func,
+  match: PropTypes.object,
+  fetchRecipe: PropTypes.func,
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(RecipePageEdit)

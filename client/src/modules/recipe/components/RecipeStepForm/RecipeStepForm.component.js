@@ -43,7 +43,7 @@ const RecipeStepForm = ({ listSteps, setListSteps }) => {
 
   return (
     <div>
-      <h2>Préparation</h2>
+      <h3>Préparation</h3>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
           {(droppableProvided, droppableSnapshot) => (
