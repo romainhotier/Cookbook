@@ -7,8 +7,8 @@ import utils
 import app.ingredient.model as ingredient_model
 import app.recipe.model as recipe_model
 
-import tests.test_file.model as filetest_model
-FileTest = filetest_model.FileTest()
+import tests.test_file_mongo.model as filemongotest_model
+FileMongoTest = filemongotest_model.FileMongoTest()
 
 mongo = utils.Mongo()
 ingredient = ingredient_model.Ingredient()
@@ -198,9 +198,9 @@ class IngredientTest(object):
         client.close()
         return
 
-    """ files """
-    def add_file(self, filename, is_main):
-        """ Add a file to IngredientTest.
+    """ files mongo """
+    def add_file_mongo(self, filename, is_main):
+        """ Add a Mongo file to IngredientTest.
 
         Parameters
         ----------
@@ -215,8 +215,8 @@ class IngredientTest(object):
             Response server if validation failed, True otherwise.
 
         """
-        file = filetest_model.FileTest().custom({"filename": filename,
-                                                 "metadata": {"kind": "ingredient",
-                                                              "_id_parent": ObjectId(self._id),
-                                                              "is_main": is_main}}).insert()
+        file = filemongotest_model.FileMongoTest().custom({"filename": filename,
+                                                           "metadata": {"kind": "ingredient",
+                                                                        "_id_parent": ObjectId(self._id),
+                                                                        "is_main": is_main}}).insert()
         return file

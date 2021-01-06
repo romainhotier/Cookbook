@@ -5,22 +5,22 @@ import utils
 import tests.test_recipe.DeleteRecipe.api as api
 import tests.test_ingredient.model as ingredient_model
 import tests.test_recipe.model as recipe_model
-import tests.test_file.model as file_model
+import tests.test_file_mongo.model as file_mongo_model
 
 server = utils.Server()
 api = api.DeleteRecipe()
 ingredient = ingredient_model.IngredientTest()
 recipe = recipe_model.RecipeTest()
-file = file_model.FileTest()
+file_mongo = file_mongo_model.FileMongoTest()
 
 
 class DeleteRecipe(unittest.TestCase):
 
     def setUp(self):
-        """ Clean IngredientTest, RecipeTest and FileTest."""
+        """ Clean IngredientTest, RecipeTest and FileMongoTest."""
         recipe.clean()
         ingredient.clean()
-        file.clean()
+        file_mongo.clean()
 
     def test_api_ok(self):
         """ Default case.
@@ -39,7 +39,7 @@ class DeleteRecipe(unittest.TestCase):
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.headers["Content-Type"],  "application/json")
+        self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], tc_id)
@@ -88,19 +88,19 @@ class DeleteRecipe(unittest.TestCase):
         tc_recipe2.add_step(_id_step="333333333333333333333333", description="step recipe 2 - 1st")
         tc_recipe1.insert()
         tc_recipe2.insert()
-        tc_file_recipe11 = tc_recipe1.add_file_recipe(filename="qa_rhr_1", is_main=True)
-        tc_file_recipe12 = tc_recipe1.add_file_recipe(filename="qa_rhr_2", is_main=False)
-        tc_file_recipe2 = tc_recipe2.add_file_recipe(filename="qa_rhr_3", is_main=False)
-        tc_file_step111 = tc_recipe1.add_file_step(_id_step="111111111111111111111111", filename="qa_rhr_11",
-                                                   is_main=False)
-        tc_file_step121 = tc_recipe1.add_file_step(_id_step="222222222222222222222222", filename="qa_rhr_21",
-                                                   is_main=False)
-        tc_file_step122 = tc_recipe1.add_file_step(_id_step="222222222222222222222222", filename="qa_rhr_22",
-                                                   is_main=True)
-        tc_file_step211 = tc_recipe2.add_file_step(_id_step="333333333333333333333333", filename="qa_rhr_31",
-                                                   is_main=True)
-        tc_file_step212 = tc_recipe2.add_file_step(_id_step="333333333333333333333333", filename="qa_rhr_32",
-                                                   is_main=False)
+        tc_file_recipe11 = tc_recipe1.add_file_mongo_recipe(filename="qa_rhr_1", is_main=True)
+        tc_file_recipe12 = tc_recipe1.add_file_mongo_recipe(filename="qa_rhr_2", is_main=False)
+        tc_file_recipe2 = tc_recipe2.add_file_mongo_recipe(filename="qa_rhr_3", is_main=False)
+        tc_file_step111 = tc_recipe1.add_file_mongo_step(_id_step="111111111111111111111111", filename="qa_rhr_11",
+                                                         is_main=False)
+        tc_file_step121 = tc_recipe1.add_file_mongo_step(_id_step="222222222222222222222222", filename="qa_rhr_21",
+                                                         is_main=False)
+        tc_file_step122 = tc_recipe1.add_file_mongo_step(_id_step="222222222222222222222222", filename="qa_rhr_22",
+                                                         is_main=True)
+        tc_file_step211 = tc_recipe2.add_file_mongo_step(_id_step="333333333333333333333333", filename="qa_rhr_31",
+                                                         is_main=True)
+        tc_file_step212 = tc_recipe2.add_file_mongo_step(_id_step="333333333333333333333333", filename="qa_rhr_32",
+                                                         is_main=False)
         """ param """
         tc_id = tc_recipe1.get_id()
         """ call api """
@@ -109,7 +109,7 @@ class DeleteRecipe(unittest.TestCase):
         response_body = response.json()
         """ assert """
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.headers["Content-Type"],  "application/json")
+        self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], tc_id)

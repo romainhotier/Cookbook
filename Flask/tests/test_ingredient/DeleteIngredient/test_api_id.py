@@ -4,23 +4,23 @@ import requests
 import utils
 import tests.test_ingredient.DeleteIngredient.api as api
 import tests.test_ingredient.model as ingredient_model
-import tests.test_file.model as file_model
+import tests.test_file_mongo.model as file_mongo_model
 import tests.test_recipe.model as recipe_model
 
 server = utils.Server()
 api = api.DeleteIngredient()
 ingredient = ingredient_model.IngredientTest()
 recipe = recipe_model.RecipeTest()
-file = file_model.FileTest()
+file_mongo = file_mongo_model.FileMongoTest()
 
 
 class DeleteIngredient(unittest.TestCase):
 
     def setUp(self):
-        """ Clean all IngredientTest, RecipeTest and FileTest. """
+        """ Clean all IngredientTest, RecipeTest and FileMongoTest. """
         ingredient.clean()
         recipe.clean()
-        file.clean()
+        file_mongo.clean()
 
     def test_id_without(self):
         """ QueryParameter _id missing.

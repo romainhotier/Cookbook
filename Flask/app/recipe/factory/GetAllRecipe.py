@@ -4,3 +4,4 @@ class Factory(object):
         """ Class to work around GetAllRecipe.
         """
         self.param_with_files = "with_files"
+        self.param_with_files_mongo = "with_files_mongo"

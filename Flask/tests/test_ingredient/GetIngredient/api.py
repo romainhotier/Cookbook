@@ -11,6 +11,7 @@ class GetIngredient(object):
         self.url = 'ingredient'
         self.param_id = "_id"
         self.param_with_files = "with_files"
+        self.param_with_files_mongo = "with_files_mongo"
         self.rep_code_msg_ok = server.rep_code_msg_ok.replace("xxx", "ingredient")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "ingredient")
         self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
@@ -49,6 +50,7 @@ class GetIngredient(object):
             IngredientTest.
         kwargs : Any
             files: [FileTests].
+            files_mongo: [FileMongoTests].
 
         Returns
         -------
@@ -58,6 +60,8 @@ class GetIngredient(object):
         data_expected = ingredient.get_stringify()
         if "files" in kwargs:
             data_expected["files"] = [file.get_enrichment() for file in kwargs["files"]]
+        if "files_mongo" in kwargs:
+            data_expected["files_mongo"] = [file.get_enrichment() for file in kwargs["files_mongo"]]
         return data_expected
 
     @staticmethod

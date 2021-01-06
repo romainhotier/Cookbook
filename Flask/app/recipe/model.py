@@ -3,7 +3,7 @@ from bson import ObjectId
 import re
 
 import utils
-import app.file.model as file_model
+import app.file_mongo.model as file_mongo_model
 
 mongo = utils.Mongo()
 
@@ -260,67 +260,68 @@ class Recipe(object):
         client.close()
         return steps_ids
 
-    def add_enrichment_files(self):
-        """ Add all files information for Recipes.
+    """ files mongo"""
+    def add_enrichment_files_mongo(self):
+        """ Add all Mongo files information for Recipes.
         Returns
         -------
         Any
-            Recipes with Files information.
+            Recipes with Mongo Files information.
         """
         if isinstance(self.result, dict):
-            self.add_enrichment_files_recipe(recipe=self.result)
-            self.add_enrichment_files_ingredients(recipe=self.result)
-            self.add_enrichment_files_steps(recipe=self.result)
+            self.add_enrichment_files_mongo_recipe(recipe=self.result)
+            self.add_enrichment_files_mongo_ingredients(recipe=self.result)
+            self.add_enrichment_files_mongo_steps(recipe=self.result)
         elif isinstance(self.result, list):
             for recipe in self.result:
-                self.add_enrichment_files_recipe(recipe=recipe)
-                self.add_enrichment_files_ingredients(recipe=recipe)
-                self.add_enrichment_files_steps(recipe=recipe)
+                self.add_enrichment_files_mongo_recipe(recipe=recipe)
+                self.add_enrichment_files_mongo_ingredients(recipe=recipe)
+                self.add_enrichment_files_mongo_steps(recipe=recipe)
             return self
 
-    def add_enrichment_files_recipe(self, recipe):
-        """ Add files information for Recipes.
+    def add_enrichment_files_mongo_recipe(self, recipe):
+        """ Add Mongo files information for Recipes.
         Returns
         -------
         Any
-            Recipes with Files information.
+            Recipes with Mongo Files information.
         """
-        recipe["files"] = []
+        recipe["files_mongo"] = []
         """ get files """
-        files = file_model.File().get_all_file_by_id_parent(_id_parent=recipe["_id"]).result
+        files = file_mongo_model.FileMongo().get_all_file_by_id_parent(_id_parent=recipe["_id"]).result
         for file in files:
             file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
-            recipe["files"].append(file_enrichment)
+            recipe["files_mongo"].append(file_enrichment)
         return self
 
-    def add_enrichment_files_steps(self, recipe):
-        """ Add files information for Recipe's Steps.
+    def add_enrichment_files_mongo_steps(self, recipe):
+        """ Add Mongo files information for Recipe's Steps.
         Returns
         -------
         Any
-            Recipes's Steps with Files information.
+            Recipes's Steps with FilesMongo information.
         """
         for step in recipe["steps"]:
-            step["files"] = []
+            step["files_mongo"] = []
             """ get files """
-            files = file_model.File().get_all_file_by_id_parent(_id_parent=step["_id"]).result
+            files = file_mongo_model.FileMongo().get_all_file_by_id_parent(_id_parent=step["_id"]).result
             for file in files:
                 file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
-                step["files"].append(file_enrichment)
+                step["files_mongo"].append(file_enrichment)
         return self
 
-    def add_enrichment_files_ingredients(self, recipe):
-        """ Add files information for Recipes's Ingredient.
+    def add_enrichment_files_mongo_ingredients(self, recipe):
+        """ Add Mongo files information for Recipes's Ingredient.
         Returns
         -------
         Any
-            Recipes's Ingredient with Files information.
+            Recipes's Ingredient with FilesMongo information.
         """
         for ingredient in recipe["ingredients"]:
-            ingredient["files"] = []
+            ingredient["files_mongo"] = []
             """ get files """
-            files = file_model.File().get_all_file_by_id_parent(_id_parent=ingredient["_id"]).result
+            files = file_mongo_model.FileMongo().get_all_file_by_id_parent(_id_parent=ingredient["_id"]).result
             for file in files:
                 file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
-                ingredient["files"].append(file_enrichment)
+                ingredient["files_mongo"].append(file_enrichment)
         return self

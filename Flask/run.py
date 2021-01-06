@@ -5,7 +5,7 @@ from flask_cors import CORS
 import sys
 
 import utils
-import app.file.router as file_routes
+import app.file_mongo.router as file_mongo_routes
 import app.files.router as files_routes
 import app.ingredient.router as ingredient_routes
 import app.recipe.router as recipe_routes
@@ -21,7 +21,7 @@ backend.config["EXPIRATION_TOKEN"] = 5
 bcrypt = Bcrypt(backend)
 jwt = JWTManager(backend)
 
-backend.register_blueprint(file_routes.apis)
+backend.register_blueprint(file_mongo_routes.apis)
 backend.register_blueprint(files_routes.apis)
 backend.register_blueprint(ingredient_routes.apis)
 backend.register_blueprint(recipe_routes.apis)

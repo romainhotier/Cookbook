@@ -5,8 +5,8 @@ import re
 
 import utils
 
-import tests.test_file.model as filetest_model
-FileTest = filetest_model.FileTest()
+import tests.test_file_mongo.model as filemongotest_model
+FileMongoTest = filemongotest_model.FileMongoTest()
 
 mongo = utils.Mongo()
 
@@ -29,7 +29,6 @@ class RecipeTest(object):
         - status = Recipe's status
         - steps = Recipe's steps
         - title = Recipe's name (Unique)
-        - fs = Recipe's Files
         """
         self._id = ObjectId()
         self.categories = ["qa_rhr_category"]
@@ -44,7 +43,6 @@ class RecipeTest(object):
         self.status = "in_progress"
         self.steps = []
         self.title = "qa_rhr_title"
-        self.fs = []
 
     """ recipe """
     def display(self):
@@ -292,9 +290,9 @@ class RecipeTest(object):
                 break
         return self
 
-    """ files """
-    def add_file_recipe(self, filename, is_main, **kwargs):
-        """ Add a file to RecipeTest.
+    """ files mongo """
+    def add_file_mongo_recipe(self, filename, is_main, **kwargs):
+        """ Add a Mongo file to RecipeTest.
 
         Parameters
         ----------
@@ -310,17 +308,17 @@ class RecipeTest(object):
         FileTest
             FileTest added.
         """
-        file = filetest_model.FileTest().custom({"filename": filename,
-                                                 "metadata": {"kind": "recipe",
-                                                              "_id_parent": ObjectId(self._id),
-                                                              "is_main": is_main}}).insert()
+        file = filemongotest_model.FileMongoTest().custom({"filename": filename,
+                                                           "metadata": {"kind": "recipe",
+                                                                        "_id_parent": ObjectId(self._id),
+                                                                        "is_main": is_main}}).insert()
         if "identifier" in kwargs.keys():
             file.custom({"_id": kwargs["identifier"]})
         return file
 
     @staticmethod
-    def add_file_step(_id_step, filename, is_main, **kwargs):
-        """ Add a file to RecipeTest's step.
+    def add_file_mongo_step(_id_step, filename, is_main, **kwargs):
+        """ Add a Mongo file to RecipeTest's step.
 
         Parameters
         ----------
@@ -338,10 +336,10 @@ class RecipeTest(object):
         FileTest
             FileTest added.
         """
-        file = filetest_model.FileTest().custom({"filename": filename,
-                                                 "metadata": {"kind": "step",
-                                                              "_id_parent": ObjectId(_id_step),
-                                                              "is_main": is_main}}).insert()
+        file = filemongotest_model.FileMongoTest().custom({"filename": filename,
+                                                           "metadata": {"kind": "step",
+                                                                        "_id_parent": ObjectId(_id_step),
+                                                                        "is_main": is_main}}).insert()
         if "identifier" in kwargs.keys():
             file.custom({"_id": kwargs["identifier"]})
         return file
