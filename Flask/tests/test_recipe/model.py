@@ -43,6 +43,7 @@ class RecipeTest(object):
         self.status = "in_progress"
         self.steps = []
         self.title = "qa_rhr_title"
+        self.files = []
 
     """ recipe """
     def display(self):
@@ -343,3 +344,29 @@ class RecipeTest(object):
         if "identifier" in kwargs.keys():
             file.custom({"_id": kwargs["identifier"]})
         return file
+
+    """ files """
+    def add_files_recipe(self, files, **kwargs):
+        """ Add a  File to RecipeTest's step.
+
+        Parameters
+        ----------
+        files : FileTest
+            FileTest to be added
+        kwargs : Any
+            mongo : force insert in Mongo
+
+        Returns
+        -------
+        FileTest
+            FileTest added.
+        """
+        for f in files:
+            self.files.append(f.path)
+        if "mongo" in kwargs:
+            client = MongoClient(mongo.ip, mongo.port)
+            db = client[mongo.name][mongo.collection_recipe]
+            for f in files:
+                db.update_one({"_id": ObjectId(self.get_id())}, {'$push': {"files": f.path}})
+            client.close()
+        return self

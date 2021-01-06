@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, send_from_directory
 
 import utils
 
@@ -14,33 +14,66 @@ ingredient = ingredient_model.Ingredient()
 recipe = recipe_model.Recipe()
 
 
-@apis.route('/recipe/<_id>', methods=['POST'])
-def post_recipe_file(_id):
+@apis.route('/<path:path>', methods=['GET'])
+def get_files(path):
     """
-    @api {post} /file/recipe/<_id_recipe>  PostRecipeFile
-    @apiGroup File
-    @apiDescription Add a file to a recipe
+    @api {get} /files/<path> GetFiles
+    @apiGroup Files
+    @apiDescription Get a file
 
-    @apiParam (Query param) {String} _id Recipe's ObjectId
+    @apiParam (Query param) {String} path File's path
 
     @apiExample {json} Example usage:
-    POST http://127.0.0.1:5000/file/recipe/<_id_recipe>
-    files = [
-             ('files', ('qa_rhr_filename.png', open(path1, 'rb'), mimetypes)),
-             ('files', ('qa_rhr_filename2.jpeg', open(path2, 'rb'), mimetypes))]
+    GET http://127.0.0.1:5000/files/recipe/<path>
 
     @apiSuccessExample {json} Success response:
-    HTTPS 201
-    {
-        'codeMsg': 'cookbook.file.success.created',
-        'codeStatus': 201,
-        'data': 'added file ObjectId: 5e67a997ed11fd9361b2e374'
-    }
+    Files Streamed
 
     @apiErrorExample {json} Error response:
     HTTPS 400
     {
         'codeMsg': 'cookbook.file.error.bad_request',
+        'codeStatus': 400,
+        'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
+    }
+    """
+    validation = validator.GetFiles.Validator()
+    """ check param """
+    #validation.is_object_id_valid(kind="recipe", value=_id)
+    """ return response """
+    return send_from_directory(directory=utils.Server().path_file_storage, filename=path)  # , as_attachment=True)
+
+
+@apis.route('/recipe/<_id>', methods=['POST'])
+def post_recipe_files(_id):
+    """
+    @api {post} /files/recipe/<_id_recipe>  PostRecipeFiles
+    @apiGroup Files
+    @apiDescription Add files to a recipe
+
+    @apiParam (Query param) {String} _id Recipe's ObjectId
+    @apiParam (Multipart/form-data) files Recipe's Files
+
+    @apiExample {json} Example usage:
+    POST http://127.0.0.1:5000/files/recipe/<_id_recipe>
+    files = [
+             ('files', ('qa_rhr_filename.txt', open(path1, 'rb'), mimetypes)),
+             ('files', ('qa_rhr_filename2.png', open(path2, 'rb'), mimetypes)),
+             ('files', ('qa_rhr_filename3.jpeg', open(path3, 'rb'), mimetypes))]
+
+    @apiSuccessExample {json} Success response:
+    HTTPS 201
+    {
+        'codeMsg': 'cookbook.files.success.created',
+        'codeStatus': 201,
+        'data': ['recipe/5ff5869625fcd58c3ecc5f17/qa_rhr_filename.txt',
+                 'recipe/5ff5869625fcd58c3ecc5f17/qa_rhr_filename2.png',
+                 'recipe/5ff5869625fcd58c3ecc5f17/qa_rhr_filename3.jpeg']}
+
+    @apiErrorExample {json} Error response:
+    HTTPS 400
+    {
+        'codeMsg': 'cookbook.files.error.bad_request',
         'codeStatus': 400,
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
@@ -52,7 +85,7 @@ def post_recipe_file(_id):
     """ save files """
     urls = api.save_files(kind="recipe", _id=_id, files=request.files.getlist('files'))
     """ update ingredient """
-    recipe.add_fs(_id=_id, data=urls)
+    recipe.add_files(_id=_id, data=urls)
     """ return response """
     return server.return_response(data=urls, api=apis.name, http_code=201)
 

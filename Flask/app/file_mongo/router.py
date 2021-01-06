@@ -34,7 +34,7 @@ def delete_file_mongo(_id):
     @apiErrorExample {json} Error response:
     HTTPS 400
     {
-        'codeMsg': 'cookbook.file.error.bad_request',
+        'codeMsg': 'cookbook.file_mongo.error.bad_request',
         'codeStatus': 400,
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
@@ -68,7 +68,7 @@ def get_file_mongo(_id):
     @apiErrorExample {json} Error response:
     HTTPS 400
     {
-        'codeMsg': 'cookbook.file.error.bad_request',
+        'codeMsg': 'cookbook.file_mongo.error.bad_request',
         'codeStatus': 400,
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
@@ -105,7 +105,7 @@ def post_ingredient_file_mongo(_id):
     @apiSuccessExample {json} Success response:
     HTTPS 201
     {
-        'codeMsg': 'cookbook.file.success.created',
+        'codeMsg': 'cookbook.file_mongo.success.created',
         'codeStatus': 201,
         'data': 'added file ObjectId: 5e622b537aa097121df95d93'
     }
@@ -113,7 +113,7 @@ def post_ingredient_file_mongo(_id):
     @apiErrorExample {json} Error response:
     HTTPS 400
     {
-        'codeMsg': 'cookbook.file.error.bad_request',
+        'codeMsg': 'cookbook.file_mongo.error.bad_request',
         'codeStatus': 400,
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
@@ -156,7 +156,7 @@ def post_recipe_file_mongo(_id):
     @apiSuccessExample {json} Success response:
     HTTPS 201
     {
-        'codeMsg': 'cookbook.file.success.created',
+        'codeMsg': 'cookbook.file_mongo.success.created',
         'codeStatus': 201,
         'data': 'added file ObjectId: 5e67a997ed11fd9361b2e374'
     }
@@ -164,7 +164,7 @@ def post_recipe_file_mongo(_id):
     @apiErrorExample {json} Error response:
     HTTPS 400
     {
-        'codeMsg': 'cookbook.file.error.bad_request',
+        'codeMsg': 'cookbook.file_mongo.error.bad_request',
         'codeStatus': 400,
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
@@ -208,7 +208,7 @@ def post_step_file_mongo(_id_recipe, _id_step):
     @apiSuccessExample {json} Success response:
     HTTPS 201
     {
-        'codeMsg': 'cookbook.file.success.created',
+        'codeMsg': 'cookbook.file_mongo.success.created',
         'codeStatus': 201,
         'data': 'added file ObjectId: 5e6a42237e59e8439a883d99'
     }
@@ -216,7 +216,7 @@ def post_step_file_mongo(_id_recipe, _id_step):
     @apiErrorExample {json} Error response:
     HTTPS 400
     {
-        'codeMsg': 'cookbook.file.error.bad_request',
+        'codeMsg': 'cookbook.file_mongo.error.bad_request',
         'codeStatus': 400,
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
@@ -259,7 +259,7 @@ def put_file_is_main_mongo(_id):
     @apiErrorExample {json} Error response:
     HTTPS 400
     {
-        'codeMsg': 'cookbook.file.error.bad_request',
+        'codeMsg': 'cookbook.file_mongo.error.bad_request',
         'codeStatus': 400,
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
