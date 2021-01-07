@@ -15,6 +15,7 @@ class PostRecipeFiles(object):
         self.rep_code_msg_created = server.rep_code_msg_created.replace("xxx", "files")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "files")
         self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
+        self.rep_code_msg_error_405 = server.rep_code_msg_error_405.replace("xxx", "cookbook")
 
     @staticmethod
     def get_file_name(path):

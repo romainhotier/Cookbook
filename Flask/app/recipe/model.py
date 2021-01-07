@@ -1,7 +1,6 @@
 from pymongo import MongoClient
 from bson import ObjectId
 import re
-import os
 
 import utils
 import app.file_mongo.model as file_mongo_model

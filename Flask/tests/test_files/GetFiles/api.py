@@ -12,6 +12,7 @@ class GetFiles(object):
         self.param_path = "path"
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "files")
         self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
+        self.rep_code_msg_error_404_url_files = server.rep_code_msg_error_404.replace("xxx", "files")
 
     @staticmethod
     def create_detail(param, msg, **kwargs):

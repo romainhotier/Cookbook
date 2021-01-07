@@ -10,7 +10,6 @@ class GetIngredient(object):
     def __init__(self):
         self.url = 'ingredient'
         self.param_id = "_id"
-        self.param_with_files = "with_files"
         self.param_with_files_mongo = "with_files_mongo"
         self.rep_code_msg_ok = server.rep_code_msg_ok.replace("xxx", "ingredient")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "ingredient")

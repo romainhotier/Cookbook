@@ -22,8 +22,8 @@ class GetRecipe(unittest.TestCase):
         ingredient.clean()
         file_mongo.clean()
 
-    def test_with_files_without(self):
-        """ QueryParameter with_files is missing.
+    def test_with_files_mongo_without(self):
+        """ QueryParameter with_files_mongo is missing.
 
         Return
             200 - All Recipes.
@@ -66,8 +66,8 @@ class GetRecipe(unittest.TestCase):
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe).get_data_expected())
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
-    def test_with_files_empty(self):
-        """ QueryParameter with_files is an empty string.
+    def test_with_files_mongo_empty(self):
+        """ QueryParameter with_files_mongo is an empty string.
 
         Return
             400 - Bad request.
@@ -93,8 +93,8 @@ class GetRecipe(unittest.TestCase):
                                    value=tc_with_files_mongo)
         self.assertEqual(response_body["detail"], detail)
 
-    def test_with_files_invalid(self):
-        """ QueryParameter with_files is a string.
+    def test_with_files_mongo_invalid(self):
+        """ QueryParameter with_files_mongo is a string.
 
         Return
             400 - Bad request.
@@ -120,8 +120,8 @@ class GetRecipe(unittest.TestCase):
                                    value=tc_with_files_mongo)
         self.assertEqual(response_body["detail"], detail)
 
-    def test_with_files_false(self):
-        """ QueryParameter with_files is false.
+    def test_with_files_mongo_false(self):
+        """ QueryParameter with_files_mongo is false.
 
         Return
             200 - All Recipes.
@@ -166,8 +166,8 @@ class GetRecipe(unittest.TestCase):
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe).get_data_expected())
         self.assertTrue(api.check_not_present(value="detail", rep=response_body))
 
-    def test_with_files_true(self):
-        """ QueryParameter with_files is true.
+    def test_with_files_mongo_true(self):
+        """ QueryParameter with_files_mongo is true.
 
         Return
             200 - All Recipes.

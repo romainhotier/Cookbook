@@ -62,7 +62,6 @@ def get_all_ingredient():
     @apiGroup Ingredient
     @apiDescription Get file ingredients
 
-    @apiParam (Query param) {String} [with_files] if "true", add ingredient's files
     @apiParam (Query param) {String} [with_files_mongo] if "true", add ingredient's Mongo files
 
     @apiExample {json} Example usage:
@@ -83,10 +82,8 @@ def get_all_ingredient():
     """
     api = factory.GetAllIngredient.Factory()
     validation = validator.GetAllIngredient.Validator()
-    with_files = request.args.get(api.param_with_files)
     with_files_mongo = request.args.get(api.param_with_files_mongo)
     """ check param """
-    validation.is_with_files_valid(value=with_files)
     validation.is_with_files_mongo_valid(value=with_files_mongo)
     """ get all ingredient """
     data = ingredient.select_all()
@@ -105,7 +102,6 @@ def get_ingredient(_id):
     @apiDescription Get an ingredient by it's ObjectId
 
     @apiParam (Query param) {String} _id Ingredient's ObjectId
-    @apiParam (Query param) {String} [with_files] if "true", add ingredient's files
     @apiParam (Query param) {String} [with_files_mongo] if "true", add ingredient's Mongo files
 
     @apiExample {json} Example usage:
@@ -131,11 +127,9 @@ def get_ingredient(_id):
     """
     api = factory.GetAllIngredient.Factory()
     validation = validator.GetIngredient.Validator()
-    with_files = request.args.get(api.param_with_files)
     with_files_mongo = request.args.get(api.param_with_files_mongo)
     """ check param """
     validation.is_object_id_valid(value=_id)
-    validation.is_with_files_valid(value=with_files)
     validation.is_with_files_mongo_valid(value=with_files_mongo)
     """ get ingredient """
     data = ingredient.select_one(_id=_id)

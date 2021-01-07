@@ -64,7 +64,6 @@ def get_all_recipe():
     @apiGroup Recipe
     @apiDescription Get all recipes
 
-    @apiParam (Query param) {String} [with_files] if "true", add recipe's files
     @apiParam (Query param) {String} [with_files_mongo] if "true", add recipe's Mongo files
 
     @apiExample {json} Example usage:
@@ -85,10 +84,8 @@ def get_all_recipe():
     """
     api = factory.GetAllRecipe.Factory()
     validation = validator.GetAllRecipe.Validator()
-    with_files = request.args.get(api.param_with_files)
     with_files_mongo = request.args.get(api.param_with_files_mongo)
     """ check param """
-    validation.is_with_files_valid(value=with_files)
     validation.is_with_files_mongo_valid(value=with_files_mongo)
     """ get all recipe """
     data = recipe.select_all()
@@ -107,7 +104,6 @@ def get_recipe(slug):
     @apiDescription Get a recipe by it's slug
 
     @apiParam (Query param) {String} slug Recipe's slug
-    @apiParam (Query param) {String} [with_files] if "true", add ingredient's files
     @apiParam (Query param) {String} [with_files_mongo] if "true", add ingredient's Mongo files
 
     @apiExample {json} Example usage:
@@ -133,11 +129,9 @@ def get_recipe(slug):
     """
     api = factory.GetRecipe.Factory()
     validation = validator.GetRecipe.Validator()
-    with_files = request.args.get(api.param_with_files)
     with_files_mongo = request.args.get(api.param_with_files_mongo)
     """ check param """
     validation.is_slug_valid(value=slug)
-    validation.is_with_files_valid(value=with_files)
     validation.is_with_files_mongo_valid(value=with_files_mongo)
     """ get recipe """
     data = recipe.select_one_by_slug(slug=slug)
