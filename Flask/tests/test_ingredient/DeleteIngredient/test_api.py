@@ -4,23 +4,23 @@ import requests
 import utils
 import tests.test_ingredient.DeleteIngredient.api as api
 import tests.test_ingredient.model as ingredient_model
-import tests.test_file.model as file_model
+import tests.test_file_mongo.model as file_mongo_model
 import tests.test_recipe.model as recipe_model
 
 server = utils.Server()
 api = api.DeleteIngredient()
 ingredient = ingredient_model.IngredientTest()
 recipe = recipe_model.RecipeTest()
-file = file_model.FileTest()
+file_mongo = file_mongo_model.FileMongoTest()
 
 
 class DeleteIngredient(unittest.TestCase):
 
     def setUp(self):
-        """ Clean all IngredientTest, RecipeTest and FileTest. """
+        """ Clean all IngredientTest, RecipeTest and FileMongoTest. """
         ingredient.clean()
         recipe.clean()
-        file.clean()
+        file_mongo.clean()
 
     def test_api_ok(self):
         """ Default case.
@@ -74,16 +74,16 @@ class DeleteIngredient(unittest.TestCase):
         tc_ingredient1.check_bdd_data()
         tc_ingredient2.check_bdd_data()
 
-    def test_api_file_clean(self):
-        """ File associated cleaned.
+    def test_api_file_mongo_clean(self):
+        """ FileMongo associated cleaned.
 
         Return
             204 - Ingredient Deleted.
         """
         """ env """
         tc_ingredient1 = ingredient_model.IngredientTest().insert()
-        tc_file1 = tc_ingredient1.add_file(filename="qa_rhr_1", is_main=False)
-        tc_file2 = tc_ingredient1.add_file(filename="qa_rhr_2", is_main=False)
+        tc_file1 = tc_ingredient1.add_file_mongo(filename="qa_rhr_1", is_main=False)
+        tc_file2 = tc_ingredient1.add_file_mongo(filename="qa_rhr_2", is_main=False)
         """ param """
         tc_id = tc_ingredient1.get_id()
         """ call api """

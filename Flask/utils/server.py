@@ -1,5 +1,7 @@
 from flask import make_response
 import re
+import os
+import platform
 
 import logging
 
@@ -17,6 +19,7 @@ class Server(object):
         self.ip = 'localhost'
         self.port = '5000'
         self.main_url = "{0}://{1}:{2}".format(self.secure, self.ip, self.port)
+        self.path_file_storage = self.set_path_file_storage()
         self.rep_code_msg_ok = "cookbook.xxx.success.ok"
         self.rep_code_msg_created = "cookbook.xxx.success.created"
         self.rep_code_msg_error_400 = "cookbook.xxx.error.bad_request"
@@ -48,6 +51,7 @@ class Server(object):
         self.detail_url_not_found = "The requested URL was not found on the server"
         self.detail_method_not_allowed = "The method is not allowed for the requested URL."
 
+    """ response """
     def return_response(self, data, api, http_code, **kwargs):
         """ Return a Server response.
 
@@ -177,6 +181,7 @@ class Server(object):
             detail["value"] = kwargs["value"]
         return detail
 
+    """ option command line """
     @staticmethod
     def get_backend_options(args):
         """ Catch command line options.
@@ -204,3 +209,77 @@ class Server(object):
                 return {"env": "production", "debug": False, "testing": False}
         except IndexError:
             return {"env": "production", "debug": False, "testing": False}
+
+    """ files """
+    @staticmethod
+    def set_path_file_storage():
+        """ Set path for files to be saved locally.
+
+        Returns
+        -------
+        dict
+            Storage path.
+        """
+        sys = platform.system()
+        usr = os.getlogin()
+        if usr == "rhr" and sys == "Linux":  # Desktop pc for dev
+            return "/home/rhr/Workspace/Cookbook/Flask/_files/"
+        elif usr == "ubuntu" and sys == "Linux":  # Raspberry prod
+            return "/home/ubuntu/Workspace/Storage/cookbook/"
+        # elif usr == "xxx" and sys == "Darwin":  # Mac pc for dev
+        #     return "/home/rhr/Workspace/Cookbook/Flask/_files"
+        # elif usr == "xxx" and sys == "Windows":  # windows for dev
+        #     return "/home/rhr/Workspace/Cookbook/Flask/_files"
+
+    def check_file_storage_folder(self, kind, _id):
+        """ Check/Create if folder exist.
+
+        Parameters
+        ----------
+        kind : str
+            can be recipe/step/ingredient.
+        _id : str
+            ObjectId.
+        """
+        self.check_file_folder()
+        self.check_kind_folder(kind=kind)
+        self.check_id_folder(kind=kind, _id=_id)
+
+    # use in check_file_storage_folder
+    def check_file_folder(self):
+        """ Check/Create if storage folder exist.
+        """
+        try:
+            os.mkdir("{0}".format(self.path_file_storage))
+        except (FileExistsError, OSError):
+            pass
+
+    # use in check_file_storage_folder
+    def check_kind_folder(self, kind):
+        """ Check/Create if type folder exist.
+
+        Parameters
+        ----------
+        kind : str
+            can be recipe/step/ingredient.
+        """
+        try:
+            os.mkdir("{0}/{1}".format(self.path_file_storage, kind))
+        except (FileExistsError, OSError):
+            pass
+
+    # use in check_file_storage_folder
+    def check_id_folder(self, kind, _id):
+        """ Check/Create if id folder exist.
+
+        Parameters
+        ----------
+        kind : str
+            can be recipe/step/ingredient.
+        _id : str
+            ObjectId.
+        """
+        try:
+            os.mkdir("{0}/{1}/{2}".format(self.path_file_storage, kind, _id))
+        except (FileExistsError, OSError):
+            pass

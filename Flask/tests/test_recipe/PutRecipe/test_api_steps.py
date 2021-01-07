@@ -597,9 +597,9 @@ class PutRecipe(unittest.TestCase):
         tc_recipe.add_step(_id_step="aaaaaaaaaaaaaaaaaaaaaaaa", description="step1")
         tc_recipe.add_step(_id_step="bbbbbbbbbbbbbbbbbbbbbbbb", description="step2")
         tc_recipe.insert()
-        tc_file1 = tc_recipe.add_file_step(_id_step="aaaaaaaaaaaaaaaaaaaaaaaa", filename="file11", is_main=False)
-        tc_file2 = tc_recipe.add_file_step(_id_step="aaaaaaaaaaaaaaaaaaaaaaaa", filename="file12", is_main=False)
-        tc_file3 = tc_recipe.add_file_step(_id_step="bbbbbbbbbbbbbbbbbbbbbbbb", filename="file2", is_main=False)
+        tc_file1 = tc_recipe.add_file_mongo_step(_id_step="aaaaaaaaaaaaaaaaaaaaaaaa", filename="file11", is_main=False)
+        tc_file2 = tc_recipe.add_file_mongo_step(_id_step="aaaaaaaaaaaaaaaaaaaaaaaa", filename="file12", is_main=False)
+        tc_file3 = tc_recipe.add_file_mongo_step(_id_step="bbbbbbbbbbbbbbbbbbbbbbbb", filename="file2", is_main=False)
         """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_steps: [{api.param_step_description: "step_new"},

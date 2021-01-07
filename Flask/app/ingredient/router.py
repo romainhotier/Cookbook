@@ -5,14 +5,14 @@ import app.ingredient.factory as factory
 import app.ingredient.validator as validator
 import app.ingredient.model as ingredient_model
 import app.recipe.model as recipe_model
-import app.file.model as file_model
+import app.file_mongo.model as file_mongo_model
 
 apis = Blueprint('ingredient', __name__, url_prefix='/ingredient')
 
 server = utils.Server()
 ingredient = ingredient_model.Ingredient()
 recipe = recipe_model.Recipe()
-file = file_model.File()
+file_mongo = file_mongo_model.FileMongo()
 
 
 @apis.route('/<_id>', methods=['DELETE'])
@@ -47,7 +47,7 @@ def delete_ingredient(_id):
     """ check param """
     validation.is_object_id_valid(value=_id)
     """ clean files and link """
-    file.clean_file_by_id_parent(_id_parent=_id)
+    file_mongo.clean_file_by_id_parent(_id_parent=_id)
     recipe.clean_ingredients_by_id(_id_ingredient=_id)
     """ delete ingredient """
     ingredient.delete(_id=_id)
@@ -62,7 +62,7 @@ def get_all_ingredient():
     @apiGroup Ingredient
     @apiDescription Get file ingredients
 
-    @apiParam (Query param) {String} [with_files] if "true", add ingredient's files
+    @apiParam (Query param) {String} [with_files_mongo] if "true", add ingredient's Mongo files
 
     @apiExample {json} Example usage:
     GET http://127.0.0.1:5000/ingredient
@@ -82,14 +82,14 @@ def get_all_ingredient():
     """
     api = factory.GetAllIngredient.Factory()
     validation = validator.GetAllIngredient.Validator()
-    with_files = request.args.get(api.param_with_files)
+    with_files_mongo = request.args.get(api.param_with_files_mongo)
     """ check param """
-    validation.is_with_files_valid(value=with_files)
+    validation.is_with_files_mongo_valid(value=with_files_mongo)
     """ get all ingredient """
     data = ingredient.select_all()
     """ add enrichment if needed """
-    if with_files == "true":
-        data.add_enrichment_files()
+    if with_files_mongo == "true":
+        data.add_enrichment_files_mongo()
     """ return response """
     return server.return_response(data=data.result, api=apis.name, http_code=200)
 
@@ -102,7 +102,7 @@ def get_ingredient(_id):
     @apiDescription Get an ingredient by it's ObjectId
 
     @apiParam (Query param) {String} _id Ingredient's ObjectId
-    @apiParam (Query param) {String} [with_files] if "true", add ingredient's files
+    @apiParam (Query param) {String} [with_files_mongo] if "true", add ingredient's Mongo files
 
     @apiExample {json} Example usage:
     GET http://127.0.0.1:5000/ingredient/<_id_ingredient>
@@ -127,15 +127,15 @@ def get_ingredient(_id):
     """
     api = factory.GetAllIngredient.Factory()
     validation = validator.GetIngredient.Validator()
-    with_files = request.args.get(api.param_with_files)
+    with_files_mongo = request.args.get(api.param_with_files_mongo)
     """ check param """
     validation.is_object_id_valid(value=_id)
-    validation.is_with_files_valid(value=with_files)
+    validation.is_with_files_mongo_valid(value=with_files_mongo)
     """ get ingredient """
     data = ingredient.select_one(_id=_id)
     """ add enrichment if needed """
-    if with_files == "true":
-        data.add_enrichment_files()
+    if with_files_mongo == "true":
+        data.add_enrichment_files_mongo()
     """ return response """
     return server.return_response(data=data.result, api=apis.name, http_code=200)
 

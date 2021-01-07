@@ -10,7 +10,7 @@ class GetRecipe(object):
     def __init__(self):
         self.url = 'recipe'
         self.param_slug = "slug"
-        self.param_with_files = "with_files"
+        self.param_with_files_mongo = "with_files_mongo"
         self.rep_code_msg_ok = server.rep_code_msg_ok.replace("xxx", "recipe")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "recipe")
         self.rep_code_msg_error_404_url = server.rep_code_msg_error_404.replace("xxx", "cookbook")
@@ -56,8 +56,10 @@ class GetRecipe(object):
             Data's response.
         """
         data_expected = recipe.get_stringify()
-        if "files" in kwargs:
-            data_expected["files"] = [file.get_enrichment() for file in kwargs["files"]]
+        # if "files" in kwargs:
+        #     data_expected["files"] = [file.get_enrichment() for file in kwargs["files"]]
+        if "files_mongo" in kwargs:
+            data_expected["files_mongo"] = [file.get_enrichment() for file in kwargs["files_mongo"]]
         self.formated_data = data_expected
         return self
 
@@ -71,15 +73,15 @@ class GetRecipe(object):
         """
         return self.formated_data
 
-    def add_ingredient_files(self, ingredient, files):
+    def add_ingredient_files_mongo(self, ingredient, files_mongo):
         """ Format data's response.
 
         Parameters
         ----------
         ingredient : Any
             IngredientTest.
-        files : list
-            files: [FileTests].
+        files_mongo : list
+            files_mongo: [FileMongoTests].
 
         Returns
         -------
@@ -89,21 +91,21 @@ class GetRecipe(object):
         try:
             for ingr in self.formated_data["ingredients"]:
                 if ingr["_id"] == ingredient.get_id():
-                    ingr["files"] = [file.get_enrichment() for file in files]
+                    ingr["files_mongo"] = [file.get_enrichment() for file in files_mongo]
                     break
         except KeyError:
             pass
         return self.formated_data
 
-    def add_steps_files(self, _id, files):
+    def add_steps_files_mongo(self, _id, files_mongo):
         """ Format data's response.
 
         Parameters
         ----------
         _id : str
             Step's ObjectId.
-        files : list
-            files: [FileTests].
+        files_mongo : list
+            files_mongo: [FileMongoTests].
 
         Returns
         -------
@@ -113,7 +115,7 @@ class GetRecipe(object):
         try:
             for step in self.formated_data["steps"]:
                 if step["_id"] == _id:
-                    step["files"] = [file.get_enrichment() for file in files]
+                    step["files_mongo"] = [file.get_enrichment() for file in files_mongo]
                     break
         except KeyError:
             pass

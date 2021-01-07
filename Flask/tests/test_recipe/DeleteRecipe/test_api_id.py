@@ -5,22 +5,19 @@ import utils
 import tests.test_recipe.DeleteRecipe.api as api
 import tests.test_ingredient.model as ingredient_model
 import tests.test_recipe.model as recipe_model
-import tests.test_file.model as file_model
 
 server = utils.Server()
 api = api.DeleteRecipe()
 ingredient = ingredient_model.IngredientTest()
 recipe = recipe_model.RecipeTest()
-file = file_model.FileTest()
 
 
 class DeleteRecipe(unittest.TestCase):
 
     def setUp(self):
-        """ Clean IngredientTest, RecipeTest and FileTest."""
+        """ Clean IngredientTest, RecipeTest."""
         recipe.clean()
         ingredient.clean()
-        file.clean()
 
     def test_id_without(self):
         """ QueryParameter _id is missing.

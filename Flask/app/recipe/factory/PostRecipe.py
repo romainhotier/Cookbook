@@ -8,6 +8,7 @@ class Factory(object):
         """
         self.param_categories = "categories"
         self.param_cooking_time = "cooking_time"
+        self.param_files = "files"
         self.param_ingredients = "ingredients"
         self.param_ingredient = "ingredient"
         self.param_ingredient_id = "_id"
@@ -141,7 +142,7 @@ class Factory(object):
         """ Fill keys that are not mandatory with default value for PostRecipe.
          - resume/note -> ""
          - level/cooking_time/preparation_time/nb_people -> 0
-         - categories/ingredients/steps -> []
+         - categories/ingredients/steps/files -> []
          - status -> "in_progress"
         """
         for key in self.get_body_param():
@@ -151,7 +152,7 @@ class Factory(object):
                 elif key in [self.param_level, self.param_cooking_time, self.param_preparation_time,
                              self.param_nb_people]:
                     self.body[key] = 0
-                elif key in [self.param_categories, self.param_ingredients, self.param_steps]:
+                elif key in [self.param_categories, self.param_files, self.param_ingredients, self.param_steps]:
                     self.body[key] = []
                 elif key in [self.param_status]:
                     self.body[key] = "in_progress"
