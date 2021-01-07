@@ -3,6 +3,7 @@ from bson import ObjectId
 import re
 
 import utils
+import app.ingredient.model as ingredient_model
 import app.file_mongo.model as file_mongo_model
 
 mongo = utils.Mongo()
@@ -345,4 +346,26 @@ class Recipe(object):
             for file in files:
                 file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
                 ingredient["files_mongo"].append(file_enrichment)
+        return self
+
+    """ calories """
+    def add_enrichment_calories(self):
+        """ calculate calories with ingredient's recipe.
+
+        Returns
+        -------
+        int
+            Recipe's calories
+        """
+        recipe_calories = 0
+        ingredients = self.result["ingredients"]
+        for ing in ingredients:
+            nutri = ingredient_model.Ingredient().get_nutriments(_id=ing["_id"])
+            if ing["unit"] == "portion":
+                ing_calories = ((nutri["calories"] / 100) * nutri["portion"]) * ing["quantity"]
+                recipe_calories += ing_calories
+            else:
+                ing_calories = (nutri["calories"] / 100) * ing["quantity"]
+                recipe_calories += ing_calories
+        self.result["calories"] = recipe_calories
         return self

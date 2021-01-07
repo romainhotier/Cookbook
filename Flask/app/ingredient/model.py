@@ -208,3 +208,24 @@ class Ingredient(object):
                     file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
                     ingredient["files_mongo"].append(file_enrichment)
             return self
+
+    """ recipe calories """
+    @staticmethod
+    def get_nutriments(_id):
+        """ Get nutriments for one Ingredient by ObjectId.
+
+        Parameters
+        ----------
+        _id : str
+            Ingredient's ObjectId.
+
+        Returns
+        -------
+        dict
+            Ingredient's nutriment
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_ingredient]
+        result = db.find_one({"_id": ObjectId(_id)})
+        client.close()
+        return result["nutriments"]
