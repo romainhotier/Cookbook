@@ -5,12 +5,14 @@ import app.recipe.factory as factory
 import app.recipe.validator as validator
 import app.recipe.model as recipe_model
 import app.file_mongo.model as file_mongo_model
+import app.files.model as files_model
 
 apis = Blueprint('recipe', __name__, url_prefix='/recipe')
 
 server = utils.Server()
 recipe = recipe_model.Recipe()
 file_mongo = file_mongo_model.FileMongo()
+files = files_model.Files()
 
 
 @apis.route('/<_id>', methods=['DELETE'])
@@ -217,6 +219,7 @@ def put_recipe(_id):
     @apiParam (Query param) {String} _id Recipe's ObjectId
     @apiParam (Body param) {Array} [categories]=Empty_Array Recipe's categories
     @apiParam (Body param) {Integer} [cooking_time]=0 Recipe's cooking time
+    @apiParam (Body param) {Array} [files] Recipe's files
     @apiParam (Body param) {Array} [ingredients]=Empty_Array Recipe's Ingredients
     @apiParam (Body param) {String} ingredients[_id] Ingredient's ObjectId
     @apiParam (Body param) {Integer} ingredients[quantity] Ingredient's quantity
@@ -261,15 +264,19 @@ def put_recipe(_id):
     """ check param """
     validation.is_object_id_valid(value=_id)
     """ check body """
-    body = api.clean_body(data=request.json)
+    body = api.clean_body(_id=_id, data=request.json)
     validation.is_body_valid(data=body, _id=_id)
     body_formated = api.reformat_body(data=body)
     diff_step = api.get_diff_steps(_id=_id, body=body_formated)
+    diff_files_recipe = api.get_diff_files_recipe(_id=_id, body=body_formated)
     """ update recipe """
     data = recipe.update(_id=_id, data=body_formated)
     """ clean steps file """
     for _id_step in diff_step:
         file_mongo.clean_file_by_id_parent(_id_parent=_id_step)
+    """ clean files recipe """
+    for path in diff_files_recipe:
+        files.delete(path=path)
     """ return response """
     return server.return_response(data=data.result, api=apis.name, http_code=200)
 

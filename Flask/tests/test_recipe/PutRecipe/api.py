@@ -14,6 +14,7 @@ class PutRecipe(object):
         self.param_id = "_id"
         self.param_categories = "categories"
         self.param_cooking_time = "cooking_time"
+        self.param_files = "files"
         self.param_ingredients = "ingredients"
         self.param_ingredient_id = "_id"
         self.param_ingredient_quantity = "quantity"

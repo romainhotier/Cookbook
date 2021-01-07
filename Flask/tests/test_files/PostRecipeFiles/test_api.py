@@ -11,7 +11,7 @@ api = api.PostRecipeFiles()
 recipe = recipe_model.RecipeTest()
 file = files_model.FilesTest()
 
-file_paths = api.get_files_path_for_test()
+file_paths = utils.PathExplorer().get_files_path_for_test()
 
 
 class PostRecipeFiles(unittest.TestCase):
@@ -42,9 +42,9 @@ class PostRecipeFiles(unittest.TestCase):
         """ close files """
         api.close_files(files_open=tc_files_open)
         """ change """
-        tc_file1 = files_model.FilesTest().set_path(kind="recipe", _id=tc_id, path=file_paths[0])
-        tc_file2 = files_model.FilesTest().set_path(kind="recipe", _id=tc_id, path=file_paths[1])
-        tc_file3 = files_model.FilesTest().set_path(kind="recipe", _id=tc_id, path=file_paths[2])
+        tc_file1 = files_model.FilesTest().set_short_path(kind="recipe", _id=tc_id, path=file_paths[0])
+        tc_file2 = files_model.FilesTest().set_short_path(kind="recipe", _id=tc_id, path=file_paths[1])
+        tc_file3 = files_model.FilesTest().set_short_path(kind="recipe", _id=tc_id, path=file_paths[2])
         tc_recipe.add_files_recipe(files=[tc_file1, tc_file2, tc_file3])
         """ assert """
         self.assertEqual(response.status_code, 201)
@@ -67,7 +67,8 @@ class PostRecipeFiles(unittest.TestCase):
         """
         """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
-        tc_file1 = files_model.FilesTest().set_path(kind="recipe", _id=tc_recipe.get_id(), path=file_paths[0]).insert()
+        tc_file1 = files_model.FilesTest().set_short_path(kind="recipe", _id=tc_recipe.get_id(),
+                                                          path=file_paths[0]).insert()
         tc_recipe.add_files_recipe(files=[tc_file1], mongo=True)
         """ param """
         tc_id = tc_recipe.get_id()
@@ -82,8 +83,8 @@ class PostRecipeFiles(unittest.TestCase):
         """ close files """
         api.close_files(files_open=tc_files_open)
         """ change """
-        tc_file2 = files_model.FilesTest().set_path(kind="recipe", _id=tc_id, path=file_paths[1])
-        tc_file3 = files_model.FilesTest().set_path(kind="recipe", _id=tc_id, path=file_paths[2])
+        tc_file2 = files_model.FilesTest().set_short_path(kind="recipe", _id=tc_id, path=file_paths[1])
+        tc_file3 = files_model.FilesTest().set_short_path(kind="recipe", _id=tc_id, path=file_paths[2])
         tc_recipe.add_files_recipe(files=[tc_file2, tc_file3])
         """ assert """
         self.assertEqual(response.status_code, 201)
@@ -133,3 +134,6 @@ class PostRecipeFiles(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+# TODO : finish test

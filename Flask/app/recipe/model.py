@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 from bson import ObjectId
 import re
+import os
 
 import utils
 import app.file_mongo.model as file_mongo_model
@@ -16,6 +17,7 @@ class Recipe(object):
         - _id = ObjectId in mongo
         - categories = Recipe's categories
         - cooking_time = Recipe's cooking_time
+        - files = Recipe's files
         - ingredients = Recipe's Ingredients
         - ingredients._id = Ingredient's ObjectId
         - ingredients.quantity = Ingredient's quantity
@@ -30,7 +32,6 @@ class Recipe(object):
         - steps = Recipe's steps
         - steps.description = Step's description
         - title = Recipe's name (Unique)
-        - files = Recipe's files
         """
         self.result = {}
 
@@ -186,30 +187,6 @@ class Recipe(object):
         self.result = mongo.to_json(result)
         return self
 
-    def add_files(self, _id, data):
-        """ add files to a recipe.
-
-        Parameters
-        ----------
-        _id : str
-            Recipe's ObjectId.
-        data : list
-            Files's urls.
-
-        Returns
-        -------
-        Recipe
-            Updated Recipe.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_recipe]
-        for url in data:
-            db.update_one({"_id": ObjectId(_id)}, {'$push': {"files": url}})
-        result = db.find_one({"_id": ObjectId(_id)})
-        client.close()
-        self.result = mongo.to_json(result)
-        return self
-
     @staticmethod
     def delete(_id):
         """ Delete an Recipe.
@@ -259,6 +236,51 @@ class Recipe(object):
         steps_ids = [step["_id"] for step in result["steps"]]
         client.close()
         return steps_ids
+
+    """ files """
+    def add_files(self, _id, data):
+        """ add files to a recipe.
+
+        Parameters
+        ----------
+        _id : str
+            Recipe's ObjectId.
+        data : list
+            Files's urls.
+
+        Returns
+        -------
+        Recipe
+            Updated Recipe.
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        for url in data:
+            db.update_one({"_id": ObjectId(_id)}, {'$push': {"files": url}})
+        result = db.find_one({"_id": ObjectId(_id)})
+        client.close()
+        self.result = mongo.to_json(result)
+        return self
+
+    @staticmethod
+    def get_files(_id):
+        """ get Recipe's files.
+
+        Parameters
+        ----------
+        _id : str
+            Recipe's ObjectId.
+
+        Returns
+        -------
+        list
+            Recipe's Files.
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        result = db.find_one({"_id": ObjectId(_id)})["files"]
+        client.close()
+        return result
 
     """ files mongo"""
     def add_enrichment_files_mongo(self):

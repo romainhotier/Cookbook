@@ -11,7 +11,7 @@ api = api.PostIngredientFile()
 ingredient = ingredient_model.IngredientTest()
 file = file_model.FileMongoTest()
 
-file_path = api.get_file_path_for_test()
+file_path = utils.PathExplorer().get_file_path_for_test()
 
 
 class PostIngredientFile(unittest.TestCase):

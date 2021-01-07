@@ -32,16 +32,13 @@ def get_files(path):
     @apiErrorExample {json} Error response:
     HTTPS 400
     {
-        'codeMsg': 'cookbook.file.error.bad_request',
-        'codeStatus': 400,
-        'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
+        'codeMsg': 'cookbook.cookbook.error.bad_request',
+        'codeStatus': 404,
+        'detail': 'The requested URL was not found on the server'
     }
     """
-    validation = validator.GetFiles.Validator()
-    """ check param """
-    #validation.is_object_id_valid(kind="recipe", value=_id)
     """ return response """
-    return send_from_directory(directory=utils.Server().path_file_storage, filename=path)  # , as_attachment=True)
+    return send_from_directory(directory=utils.Server().path_file_storage, filename=path)
 
 
 @apis.route('/recipe/<_id>', methods=['POST'])

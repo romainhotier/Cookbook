@@ -1,5 +1,3 @@
-import os
-import platform
 from bson import ObjectId
 
 import utils
@@ -95,57 +93,3 @@ class PostRecipeFile(object):
             File's ObjectId.
         """
         return ObjectId(response["data"].split(": ")[1])
-
-    def get_file_path_for_test(self):
-        """ Get file's path.
-
-        Returns
-        -------
-        str
-            Path according to the system.
-        """
-        current_path = self.convert_to_unix_path(os.getcwd())
-        default_path = ""
-        for p in current_path.split('/'):
-            if p == "Flask":
-                default_path += p + "/"
-                break
-            else:
-                default_path += p + "/"
-        test_path = default_path + "tests/test_file_mongo/_file_exemple/text.txt"
-        if platform.system() == "Windows":
-            return self.convert_to_windows_path(test_path)
-        elif platform.system() in ["Linux", "Darwin"]:
-            return test_path
-
-    @staticmethod
-    def convert_to_windows_path(path):
-        """ Get path to windows's path.
-
-        Parameters
-        ----------
-        path : str
-            Path to be converted.
-
-        Returns
-        -------
-        str
-            replace / by \\.
-        """
-        return path.replace('/', '\\')
-
-    @staticmethod
-    def convert_to_unix_path(path):
-        """ Get path to windows's path.
-
-        Parameters
-        ----------
-        path : str
-            Path to be converted.
-
-        Returns
-        -------
-        str
-            replace \\ by /.
-        """
-        return path.replace('\\', '/')

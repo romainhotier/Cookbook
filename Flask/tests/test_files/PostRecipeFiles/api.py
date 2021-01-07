@@ -1,5 +1,3 @@
-import os
-import platform
 import mimetypes
 
 import utils
@@ -142,59 +140,3 @@ class PostRecipeFiles(object):
             Data's response.
         """
         return ["recipe/{}/{}".format(recipe_id, self.get_file_name(path)) for path in file_paths]
-
-    def get_files_path_for_test(self):
-        """ Get file's path.
-
-        Returns
-        -------
-        list
-            Path according to the system, len 3 here.
-        """
-        current_path = self.convert_to_unix_path(os.getcwd())
-        default_path = ""
-        for p in current_path.split('/'):
-            if p == "Flask":
-                default_path += p + "/"
-                break
-            else:
-                default_path += p + "/"
-        test_paths = [default_path + "tests/test_files/_file_exemple/text.txt",
-                      default_path + "tests/test_files/_file_exemple/image.png",
-                      default_path + "tests/test_files/_file_exemple/image2.jpeg"]
-        if platform.system() == "Windows":
-            return self.convert_to_windows_path(paths=test_paths)
-        elif platform.system() in ["Linux", "Darwin"]:
-            return test_paths
-
-    @staticmethod
-    def convert_to_windows_path(paths):
-        """ Get path to windows's paths.
-
-        Parameters
-        ----------
-        paths : list
-            Path to be converted.
-
-        Returns
-        -------
-        list
-            replace / by \\.
-        """
-        return [path.replace('/', '\\') for path in paths]
-
-    @staticmethod
-    def convert_to_unix_path(path):
-        """ Get path to windows's path.
-
-        Parameters
-        ----------
-        path : str
-            Path to be converted.
-
-        Returns
-        -------
-        str
-            replace \\ by /.
-        """
-        return path.replace('\\', '/')

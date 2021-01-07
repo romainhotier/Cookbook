@@ -11,7 +11,7 @@ api = api.GetFiles()
 recipe = recipe_model.RecipeTest()
 file = files_model.FilesTest()
 
-file_paths = api.get_files_path_for_test()
+file_paths = utils.PathExplorer().get_files_path_for_test()
 
 
 class GetFiles(unittest.TestCase):
@@ -30,10 +30,12 @@ class GetFiles(unittest.TestCase):
         """
         """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
-        tc_file1 = files_model.FilesTest().set_path(kind="recipe", _id=tc_recipe.get_id(), path=file_paths[0]).insert()
-        tc_file2 = files_model.FilesTest().set_path(kind="recipe", _id=tc_recipe.get_id(), path=file_paths[1]).insert()
-        tc_recipe.add_files_recipe(files=[tc_file1], mongo=True)
-        tc_recipe.add_files_recipe(files=[tc_file2], mongo=True)
+        tc_file1 = files_model.FilesTest().set_short_path(kind="recipe", _id=tc_recipe.get_id(),
+                                                          path=file_paths[0]).insert()
+        tc_file2 = files_model.FilesTest().set_short_path(kind="recipe", _id=tc_recipe.get_id(),
+                                                          path=file_paths[1]).insert()
+        tc_recipe.add_files_recipe(files=[tc_file1, tc_file2], mongo=True)
+        #tc_recipe.add_files_recipe(files=[tc_file2], mongo=True)
         """ param """
         tc_path = tc_file1.path
         """ call api """
@@ -63,8 +65,10 @@ class GetFiles(unittest.TestCase):
         """
         """ env """
         tc_recipe = recipe_model.RecipeTest().insert()
-        tc_file1 = files_model.FilesTest().set_path(kind="recipe", _id=tc_recipe.get_id(), path=file_paths[0]).insert()
-        tc_file2 = files_model.FilesTest().set_path(kind="recipe", _id=tc_recipe.get_id(), path=file_paths[1]).insert()
+        tc_file1 = files_model.FilesTest().set_short_path(kind="recipe", _id=tc_recipe.get_id(),
+                                                          path=file_paths[0]).insert()
+        tc_file2 = files_model.FilesTest().set_short_path(kind="recipe", _id=tc_recipe.get_id(),
+                                                          path=file_paths[1]).insert()
         tc_recipe.add_files_recipe(files=[tc_file1], mongo=True)
         tc_recipe.add_files_recipe(files=[tc_file2], mongo=True)
         """ param """
@@ -141,3 +145,5 @@ class GetFiles(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+# TODO : finish test

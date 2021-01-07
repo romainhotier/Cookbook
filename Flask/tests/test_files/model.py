@@ -19,7 +19,7 @@ class FilesTest(object):
         self.id = ""
         self.path = ""
 
-    def set_path(self, kind, _id, path):
+    def set_short_path(self, kind, _id, path):
         """ Set all informations needed for file exploitation.
 
         Parameters
@@ -53,73 +53,16 @@ class FilesTest(object):
         print(self.__dict__)
 
     def insert(self):
-        """ Copy FileTest to filestorage.
+        """ Copy FileTest to filestorage repo.
 
         Returns
         -------
         FilesTest
             File copied.
         """
-        self.check_save_folder(kind=self.kind, _id=self.id)
+        utils.Server().check_file_storage_folder(kind=self.kind, _id=self.id)
         shutil.copyfile(self.origin, utils.Server().path_file_storage + "/" + self.path)
         return self
-
-    # use in insert
-    def check_save_folder(self, kind, _id):
-        """ Check/Create if folder exist.
-
-        Parameters
-        ----------
-        kind : str
-            can be recipe/step/ingredient.
-        _id : str
-            ObjectId.
-        """
-        self.check_file_folder()
-        self.check_kind_folder(kind=kind)
-        self.check_id_folder(kind=kind, _id=_id)
-
-    # use in check_save_folder
-    @staticmethod
-    def check_file_folder():
-        """ Check/Create if storage folder exist.
-        """
-        try:
-            os.mkdir("{0}".format(utils.Server().path_file_storage))
-        except (FileExistsError, OSError):
-            pass
-
-    # use in check_save_folder
-    @staticmethod
-    def check_kind_folder(kind):
-        """ Check/Create if type folder exist.
-
-        Parameters
-        ----------
-        kind : str
-            can be recipe/step/ingredient.
-        """
-        try:
-            os.mkdir("{0}/{1}".format(utils.Server().path_file_storage, kind))
-        except (FileExistsError, OSError):
-            pass
-
-    # use in check_save_folder
-    @staticmethod
-    def check_id_folder(kind, _id):
-        """ Check/Create if id folder exist.
-
-        Parameters
-        ----------
-        kind : str
-            can be recipe/step/ingredient.
-        _id : str
-            ObjectId.
-        """
-        try:
-            os.mkdir("{0}/{1}/{2}".format(utils.Server().path_file_storage, kind, _id))
-        except (FileExistsError, OSError):
-            pass
 
     def check_file_exist(self):
         """ Check if file exist.
@@ -130,7 +73,18 @@ class FilesTest(object):
             True if exist, False otherwise.
         """
         path = utils.Server().path_file_storage + self.path
-        return os.path.exists(path)
+        assert os.path.exists(path)
+
+    def check_file_not_exist(self):
+        """ Check if file exist.
+
+        Returns
+        -------
+        bool
+            True if exist, False otherwise.
+        """
+        path = utils.Server().path_file_storage + self.path
+        assert os.path.exists(path) is False
 
     @staticmethod
     def clean():
