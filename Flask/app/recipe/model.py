@@ -294,6 +294,7 @@ class Recipe(object):
             self.add_enrichment_files_mongo_recipe(recipe=self.result)
             self.add_enrichment_files_mongo_ingredients(recipe=self.result)
             self.add_enrichment_files_mongo_steps(recipe=self.result)
+            return self
         elif isinstance(self.result, list):
             for recipe in self.result:
                 self.add_enrichment_files_mongo_recipe(recipe=recipe)
@@ -357,8 +358,16 @@ class Recipe(object):
         int
             Recipe's calories
         """
+        if isinstance(self.result, dict):
+            self.calculate_recipe_calories(recipe=self.result)
+        elif isinstance(self.result, list):
+            for recipe in self.result:
+                self.calculate_recipe_calories(recipe=recipe)
+            return self
+
+    def calculate_recipe_calories(self, recipe):
         recipe_calories = 0
-        ingredients = self.result["ingredients"]
+        ingredients = recipe["ingredients"]
         for ing in ingredients:
             nutri = ingredient_model.Ingredient().get_nutriments(_id=ing["_id"])
             if ing["unit"] == "portion":
@@ -367,5 +376,5 @@ class Recipe(object):
             else:
                 ing_calories = (nutri["calories"] / 100) * ing["quantity"]
                 recipe_calories += ing_calories
-        self.result["calories"] = recipe_calories
+        recipe["calories"] = recipe_calories
         return self

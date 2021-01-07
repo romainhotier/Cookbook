@@ -65,6 +65,7 @@ def get_all_recipe():
     @apiDescription Get all recipes
 
     @apiParam (Query param) {String} [with_files_mongo] if "true", add recipe's Mongo files
+    @apiParam (Query param) {String} [with_calories] if "true", add Recipe's calories from ingredients
 
     @apiExample {json} Example usage:
     GET http://127.0.0.1:5000/recipe
@@ -85,13 +86,17 @@ def get_all_recipe():
     api = factory.GetAllRecipe.Factory()
     validation = validator.GetAllRecipe.Validator()
     with_files_mongo = request.args.get(api.param_with_files_mongo)
+    with_calories = request.args.get(api.param_with_calories)
     """ check param """
     validation.is_with_files_mongo_valid(value=with_files_mongo)
+    validation.is_with_calories_valid(value=with_calories)
     """ get all recipe """
     data = recipe.select_all()
     """ add enrichment if needed """
     if with_files_mongo == "true":
         data.add_enrichment_files_mongo()
+    if with_calories == "true":
+        data.add_enrichment_calories()
     """ return response """
     return server.return_response(data=data.result, api=apis.name, http_code=200)
 
