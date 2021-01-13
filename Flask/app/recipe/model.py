@@ -3,6 +3,7 @@ from bson import ObjectId
 import re
 
 import utils
+import app.ingredient.model as ingredient_model
 import app.file_mongo.model as file_mongo_model
 
 mongo = utils.Mongo()
@@ -293,6 +294,7 @@ class Recipe(object):
             self.add_enrichment_files_mongo_recipe(recipe=self.result)
             self.add_enrichment_files_mongo_ingredients(recipe=self.result)
             self.add_enrichment_files_mongo_steps(recipe=self.result)
+            return self
         elif isinstance(self.result, list):
             for recipe in self.result:
                 self.add_enrichment_files_mongo_recipe(recipe=recipe)
@@ -345,4 +347,34 @@ class Recipe(object):
             for file in files:
                 file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
                 ingredient["files_mongo"].append(file_enrichment)
+        return self
+
+    """ calories """
+    def add_enrichment_calories(self):
+        """ calculate calories with ingredient's recipe.
+
+        Returns
+        -------
+        int
+            Recipe's calories
+        """
+        if isinstance(self.result, dict):
+            self.calculate_recipe_calories(recipe=self.result)
+        elif isinstance(self.result, list):
+            for recipe in self.result:
+                self.calculate_recipe_calories(recipe=recipe)
+            return self
+
+    def calculate_recipe_calories(self, recipe):
+        recipe_calories = 0
+        ingredients = recipe["ingredients"]
+        for ing in ingredients:
+            nutri = ingredient_model.Ingredient().get_nutriments(_id=ing["_id"])
+            if ing["unit"] == "portion":
+                ing_calories = ((nutri["calories"] / 100) * nutri["portion"]) * ing["quantity"]
+                recipe_calories += ing_calories
+            else:
+                ing_calories = (nutri["calories"] / 100) * ing["quantity"]
+                recipe_calories += ing_calories
+        recipe["calories"] = recipe_calories
         return self

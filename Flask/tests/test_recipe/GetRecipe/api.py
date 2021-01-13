@@ -10,6 +10,7 @@ class GetRecipe(object):
     def __init__(self):
         self.url = 'recipe'
         self.param_slug = "slug"
+        self.param_with_calories = "with_calories"
         self.param_with_files_mongo = "with_files_mongo"
         self.rep_code_msg_ok = server.rep_code_msg_ok.replace("xxx", "recipe")
         self.rep_code_msg_error_400 = server.rep_code_msg_error_400.replace("xxx", "recipe")
@@ -49,6 +50,7 @@ class GetRecipe(object):
             RecipeTest.
         kwargs : Any
             files: [FileTests].
+            calories: [Ingredients].
 
         Returns
         -------
@@ -56,10 +58,10 @@ class GetRecipe(object):
             Data's response.
         """
         data_expected = recipe.get_stringify()
-        # if "files" in kwargs:
-        #     data_expected["files"] = [file.get_enrichment() for file in kwargs["files"]]
         if "files_mongo" in kwargs:
             data_expected["files_mongo"] = [file.get_enrichment() for file in kwargs["files_mongo"]]
+        if "calories" in kwargs:
+            data_expected["calories"] = recipe.add_enrichment_calories(ingredients=kwargs["calories"])
         self.formated_data = data_expected
         return self
 

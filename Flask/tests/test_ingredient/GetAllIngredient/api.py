@@ -56,8 +56,6 @@ class GetAllIngredient(object):
             Data's response.
         """
         data_expected = ingredient.get_stringify()
-        # if "files" in kwargs:
-        #     data_expected["files"] = [file.get_enrichment() for file in kwargs["files"]]
         if "files_mongo" in kwargs:
             data_expected["files_mongo"] = [file.get_enrichment() for file in kwargs["files_mongo"]]
         return data_expected

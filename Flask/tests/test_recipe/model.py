@@ -4,6 +4,7 @@ import copy
 import re
 
 import utils
+import app.ingredient.model as ingredient_model
 
 import tests.test_file_mongo.model as filemongotest_model
 FileMongoTest = filemongotest_model.FileMongoTest()
@@ -370,3 +371,30 @@ class RecipeTest(object):
                 db.update_one({"_id": ObjectId(self.get_id())}, {'$push': {"files": f.path}})
             client.close()
         return self
+
+    """ calories """
+    @staticmethod
+    def add_enrichment_calories(ingredients):
+        """ calculate calories with ingredient's recipe.
+
+        Parameters
+        ----------
+        ingredients : IngredientTest
+            Recipe's Ingredient
+
+        Returns
+        -------
+        int
+            Recipe's calories
+        """
+        recipe_calories = 0
+        for ingredient in ingredients:
+            ing = ingredient.get()
+            nutri = ing.nutriments
+            if ing["unit"] == "portion":
+                ing_calories = ((nutri["calories"] / 100) * nutri["portion"]) * ing["quantity"]
+                recipe_calories += ing_calories
+            else:
+                ing_calories = (nutri["calories"] / 100) * ing["quantity"]
+                recipe_calories += ing_calories
+        return recipe_calories
