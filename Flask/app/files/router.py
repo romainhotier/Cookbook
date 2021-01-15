@@ -6,12 +6,49 @@ import app.files.factory as factory
 import app.files.validator as validator
 import app.ingredient.model as ingredient_model
 import app.recipe.model as recipe_model
+import app.files.model as files_model
 
 apis = Blueprint('files', __name__, url_prefix='/files')
 
 server = utils.Server()
 ingredient = ingredient_model.Ingredient()
 recipe = recipe_model.Recipe()
+files = files_model.Files()
+
+
+@apis.route('/<path:path>', methods=['DELETE'])
+def delete_files(path):
+    """
+    @api {delete} /files/<path> GetFiles
+    @apiGroup Files
+    @apiDescription Get a file
+
+    @apiParam (Query param) {String} path File's path
+
+    @apiExample {json} Example usage:
+    DELETE http://127.0.0.1:5000/files/recipe/<path>
+
+    @apiSuccessExample {json} Success response:
+    HTTPS 204
+
+    @apiErrorExample {json} Error response:
+    HTTPS 400
+    {
+        'codeMsg': 'cookbook.cookbook.error.bad_request',
+        'codeStatus': 404,
+        'detail': 'The requested URL was not found on the server'
+    }
+    """
+    api = factory.DeleteFiles.Factory()
+    validation = validator.DeleteFiles.Validator()
+    """ check param """
+    validation.is_path_valid(value=path)
+    """ delete file """
+    files.delete(path=path)
+    """ clean in recipe """
+    recipe.delete_files(_id=path.split("/")[1], data=path)
+    """ return response """
+    return server.return_response(data=path, api=apis.name, http_code=200)
 
 
 @apis.route('/<path:path>', methods=['GET'])

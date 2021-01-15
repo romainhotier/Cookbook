@@ -46,7 +46,6 @@ class Validator(object):
         validator.has_at_least_one_key(param="body", data=data)
         self.is_categories_valid(data=data)
         self.is_cooking_time_valid(data=data)
-        self.is_files_valid(data=data)
         self.is_ingredients_valid(data=data)
         self.is_level_valid(data=data)
         self.is_nb_people_valid(data=data)
@@ -95,26 +94,6 @@ class Validator(object):
         """
         if api.param_cooking_time in data:
             validator.is_int(param=api.param_cooking_time, value=data[api.param_cooking_time])
-            return True
-        return True
-
-    # use in is_body_valid
-    @staticmethod
-    def is_files_valid(data):
-        """ Check if files is correct if specified.
-
-        Parameters
-        ----------
-        data : dict
-            PutRecipe's body.
-
-        Returns
-        -------
-        Any
-            Response server if validation failed, True otherwise.
-        """
-        if api.param_files in data:
-            validator.is_array(param=api.param_files, value=data[api.param_files])
             return True
         return True
 

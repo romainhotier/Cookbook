@@ -11,7 +11,6 @@ class Factory(object):
         self.param_id = "_id"
         self.param_categories = "categories"
         self.param_cooking_time = "cooking_time"
-        self.param_files = "files"
         self.param_ingredients = "ingredients"
         self.param_ingredient = "ingredient"
         self.param_ingredient_id = "_id"
@@ -39,7 +38,7 @@ class Factory(object):
         list
             Body parameters.
         """
-        return [self.param_categories, self.param_cooking_time, self.param_files,
+        return [self.param_categories, self.param_cooking_time,
                 self.param_ingredients, self.param_level, self.param_nb_people, self.param_note,
                 self.param_preparation_time, self.param_resume, self.param_slug,
                 self.param_status, self.param_status, self.param_steps, self.param_title]
@@ -83,7 +82,6 @@ class Factory(object):
         self.remove_foreign_key()
         self.remove_foreign_key_ingredients()
         self.remove_foreign_key_steps()
-        self.remove_foreign_key_files(_id=_id)
         return self.body
 
     # use in clean_body
@@ -125,19 +123,6 @@ class Factory(object):
             except TypeError:
                 pass
         except KeyError:
-            pass
-
-    # use in clean_body
-    def remove_foreign_key_files(self, _id):
-        """ Remove new files in param files.
-        """
-        try:
-            files = self.body[self.param_files]
-            old_files = recipe_model.Recipe().get_files(_id=_id)
-            for f in files:
-                if f not in old_files:
-                    self.body[self.param_files].remove(f)
-        except (TypeError, AttributeError, ValueError, KeyError):
             pass
 
     def reformat_body(self, data):
@@ -199,31 +184,5 @@ class Factory(object):
                 if _id not in ids_update:
                     ids_to_be_cleaned.append(_id)
             return ids_to_be_cleaned
-        except KeyError:
-            return []
-
-    def get_diff_files_recipe(self, _id, body):
-        """ Return Files to be deleted.
-
-        Parameters
-        ----------
-        _id : str
-            Recipe's ObjectId.
-        body : dict
-            PutRecipe's body.
-
-        Returns
-        -------
-        list
-            Files's path to be cleaned.
-        """
-        try:
-            origin = recipe_model.Recipe().select_one(_id=_id).result[self.param_files]
-            update = body[self.param_files]
-            files_to_be_cleaned = []
-            for path in origin:
-                if path not in update:
-                    files_to_be_cleaned.append(path)
-            return files_to_be_cleaned
         except KeyError:
             return []

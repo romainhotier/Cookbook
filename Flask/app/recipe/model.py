@@ -282,6 +282,30 @@ class Recipe(object):
         client.close()
         return result
 
+    def delete_files(self, _id, data):
+        """ delete files to a recipe.
+
+        Parameters
+        ----------
+        _id : str
+            Recipe's ObjectId.
+        data : list
+            Files's urls.
+
+        Returns
+        -------
+        Recipe
+            Updated Recipe.
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        for url in data:
+            db.update_one({"_id": ObjectId(_id)}, {'$pull': {"files": url}})
+        result = db.find_one({"_id": ObjectId(_id)})
+        client.close()
+        self.result = mongo.to_json(result)
+        return self
+
     """ files mongo"""
     def add_enrichment_files_mongo(self):
         """ Add all Mongo files information for Recipes.

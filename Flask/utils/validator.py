@@ -335,6 +335,28 @@ class Validator(object):
             return True
 
     @staticmethod
+    def is_string_path(param, value):
+        """ Check if the value is a path string.
+
+        Parameters
+        ----------
+        param : str
+            Name of the tested parameter.
+        value : str
+            Value of the tested parameter.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        if len(value.split("/")) < 1:
+            detail = server.format_detail(param=param, msg=server.detail_must_be_a_path, value=value)
+            return abort(status=400, description=detail)
+        else:
+            return True
+
+    @staticmethod
     def is_int(param, value):
         """ Check if the value is an integer.
 
