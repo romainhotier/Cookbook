@@ -372,6 +372,31 @@ class RecipeTest(object):
             client.close()
         return self
 
+    def delete_files_recipe(self, files, **kwargs):
+        """ Delete a File to RecipeTest's step.
+
+        Parameters
+        ----------
+        files : FileTest
+            FileTest to be added
+        kwargs : Any
+            mongo : force insert in Mongo
+
+        Returns
+        -------
+        FileTest
+            FileTest added.
+        """
+        for f in files:
+            self.files.remove(f.path)
+        if "mongo" in kwargs:
+            client = MongoClient(mongo.ip, mongo.port)
+            db = client[mongo.name][mongo.collection_recipe]
+            for f in files:
+                db.update_one({"_id": ObjectId(self.get_id())}, {'$push': {"files": f.path}})
+            client.close()
+        return self
+
     """ calories """
     @staticmethod
     def add_enrichment_calories(ingredients):
