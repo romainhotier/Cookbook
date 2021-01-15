@@ -1,4 +1,4 @@
-import utils
+from app import utils
 import app.recipe.factory.PutRecipe as Factory
 
 mongo = utils.Mongo()
@@ -119,7 +119,8 @@ class Validator(object):
                 self.is_ingredient_id_valid(data=ingredient)
                 self.is_ingredient_quantity_valid(data=ingredient)
                 self.is_ingredient_unit_valid(data=ingredient)
-            validator.is_unique_link_multi(param=api.param_ingredients+"."+api.param_ingredient_id, data=data)
+            validator.is_unique_ingredient_associated(param=api.param_ingredients+"."+api.param_ingredient_id,
+                                                      data=data)
             return True
         return True
 

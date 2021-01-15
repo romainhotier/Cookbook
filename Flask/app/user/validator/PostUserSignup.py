@@ -1,4 +1,4 @@
-import utils
+from app import utils
 import app.user.factory.PostUserSignup as Factory
 
 validator = utils.Validator()

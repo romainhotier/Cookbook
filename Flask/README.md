@@ -17,6 +17,7 @@
 - install package
 in the same console where virtual-env is activated
 ```
+> cd /home/.../Flask
 > pip3 install -r requirements.txt
 ```
 # Manual Launch #
@@ -51,7 +52,6 @@ you need to update Flask/start_server.sh with your config
 > cd Workspace/Cookbook/Flask
 > ./start_server.sh
 ```
-
 # Documentation # 
 https://apidocjs.com/
 - install node.js
@@ -74,6 +74,7 @@ Open it with index.html
 > cd Flask
 > python -W ignore -m pytest tests/to/be/done
 ```
+
 ### TBD ###
 - conf
 ``` 

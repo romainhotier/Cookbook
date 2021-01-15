@@ -1,4 +1,4 @@
-import utils
+from app import utils
 import app.ingredient.factory.PostIngredient as Factory
 
 validator = utils.Validator()

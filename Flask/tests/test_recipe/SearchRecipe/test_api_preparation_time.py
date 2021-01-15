@@ -1,20 +1,16 @@
 import unittest
 import requests
 
-import utils
-import tests.test_recipe.SearchRecipe.api as api
-import tests.test_recipe.model as recipe_model
-
-server = utils.Server()
-api = api.SearchRecipe()
-recipe = recipe_model.RecipeTest()
+from tests import server, rep
+from tests.test_recipe import RecipeTest
+from tests.test_recipe.SearchRecipe import api
 
 
-class SearchRecipe(unittest.TestCase):
+class TestSearchRecipe(unittest.TestCase):
 
     def setUp(self):
         """ Clean RecipeTest."""
-        recipe.clean()
+        RecipeTest().clean()
 
     def test_preparation_time_empty(self):
         """ QueryParameter preparation_time is an empty string.
@@ -23,7 +19,7 @@ class SearchRecipe(unittest.TestCase):
             400 - Bad request.
         """
         """ env """
-        recipe_model.RecipeTest().insert()
+        RecipeTest().insert()
         """ param """
         tc_preparation_time = ""
         """ call api """
@@ -35,10 +31,10 @@ class SearchRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        detail = api.create_detail(param=api.param_preparation_time, msg=server.detail_must_be_an_integer,
+        detail = rep.format_detail(param=api.param_preparation_time, msg=rep.detail_must_be_an_integer,
                                    value=tc_preparation_time)
         self.assertEqual(response_body["detail"], detail)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
 
     def test_preparation_time_invalid(self):
         """ QueryParameter preparation_time is a string.
@@ -47,7 +43,7 @@ class SearchRecipe(unittest.TestCase):
             400 - Bad request.
         """
         """ env """
-        recipe_model.RecipeTest().insert()
+        RecipeTest().insert()
         """ param """
         tc_preparation_time = "invalid"
         """ call api """
@@ -59,10 +55,10 @@ class SearchRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        detail = api.create_detail(param=api.param_preparation_time, msg=server.detail_must_be_an_integer,
+        detail = rep.format_detail(param=api.param_preparation_time, msg=rep.detail_must_be_an_integer,
                                    value=tc_preparation_time)
         self.assertEqual(response_body["detail"], detail)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
 
     def test_preparation_time_ok(self):
         """ QueryParameter preparation_time is a number.
@@ -71,8 +67,8 @@ class SearchRecipe(unittest.TestCase):
             200 - Matched Recipe.
         """
         """ env """
-        tc_recipe1 = recipe_model.RecipeTest().custom({"preparation_time": 5}).insert()
-        tc_recipe2 = recipe_model.RecipeTest().custom({"preparation_time": 6}).insert()
+        tc_recipe1 = RecipeTest().custom({"preparation_time": 5}).insert()
+        tc_recipe2 = RecipeTest().custom({"preparation_time": 6}).insert()
         """ param """
         tc_preparation_time = "5"
         """ call api """
@@ -84,13 +80,13 @@ class SearchRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertIn(tc_recipe1.get_stringify(), response_body["data"])
-        self.assertNotIn(tc_recipe2.get_stringify(), response_body["data"])
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        self.assertIn(api.data_expected(recipe=tc_recipe1), response_body["data"])
+        self.assertNotIn(api.data_expected(recipe=tc_recipe2), response_body["data"])
+        self.assertTrue(rep.check_not_present(value="detail", response=response_body))
 
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(SearchRecipe())
+        cls.setUp(TestSearchRecipe())
 
 
 if __name__ == '__main__':

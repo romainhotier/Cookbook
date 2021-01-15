@@ -3,11 +3,8 @@ from bson import ObjectId
 import copy
 import re
 
-import utils
-import app.ingredient.model as ingredient_model
-
-import tests.test_file_mongo.model as filemongotest_model
-FileMongoTest = filemongotest_model.FileMongoTest()
+from app import utils
+from app.ingredient import Ingredient
 
 mongo = utils.Mongo()
 
@@ -30,6 +27,7 @@ class RecipeTest(object):
         - status = Recipe's status
         - steps = Recipe's steps
         - title = Recipe's name (Unique)
+        - files = Recipe's files
         """
         self._id = ObjectId()
         self.categories = ["qa_rhr_category"]
@@ -95,7 +93,7 @@ class RecipeTest(object):
         dict
             Copy of RecipeTest with ObjectId stringify.
         """
-        return mongo.to_json(self.get())
+        return mongo.convert_to_json(self.get())
 
     def insert(self):
         """ Insert RecipeTest.
@@ -131,8 +129,54 @@ class RecipeTest(object):
             if i in self.get_param():
                 if i == '_id':
                     self.__setattr__(i, ObjectId(j))
+                elif i == "ingredients":
+                    try:
+                        for ingr in data["ingredients"]:
+                            for key in list(ingr):
+                                if key not in ["_id", "quantity", "unit"]:
+                                    ingr.pop(key)
+                    except (TypeError, AttributeError):
+                        pass
+                    self.__setattr__(i, j)
+                elif i == "steps":
+                    try:
+                        for step in data["steps"]:
+                            for key in list(step):
+                                if key not in ["_id", "description"]:
+                                    step.pop(key)
+                    except (TypeError, AttributeError):
+                        pass
+                    self.__setattr__(i, j)
                 else:
                     self.__setattr__(i, j)
+        return self
+
+    def custom_from_body(self, data):
+        """ Update RecipeTest from PostRecipe.
+
+        Parameters
+        ----------
+        data : dict
+            Body's value.
+
+        Returns
+        -------
+        IngredientTest
+        """
+        """ default value """
+        optional_parameter = ["categories", "cooking_time", "ingredient", "level", "nb_people", "note",
+                              "preparation_time", "resume", "status", "steps"]
+        for param in optional_parameter:
+            if param not in data:
+                if param in ["categories", "ingredients", "steps", "files"]:
+                    self.__setattr__(param, [])
+                elif param in ["cooking_time", "level", "nb_people", "preparation_time"]:
+                    self.__setattr__(param, 0)
+                elif param in ["note", "resume"]:
+                    self.__setattr__(param, "")
+                elif param in ["status"]:
+                    self.__setattr__(param, "in_progress")
+        self.custom(data)
         return self
 
     def custom_id_from_body(self, data):
@@ -169,12 +213,13 @@ class RecipeTest(object):
         client.close()
         assert recipe is not None
         for value in recipe:
+            """ check steps """
             if value in ["steps"]:  # check for steps
                 for i, step in enumerate(recipe["steps"]):
                     if "_id" not in self.__getattribute__(value)[i]:  # new step
                         assert step["description"] == self.__getattribute__(value)[i]["description"]
                     else:  # old step
-                        assert mongo.to_json(step) == mongo.to_json(self.__getattribute__(value)[i])
+                        assert mongo.convert_to_json(step) == mongo.convert_to_json(self.__getattribute__(value)[i])
             elif value not in ["_id"]:
                 assert recipe[value] == self.__getattribute__(value)
 
@@ -228,38 +273,24 @@ class RecipeTest(object):
         description : str
             Step's description.
         """
-        self.steps.append({"_id": ObjectId(_id_step), "description": description})
-
-    def custom_step(self, position, data):
-        """ Custom a Step.
-
-        Parameters
-        ----------
-        position : int
-            Step's position in array.
-        data : str
-            Step's data.
-        """
-        self.steps[position]["description"] = data
-
-    def remove_step(self, position):
-        """ Delete a Step.
-
-        Parameters
-        ----------
-        position : int
-            Step's position in array.
-        """
-        del self.steps[position]
+        data = {"_id": ObjectId(_id_step), "description": description}
+        """ add in model """
+        self.steps.append(data)
+        """ add in mongo """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        db.update_one({"_id": ObjectId(self._id)}, {'$push': {"steps": data}})
+        client.close()
+        return self
 
     """ ingredients """
-    def add_ingredient(self, _id, quantity, unit):
+    def add_ingredient(self, ingredient, quantity, unit):
         """ Add a IngredientTest to RecipeTest.
 
         Parameters
         ----------
-        _id : str
-            IngredientTest's ObjectId.
+        ingredient : IngredientTest
+            IngredientTest to be added.
         quantity : int
             IngredientTest's quantity.
         unit : str
@@ -270,142 +301,85 @@ class RecipeTest(object):
         RecipeTest
             RecipeTest.
         """
-        self.ingredients.append({"_id": _id, "quantity": quantity, "unit": unit})
+        data = {"_id": ingredient.get_id(), "quantity": quantity, "unit": unit}
+        """ add in model """
+        self.ingredients.append(data)
+        """ add in mongo """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        db.update_one({"_id": ObjectId(self._id)}, {'$push': {"ingredients": data}})
+        client.close()
         return self
 
-    def delete_ingredient(self, _id):
+    def delete_ingredient(self, ingredient):
         """ Delete a IngredientTest to RecipeTest.
 
         Parameters
         ----------
-        _id : str
-            IngredientTest's ObjectId.
+        ingredient : IngredientTest
+            IngredientTest.
 
         Returns
         -------
         RecipeTest
             RecipeTest.
         """
-        for ingredient in self.ingredients:
-            if ingredient["_id"] == _id:
-                self.ingredients.remove(ingredient)
+        """ delete in model """
+        for ingr in self.ingredients:
+            if ingr["_id"] == ingredient.get_id():
+                self.ingredients.remove(ingr)
                 break
         return self
 
-    """ files mongo """
-    def add_file_mongo_recipe(self, filename, is_main, **kwargs):
-        """ Add a Mongo file to RecipeTest.
-
-        Parameters
-        ----------
-        filename : str
-            Name of File.
-        is_main : bool
-            Is primary or not.
-        kwargs : Any
-            identifier : force ObjectId
-
-        Returns
-        -------
-        FileTest
-            FileTest added.
-        """
-        file = filemongotest_model.FileMongoTest().custom({"filename": filename,
-                                                           "metadata": {"kind": "recipe",
-                                                                        "_id_parent": ObjectId(self._id),
-                                                                        "is_main": is_main}}).insert()
-        if "identifier" in kwargs.keys():
-            file.custom({"_id": kwargs["identifier"]})
-        return file
-
-    @staticmethod
-    def add_file_mongo_step(_id_step, filename, is_main, **kwargs):
-        """ Add a Mongo file to RecipeTest's step.
-
-        Parameters
-        ----------
-        _id_step : str
-            Step's ObjectId
-        filename : str
-            Name of File.
-        is_main : bool
-            Is primary or not.
-        kwargs : Any
-            identifier : force ObjectId
-
-        Returns
-        -------
-        FileTest
-            FileTest added.
-        """
-        file = filemongotest_model.FileMongoTest().custom({"filename": filename,
-                                                           "metadata": {"kind": "step",
-                                                                        "_id_parent": ObjectId(_id_step),
-                                                                        "is_main": is_main}}).insert()
-        if "identifier" in kwargs.keys():
-            file.custom({"_id": kwargs["identifier"]})
-        return file
-
     """ files """
     def add_files_recipe(self, files, **kwargs):
-        """ Add a  File to RecipeTest's step.
+        """ Add a  FileTest to RecipeTest's step.
 
         Parameters
         ----------
-        files : FileTest
+        files : list
             FileTest to be added
-        kwargs : Any
-            mongo : force insert in Mongo
+        kwargs: Any
+            'add_in_mongo'
 
         Returns
         -------
-        FileTest
-            FileTest added.
+        RecipeTest
+            RecipeTest.
         """
         for f in files:
-            self.files.append(f.path)
-        if "mongo" in kwargs:
+            self.files.append(f.short_path)
+        if "add_in_mongo" in kwargs:
             client = MongoClient(mongo.ip, mongo.port)
             db = client[mongo.name][mongo.collection_recipe]
             for f in files:
-                db.update_one({"_id": ObjectId(self.get_id())}, {'$push': {"files": f.path}})
+                db.update_one({"_id": ObjectId(self.get_id())}, {'$push': {"files": f.short_path}})
             client.close()
         return self
 
-    def delete_files_recipe(self, files, **kwargs):
-        """ Delete a File to RecipeTest's step.
+    def delete_files_recipe(self, files):
+        """ Delete a FileTest to RecipeTest's step.
 
         Parameters
         ----------
-        files : FileTest
-            FileTest to be added
-        kwargs : Any
-            mongo : force insert in Mongo
+        files : list
+            FileTest to be deleted
 
         Returns
         -------
-        FileTest
-            FileTest added.
+        RecipeTest
+            RecipeTest.
         """
         for f in files:
-            self.files.remove(f.path)
-        if "mongo" in kwargs:
-            client = MongoClient(mongo.ip, mongo.port)
-            db = client[mongo.name][mongo.collection_recipe]
-            for f in files:
-                db.update_one({"_id": ObjectId(self.get_id())}, {'$push': {"files": f.path}})
-            client.close()
+            self.files.remove(f.short_path)
         return self
 
     """ calories """
-    @staticmethod
-    def add_enrichment_calories(ingredients):
+    def add_enrichment_calories(self):
         """ calculate calories with ingredient's recipe.
 
         Parameters
         ----------
-        ingredients : IngredientTest
-            Recipe's Ingredient
 
         Returns
         -------
@@ -413,13 +387,13 @@ class RecipeTest(object):
             Recipe's calories
         """
         recipe_calories = 0
-        for ingredient in ingredients:
-            ing = ingredient.get()
-            nutri = ing.nutriments
+        for ing in self.ingredients:
+            nutri = Ingredient().get_nutriments(_id=ing["_id"])
             if ing["unit"] == "portion":
                 ing_calories = ((nutri["calories"] / 100) * nutri["portion"]) * ing["quantity"]
                 recipe_calories += ing_calories
             else:
                 ing_calories = (nutri["calories"] / 100) * ing["quantity"]
                 recipe_calories += ing_calories
-        return recipe_calories
+        self.__setattr__("calories", recipe_calories)
+        return self

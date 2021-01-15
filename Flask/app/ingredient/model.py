@@ -2,8 +2,7 @@ from pymongo import MongoClient, errors
 from bson import ObjectId
 import re
 
-import utils
-import app.file_mongo.model as file_mongo_model
+from app import utils
 
 mongo = utils.Mongo()
 
@@ -39,7 +38,7 @@ class Ingredient(object):
         db = client[mongo.name][mongo.collection_ingredient]
         cursor = db.find({})
         client.close()
-        self.result = mongo.to_json([ingredient for ingredient in cursor])
+        self.result = mongo.convert_to_json([ingredient for ingredient in cursor])
         return self
 
     def select_one(self, _id):
@@ -59,7 +58,7 @@ class Ingredient(object):
         db = client[mongo.name][mongo.collection_ingredient]
         result = db.find_one({"_id": ObjectId(_id)})
         client.close()
-        self.result = mongo.to_json(result)
+        self.result = mongo.convert_to_json(result)
         return self
 
     def search(self, data):
@@ -85,7 +84,7 @@ class Ingredient(object):
         db = client[mongo.name][mongo.collection_ingredient]
         cursor = db.find(search)
         client.close()
-        self.result = mongo.to_json([ingredient for ingredient in cursor])
+        self.result = mongo.convert_to_json([ingredient for ingredient in cursor])
         return self
 
     def insert(self, data):
@@ -106,7 +105,7 @@ class Ingredient(object):
         query = db.insert_one(data)
         result = db.find_one({"_id": ObjectId(query.inserted_id)})
         client.close()
-        self.result = mongo.to_json(result)
+        self.result = mongo.convert_to_json(result)
         return self
 
     def update(self, _id, data):
@@ -141,7 +140,7 @@ class Ingredient(object):
         """ return result """
         result = db.find_one({"_id": ObjectId(_id)})
         client.close()
-        self.result = mongo.to_json(result)
+        self.result = mongo.convert_to_json(result)
         return self
 
     @staticmethod
@@ -183,31 +182,6 @@ class Ingredient(object):
             return True
         else:
             return False
-
-    def add_enrichment_files_mongo(self):
-        """ Add files_mongo information for Ingredients.
-        Returns
-        -------
-        Any
-            Ingredients with Mongo Files information.
-        """
-        if isinstance(self.result, dict):
-            self.result["files_mongo"] = []
-            """ get files """
-            files = file_mongo_model.FileMongo().get_all_file_by_id_parent(_id_parent=self.result["_id"]).result
-            for file in files:
-                file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
-                self.result["files_mongo"].append(file_enrichment)
-            return self
-        elif isinstance(self.result, list):
-            for ingredient in self.result:
-                ingredient["files_mongo"] = []
-                """ get files """
-                files = file_mongo_model.FileMongo().get_all_file_by_id_parent(_id_parent=ingredient["_id"]).result
-                for file in files:
-                    file_enrichment = {"_id": str(file["_id"]), "is_main": file["metadata"]["is_main"]}
-                    ingredient["files_mongo"].append(file_enrichment)
-            return self
 
     """ recipe calories """
     @staticmethod

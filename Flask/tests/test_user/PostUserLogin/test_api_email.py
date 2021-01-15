@@ -1,20 +1,16 @@
 import unittest
 import requests
 
-import utils
-import tests.test_user.PostUserLogin.api as api
-import tests.test_user.model as user_model
-
-server = utils.Server()
-api = api.PostUserLogin()
-user = user_model.UserTest()
+from tests import server, rep
+from tests.test_user import UserTest
+from tests.test_user.PostUserLogin import api
 
 
-class PostUserLogin(unittest.TestCase):
+class TestPostUserLogin(unittest.TestCase):
 
     def setUp(self):
         """ Clean UserTest."""
-        user.clean()
+        UserTest().clean()
 
     def test_email_without(self):
         """ BodyParameter email is missing.
@@ -23,7 +19,7 @@ class PostUserLogin(unittest.TestCase):
             400 - Bad request.
         """
         """ env """
-        tc_user = user_model.UserTest().insert()
+        tc_user = UserTest().insert()
         """ param """
         body = {api.param_password: tc_user.password}
         """ call api """
@@ -35,8 +31,8 @@ class PostUserLogin(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_email, msg=server.detail_is_required)
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        detail = rep.format_detail(param=api.param_email, msg=rep.detail_is_required)
         self.assertEqual(response_body["detail"], detail)
 
     def test_email_null(self):
@@ -46,7 +42,7 @@ class PostUserLogin(unittest.TestCase):
             400 - Bad request.
         """
         """ env """
-        tc_user = user_model.UserTest().insert()
+        tc_user = UserTest().insert()
         """ param """
         body = {api.param_email: None,
                 api.param_password: tc_user.password}
@@ -59,9 +55,8 @@ class PostUserLogin(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_email, msg=server.detail_must_be_a_string,
-                                   value=body[api.param_email])
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        detail = rep.format_detail(param=api.param_email, msg=rep.detail_must_be_a_string, value=body[api.param_email])
         self.assertEqual(response_body["detail"], detail)
 
     def test_email_empty(self):
@@ -71,7 +66,7 @@ class PostUserLogin(unittest.TestCase):
             400 - Bad request.
         """
         """ env """
-        tc_user = user_model.UserTest().insert()
+        tc_user = UserTest().insert()
         """ param """
         body = {api.param_email: "",
                 api.param_password: tc_user.password}
@@ -84,14 +79,13 @@ class PostUserLogin(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_email, msg=server.detail_must_be_not_empty,
-                                   value=body[api.param_email])
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        detail = rep.format_detail(param=api.param_email, msg=rep.detail_must_be_not_empty, value=body[api.param_email])
         self.assertEqual(response_body["detail"], detail)
 
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(PostUserLogin())
+        cls.setUp(TestPostUserLogin())
 
 
 if __name__ == '__main__':

@@ -1,3 +1,5 @@
-import app.files.factory.DeleteFiles
-import app.files.factory.GetFiles
-import app.files.factory.PostFiles
+""" All file's api factory """
+
+import app.files.factory.DeleteFile
+import app.files.factory.GetFile
+import app.files.factory.PostFilesRecipe

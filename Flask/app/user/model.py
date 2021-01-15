@@ -1,11 +1,8 @@
 from pymongo import MongoClient
 from bson import ObjectId
-from functools import wraps
-from flask import abort
 from flask_bcrypt import generate_password_hash, check_password_hash
-from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
 
-import utils
+from app import utils
 
 mongo = utils.Mongo()
 
@@ -76,19 +73,19 @@ class User(object):
         """ hash password """
         data["password"] = self.hash_password(data["password"])
         query = db.insert_one(data)
-        """ return user """
+        """ return user without password """
         result = db.find_one({"_id": ObjectId(query.inserted_id)})
         result.pop("password")
         client.close()
-        self.result = mongo.to_json(result)
+        self.result = mongo.convert_to_json(result)
         return self
 
-    def select_me(self, identifier):
+    def select_me(self, _id):
         """ Select an User by it's _id.
 
         Parameters
         ----------
-        identifier : ObjectId
+        _id : ObjectId
             User's ObjectId.
 
         Returns
@@ -98,9 +95,9 @@ class User(object):
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_user]
-        result = db.find_one({"_id": ObjectId(identifier)}, {"_id": 1, "display_name": 1, "email": 1, "status": 1})
+        result = db.find_one({"_id": ObjectId(_id)}, {"_id": 1, "display_name": 1, "email": 1, "status": 1})
         client.close()
-        self.result = mongo.to_json(result)
+        self.result = mongo.convert_to_json(result)
         return self
 
     def select_one_by_email(self, email):
@@ -120,39 +117,16 @@ class User(object):
         db = client[mongo.name][mongo.collection_user]
         result = db.find_one({"email": email})
         client.close()
-        self.result = mongo.to_json(result)
+        self.result = mongo.convert_to_json(result)
         return self
 
     @staticmethod
-    def check_user_is_unique(email):
-        """ Check if an email already exist.
-
-        Parameters
-        ----------
-        email : str
-            User's email.
-
-        Returns
-        -------
-        bool
-            True if email doesn't exist in mongo.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_user]
-        result = db.count_documents({"email": email})
-        client.close()
-        if result == 0:
-            return True
-        else:
-            return False
-
-    @staticmethod
-    def get_user_status(identifier):
+    def get_user_status(_id):
         """ Select status of a User by it's _id.
 
         Parameters
         ----------
-        identifier : str
+        _id : str
             User's ObjectId.
 
         Returns
@@ -162,7 +136,7 @@ class User(object):
         """
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_user]
-        result = db.find_one({"_id": ObjectId(identifier)}, {"status": 1})
+        result = db.find_one({"_id": ObjectId(_id)}, {"status": 1})
         client.close()
         try:
             return result["status"]
@@ -189,39 +163,25 @@ class User(object):
         client.close()
         return str(result["_id"])
 
-
-class Auth(object):
-
     @staticmethod
-    def login_required(f):
-        """ Wrapper to check auth.
+    def check_user_is_unique(email):
+        """ Check if an email already exist.
+
+        Parameters
+        ----------
+        email : str
+            User's email.
 
         Returns
         -------
-        Any
-           Auth_handler if authentification failed.
+        bool
+            True if email doesn't exist in mongo.
         """
-        @wraps(f)
-        def wrapper(*args, **kwargs):
-            verify_jwt_in_request()
-            return f(*args, **kwargs)
-        return wrapper
-
-    @staticmethod
-    def admin_only(f):
-        """ Wrapper to check if User is an admin.
-
-        Returns
-        -------
-        Any
-           Server response.
-        """
-        @wraps(f)
-        def wrapper(*args, **kwargs):
-            verify_jwt_in_request()
-            if "admin" not in User().get_user_status(get_jwt_identity()):
-                return abort(status=403)
-            else:
-                pass
-            return f(*args, **kwargs)
-        return wrapper
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_user]
+        result = db.count_documents({"email": email})
+        client.close()
+        if result == 0:
+            return True
+        else:
+            return False

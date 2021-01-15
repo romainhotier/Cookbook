@@ -1,23 +1,18 @@
 import unittest
 import requests
 
-import utils
-import tests.test_recipe.PostRecipe.api as api
-import tests.test_recipe.model as recipe_model
-import tests.test_ingredient.model as ingredient_model
-
-server = utils.Server()
-api = api.PostRecipe()
-recipe = recipe_model.RecipeTest()
-ingredient = ingredient_model.IngredientTest()
+from tests import server, rep
+from tests.test_ingredient import IngredientTest
+from tests.test_recipe import RecipeTest
+from tests.test_recipe.PostRecipe import api
 
 
-class PostRecipe(unittest.TestCase):
+class TestPostRecipe(unittest.TestCase):
 
     def setUp(self):
         """ Clean RecipeTest and FileTest."""
-        recipe.clean()
-        ingredient.clean()
+        RecipeTest().clean()
+        IngredientTest().clean()
 
     def test_api_ok(self):
         """ Default case.
@@ -33,15 +28,15 @@ class PostRecipe(unittest.TestCase):
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ change """
-        tc_recipe = recipe_model.RecipeTest().custom(api.add_default_value(body=body))
+        tc_recipe = RecipeTest().custom_from_body(data=body)
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 201)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
-        data_check = api.json_check(data=response_body["data"], data_expected=tc_recipe)
+        data_check = rep.json_schema_check(data=response_body["data"], schema=api.create_schema(recipe=tc_recipe))
         self.assertTrue(data_check["result"], data_check["error"])
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        self.assertTrue(rep.check_not_present(value="detail", response=response_body))
         """ check """
         tc_recipe.custom_id_from_body(data=response_body).check_bdd_data()
 
@@ -52,10 +47,10 @@ class PostRecipe(unittest.TestCase):
             201 - Inserted Recipe.
         """
         """ env """
-        tc_ingredient1 = ingredient_model.IngredientTest().insert()
-        tc_ingredient2 = ingredient_model.IngredientTest().insert()
+        tc_ingredient1 = IngredientTest().insert()
+        tc_ingredient2 = IngredientTest().insert()
         """ param """
-        body = {api.param_categories: ["categori1", "categori2"],
+        body = {api.param_categories: ["category1", "category2"],
                 api.param_cooking_time: 30,
                 api.param_ingredients: [{api.param_ingredient_id: tc_ingredient1.get_id(),
                                          api.param_ingredient_quantity: 1,
@@ -80,15 +75,15 @@ class PostRecipe(unittest.TestCase):
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ change """
-        tc_recipe = recipe_model.RecipeTest().custom(api.add_default_value(body=body))
+        tc_recipe = RecipeTest().custom_from_body(data=body)
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 201)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
-        data_check = api.json_check(data=response_body["data"], data_expected=tc_recipe)
+        data_check = rep.json_schema_check(data=response_body["data"], schema=api.create_schema(recipe=tc_recipe))
         self.assertTrue(data_check["result"], data_check["error"])
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        self.assertTrue(rep.check_not_present(value="detail", response=response_body))
         """ check """
         tc_recipe.custom_id_from_body(data=response_body).check_bdd_data()
 
@@ -106,20 +101,20 @@ class PostRecipe(unittest.TestCase):
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ change """
-        tc_recipe = recipe_model.RecipeTest().custom(api.add_default_value(body=body))
+        tc_recipe = RecipeTest().custom_from_body(data=body)
         """ assert """
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 404)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        self.assertEqual(response_body["detail"], server.detail_url_not_found)
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        self.assertEqual(response_body["detail"], rep.detail_url_not_found)
         """ check """
         tc_recipe.check_doesnt_exist_by_title()
 
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(PostRecipe())
+        cls.setUp(TestPostRecipe())
 
 
 if __name__ == '__main__':

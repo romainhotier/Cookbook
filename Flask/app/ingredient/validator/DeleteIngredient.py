@@ -1,4 +1,4 @@
-import utils
+from app import utils
 import app.ingredient.factory.DeleteIngredient as Factory
 
 mongo = utils.Mongo()

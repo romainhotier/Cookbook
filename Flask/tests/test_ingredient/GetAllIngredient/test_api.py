@@ -1,20 +1,16 @@
 import unittest
 import requests
 
-import utils
-import tests.test_ingredient.GetAllIngredient.api as api
-import tests.test_ingredient.model as ingredient_model
-
-server = utils.Server()
-api = api.GetAllIngredient()
-ingredient = ingredient_model.IngredientTest()
+from tests import server, rep
+from tests.test_ingredient import IngredientTest
+from tests.test_ingredient.GetAllIngredient import api
 
 
-class GetAllIngredient(unittest.TestCase):
+class TestGetAllIngredient(unittest.TestCase):
 
     def setUp(self):
         """ Clean IngredientTest."""
-        ingredient.clean()
+        IngredientTest().clean()
 
     def test_api_ok(self):
         """ Default case.
@@ -23,8 +19,8 @@ class GetAllIngredient(unittest.TestCase):
             200 - All Ingredient.
         """
         """ env """
-        tc_ingredient1 = ingredient_model.IngredientTest().insert()
-        tc_ingredient2 = ingredient_model.IngredientTest().insert()
+        tc_ingredient1 = IngredientTest().insert()
+        tc_ingredient2 = IngredientTest().insert()
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.get(url, verify=False)
@@ -36,7 +32,7 @@ class GetAllIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertIn(api.data_expected(ingredient=tc_ingredient1), response_body["data"])
         self.assertIn(api.data_expected(ingredient=tc_ingredient2), response_body["data"])
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        self.assertTrue(rep.check_not_present(value="detail", response=response_body))
 
     def test_api_ok_more_param(self):
         """ Default case with more parameter.
@@ -45,8 +41,8 @@ class GetAllIngredient(unittest.TestCase):
             200 - All Ingredient.
         """
         """ env """
-        tc_ingredient1 = ingredient_model.IngredientTest().insert()
-        tc_ingredient2 = ingredient_model.IngredientTest().insert()
+        tc_ingredient1 = IngredientTest().insert()
+        tc_ingredient2 = IngredientTest().insert()
         """ call api """
         url = server.main_url + "/" + api.url + "?invalid=invalid"
         response = requests.get(url, verify=False)
@@ -58,7 +54,7 @@ class GetAllIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertIn(api.data_expected(ingredient=tc_ingredient1), response_body["data"])
         self.assertIn(api.data_expected(ingredient=tc_ingredient2), response_body["data"])
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        self.assertTrue(rep.check_not_present(value="detail", response=response_body))
 
     def test_api_url_not_found(self):
         """ Wrong url.
@@ -67,8 +63,8 @@ class GetAllIngredient(unittest.TestCase):
             404 - Url not found.
         """
         """ env """
-        ingredient_model.IngredientTest().insert()
-        ingredient_model.IngredientTest().insert()
+        IngredientTest().insert()
+        IngredientTest().insert()
         """ call api """
         url = server.main_url + "/" + api.url + "x"
         response = requests.get(url, verify=False)
@@ -78,12 +74,12 @@ class GetAllIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"],  "application/json")
         self.assertEqual(response_body["codeStatus"], 404)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        self.assertEqual(response_body["detail"], server.detail_url_not_found)
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        self.assertEqual(response_body["detail"], rep.detail_url_not_found)
 
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(GetAllIngredient())
+        cls.setUp(TestGetAllIngredient())
 
 
 if __name__ == '__main__':

@@ -1,35 +1,29 @@
 from flask import Blueprint, request, send_from_directory
 
-import utils
-
+from app import utils, backend
+from app.recipe import Recipe
+from app.files import File
 import app.files.factory as factory
 import app.files.validator as validator
-import app.ingredient.model as ingredient_model
-import app.recipe.model as recipe_model
-import app.files.model as files_model
 
 apis = Blueprint('files', __name__, url_prefix='/files')
 
-server = utils.Server()
-ingredient = ingredient_model.Ingredient()
-recipe = recipe_model.Recipe()
-files = files_model.Files()
-
 
 @apis.route('/<path:path>', methods=['DELETE'])
-def delete_files(path):
+def delete_file(path):
     """
-    @api {delete} /files/<path> GetFiles
+    @api {delete} /files/<path> DeleteFile
     @apiGroup Files
-    @apiDescription Get a file
+    @apiDescription Delete a file
 
     @apiParam (Query param) {String} path File's path
 
     @apiExample {json} Example usage:
-    DELETE http://127.0.0.1:5000/files/recipe/<path>
+    DELETE http://127.0.0.1:5000/files/<path>
 
     @apiSuccessExample {json} Success response:
     HTTPS 204
+    TBD
 
     @apiErrorExample {json} Error response:
     HTTPS 400
@@ -39,22 +33,23 @@ def delete_files(path):
         'detail': 'The requested URL was not found on the server'
     }
     """
-    api = factory.DeleteFiles.Factory()
-    validation = validator.DeleteFiles.Validator()
+    api = factory.DeleteFile.Factory()
+    validation = validator.DeleteFile.Validator()
     """ check param """
     validation.is_path_valid(value=path)
     """ delete file """
-    files.delete(path=path)
+    deleted_path = File().delete(short_path=path)
     """ clean in recipe """
-    recipe.delete_files(_id=path.split("/")[1], data=path)
+    if api.len_path(path=path) == 3:
+        Recipe().delete_file(_id=path.split("/")[1], data=path)
     """ return response """
-    return server.return_response(data=path, api=apis.name, http_code=200)
+    return utils.ResponseMaker().return_response(data=deleted_path, api=apis.name, http_code=200)
 
 
 @apis.route('/<path:path>', methods=['GET'])
-def get_files(path):
+def get_file(path):
     """
-    @api {get} /files/<path> GetFiles
+    @api {get} /files/<path> GetFile
     @apiGroup Files
     @apiDescription Get a file
 
@@ -75,21 +70,21 @@ def get_files(path):
     }
     """
     """ return response """
-    return send_from_directory(directory=utils.Server().path_file_storage, filename=path)
+    return send_from_directory(directory=backend.config["FILE_STORAGE_PATH"], filename=path)
 
 
 @apis.route('/recipe/<_id>', methods=['POST'])
-def post_recipe_files(_id):
+def post_files_recipe(_id):
     """
-    @api {post} /files/recipe/<_id_recipe>  PostRecipeFiles
+    @api {post} /files/<_id>  PostFiles
     @apiGroup Files
-    @apiDescription Add files to a recipe
+    @apiDescription Add files to an element
 
     @apiParam (Query param) {String} _id Recipe's ObjectId
-    @apiParam (Multipart/form-data) files Recipe's Files
+    @apiParam (Multipart/form-data) files Files
 
     @apiExample {json} Example usage:
-    POST http://127.0.0.1:5000/files/recipe/<_id_recipe>
+    POST http://127.0.0.1:5000/files/recipe/<_id>
     files = [
              ('files', ('qa_rhr_filename.txt', open(path1, 'rb'), mimetypes)),
              ('files', ('qa_rhr_filename2.png', open(path2, 'rb'), mimetypes)),
@@ -112,16 +107,15 @@ def post_recipe_files(_id):
         'detail': {'msg': 'Must be an ObjectId', 'param': '_id', 'value': 'invalid'}
     }
     """
-    api = factory.PostFiles.Factory()
-    validation = validator.PostFiles.Validator()
+    validation = validator.PostFilesRecipe.Validator()
     """ check param """
-    validation.is_object_id_valid(kind="recipe", value=_id)
+    validation.is_object_id_valid(value=_id)
     """ save files """
-    urls = api.save_files(kind="recipe", _id=_id, files=request.files.getlist('files'))
+    urls = File().save_files(short_path="recipe/{}".format(_id), files=request.files.getlist('files'))
     """ update ingredient """
-    recipe.add_files(_id=_id, data=urls)
+    Recipe().add_files(_id=_id, data=urls)
     """ return response """
-    return server.return_response(data=urls, api=apis.name, http_code=201)
+    return utils.ResponseMaker().return_response(data=urls, api=apis.name, http_code=201)
 
 
 @apis.errorhandler(400)
@@ -138,7 +132,7 @@ def api_handler_validator_failed(err):
     Any
         Server response.
     """
-    return server.return_response(data=err.description, api=apis.name, http_code=400)
+    return utils.ResponseMaker().return_response(data=err.description, api=apis.name, http_code=400)
 
 
 @apis.errorhandler(404)
@@ -155,4 +149,4 @@ def api_handler_url_not_found(err):
     Any
         Server response.
     """
-    return server.return_response(data=err, api=apis.name, http_code=404)
+    return utils.ResponseMaker().return_response(data=err, api=apis.name, http_code=404)

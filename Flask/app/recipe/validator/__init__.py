@@ -1,3 +1,5 @@
+""" All racipe's api validator """
+
 import app.recipe.validator.DeleteRecipe
 import app.recipe.validator.GetAllRecipe
 import app.recipe.validator.GetRecipe

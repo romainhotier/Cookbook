@@ -7,7 +7,7 @@ source activate
 cd /home/ubuntu/Workspace/Cookbook/Flask
 ### install packages ###
 pip install -r requirements.txt
-### generer la doc ###
+### generate doc ###
 apidoc -i ../Flask/ -o ../apidoc/
-### lancer le server ###
+### launch le server ###
 python run.py

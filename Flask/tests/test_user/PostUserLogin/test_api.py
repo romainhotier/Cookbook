@@ -1,20 +1,16 @@
 import unittest
 import requests
 
-import utils
-import tests.test_user.PostUserLogin.api as api
-import tests.test_user.model as user_model
-
-server = utils.Server()
-api = api.PostUserLogin()
-user = user_model.UserTest()
+from tests import server, rep
+from tests.test_user import UserTest
+from tests.test_user.PostUserLogin import api
 
 
-class PostUserLogin(unittest.TestCase):
+class TestPostUserLogin(unittest.TestCase):
 
     def setUp(self):
         """ Clean UserTest."""
-        user.clean()
+        UserTest().clean()
 
     def test_api_ok(self):
         """ Default case.
@@ -23,7 +19,7 @@ class PostUserLogin(unittest.TestCase):
             200 - Get Token.
         """
         """ env """
-        tc_user = user_model.UserTest().insert()
+        tc_user = UserTest().insert()
         """ param """
         body = {api.param_email: tc_user.email,
                 api.param_password: tc_user.password}
@@ -37,7 +33,7 @@ class PostUserLogin(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertRegex(response_body["data"]['token'], api.data_regex)
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        self.assertTrue(rep.check_not_present(value="detail", response=response_body))
 
     def test_api_ok_more_param(self):
         """ Default case with more parameters.
@@ -46,7 +42,7 @@ class PostUserLogin(unittest.TestCase):
             200 - Get Token.
         """
         """ env """
-        tc_user = user_model.UserTest().insert()
+        tc_user = UserTest().insert()
         """ param """
         body = {api.param_email: tc_user.email,
                 api.param_password: tc_user.password,
@@ -61,7 +57,7 @@ class PostUserLogin(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertRegex(response_body["data"]['token'], api.data_regex)
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        self.assertTrue(rep.check_not_present(value="detail", response=response_body))
 
     def test_api_url_not_found(self):
         """ Wrong url.
@@ -70,7 +66,7 @@ class PostUserLogin(unittest.TestCase):
             404 - url not found.
         """
         """ env """
-        tc_user = user_model.UserTest().insert()
+        tc_user = UserTest().insert()
         """ param """
         body = {api.param_email: tc_user.email,
                 api.param_password: tc_user.password}
@@ -83,12 +79,12 @@ class PostUserLogin(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 404)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        self.assertEqual(response_body["detail"], server.detail_url_not_found)
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        self.assertEqual(response_body["detail"], rep.detail_url_not_found)
 
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(PostUserLogin())
+        cls.setUp(TestPostUserLogin())
 
 
 if __name__ == '__main__':

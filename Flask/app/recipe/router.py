@@ -1,18 +1,12 @@
 from flask import Blueprint, request
 
-import utils
+from app import utils
+from app.files import File
+from app.recipe import Recipe
 import app.recipe.factory as factory
 import app.recipe.validator as validator
-import app.recipe.model as recipe_model
-import app.file_mongo.model as file_mongo_model
-import app.files.model as files_model
 
 apis = Blueprint('recipe', __name__, url_prefix='/recipe')
-
-server = utils.Server()
-recipe = recipe_model.Recipe()
-file_mongo = file_mongo_model.FileMongo()
-files = files_model.Files()
 
 
 @apis.route('/<_id>', methods=['DELETE'])
@@ -32,7 +26,7 @@ def delete_recipe(_id):
     {
         'codeMsg': 'cookbook.recipe.success.ok',
         'codeStatus': 200,
-        'data': 'Deleted Recipe: 5fd770e1a9888551191a8743'
+        'data': '5fd770e1a9888551191a8743'
     }
 
     @apiErrorExample {json} Error response:
@@ -47,14 +41,11 @@ def delete_recipe(_id):
     """ check param """
     validation.is_object_id_valid(value=_id)
     """ clean files recipe """
-    file_mongo.clean_file_by_id_parent(_id_parent=_id)
-    """ clean files steps """
-    for _id_step in recipe.get_all_step_id(_id_recipe=_id):
-        file_mongo.clean_file_by_id_parent(_id_parent=_id_step)
+    File().clean_delete_recipe(_id=_id)
     """ delete recipe """
-    recipe.delete(_id=_id)
+    Recipe().delete(_id=_id)
     """ return response """
-    return server.return_response(data=_id, api=apis.name, http_code=200)
+    return utils.ResponseMaker().return_response(data=_id, api=apis.name, http_code=200)
 
 
 @apis.route('', methods=['GET'])
@@ -64,7 +55,6 @@ def get_all_recipe():
     @apiGroup Recipe
     @apiDescription Get all recipes
 
-    @apiParam (Query param) {String} [with_files_mongo] if "true", add recipe's Mongo files
     @apiParam (Query param) {String} [with_calories] if "true", add Recipe's calories from ingredients
 
     @apiExample {json} Example usage:
@@ -75,30 +65,26 @@ def get_all_recipe():
     {
         'codeMsg': 'cookbook.recipe.success.ok',
         'codeStatus': 200,
-        'data': [{'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,
-                  'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'qa_rhr_1',
-                  'status': 'in_progress'},
-                 {'_id': '5e71eb8f39358991f2ea19f7', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,
-                  'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr_2',
-                  'status': 'in_progress'}]
+        'data': [{'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'ingredients': [], 'level': 0,
+                  'nb_people': 0, 'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'status': 'in_progress',
+                  'steps': [], 'title': 'qa_rhr_1', 'files' : []},
+                 {'_id': '5e71eb8f39358991f2ea19f7', 'categories': [], 'cooking_time': 0, 'ingredients': [], 'level': 0,
+                  'nb_people': 0, 'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'status': 'in_progress',
+                  'steps': [], 'title': 'qa_rhr_2', 'files' : []}]
     }
     """
     api = factory.GetAllRecipe.Factory()
     validation = validator.GetAllRecipe.Validator()
-    with_files_mongo = request.args.get(api.param_with_files_mongo)
     with_calories = request.args.get(api.param_with_calories)
     """ check param """
-    validation.is_with_files_mongo_valid(value=with_files_mongo)
     validation.is_with_calories_valid(value=with_calories)
     """ get all recipe """
-    data = recipe.select_all()
+    data = Recipe().select_all()
     """ add enrichment if needed """
-    if with_files_mongo == "true":
-        data.add_enrichment_files_mongo()
     if with_calories == "true":
         data.add_enrichment_calories()
     """ return response """
-    return server.return_response(data=data.result, api=apis.name, http_code=200)
+    return utils.ResponseMaker().return_response(data=data.result, api=apis.name, http_code=200)
 
 
 @apis.route('/<slug>', methods=['GET'])
@@ -109,7 +95,6 @@ def get_recipe(slug):
     @apiDescription Get a recipe by it's slug
 
     @apiParam (Query param) {String} slug Recipe's slug
-    @apiParam (Query param) {String} [with_files_mongo] if "true", add ingredient's Mongo files
     @apiParam (Query param) {String} [with_calories] if "true", add Recipe's calories from ingredients
 
     @apiExample {json} Example usage:
@@ -120,9 +105,9 @@ def get_recipe(slug):
     {
         'codeMsg': 'cookbook.recipe.success.ok',
         'codeStatus': 200,
-        'data': {'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,
-                 'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr',
-                 'status': 'in_progress'}
+        'data': {'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'ingredients': [], 'level': 0,
+                  'nb_people': 0, 'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'status': 'in_progress',
+                  'steps': [], 'title': 'qa_rhr_1', 'files' : []}
     }
 
     @apiErrorExample {json} Error response:
@@ -135,21 +120,17 @@ def get_recipe(slug):
     """
     api = factory.GetRecipe.Factory()
     validation = validator.GetRecipe.Validator()
-    with_files_mongo = request.args.get(api.param_with_files_mongo)
     with_calories = request.args.get(api.param_with_calories)
     """ check param """
     validation.is_slug_valid(value=slug)
-    validation.is_with_files_mongo_valid(value=with_files_mongo)
     validation.is_with_calories_valid(value=with_calories)
     """ get recipe """
-    data = recipe.select_one_by_slug(slug=slug)
+    data = Recipe().select_one_by_slug(slug=slug)
     """ add enrichment if needed """
-    if with_files_mongo == "true":
-        data.add_enrichment_files_mongo()
     if with_calories == "true":
         data.add_enrichment_calories()
     """ return response """
-    return server.return_response(data=data.result, api=apis.name, http_code=200)
+    return utils.ResponseMaker().return_response(data=data.result, api=apis.name, http_code=200)
 
 
 @apis.route('', methods=['POST'])
@@ -189,8 +170,8 @@ def post_recipe():
         'codeMsg': 'cookbook.recipe.success.created',
         'codeStatus': 201,
         'data': {'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'ingredients': [], 'level': 0,
-                 'nb_people': 0, 'note': '', 'preparation_time': 0, 'resume': '', 'slug': 'slug_ex',
-                 'status': 'in_progress', 'steps': [], 'title': 'title_ex'}
+                  'nb_people': 0, 'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'status': 'in_progress',
+                  'steps': [], 'title': 'qa_rhr_1', 'files' : []}
     }
 
     @apiErrorExample {json} Error response:
@@ -208,9 +189,9 @@ def post_recipe():
     validation.is_body_valid(data=body)
     body_filled = api.fill_body(data=body)
     """ insert recipe """
-    data = recipe.insert(data=body_filled)
+    data = Recipe().insert(data=body_filled)
     """ return result """
-    return server.return_response(data=data.result, api=apis.name, http_code=201)
+    return utils.ResponseMaker().return_response(data=data.result, api=apis.name, http_code=201)
 
 
 @apis.route('/<_id>', methods=['PUT'])
@@ -249,9 +230,9 @@ def put_recipe(_id):
     {
         'codeMsg': 'cookbook.recipe.success.created',
         'codeStatus': 201,
-        'data': {'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'level': 0, 'nb_people': 0,
-                 'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'steps': [], 'title': 'aqa_rhr',
-                 'status': 'in_progress'}
+        'data': {'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'ingredients': [], 'level': 0,
+                  'nb_people': 0, 'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'status': 'in_progress',
+                  'steps': [], 'title': 'qa_rhr_1', 'files' : []}
     }
 
     @apiErrorExample {json} Error response:
@@ -270,14 +251,10 @@ def put_recipe(_id):
     body = api.clean_body(_id=_id, data=request.json)
     validation.is_body_valid(data=body, _id=_id)
     body_formated = api.reformat_body(data=body)
-    diff_step = api.get_diff_steps(_id=_id, body=body_formated)
     """ update recipe """
-    data = recipe.update(_id=_id, data=body_formated)
-    """ clean steps file """
-    for _id_step in diff_step:
-        file_mongo.clean_file_by_id_parent(_id_parent=_id_step)
+    data = Recipe().update(_id=_id, data=body_formated)
     """ return response """
-    return server.return_response(data=data.result, api=apis.name, http_code=200)
+    return utils.ResponseMaker().return_response(data=data.result, api=apis.name, http_code=200)
 
 
 @apis.route('/search', methods=['GET'])
@@ -304,11 +281,11 @@ def search_recipe():
         'codeMsg': 'cookbook.recipe.success.ok',
         'codeStatus': 200,
         'data': [{'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'ingredients': [], 'level': 0,
-                 'nb_people': 0, 'note': '', 'preparation_time': 0, 'resume': '', 'slug': 'slug_ex',
-                 'status': 'in_progress', 'steps': [], 'title': 'title_ex'},
+                  'nb_people': 0, 'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'status': 'in_progress',
+                  'steps': [], 'title': 'qa_rhr_1', 'files' : []},
                  {'_id': '5e71eb8f39358991f2ea19f7', 'categories': [], 'cooking_time': 0, 'ingredients': [], 'level': 0,
-                 'nb_people': 0, 'note': '', 'preparation_time': 0, 'resume': '', 'slug': 'slug_ex',
-                 'status': 'in_progress', 'steps': [], 'title': 'title_ex2'}]
+                  'nb_people': 0, 'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'status': 'in_progress',
+                  'steps': [], 'title': 'qa_rhr_2', 'files' : []}]
     }
 
     @apiErrorExample {json} Error response:
@@ -325,9 +302,9 @@ def search_recipe():
     search = api.format_body(data=request.args)
     validation.is_search_valid(data=search)
     """ get all recipe """
-    data = recipe.search(data=search)
+    data = Recipe().search(data=search)
     """ return response """
-    return server.return_response(data=data.result, api=apis.name, http_code=200)
+    return utils.ResponseMaker().return_response(data=data.result, api=apis.name, http_code=200)
 
 
 @apis.errorhandler(400)
@@ -344,7 +321,7 @@ def api_handler_validator_failed(err):
     Any
         Server response.
     """
-    return server.return_response(data=err.description, api=apis.name, http_code=400)
+    return utils.ResponseMaker().return_response(data=err.description, api=apis.name, http_code=400)
 
 
 @apis.errorhandler(404)
@@ -361,4 +338,4 @@ def api_handler_url_not_found(err):
     Any
         Server response.
     """
-    return server.return_response(data=err, api=apis.name, http_code=404)
+    return utils.ResponseMaker().return_response(data=err, api=apis.name, http_code=404)

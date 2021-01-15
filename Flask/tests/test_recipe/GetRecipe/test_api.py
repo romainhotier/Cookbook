@@ -1,20 +1,16 @@
 import unittest
 import requests
 
-import utils
-import tests.test_recipe.GetRecipe.api as api
-import tests.test_recipe.model as recipe_model
-
-server = utils.Server()
-api = api.GetRecipe()
-recipe = recipe_model.RecipeTest()
+from tests import server, rep
+from tests.test_recipe import RecipeTest
+from tests.test_recipe.GetRecipe import api
 
 
-class GetRecipe(unittest.TestCase):
+class TestGetRecipe(unittest.TestCase):
     
     def setUp(self):
         """ Clean RecipeTest."""
-        recipe.clean()
+        RecipeTest().clean()
 
     def test_api_ok(self):
         """ Default case.
@@ -23,8 +19,8 @@ class GetRecipe(unittest.TestCase):
             200 - One Recipe.
         """
         """ env """
-        tc_recipe1 = recipe_model.RecipeTest().insert()
-        recipe_model.RecipeTest().insert()
+        tc_recipe1 = RecipeTest().insert()
+        RecipeTest().insert()
         """ param """
         tc_slug = tc_recipe1.slug
         """ call api """
@@ -36,8 +32,8 @@ class GetRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe1).get_data_expected())
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe1))
+        self.assertTrue(rep.check_not_present(value="detail", response=response_body))
 
     def test_api_ok_more_param(self):
         """ Default case with more parameters.
@@ -46,8 +42,8 @@ class GetRecipe(unittest.TestCase):
             200 - One Recipe.
         """
         """ env """
-        tc_recipe1 = recipe_model.RecipeTest().insert()
-        recipe_model.RecipeTest().insert()
+        tc_recipe1 = RecipeTest().insert()
+        RecipeTest().insert()
         """ param """
         tc_slug = tc_recipe1.slug
         """ call api """
@@ -59,8 +55,8 @@ class GetRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
-        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe1).get_data_expected())
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe1))
+        self.assertTrue(rep.check_not_present(value="detail", response=response_body))
 
     def test_api_url_not_found(self):
         """ Wrong url.
@@ -69,8 +65,8 @@ class GetRecipe(unittest.TestCase):
             404 - Bad request.
         """
         """ env """
-        tc_recipe1 = recipe_model.RecipeTest().insert()
-        recipe_model.RecipeTest().insert()
+        tc_recipe1 = RecipeTest().insert()
+        RecipeTest().insert()
         """ param """
         tc_slug = tc_recipe1.slug
         """ call api """
@@ -82,12 +78,12 @@ class GetRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 404)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        self.assertEqual(response_body["detail"], server.detail_url_not_found)
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        self.assertEqual(response_body["detail"], rep.detail_url_not_found)
 
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(GetRecipe())
+        cls.setUp(TestGetRecipe())
 
 
 if __name__ == '__main__':

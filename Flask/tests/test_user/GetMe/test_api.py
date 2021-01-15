@@ -2,18 +2,16 @@ import unittest
 import requests
 import time
 
-import utils
-import tests.test_user.GetMe.api as api
-import tests.test_user.model as user_model
+from tests import server, rep
+from tests.test_user import UserTest
+from tests.test_user.GetMe import api
 
-server = utils.Server()
-api = api.GetMe()
-user = user_model.UserTest()
+auth = UserTest()
 
 
-class GetMe(unittest.TestCase):
+class TestGetMe(unittest.TestCase):
 
-    @user.login
+    @auth.login
     def setUp(self, **kwargs):
         """ Login and store info."""
         self.user = kwargs["user"]
@@ -35,7 +33,7 @@ class GetMe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(user=self.user))
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        self.assertTrue(rep.check_not_present(value="detail", response=response_body))
 
     def test_api_header_deprecated(self):
         """ Header is deprecated.
@@ -54,8 +52,8 @@ class GetMe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 401)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_401)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param="token", msg=server.detail_has_expired)
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        detail = rep.format_detail(param="token", msg=rep.detail_has_expired)
         self.assertEqual(response_body["detail"], detail)
 
     def test_api_header_nok(self):
@@ -73,8 +71,8 @@ class GetMe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 401)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_401)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param="token", msg=server.detail_was_wrong)
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        detail = rep.format_detail(param="token", msg=rep.detail_was_wrong)
         self.assertEqual(response_body["detail"], detail)
 
     def test_api_without_header(self):
@@ -92,18 +90,18 @@ class GetMe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 401)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_401)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param="token", msg=server.detail_is_required)
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        detail = rep.format_detail(param="token", msg=rep.detail_is_required)
         self.assertEqual(response_body["detail"], detail)
 
     def tearDown(self):
         """ Clean UserTest."""
-        user.clean()
+        UserTest().clean()
 
     @classmethod
     def tearDownClass(cls):
         """ Clean UserTest."""
-        user.clean()
+        UserTest.clean()
 
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
-import app.files.validator.DeleteFiles
-import app.files.validator.GetFiles
-import app.files.validator.PostFiles
+""" All file's api validator """
 
+import app.files.validator.DeleteFile
+import app.files.validator.GetFile
+import app.files.validator.PostFilesRecipe

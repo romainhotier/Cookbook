@@ -1,20 +1,16 @@
 import unittest
 import requests
 
-import utils
-import tests.test_ingredient.GetIngredient.api as api
-import tests.test_ingredient.model as ingredient_model
-
-server = utils.Server()
-api = api.GetIngredient()
-ingredient = ingredient_model.IngredientTest()
+from tests import server, rep
+from tests.test_ingredient import IngredientTest
+from tests.test_ingredient.GetIngredient import api
 
 
-class GetIngredient(unittest.TestCase):
+class TestGetIngredient(unittest.TestCase):
 
     def setUp(self):
         """ Clean IngredientTest. """
-        ingredient.clean()
+        IngredientTest().clean()
 
     def test_id_without(self):
         """ QueryParameter _id is missing.
@@ -23,8 +19,8 @@ class GetIngredient(unittest.TestCase):
             200 - Go to GetAllIngredient.
         """
         """ env """
-        tc_ingredient1 = ingredient_model.IngredientTest().insert()
-        tc_ingredient2 = ingredient_model.IngredientTest().insert()
+        tc_ingredient1 = IngredientTest().insert()
+        tc_ingredient2 = IngredientTest().insert()
         """ call api """
         url = server.main_url + "/" + api.url
         response = requests.get(url, verify=False)
@@ -36,7 +32,7 @@ class GetIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertIn(api.data_expected(ingredient=tc_ingredient1), response_body["data"])
         self.assertIn(api.data_expected(ingredient=tc_ingredient2), response_body["data"])
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        self.assertTrue(rep.check_not_present(value="detail", response=response_body))
 
     def test_id_string(self):
         """ QueryParameter _id is a string.
@@ -45,7 +41,7 @@ class GetIngredient(unittest.TestCase):
             400 - Bad request.
         """
         """ env """
-        ingredient_model.IngredientTest().insert()
+        IngredientTest().insert()
         """ param """
         tc_id = "invalid"
         """ call api """
@@ -57,8 +53,8 @@ class GetIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"],  "application/json")
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_id, msg=server.detail_must_be_an_object_id, value=tc_id)
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        detail = rep.format_detail(param=api.param_id, msg=rep.detail_must_be_an_object_id, value=tc_id)
         self.assertEqual(response_body["detail"], detail)
 
     def test_id_object_id_invalid(self):
@@ -68,7 +64,7 @@ class GetIngredient(unittest.TestCase):
             400 - Bad request.
         """
         """ env """
-        ingredient_model.IngredientTest().insert()
+        IngredientTest().insert()
         """ param """
         tc_id = "aaaaaaaaaaaaaaaaaaaaaaaa"
         """ call api """
@@ -80,13 +76,13 @@ class GetIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"],  "application/json")
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_id, msg=server.detail_doesnot_exist, value=tc_id)
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        detail = rep.format_detail(param=api.param_id, msg=rep.detail_doesnot_exist, value=tc_id)
         self.assertEqual(response_body["detail"], detail)
 
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(GetIngredient())
+        cls.setUp(TestGetIngredient())
 
 
 if __name__ == '__main__':

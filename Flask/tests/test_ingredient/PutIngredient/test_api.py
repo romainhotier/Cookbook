@@ -1,20 +1,16 @@
 import unittest
 import requests
 
-import utils
-import tests.test_ingredient.PutIngredient.api as api
-import tests.test_ingredient.model as ingredient_model
-
-server = utils.Server()
-api = api.PutIngredient()
-ingredient = ingredient_model.IngredientTest()
+from tests import server, rep
+from tests.test_ingredient import IngredientTest
+from tests.test_ingredient.PutIngredient import api
 
 
-class PutIngredient(unittest.TestCase):
+class TestPutIngredient(unittest.TestCase):
 
     def setUp(self):
         """ Clean IngredientTest."""
-        ingredient.clean()
+        IngredientTest().clean()
 
     def test_api_ok(self):
         """ Default case.
@@ -23,8 +19,8 @@ class PutIngredient(unittest.TestCase):
             200 - Updated Ingredient.
         """
         """ env """
-        tc_ingredient1 = ingredient_model.IngredientTest().insert()
-        tc_ingredient2 = ingredient_model.IngredientTest().insert()
+        tc_ingredient1 = IngredientTest().insert()
+        tc_ingredient2 = IngredientTest().insert()
         """ param """        
         tc_id = tc_ingredient1.get_id()
         body = {api.param_name: "qa_rhr_name_update"}
@@ -33,14 +29,14 @@ class PutIngredient(unittest.TestCase):
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
         """ change """
-        tc_ingredient1.custom(body)
+        tc_ingredient1.custom(data=body)
         """ assert """
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(ingredient=tc_ingredient1))
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        self.assertTrue(rep.check_not_present(value="detail", response=response_body))
         """ check """
         tc_ingredient1.check_bdd_data()
         tc_ingredient2.check_bdd_data()
@@ -52,7 +48,7 @@ class PutIngredient(unittest.TestCase):
             200 - Updated Ingredient.
         """
         """ env """
-        tc_ingredient = ingredient_model.IngredientTest().insert()
+        tc_ingredient = IngredientTest().insert()
         """ param """
         tc_id = tc_ingredient.get_id()
         body = {api.param_name: "qa_rhr_name_update",
@@ -64,14 +60,14 @@ class PutIngredient(unittest.TestCase):
         response = requests.put(url, json=body, verify=False)
         response_body = response.json()
         """ change """
-        tc_ingredient.custom(body)
+        tc_ingredient.custom(data=body)
         """ assert """
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(ingredient=tc_ingredient))
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        self.assertTrue(rep.check_not_present(value="detail", response=response_body))
         """ check """
         tc_ingredient.check_bdd_data()
 
@@ -82,7 +78,7 @@ class PutIngredient(unittest.TestCase):
             404 - Url not found.
         """
         """ env """
-        tc_ingredient = ingredient_model.IngredientTest().insert()
+        tc_ingredient = IngredientTest().insert()
         """ param """
         tc_id = tc_ingredient.get_id()
         body = {api.param_name: "qa_rhr_name_update"}
@@ -95,14 +91,14 @@ class PutIngredient(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 404)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_404_url)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        self.assertEqual(response_body["detail"], server.detail_url_not_found)
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        self.assertEqual(response_body["detail"], rep.detail_url_not_found)
         """ check """
         tc_ingredient.check_bdd_data()
 
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(PutIngredient())
+        cls.setUp(TestPutIngredient())
 
 
 if __name__ == '__main__':

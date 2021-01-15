@@ -3,16 +3,9 @@ from bson import ObjectId
 import copy
 import re
 
-import utils
-import app.ingredient.model as ingredient_model
-import app.recipe.model as recipe_model
-
-import tests.test_file_mongo.model as filemongotest_model
-FileMongoTest = filemongotest_model.FileMongoTest()
+from app import utils
 
 mongo = utils.Mongo()
-ingredient = ingredient_model.Ingredient()
-recipe = recipe_model.Recipe()
 
 
 class IngredientTest(object):
@@ -85,7 +78,7 @@ class IngredientTest(object):
         dict
             Copy of IngredientTest with ObjectId stringify.
         """
-        return mongo.to_json(self.get())
+        return mongo.convert_to_json(self.get())
 
     def insert(self):
         """ Insert IngredientTest.
@@ -130,6 +123,27 @@ class IngredientTest(object):
                         pass
                 else:
                     self.__setattr__(i, j)
+        return self
+
+    def custom_from_body(self, data):
+        """ Update IngredientTest from PostIngredient.
+
+        Parameters
+        ----------
+        data : dict
+            Body's value.
+
+        Returns
+        -------
+        IngredientTest
+        """
+        self.custom(data)
+        if "categories" not in data:
+            self.categories = []
+        if "nutriments" not in data:
+            self.nutriments = {"calories": 0, "carbohydrates": 0, "fats": 0, "proteins": 0, "portion": 1}
+        if "unit" not in data:
+            self.unit = "g"
         return self
 
     def custom_id_from_body(self, data):
@@ -197,26 +211,3 @@ class IngredientTest(object):
         db.delete_many({"name": {"$regex": rgx}})
         client.close()
         return
-
-    """ files mongo """
-    def add_file_mongo(self, filename, is_main):
-        """ Add a Mongo file to IngredientTest.
-
-        Parameters
-        ----------
-        filename : str
-            Name of File.
-        is_main : bool
-            Is primary or not.
-
-        Returns
-        -------
-        FileTest
-            Response server if validation failed, True otherwise.
-
-        """
-        file = filemongotest_model.FileMongoTest().custom({"filename": filename,
-                                                           "metadata": {"kind": "ingredient",
-                                                                        "_id_parent": ObjectId(self._id),
-                                                                        "is_main": is_main}}).insert()
-        return file

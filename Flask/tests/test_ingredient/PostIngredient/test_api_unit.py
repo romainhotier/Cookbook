@@ -1,20 +1,16 @@
 import unittest
 import requests
 
-import utils
-import tests.test_ingredient.PostIngredient.api as api
-import tests.test_ingredient.model as ingredient_model
-
-server = utils.Server()
-api = api.PostIngredient()
-ingredient = ingredient_model.IngredientTest()
+from tests import server, rep
+from tests.test_ingredient import IngredientTest
+from tests.test_ingredient.PostIngredient import api
 
 
-class PostIngredient(unittest.TestCase):
+class TestPostIngredient(unittest.TestCase):
 
     def setUp(self):
         """ Clean IngredientTest."""
-        ingredient.clean()
+        IngredientTest().clean()
 
     def test_unit_without(self):
         """ BodyParameter unit is missing.
@@ -30,15 +26,16 @@ class PostIngredient(unittest.TestCase):
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ change """
-        tc_ingredient = ingredient_model.IngredientTest().custom(api.custom_body(body=body))
+        tc_ingredient = IngredientTest().custom_from_body(data=body)
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 201)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
-        data_check = api.json_check(data=response_body["data"], data_expected=tc_ingredient)
+        data_check = rep.json_schema_check(data=response_body["data"],
+                                           schema=api.create_schema(ingredient=tc_ingredient))
         self.assertTrue(data_check["result"], data_check["error"])
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        self.assertTrue(rep.check_not_present(value="detail", response=response_body))
         """ check """
         tc_ingredient.custom_id_from_body(data=response_body).check_bdd_data()
 
@@ -57,14 +54,14 @@ class PostIngredient(unittest.TestCase):
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ change """
-        tc_ingredient = ingredient_model.IngredientTest().custom(api.custom_body(body=body))
+        tc_ingredient = IngredientTest().custom_from_body(data=body)
         """ assert """
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_unit, msg=server.detail_must_be_a_string, value=body[api.param_unit])
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        detail = rep.format_detail(param=api.param_unit, msg=rep.detail_must_be_a_string, value=body[api.param_unit])
         self.assertEqual(response_body["detail"], detail)
         """ check """
         tc_ingredient.check_doesnt_exist_by_name()
@@ -84,14 +81,14 @@ class PostIngredient(unittest.TestCase):
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ change """
-        tc_ingredient = ingredient_model.IngredientTest().custom(api.custom_body(body=body))
+        tc_ingredient = IngredientTest().custom_from_body(data=body)
         """ assert """
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_unit, msg=server.detail_must_be_in + api.repf_detail_unit,
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        detail = rep.format_detail(param=api.param_unit, msg=rep.detail_must_be_in + api.repf_detail_unit,
                                    value=body[api.param_unit])
         self.assertEqual(response_body["detail"], detail)
         """ check """
@@ -112,14 +109,14 @@ class PostIngredient(unittest.TestCase):
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ change """
-        tc_ingredient = ingredient_model.IngredientTest().custom(api.custom_body(body=body))
+        tc_ingredient = IngredientTest().custom_from_body(data=body)
         """ assert """
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_unit, msg=server.detail_must_be_in + api.repf_detail_unit,
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        detail = rep.format_detail(param=api.param_unit, msg=rep.detail_must_be_in + api.repf_detail_unit,
                                    value=body[api.param_unit])
         self.assertEqual(response_body["detail"], detail)
         """ check """
@@ -140,15 +137,16 @@ class PostIngredient(unittest.TestCase):
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ change """
-        tc_ingredient = ingredient_model.IngredientTest().custom(api.custom_body(body=body))
+        tc_ingredient = IngredientTest().custom_from_body(data=body)
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 201)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
-        data_check = api.json_check(data=response_body["data"], data_expected=tc_ingredient)
+        data_check = rep.json_schema_check(data=response_body["data"],
+                                           schema=api.create_schema(ingredient=tc_ingredient))
         self.assertTrue(data_check["result"], data_check["error"])
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        self.assertTrue(rep.check_not_present(value="detail", response=response_body))
         """ check """
         tc_ingredient.custom_id_from_body(data=response_body).check_bdd_data()
 
@@ -167,21 +165,22 @@ class PostIngredient(unittest.TestCase):
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ change """
-        tc_ingredient = ingredient_model.IngredientTest().custom(api.custom_body(body=body))
+        tc_ingredient = IngredientTest().custom_from_body(data=body)
         """ assert """
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response_body["codeStatus"], 201)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
-        data_check = api.json_check(data=response_body["data"], data_expected=tc_ingredient)
+        data_check = rep.json_schema_check(data=response_body["data"],
+                                           schema=api.create_schema(ingredient=tc_ingredient))
         self.assertTrue(data_check["result"], data_check["error"])
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        self.assertTrue(rep.check_not_present(value="detail", response=response_body))
         """ check """
         tc_ingredient.custom_id_from_body(data=response_body).check_bdd_data()
 
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(PostIngredient())
+        cls.setUp(TestPostIngredient())
 
 
 if __name__ == '__main__':

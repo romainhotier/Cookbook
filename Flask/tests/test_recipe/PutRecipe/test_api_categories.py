@@ -1,20 +1,16 @@
 import unittest
 import requests
 
-import utils
-import tests.test_recipe.PutRecipe.api as api
-import tests.test_recipe.model as recipe_model
-
-server = utils.Server()
-api = api.PutRecipe()
-recipe = recipe_model.RecipeTest()
+from tests import server, rep
+from tests.test_recipe import RecipeTest
+from tests.test_recipe.PutRecipe import api
 
 
-class PutRecipe(unittest.TestCase):
+class TestPutRecipe(unittest.TestCase):
 
     def setUp(self):
         """ Clean RecipeTest."""
-        recipe.clean()
+        RecipeTest().clean()
 
     def test_categories_without(self):
         """ BodyParameter categories is missing.
@@ -23,7 +19,7 @@ class PutRecipe(unittest.TestCase):
             400 - Bad request.
         """
         """ env """
-        tc_recipe = recipe_model.RecipeTest().insert()
+        tc_recipe = RecipeTest().insert()
         """ param """
         tc_id = tc_recipe.get_id()
         body = {}
@@ -36,8 +32,8 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param="body", msg=server.detail_must_contain_at_least_one_key, value=body)
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        detail = rep.format_detail(param="body", msg=rep.detail_must_contain_at_least_one_key, value=body)
         self.assertEqual(response_body["detail"], detail)
         """ check """
         tc_recipe.check_bdd_data()
@@ -49,7 +45,7 @@ class PutRecipe(unittest.TestCase):
             400 - Bad request.
         """
         """ env """
-        tc_recipe = recipe_model.RecipeTest().insert()
+        tc_recipe = RecipeTest().insert()
         """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_categories: None}
@@ -62,8 +58,8 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_categories, msg=server.detail_must_be_an_array,
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        detail = rep.format_detail(param=api.param_categories, msg=rep.detail_must_be_an_array,
                                    value=body[api.param_categories])
         self.assertEqual(response_body["detail"], detail)
         """ check """
@@ -76,7 +72,7 @@ class PutRecipe(unittest.TestCase):
             400 - Bad request.
         """
         """ env """
-        tc_recipe = recipe_model.RecipeTest().insert()
+        tc_recipe = RecipeTest().insert()
         """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_categories: ""}
@@ -89,8 +85,8 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_categories, msg=server.detail_must_be_an_array,
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        detail = rep.format_detail(param=api.param_categories, msg=rep.detail_must_be_an_array,
                                    value=body[api.param_categories])
         self.assertEqual(response_body["detail"], detail)
         """ check """
@@ -103,7 +99,7 @@ class PutRecipe(unittest.TestCase):
             400 - Bad request.
         """
         """ env """
-        tc_recipe = recipe_model.RecipeTest().insert()
+        tc_recipe = RecipeTest().insert()
         """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_categories: "invalid"}
@@ -116,8 +112,8 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_categories, msg=server.detail_must_be_an_array,
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        detail = rep.format_detail(param=api.param_categories, msg=rep.detail_must_be_an_array,
                                    value=body[api.param_categories])
         self.assertEqual(response_body["detail"], detail)
         """ check """
@@ -130,7 +126,7 @@ class PutRecipe(unittest.TestCase):
             200 - Updated Recipe.
         """
         """ env """
-        tc_recipe = recipe_model.RecipeTest().insert()
+        tc_recipe = RecipeTest().insert()
         """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_categories: ["invalid"]}
@@ -146,7 +142,7 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 200)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
         self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
-        self.assertTrue(api.check_not_present(value="detail", rep=response_body))
+        self.assertTrue(rep.check_not_present(value="detail", response=response_body))
         """ check """
         tc_recipe.check_bdd_data()
 
@@ -157,7 +153,7 @@ class PutRecipe(unittest.TestCase):
             400 - Bad request.
         """
         """ env """
-        tc_recipe = recipe_model.RecipeTest().insert()
+        tc_recipe = RecipeTest().insert()
         """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_categories: {}}
@@ -170,8 +166,8 @@ class PutRecipe(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], 'application/json')
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        self.assertTrue(api.check_not_present(value="data", rep=response_body))
-        detail = api.create_detail(param=api.param_categories, msg=server.detail_must_be_an_array,
+        self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        detail = rep.format_detail(param=api.param_categories, msg=rep.detail_must_be_an_array,
                                    value=body[api.param_categories])
         self.assertEqual(response_body["detail"], detail)
         """ check """
@@ -179,7 +175,7 @@ class PutRecipe(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(PutRecipe())
+        cls.setUp(TestPutRecipe())
 
 
 if __name__ == '__main__':

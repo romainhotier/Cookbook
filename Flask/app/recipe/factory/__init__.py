@@ -1,3 +1,5 @@
+""" All recipe's api factory """
+
 import app.recipe.factory.DeleteRecipe
 import app.recipe.factory.GetAllRecipe
 import app.recipe.factory.GetRecipe

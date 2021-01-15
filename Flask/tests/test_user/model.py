@@ -1,18 +1,15 @@
 from functools import wraps
-from flask_jwt_extended import create_access_token
 from pymongo import MongoClient
 from bson import ObjectId
+
 import copy
 import re
-import datetime
 
-
-import run as app
-import utils
-import app.user.model as user
+from app import utils
+from app.auth import Auth
+from app.user import User
 
 mongo = utils.Mongo()
-user = user.User()
 
 
 class UserTest(object):
@@ -82,7 +79,7 @@ class UserTest(object):
         dict
             Copy of UserTest with ObjectId stringify.
         """
-        return mongo.to_json(self.get())
+        return mongo.convert_to_json(self.get())
 
     def insert(self):
         """ Insert UserTest.
@@ -96,7 +93,7 @@ class UserTest(object):
         db = client[mongo.name][mongo.collection_user]
         data = self.get()
         data.pop("_id")
-        data["password"] = user.hash_password(password=self.password)
+        data["password"] = User().hash_password(password=self.password)
         query = db.insert_one(data)
         client.close()
         self.__setattr__("_id", query.inserted_id)
@@ -139,6 +136,16 @@ class UserTest(object):
         self.__setattr__("_id", ObjectId(data["data"]["_id"]))
         return self
 
+    def delete(self):
+        """ Delete UserTest.
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_user]
+        db.delete_one({"_id": ObjectId(self.get_id())})
+        client.close()
+        return
+
+    """ assert """
     def check_bdd_data(self):
         """ Check if UserTest is correct.
         """
@@ -147,7 +154,7 @@ class UserTest(object):
         result = db.find_one({"_id": ObjectId(self.get_id())})
         client.close()
         assert result is not None
-        assert user.check_password(password=result["password"], password_attempt=self.password)
+        assert User().check_password(password=result["password"], password_attempt=self.password)
         for value in result:
             if value not in ["_id", "password"]:
                 assert result[value] == self.__getattribute__(value)
@@ -160,7 +167,7 @@ class UserTest(object):
         result = db.find_one({"email": self.email})
         client.close()
         assert result is not None
-        assert user.check_password(password=result["password"], password_attempt=self.password)
+        assert User().check_password(password=result["password"], password_attempt=self.password)
         for value in result:
             if value not in ["_id", "password"]:
                 assert result[value] == self.__getattribute__(value)
@@ -192,15 +199,7 @@ class UserTest(object):
         client.close()
         assert result == 0
 
-    def delete(self):
-        """ Delete UserTest.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_user]
-        db.delete_one({"_id": ObjectId(self.get_id())})
-        client.close()
-        return
-
+    """ clean """
     @staticmethod
     def clean():
         """ Clean UserTest by email and display_name.
@@ -213,15 +212,13 @@ class UserTest(object):
         client.close()
         return
 
+    """ wrapper """
     def login(self, f):
         """ Wrapper to login.
         """
         @wraps(f)
         def wrapper(*args, **kwargs):
             self.insert()
-            with app.backend.app_context():
-                expires = datetime.timedelta(seconds=app.backend.config["EXPIRATION_TOKEN"])
-                access_token = create_access_token(identity=str(self._id), expires_delta=expires)
-            f(*args, **kwargs, headers={"Authorization": "Bearer " + access_token}, user=self)
+            f(*args, **kwargs, headers={"Authorization": "Bearer " + Auth().create_token(_id=str(self._id))}, user=self)
             return self
         return wrapper
