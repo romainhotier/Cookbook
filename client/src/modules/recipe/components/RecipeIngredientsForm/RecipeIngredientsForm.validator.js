@@ -9,7 +9,7 @@ export const RecipeIngredientsValidator = {
     errorMessage: 'La quantité est obligatoire',
     placeholder: 'ex: 200',
   },
-  unity: {
+  unit: {
     required: false,
     errorMessage: '',
     placeholder: 'gr',

@@ -154,15 +154,12 @@ export const postIngredientsRecipe = data => dispatch => {
     .then(response => {
       if (response.codeStatus === 201) {
         dispatch(postIngredientsRecipeSuccess(response))
-        console.log('response ingredients', response)
         notification['success']({
           message: 'Ingrédient associé à la recette !',
           description: `${get(codeMsg, `${response.codeMsg}`)}`,
         })
       } else {
         dispatch(dispatch(postIngredientsRecipeFailed(response.detail)))
-
-        console.log('response ingredients', response)
         const errorFormat = get(codeMsg, `${response.codeMsg}.${slugifyResponse(response.detail.msg)}`)
         notification['error']({
           message: 'Oooh une erreur',

@@ -48,7 +48,7 @@ const IngredientForm = ({ createIngredient, loading, updateIngredient, values = 
 
     onReset()
 
-    if (!!values._id) {
+    if (values._id) {
       return updateIngredient({ id: values._id, data: { _id: values._id, ...ingredient } })
     }
 
@@ -155,7 +155,7 @@ const IngredientForm = ({ createIngredient, loading, updateIngredient, values = 
       </Row>
       <Form.Item style={{ textAlign: 'right' }}>
         <Button type="primary" htmlType="submit" loading={loading} disabled={loading}>
-          {!!values._id ? 'Modifier' : 'Créer'}
+          {values._id ? 'Modifier' : 'Créer'}
         </Button>
       </Form.Item>
     </Form>

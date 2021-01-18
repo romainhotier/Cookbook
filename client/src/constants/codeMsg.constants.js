@@ -3,6 +3,7 @@ export const codeMsg = {
     recipe: {
       success: {
         created: `La recette vient d'être ajoutée !`,
+        ok: `C'est un succès !`,
       },
       error: {
         bad_request: {

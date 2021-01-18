@@ -5,7 +5,14 @@ import { Modal, Button } from 'antd'
 import { postIngredient } from '../../thunks'
 import IngredientForm from '../../components/ingredientForm'
 
-const IngredientModalAdd = ({ loadingPostIngredients, ingredients, postIngredient, contentButton }) => {
+const IngredientModalAdd = ({
+  loadingPostIngredients,
+  ingredients,
+  postIngredient,
+  contentButton,
+  shapeButton,
+  sizeButton = 'default',
+}) => {
   const [modalVisible, setModalVisible] = useState(false)
 
   useEffect(() => {
@@ -14,7 +21,7 @@ const IngredientModalAdd = ({ loadingPostIngredients, ingredients, postIngredien
 
   return (
     <>
-      <Button type="primary" onClick={() => setModalVisible(true)}>
+      <Button type="primary" onClick={() => setModalVisible(true)} shape={shapeButton} size={sizeButton}>
         {contentButton ?? 'Ajouter un nouvel ingrédient'}
       </Button>
       <Modal

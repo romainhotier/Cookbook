@@ -1,32 +1,43 @@
-.ant-checkbox-wrapper {
-  &.iconCheckbox {
-    display: inline-block;
-    border: 1px solid grey;
-    width: 100%;
-    padding: 10px 0;
-    margin-bottom: 15px;
-    border-radius: 50px;
-    text-align: center;
-    .ant-checkbox {
-      display: none;
-    }
+.ant-checkbox-group.checkboxWithImage {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  flex-wrap: wrap;
 
-    span {
-      line-height: 16px;
-      vertical-align: middle;
-      font-size: 12px;
-      i {
-        font-size: 16px;
-        padding-right: 5px;
+  .ant-checkbox-wrapper {
+    &.iconCheckbox {
+      display: inline-block;
+      border: 1px solid grey;
+      padding: 10px 0;
+      border-radius: 15px;
+      text-align: center;
+      margin: 6px 10px 6px 0;
+      .ant-checkbox {
+        display: none;
       }
-    }
-
-    &.ant-checkbox-wrapper-checked {
-      background-color: rgba($primary, 0.7);
       span {
-        // color: $primary;
+        line-height: 14px;
+        font-size: 14px;
+        i {
+          font-size: 16px;
+          padding-right: 5px;
+        }
+      }
+
+      &.ant-checkbox-wrapper-checked {
+        background-color: $green-300;
+        border: 1px solid $green-500;
       }
     }
   }
+}
 
+.upload-list-inline .ant-upload-list-item {
+  float: left;
+  width: 200px;
+  margin-right: 8px;
+}
+
+.upload-list-inline [class*='-upload-list-rtl'] .ant-upload-list-item {
+  float: right;
 }
