@@ -1,6 +1,6 @@
-export const fetchAllRecipesURL = () => `${process.env.REACT_APP_API_URL}/recipe`
+export const fetchAllRecipesURL = () => `${process.env.REACT_APP_API_URL}/recipe?with_calories=true`
 
-export const fetchRecipeURL = slug => `${process.env.REACT_APP_API_URL}/recipe/${slug}`
+export const fetchRecipeURL = slug => `${process.env.REACT_APP_API_URL}/recipe/${slug}?with_calories=true`
 
 export const createRecipeURL = () => `${process.env.REACT_APP_API_URL}/recipe`
 

@@ -1,0 +1,33 @@
+.ant-carousel {
+  .slick-slider {
+    .carousel {
+      &_img {
+        display: block;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        width: 100%;
+      }
+      &_dots.slick-dots {
+        li {
+          width: 20px;
+          height: 20px;
+          background-color: $black;
+          border: 1px solid $greyBorder;
+          button {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+          }
+        }
+
+        li.slick-active {
+          width: 20px;
+          button {
+            background-color: $primary;
+          }
+        }
+      }
+    }
+  }
+}
