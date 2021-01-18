@@ -65,8 +65,8 @@ class RecipePageDetails extends Component {
       return <Spin />
     }
 
-    const { title, steps, preparation_time, cooking_time, nb_people, categories, ingredients, fs } = recipe
-
+    const { title, steps, preparation_time, cooking_time, nb_people, categories, ingredients, files } = recipe
+    console.log('files', files)
     return (
       <section className="RecipeDetails">
         <div className="RecipeDetails_actions">
@@ -76,19 +76,17 @@ class RecipePageDetails extends Component {
         </div>
         <Row className="RecipeDetails_header" gutter={16}>
           <Col xs={24} sm={24} md={24} lg={24} xl={12}>
-            <Carousel>
-              {/* {fs.map((image, index) => (
-                <img key={`img-${index}`} src={image} alt={`img-${index}`} />
-              ))} */}
-              <div>
-                <h6 className="carrousel">1</h6>
-              </div>
-              <div>
-                <h6 className="carrousel">2</h6>
-              </div>
-              <div>
-                <h6 className="carrousel">3</h6>
-              </div>
+            <Carousel className="RecipeDetails_carousel">
+              {files &&
+                files.map((image, index) => (
+                  <div>
+                    <div
+                      className="RecipeDetails_carousel_img"
+                      style={{ backgroundImage: `url(${process.env.REACT_APP_IMAGES_SERVER}/${image})` }}
+                      key={`img-${index}`}
+                    />
+                  </div>
+                ))}
             </Carousel>
           </Col>
           <Col xs={24} sm={24} md={24} lg={24} xl={12}>

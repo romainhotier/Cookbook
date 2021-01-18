@@ -8,17 +8,20 @@
     display: flex;
     justify-content: center;
     align-items: top;
+    margin-bottom: 20px;
     h2 {
       text-align: left;
       margin-bottom: 15px;
     }
-    .carrousel {
-      height: 300px;
-      color: #fff;
-      line-height: 300px;
-      text-align: center;
-      background: $green-500;
-      font-size: 30px;
+  }
+  &_carousel {
+    &_img {
+      display: block;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      height: 400px;
+      width: 100%;
     }
   }
   &_informations {

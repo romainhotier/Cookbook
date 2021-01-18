@@ -2,11 +2,12 @@ import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Col, Row, Spin } from 'antd'
+import omit from 'lodash/omit'
 
 import RecipeForm from 'modules/recipe/components/RecipeForm'
-import { putRecipe, fetchRecipe } from 'modules/recipe/thunks'
+import { putRecipe, fetchRecipe, postFileRecipe, deleteFileRecipe } from 'modules/recipe/thunks'
 
-const RecipePageEdit = ({ recipes, putRecipe, match, fetchRecipe }) => {
+const RecipePageEdit = ({ recipes, putRecipe, match, fetchRecipe, postFileRecipe, deleteFileRecipe }) => {
   const slug = match.params.id
 
   useEffect(() => {
@@ -17,10 +18,19 @@ const RecipePageEdit = ({ recipes, putRecipe, match, fetchRecipe }) => {
 
   const recipe = recipes[slug]
 
-  const updateRecipe = (data, file) => {
-    console.log('data', data)
-    console.log('file', file)
-    //putRecipe(data._id, data)
+  const addFileInRecipe = file => {
+    const formData = new FormData()
+    formData.append('files', file)
+    postFileRecipe(recipe._id, formData)
+  }
+
+  const deleteFileInRecipe = file => {
+    deleteFileRecipe(file.url)
+  }
+
+  const updateRecipe = data => {
+    const recipeWithoutFiles = omit(data, 'filesRecipe')
+    putRecipe(data._id, recipeWithoutFiles)
   }
 
   if (recipe === undefined) {
@@ -33,7 +43,13 @@ const RecipePageEdit = ({ recipes, putRecipe, match, fetchRecipe }) => {
     <Row>
       <Col span={24}>
         <h2>Modifier une recette</h2>
-        <RecipeForm sendRecipe={updateRecipe} values={{ ...recipe, steps: stepsWithIdFront }} />
+        <RecipeForm
+          sendRecipe={updateRecipe}
+          values={{ ...recipe, steps: stepsWithIdFront }}
+          addFileInRecipe={addFileInRecipe}
+          deleteFileInRecipe={deleteFileInRecipe}
+          action={'update'}
+        />
       </Col>
     </Row>
   )
@@ -42,6 +58,8 @@ const RecipePageEdit = ({ recipes, putRecipe, match, fetchRecipe }) => {
 const mapDispatchToProps = {
   putRecipe,
   fetchRecipe,
+  postFileRecipe,
+  deleteFileRecipe,
 }
 
 const mapStateToProps = ({ recipes: { content, loadingPutRecipes } }) => ({
@@ -54,6 +72,8 @@ RecipePageEdit.propTypes = {
   putRecipe: PropTypes.func,
   match: PropTypes.object,
   fetchRecipe: PropTypes.func,
+  postFileRecipe: PropTypes.func,
+  deleteFileRecipe: PropTypes.func,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(RecipePageEdit)

@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import React, { Component } from 'react'
-import { Select, Form, Input, Button, Spin } from 'antd'
+import { Select, Form, Input, Button, Spin, Collapse } from 'antd'
 import find from 'lodash/find'
 import keyBy from 'lodash/keyBy'
 
@@ -11,6 +11,7 @@ import IngredientModalAdd from 'modules/ingredient/containers/IngredientModalAdd
 import './_RecipeIngredientsForm.scss'
 
 const { Option } = Select
+const { Panel } = Collapse
 
 class RecipeIngredientsForm extends Component {
   constructor(props) {
@@ -105,116 +106,122 @@ class RecipeIngredientsForm extends Component {
     ))
 
     return (
-      <>
-        <div className="ingredientForm_head">
-          <h3>Ingrédients</h3>
-          <IngredientModalAdd
-            contentButton={<i className="fas fa-plus"></i>}
-            shapeButton="circle"
-            sizeButton={'small'}
-          />
-        </div>
-
-        <Form.List name="ingredients">
-          {(fields, { add, remove }) => (
-            <>
-              {fields.map((field, index) => (
-                <div
-                  className={`IngredientsForm IngredientsForm-${index % 2 ? 'odd' : 'even'}`}
-                  key={`IngredientsForm-${field.key}`}
-                >
-                  <div>
-                    <Form.Item
-                      {...field}
-                      key={`fieldName-${field.key}`}
-                      name={[field.name, '_id']}
-                      fieldKey={[field.fieldKey, '_id']}
-                      rules={[
-                        {
-                          required: RecipeIngredientsValidator['name'].required,
-                          message: RecipeIngredientsValidator['name'].message,
-                        },
-                      ]}
-                      label="Nom"
-                    >
-                      <Select
-                        showSearch
-                        placeholder={RecipeIngredientsValidator['name'].placeholder}
-                        defaultActiveFirstOption={true}
-                        showArrow={false}
-                        filterOption={false}
-                        onSearch={this.handleSearch}
-                        onChange={this.handleChange}
-                        notFoundContent={null}
+      <Collapse defaultActiveKey={['ingredientForm']} expandIconPosition="right" className="FormRecipe_collapse">
+        <Panel
+          header={
+            <div className="ingredientForm_head">
+              <h3>Ingrédients</h3>
+              <IngredientModalAdd
+                contentButton={<i className="fas fa-plus"></i>}
+                shapeButton="circle"
+                sizeButton={'small'}
+              />
+            </div>
+          }
+          key="ingredientForm"
+          className="FormRecipe_panel"
+        >
+          <Form.List name="ingredients">
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map((field, index) => (
+                  <div
+                    className={`IngredientsForm IngredientsForm-${index % 2 ? 'odd' : 'even'}`}
+                    key={`IngredientsForm-${field.key}`}
+                  >
+                    <div>
+                      <Form.Item
+                        {...field}
+                        key={`fieldName-${field.key}`}
+                        name={[field.name, '_id']}
+                        fieldKey={[field.fieldKey, '_id']}
+                        rules={[
+                          {
+                            required: RecipeIngredientsValidator['name'].required,
+                            message: RecipeIngredientsValidator['name'].message,
+                          },
+                        ]}
+                        label="Nom"
                       >
-                        {options}
-                      </Select>
-                    </Form.Item>
-                    <Form.Item
-                      {...field}
-                      className="quantity-form"
-                      key={`fieldquantity-${field.key}`}
-                      name={[field.name, 'quantity']}
-                      label="Quantité"
-                      fieldKey={[field.fieldKey, 'quantity']}
-                      rules={[
-                        {
-                          required: RecipeIngredientsValidator['quantity'].required,
-                          message: RecipeIngredientsValidator['quantity'].message,
-                        },
-                      ]}
-                    >
-                      <Input placeholder={RecipeIngredientsValidator['quantity'].placeholder} />
-                    </Form.Item>
+                        <Select
+                          showSearch
+                          placeholder={RecipeIngredientsValidator['name'].placeholder}
+                          defaultActiveFirstOption={true}
+                          showArrow={false}
+                          filterOption={false}
+                          onSearch={this.handleSearch}
+                          onChange={this.handleChange}
+                          notFoundContent={null}
+                        >
+                          {options}
+                        </Select>
+                      </Form.Item>
+                      <Form.Item
+                        {...field}
+                        className="quantity-form"
+                        key={`fieldquantity-${field.key}`}
+                        name={[field.name, 'quantity']}
+                        label="Quantité"
+                        fieldKey={[field.fieldKey, 'quantity']}
+                        rules={[
+                          {
+                            required: RecipeIngredientsValidator['quantity'].required,
+                            message: RecipeIngredientsValidator['quantity'].message,
+                          },
+                        ]}
+                      >
+                        <Input placeholder={RecipeIngredientsValidator['quantity'].placeholder} />
+                      </Form.Item>
 
-                    <Form.Item
-                      {...field}
-                      key={`fieldunit-${field.key}`}
-                      name={[field.name, 'unit']}
-                      label="Unité"
-                      fieldKey={[field.fieldKey, 'unit']}
-                      rules={[
-                        {
-                          required: RecipeIngredientsValidator['unit'].required,
-                          message: RecipeIngredientsValidator['unit'].message,
-                        },
-                      ]}
-                    >
-                      <Select placeholder={RecipeIngredientsValidator['unit'].placeholder}>
-                        {this.createUnitOption(field.name)}
-                      </Select>
-                    </Form.Item>
+                      <Form.Item
+                        {...field}
+                        key={`fieldunit-${field.key}`}
+                        name={[field.name, 'unit']}
+                        label="Unité"
+                        fieldKey={[field.fieldKey, 'unit']}
+                        rules={[
+                          {
+                            required: RecipeIngredientsValidator['unit'].required,
+                            message: RecipeIngredientsValidator['unit'].message,
+                          },
+                        ]}
+                      >
+                        <Select placeholder={RecipeIngredientsValidator['unit'].placeholder}>
+                          {this.createUnitOption(field.name)}
+                        </Select>
+                      </Form.Item>
+                      <Button
+                        key={`buttonRemoveIngredientsfield-${field.name}`}
+                        htmlType="button"
+                        type="text"
+                        onClick={() => remove(field.name)}
+                        className="button_remove"
+                      >
+                        <i className="fas fa-trash"></i>
+                      </Button>
+                    </div>
                     <Button
                       key={`buttonRemoveIngredientsfield-${field.name}`}
                       htmlType="button"
                       type="text"
+                      size={'large'}
                       onClick={() => remove(field.name)}
                       className="button_remove"
                     >
                       <i className="fas fa-trash"></i>
                     </Button>
                   </div>
-                  <Button
-                    key={`buttonRemoveIngredientsfield-${field.name}`}
-                    htmlType="button"
-                    type="text"
-                    size={'large'}
-                    onClick={() => remove(field.name)}
-                    className="button_remove"
-                  >
-                    <i className="fas fa-trash"></i>
+                ))}
+                <Form.Item style={{ textAlign: 'right' }}>
+                  <Button type="default" onClick={() => add()}>
+                    Ajouter un ingrédient
                   </Button>
-                </div>
-              ))}
-              <Form.Item style={{ textAlign: 'right' }}>
-                <Button type="default" onClick={() => add()}>
-                  Ajouter un ingrédient
-                </Button>
-              </Form.Item>
-            </>
-          )}
-        </Form.List>
-      </>
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
+        </Panel>
+      </Collapse>
     )
   }
 }

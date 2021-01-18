@@ -6,8 +6,10 @@ div.IngredientsForm {
   border-bottom: 1px solid $greyBorder;
   padding-bottom: 10px;
   padding-top: 10px;
-
-  &-even {
+  &:nth-last-child(2) {
+    border-bottom: 0;
+  }
+  &-odd {
     background-color: $green-100;
   }
 
@@ -18,6 +20,7 @@ div.IngredientsForm {
       display: none;
     }
   }
+
   button {
     display: inline-block;
   }
@@ -30,9 +33,6 @@ div.IngredientsForm {
   }
 
   @media (min-width: 665px) {
-    &:nth-last-child(2) {
-      border-bottom: 0;
-    }
     > div {
       display: flex;
       align-items: center;
@@ -79,8 +79,11 @@ div.IngredientsForm {
 .ingredientForm_head {
   display: flex;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 0;
   h3 {
     margin: 0 15px 0 0;
+  }
+  button {
+    margin-bottom: 8px;
   }
 }

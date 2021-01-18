@@ -7,10 +7,8 @@ import RecipeForm from 'modules/recipe/components/RecipeForm'
 import { postRecipe } from 'modules/recipe/thunks'
 
 const RecipePageAdd = ({ postRecipe }) => {
-  const createRecipe = (data, file) => {
-    console.log('data', data)
-    console.log('file', file)
-    //postRecipe(data)
+  const createRecipe = data => {
+    postRecipe(data)
   }
 
   return (
