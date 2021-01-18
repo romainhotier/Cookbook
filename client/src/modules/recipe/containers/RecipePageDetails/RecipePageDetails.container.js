@@ -2,12 +2,13 @@ import { connect } from 'react-redux'
 import React, { Component } from 'react'
 import { Col, Row, Spin, Dropdown, Carousel, Divider } from 'antd'
 
-import { fetchRecipe } from 'modules/recipe/thunks'
+import { fetchRecipe, deleteRecipe } from 'modules/recipe/thunks'
 import { fetchAllIngredients } from 'modules/ingredient/thunks'
 import { RecipeInformations } from 'modules/recipe/components/RecipeDetails/RecipeInformations.component'
 import { menuActions } from 'modules/recipe/components/RecipeDetails/RecipeMenu.component'
 import { BuildListIngredients } from '../../components/RecipeDetails/BuildListIngredients.component'
 import { EditPortion } from '../../components/RecipeDetails/EditPortion.component'
+import RecipeModalDelete from '../../components/RecipeModalDelete'
 
 import './_RecipePageDetails.scss'
 
@@ -17,6 +18,7 @@ class RecipePageDetails extends Component {
 
     this.state = {
       portionEdited: null,
+      modalDeleteRecipeIsVisible: false,
     }
   }
 
@@ -45,14 +47,28 @@ class RecipePageDetails extends Component {
         portionEdited: 0,
       })
     }
-    this.setState({
+    return this.setState({
       portionEdited: newPortion,
     })
   }
 
+  showModal = () => {
+    return this.setState({
+      modalDeleteRecipeIsVisible: true,
+    })
+  }
+
   render() {
-    const { recipes, match, loadingFetchIngredients, loadingFetchRecipes, allIngredients } = this.props
-    const { portionEdited } = this.state
+    const {
+      recipes,
+      match,
+      loadingFetchIngredients,
+      loadingFetchRecipes,
+      allIngredients,
+      deleteRecipe,
+      history,
+    } = this.props
+    const { portionEdited, modalDeleteRecipeIsVisible } = this.state
     const { slug } = match.params
     const recipe = recipes[slug]
 
@@ -65,15 +81,21 @@ class RecipePageDetails extends Component {
       return <Spin />
     }
 
-    const { title, steps, preparation_time, cooking_time, nb_people, categories, ingredients, files } = recipe
-    console.log('files', files)
+    const { title, steps, preparation_time, cooking_time, nb_people, categories, ingredients, files, _id } = recipe
     return (
       <section className="RecipeDetails">
         <div className="RecipeDetails_actions">
-          <Dropdown.Button overlay={menuActions(slug)}>
+          <Dropdown.Button overlay={menuActions(slug, this.showModal)}>
             <i className="fas fa-play-circle icons"></i> Démarrer la recette
           </Dropdown.Button>
         </div>
+        <RecipeModalDelete
+          deleteRecipe={deleteRecipe}
+          id={_id}
+          isModalVisible={modalDeleteRecipeIsVisible}
+          closeModal={() => this.setState({ modalDeleteRecipeIsVisible: false })}
+          history={history}
+        />
         <Row className="RecipeDetails_header" gutter={16}>
           <Col xs={24} sm={24} md={24} lg={24} xl={12}>
             <Carousel className="RecipeDetails_carousel">
@@ -125,21 +147,29 @@ class RecipePageDetails extends Component {
 
         <Row>
           {/* INGREDIENTS  */}
+
           <Col xs={12} sm={12} md={12} lg={8} xl={8} className="listIngredients">
             <h3>Ingrédients</h3>
-            <EditPortion
-              portion={parseInt(nb_people)}
-              portionEdited={portionEdited}
-              updatePortionEdited={this.updatePortionEdited}
-            />
-            <ul>
-              <BuildListIngredients
-                allIngredients={allIngredients}
-                ingredients={ingredients}
-                portion={parseInt(nb_people)}
-                portionEdited={portionEdited}
-              />
-            </ul>
+            {!ingredients ? (
+              'Aucun ingrédient'
+            ) : (
+              <>
+                <EditPortion
+                  portion={parseInt(nb_people)}
+                  portionEdited={portionEdited}
+                  updatePortionEdited={this.updatePortionEdited}
+                />
+
+                <ul>
+                  <BuildListIngredients
+                    allIngredients={allIngredients}
+                    ingredients={ingredients}
+                    portion={parseInt(nb_people)}
+                    portionEdited={portionEdited}
+                  />
+                </ul>
+              </>
+            )}
           </Col>
 
           {/* ETAPES  */}
@@ -161,6 +191,7 @@ class RecipePageDetails extends Component {
 const mapDispatchToProps = {
   fetchRecipe,
   fetchAllIngredients,
+  deleteRecipe,
 }
 
 const mapStateToProps = ({ recipes, ingredients }) => ({
@@ -168,6 +199,7 @@ const mapStateToProps = ({ recipes, ingredients }) => ({
   loadingFetchRecipes: recipes.loadingFetchRecipes,
   allIngredients: ingredients.content,
   loadingFetchIngredients: ingredients.loadingFetchIngredients,
+  loadingDeleteRecipe: recipes.loading,
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(RecipePageDetails)

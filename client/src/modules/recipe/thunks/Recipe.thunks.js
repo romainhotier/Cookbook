@@ -11,15 +11,12 @@ import {
   postRecipeRequest,
   postRecipeSuccess,
   postRecipeFailed,
-  postFileRecipeRequest,
-  postFileRecipeSuccess,
-  postFileRecipeFailed,
-  deleteFileRecipeRequest,
-  deleteFileRecipeSuccess,
-  deleteFileRecipeFailed,
   putRecipeRequest,
   putRecipeSuccess,
   putRecipeFailed,
+  deleteRecipeRequest,
+  deleteRecipeSuccess,
+  deleteRecipeFailed,
 } from '../actions'
 
 import {
@@ -27,8 +24,7 @@ import {
   fetchRecipeURL,
   createRecipeURL,
   updateRecipeURL,
-  createFileRecipeURL,
-  deleteFileRecipeURL,
+  deleteRecipeURL,
 } from '../api/Recipe.api'
 
 import { codeMsg } from 'constants/codeMsg.constants'
@@ -134,62 +130,22 @@ export const putRecipe = (id, data) => dispatch => {
     })
 }
 
-export const postFileRecipe = (id, data) => dispatch => {
-  dispatch(postFileRecipeRequest())
-  console.log('postFileRecipe')
-  console.log('data', data)
+export const deleteRecipe = id => dispatch => {
+  dispatch(deleteRecipeRequest())
 
-  fetch(createFileRecipeURL(id), {
-    method: 'POST',
-    body: data,
-  })
-    .then(res => {
-      console.log('res', res)
-      return res.json()
-    })
-    .then(response => {
-      console.log('response', response)
-      if (response.codeStatus === 201) {
-        dispatch(postFileRecipeSuccess(response.data))
-        notification['success']({
-          message: 'Image ajoutée !',
-          description: `${get(codeMsg, `${response.codeMsg}`)}`,
-        })
-      } else {
-        dispatch(dispatch(postFileRecipeFailed(response.detail)))
-
-        const errorFormat = get(codeMsg, `${response.codeMsg}.${slugifyResponse(response.detail.msg)}`)
-        notification['error']({
-          message: 'Oooh une erreur',
-          description: `${errorFormat(response.detail.value)}`,
-        })
-      }
-    })
-    .catch(error => {
-      dispatch(postFileRecipeFailed(error))
-    })
-}
-
-export const deleteFileRecipe = path => dispatch => {
-  dispatch(deleteFileRecipeRequest())
-
-  fetch(deleteFileRecipeURL(path), {
+  fetch(deleteRecipeURL(id), {
     method: 'DELETE',
   })
-    .then(res => {
-      console.log('res', res)
-      return res.json()
-    })
+    .then(res => res.json())
     .then(response => {
-      console.log('response', response)
       if (response.codeStatus === 200) {
-        dispatch(deleteFileRecipeSuccess(response.data))
+        dispatch(deleteRecipeSuccess(response.data))
         notification['success']({
           message: 'Image supprimée !',
           description: `${get(codeMsg, `${response.codeMsg}`)}`,
         })
       } else {
-        dispatch(dispatch(deleteFileRecipeFailed(response.detail)))
+        dispatch(dispatch(deleteRecipeFailed(response.detail)))
 
         const errorFormat = get(codeMsg, `${response.codeMsg}.${slugifyResponse(response.detail.msg)}`)
         notification['error']({
@@ -199,6 +155,6 @@ export const deleteFileRecipe = path => dispatch => {
       }
     })
     .catch(error => {
-      dispatch(deleteFileRecipeFailed(error))
+      dispatch(deleteRecipeFailed(error))
     })
 }
