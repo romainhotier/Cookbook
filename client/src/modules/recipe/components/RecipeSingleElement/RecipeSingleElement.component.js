@@ -1,11 +1,14 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { NavLink } from 'react-router-dom'
+
 import Routes from '../../RecipeRoutes.js'
 
 import './_RecipeSingleElement.scss'
 
 const convertMinutes = value => {
-  const hourExiste = Math.round(value / 60, 0)
+  const hourExiste = Math.round(value / 60, 10)
+
   if (hourExiste > 1) {
     const minutes = value % 60
     return `${hourExiste} h ${minutes} min`
@@ -33,7 +36,7 @@ const RecipeSingleElement = ({ recipe }) => {
       </h3>
       <div className="recipeSingleElement_details">
         <span>
-          <i className="far fa-clock"></i> {convertMinutes(preparation_time + cooking_time)}
+          <i className="far fa-clock"></i> {convertMinutes(parseInt(preparation_time) + parseInt(cooking_time))}
         </span>{' '}
         |
         <span>
@@ -42,6 +45,10 @@ const RecipeSingleElement = ({ recipe }) => {
       </div>
     </article>
   )
+}
+
+RecipeSingleElement.propTypes = {
+  recipe: PropTypes.object,
 }
 
 export default RecipeSingleElement
