@@ -1,4 +1,5 @@
 import { handleActions } from 'redux-actions'
+import findKey from 'lodash/findKey'
 
 import {
   getAllRecipesRequest,
@@ -13,10 +14,14 @@ import {
   putRecipeRequest,
   putRecipeSuccess,
   putRecipeFailed,
+  deleteRecipeRequest,
+  deleteRecipeSuccess,
+  deleteRecipeFailed,
 } from './../actions'
 
 const defaultState = {
   content: {},
+  loading: false,
   loadingFetchRecipes: false,
   loadingPostRecipes: false,
   loadingPutRecipes: false,
@@ -157,6 +162,38 @@ const RecipeReducer = handleActions(
       return {
         ...state,
         loadingPutRecipes: false,
+        error: true,
+      }
+    },
+
+    /*
+     ** DELETE RECIPE
+     */
+    [deleteRecipeRequest](state) {
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      }
+    },
+
+    [deleteRecipeSuccess](state, action) {
+      let { content } = state
+
+      const recipeSlug = findKey(content, recipe => recipe._id === action.payload)
+      delete content[recipeSlug]
+
+      return {
+        ...state,
+        content,
+        loading: false,
+      }
+    },
+
+    [deleteRecipeFailed](state) {
+      return {
+        ...state,
+        loading: false,
         error: true,
       }
     },

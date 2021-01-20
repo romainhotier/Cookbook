@@ -1,40 +1,23 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Col, Row } from 'antd'
 
 import RecipeForm from 'modules/recipe/components/RecipeForm'
-import { fetchRecipe, postRecipe, putRecipe } from 'modules/recipe/thunks'
-import { postIngredientsRecipe } from 'modules/ingredient/thunks'
+import { postRecipe } from 'modules/recipe/thunks'
 
-const RecipePageAdd = ({ recipe, postRecipe, fetchRecipe, putRecipe }) => {
-  const [slugRecipe, setSlugRecipe] = useState(undefined)
-
-  useEffect(() => {
-    if (recipe.length > 0) {
-      fetchRecipe(recipe.slug)
-    }
-  }, [fetchRecipe, recipe])
-
+const RecipePageAdd = ({ postRecipe }) => {
   const createRecipe = data => {
-    console.log('data', data)
     postRecipe(data)
-  }
-
-  const updateRecipe = (recipe, ingredientsRecipe) => {
-    console.log('recipe', ingredientsRecipe)
-    //putRecipe(data);
   }
 
   return (
     <Row>
       <Col span={24}>
-        <h1>Ajouter une recette</h1>
+        <h2>Ajouter une recette</h2>
         <RecipeForm
-          createRecipe={createRecipe}
-          updateRecipe={updateRecipe}
-          recipe={recipe}
-          slugRecipe={slugRecipe}
-          setSlugRecipe={setSlugRecipe}
+          sendRecipe={createRecipe}
+          values={{ ingredients: [{}], steps: [{ idFront: 0, description: '' }] }}
         />
       </Col>
     </Row>
@@ -42,15 +25,15 @@ const RecipePageAdd = ({ recipe, postRecipe, fetchRecipe, putRecipe }) => {
 }
 
 const mapDispatchToProps = {
-  fetchRecipe,
   postRecipe,
-  putRecipe,
-  postIngredientsRecipe,
 }
 
-const mapStateToProps = ({ recipes: { content, loadingFetchRecipes } }) => ({
-  recipe: content,
-  loadingFetchRecipes,
+const mapStateToProps = ({ recipes: { loadingPostRecipes } }) => ({
+  loadingPostRecipes,
 })
+
+RecipePageAdd.propTypes = {
+  postRecipe: PropTypes.func,
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(RecipePageAdd)

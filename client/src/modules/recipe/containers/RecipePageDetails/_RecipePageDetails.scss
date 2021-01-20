@@ -1,13 +1,95 @@
-.step {
-  display: flex;
+.RecipeDetails {
+  &_actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
+  &_header {
+    display: flex;
+    justify-content: center;
+    align-items: top;
+    margin-bottom: 20px;
+    h2 {
+      text-align: left;
+      margin-bottom: 15px;
+    }
+  }
+  &_carousel {
+    &_img {
+      display: block;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      height: 400px;
+      width: 100%;
+    }
+  }
+  &_informations {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    border-bottom: 1px solid $greyBorder;
+    padding: 15px 0;
+    .ant-divider.ant-divider-vertical {
+      height: auto;
+    }
+  }
+  &_categories {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    > div {
+      padding: 5px 15px;
+      margin: 0 10px;
+      border: 1px solid $green-600;
+      border-radius: 15px;
+      background-color: $green-300;
+    }
+  }
 
-  &_index {
-    width: 35px;
-    height: 35px;
-    line-height: 35px;
-    text-align: center;
-    border-radius: 50%;
-    margin-right: 20px;
-    background-color: $green-300;
+  h3 {
+    margin-bottom: 20px;
+  }
+  .listIngredients {
+    padding-right: 5%;
+    ul {
+      list-style: none;
+      padding: 0;
+
+      li {
+        img {
+          margin-right: 20px;
+        }
+        line-height: 30px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+
+        font-size: 14px;
+        border-bottom: 1px solid $greyBorder;
+      }
+    }
+  }
+  .step {
+    display: flex;
+    align-items: flex-start;
+    padding-right: 10px;
+    margin-bottom: 30px;
+    &_index {
+      min-width: 35px;
+      min-height: 35px;
+      line-height: 35px;
+      text-align: center;
+      border-radius: 50%;
+      margin-right: 20px;
+      border: 1px solid $green-600;
+      background-color: $green-300;
+    }
+    &_describe {
+      font-size: 14px;
+    }
+  }
+
+  .icons.fas {
+    margin-right: 10px;
   }
 }

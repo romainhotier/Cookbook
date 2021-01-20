@@ -1,0 +1,47 @@
+.RecipeDetails_information {
+  text-align: center;
+  &_icon {
+    font-size: 35px;
+    font-weight: 300;
+    margin-bottom: 15px;
+    color: #333333;
+  }
+  &_label {
+    font-size: 14px;
+    font-weight: 400;
+  }
+  &_value {
+    font-size: 20px;
+    color: $primary;
+    font-weight: 700;
+  }
+}
+
+.RecipeDetails_editPortion {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  button {
+    margin: 0 20px;
+    background-color: $green-200;
+    border: 1px solid $green-500;
+    font-weight: 500;
+    span {
+      font-size: 20px;
+      line-height: 18px;
+    }
+  }
+  .ant-input-affix-wrapper {
+    width: 130px;
+    font-size: 14px;
+  }
+}
+
+.RecipeDetails_menu_button {
+  width: 100%;
+  padding: 0;
+  text-align: left;
+  i {
+    margin-right: 5px;
+  }
+}

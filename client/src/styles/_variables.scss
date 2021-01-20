@@ -3,6 +3,8 @@ $white-600: #f5f6f8;
 
 $black: #333333;
 
+$greyBorder: rgba(0, 0, 0, 0.06);
+
 $grey-50: #f9f9f9;
 $grey-100: #f0f0f0;
 $grey-200: #e6e6e6;
@@ -18,7 +20,7 @@ $green-100: #f6ffed;
 $green-200: #d9f7be;
 $green-300: #b7eb8f;
 $green-400: #95de64;
-$green-500: #73d13d;
+$green-500: #85b72c;
 $green-600: #52c41a;
 $green-700: #389e0d;
 $green-800: #237804;
@@ -34,4 +36,4 @@ $purple-700: #531dab;
 $purple-800: #391085;
 $purple-900: #22075e;
 
-$primary: $purple-500;
+$primary: $green-500;

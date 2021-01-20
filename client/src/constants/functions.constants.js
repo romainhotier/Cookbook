@@ -1,3 +1,7 @@
+import forEach from 'lodash/forEach'
+
+import * as listIconsIngredients from 'ressources/iconsIngredients/Icons'
+
 export const slugify = (str, charUse = '-') => {
   str = str.replace(/^\s+|\s+$/g, '')
 
@@ -24,4 +28,52 @@ export const slugify = (str, charUse = '-') => {
 
 export const slugifyResponse = str => {
   return slugify(str, '_')
+}
+
+export const searchInListIcons = slug => {
+  const icon = listIconsIngredients[`${slug}`]
+
+  if (icon !== undefined) {
+    return icon
+  }
+
+  const data = []
+  forEach(listIconsIngredients, icon => {
+    if (icon.includes(slug)) {
+      data.push(icon)
+    }
+  })
+
+  if (data.length > 0) {
+    return data[0]
+  }
+
+  const slugArray = slug.split('-')
+
+  forEach(listIconsIngredients, icon => {
+    slugArray.filter(word => {
+      if (word.length >= 3 && icon.includes(word)) {
+        data.push(icon)
+      }
+      return ''
+    })
+  })
+
+  if (data.length > 0) {
+    return data.length > 0 ? data[0] : ''
+  }
+}
+
+export const worldConnector = name => {
+  const firstLetter = name.substr(0, 1)
+
+  return firstLetter === 'a' ||
+    firstLetter === 'h' ||
+    firstLetter === 'e' ||
+    firstLetter === 'y' ||
+    firstLetter === 'u' ||
+    firstLetter === 'i' ||
+    firstLetter === 'o'
+    ? `d'${name}`
+    : `de ${name}`
 }

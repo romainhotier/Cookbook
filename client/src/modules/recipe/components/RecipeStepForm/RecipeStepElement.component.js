@@ -3,12 +3,11 @@ import { Input, Button } from 'antd'
 
 const { TextArea } = Input
 
-const RecipeStepElement = ({ id, description, disabled, removeStep, changeDescription }) => {
+const RecipeStepElement = ({ id, description, removeStep, changeDescription }) => {
   return (
     <div className="step_item_content">
-      <TextArea rows={4} value={description} disabled={disabled} onChange={e => changeDescription(e, id)} />
+      <TextArea rows={4} value={description} onChange={e => changeDescription(e, id)} />
       <Button
-        disabled={disabled}
         key={`${id}-button`}
         htmlType="button"
         type="text"

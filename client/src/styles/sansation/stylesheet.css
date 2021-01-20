@@ -1,0 +1,78 @@
+@font-face {
+    font-family: 'Sansation';
+    src: url('SansationBold.eot');
+    src: url('SansationBold.eot?#iefix') format('embedded-opentype'),
+        url('SansationBold.woff2') format('woff2'),
+        url('SansationBold.woff') format('woff'),
+        url('SansationBold.ttf') format('truetype'),
+        url('SansationBold.svg#SansationBold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Sansation';
+    src: url('SansationBoldItalic.eot');
+    src: url('SansationBoldItalic.eot?#iefix') format('embedded-opentype'),
+        url('SansationBoldItalic.woff2') format('woff2'),
+        url('SansationBoldItalic.woff') format('woff'),
+        url('SansationBoldItalic.ttf') format('truetype'),
+        url('SansationBoldItalic.svg#SansationBoldItalic') format('svg');
+    font-weight: bold;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Sansation';
+    src: url('SansationItalic.eot');
+    src: url('SansationItalic.eot?#iefix') format('embedded-opentype'),
+        url('SansationItalic.woff2') format('woff2'),
+        url('SansationItalic.woff') format('woff'),
+        url('SansationItalic.ttf') format('truetype'),
+        url('SansationItalic.svg#SansationItalic') format('svg');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Sansation';
+    src: url('SansationLight.eot');
+    src: url('SansationLight.eot?#iefix') format('embedded-opentype'),
+        url('SansationLight.woff2') format('woff2'),
+        url('SansationLight.woff') format('woff'),
+        url('SansationLight.ttf') format('truetype'),
+        url('SansationLight.svg#SansationLight') format('svg');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Sansation';
+    src: url('SansationRegular.eot');
+    src: url('SansationRegular.eot?#iefix') format('embedded-opentype'),
+        url('SansationRegular.woff2') format('woff2'),
+        url('SansationRegular.woff') format('woff'),
+        url('SansationRegular.ttf') format('truetype'),
+        url('SansationRegular.svg#SansationRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Sansation';
+    src: url('SansationLightItalic.eot');
+    src: url('SansationLightItalic.eot?#iefix') format('embedded-opentype'),
+        url('SansationLightItalic.woff2') format('woff2'),
+        url('SansationLightItalic.woff') format('woff'),
+        url('SansationLightItalic.ttf') format('truetype'),
+        url('SansationLightItalic.svg#SansationLightItalic') format('svg');
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+}
+
