@@ -306,10 +306,10 @@ class Recipe(object):
         for ing in ingredients:
             nutri = Ingredient().get_nutriments(_id=ing["_id"])
             if ing["unit"] == "portion":
-                ing_calories = ((nutri["calories"] / 100) * nutri["portion"]) * ing["quantity"]
+                ing_calories = ((float(nutri["calories"]) / 100) * float(nutri["portion"])) * float(ing["quantity"])
                 recipe_calories += ing_calories
             else:
-                ing_calories = (nutri["calories"] / 100) * ing["quantity"]
+                ing_calories = (float(nutri["calories"]) / 100) * float(ing["quantity"])
                 recipe_calories += ing_calories
         recipe["calories"] = recipe_calories
         return self
