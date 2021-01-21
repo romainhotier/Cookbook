@@ -39,7 +39,7 @@ class PathExplorer(object):
         sys = platform.system()
         usr = os.getlogin()
         if usr == "rhr" and sys == "Linux":  # Desktop pc for dev
-            return "/home/rhr/Workspace/Cookbook/Flask/_files/"
+            return "/home/rhr/Workspace/Python/Cookbook/Flask/_files/"
         elif usr == "ubuntu" and sys == "Linux":  # Raspberry prod
             return "/home/ubuntu/Workspace/Storage/cookbook/"
         # elif usr == "xxx" and sys == "Darwin":  # Mac pc for dev
