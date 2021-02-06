@@ -1,5 +1,7 @@
-import { connect } from 'react-redux'
 import React, { Component } from 'react'
+
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
 import { Row, Col } from 'antd'
 
 import { fetchAllRecipe } from '../../thunks'
@@ -37,5 +39,11 @@ const mapDispatchToProps = {
 }
 
 const mapStateToProps = ({ recipes: { content, loadingFetchRecipes } }) => ({ recipes: content, loadingFetchRecipes })
+
+RecipePageList.propTypes = {
+  fetchAllRecipe: PropTypes.func,
+  recipes: PropTypes.array,
+  loadingFetchRecipes: PropTypes.bool,
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(RecipePageList)

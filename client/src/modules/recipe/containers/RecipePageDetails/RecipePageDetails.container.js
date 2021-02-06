@@ -1,6 +1,6 @@
-import { connect } from 'react-redux'
 import React, { Component } from 'react'
-import { Col, Row, Spin, Dropdown, Carousel, Divider } from 'antd'
+import { connect } from 'react-redux'
+import { Col, Row, Spin, Dropdown, Divider } from 'antd'
 
 import { fetchRecipe, deleteRecipe } from 'modules/recipe/thunks'
 import { fetchAllIngredients } from 'modules/ingredient/thunks'
@@ -8,6 +8,7 @@ import { RecipeInformations } from 'modules/recipe/components/RecipeDetails/Reci
 import { menuActions } from 'modules/recipe/components/RecipeDetails/RecipeMenu.component'
 import { BuildListIngredients } from '../../components/RecipeDetails/BuildListIngredients.component'
 import { EditPortion } from '../../components/RecipeDetails/EditPortion.component'
+import Carousel from 'components/Carousel'
 import RecipeModalDelete from '../../components/RecipeModalDelete'
 
 import './_RecipePageDetails.scss'
@@ -98,18 +99,7 @@ class RecipePageDetails extends Component {
         />
         <Row className="RecipeDetails_header" gutter={16}>
           <Col xs={24} sm={24} md={24} lg={24} xl={12}>
-            <Carousel className="RecipeDetails_carousel">
-              {files &&
-                files.map((image, index) => (
-                  <div>
-                    <div
-                      className="RecipeDetails_carousel_img"
-                      style={{ backgroundImage: `url(${process.env.REACT_APP_IMAGES_SERVER}/${image})` }}
-                      key={`img-${index}`}
-                    />
-                  </div>
-                ))}
-            </Carousel>
+            <Carousel files={files} className={'RecipeDetails_carousel'} height={'400px'} />
           </Col>
           <Col xs={24} sm={24} md={24} lg={24} xl={12}>
             <h2>{title}</h2>
