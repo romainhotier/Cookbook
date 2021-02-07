@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 
-from app import utils
+from app import utils, backend
 from app.ingredient import Ingredient
 from app.recipe import Recipe
 import app.ingredient.factory as factory
@@ -304,4 +304,5 @@ def api_handler_url_not_found(err):
     Any
         Server response.
     """
-    return utils.ResponseMaker().return_response(data=err, api=apis.name, http_code=404)
+    return backend.send_static_file('index.html')
+    #return utils.ResponseMaker().return_response(data=err, api=apis.name, http_code=404)

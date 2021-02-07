@@ -123,7 +123,8 @@ def back_handler_url_not_found(err):
     Any
         Server response.
     """
-    return utils.ResponseMaker().return_response(data=err.description, api="cookbook", http_code=404)
+    return backend.send_static_file('index.html')
+    #return utils.ResponseMaker().return_response(data=err.description, api="cookbook", http_code=404)
 
 
 @backend.errorhandler(405)
