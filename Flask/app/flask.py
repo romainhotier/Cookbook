@@ -10,7 +10,7 @@ from app import utils
 import os
 
 """ flask and CORS options"""
-backend = Flask(__name__)
+backend = Flask(__name__, static_folder='../../client/build', static_url_path='/')
 CORS(backend)
 
 """ config """
@@ -50,10 +50,11 @@ def get_index():
     #return render_template("index.html")
     #return send_from_directory(backend.static_folder, 'index.html')
     #return send_from_directory(directory="/home/rhr/Workspace/Python/Cookbook/client/build/", filename='index.html')
-    current_path = os.getcwd()
-    p = current_path.replace('Flask', '/client/build')
-    print(p)
-    return send_from_directory(directory=p, filename='index.html')
+    # current_path = os.getcwd()
+    # p = current_path.replace('Flask', '/client/build')
+    # print(p)
+    return backend.send_static_file('index.html')
+    #return send_from_directory(directory=p, filename='index.html')
     #return utils.ResponseMaker().return_response(data="tata", api="cookbook", http_code=200)
 
 
