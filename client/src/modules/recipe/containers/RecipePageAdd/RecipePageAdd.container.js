@@ -24,9 +24,9 @@ const RecipePageAdd = ({ postRecipe }) => {
   )
 }
 
-const mapDispatchToProps = {
-  postRecipe,
-}
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  postRecipe: newRecipe => dispatch(postRecipe(newRecipe, ownProps)),
+})
 
 const mapStateToProps = ({ recipes: { loadingPostRecipes } }) => ({
   loadingPostRecipes,

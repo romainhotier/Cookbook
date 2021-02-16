@@ -1,21 +1,23 @@
-div.IngredientsForm {
+div.ingredientsForm {
   display: flex;
   align-items: center;
   flex-direction: row;
   justify-content: space-between;
-  border-bottom: 1px solid $greyBorder;
+  border-bottom: 1px solid var(--grey-border);
   padding-bottom: 10px;
   padding-top: 10px;
+  padding-left: 15px;
   &:nth-last-child(2) {
     border-bottom: 0;
   }
+
   &-odd {
-    background-color: $green-100;
+    background-color: var(--background-secondary);
   }
 
-  > div {
+  &_row {
     width: 80%;
-    border-right: 1px solid $greyBorder;
+    border-right: 1px solid var(--grey-border);
     button {
       display: none;
     }
@@ -33,19 +35,21 @@ div.IngredientsForm {
   }
 
   @media (min-width: 665px) {
-    > div {
+    &_row {
       display: flex;
       align-items: center;
       width: 100%;
       border-right: 0;
-      button {
+      .button_remove {
         display: inline-block;
-        margin-top: 10px;
+        margin-top: 15px;
       }
     }
-    button {
+
+    button:not(.ingredientsForm_row) {
       display: none;
     }
+
     div.ant-row.ant-form-item {
       margin-right: 8px;
       flex-direction: column;
@@ -70,12 +74,17 @@ div.IngredientsForm {
       width: 30%;
     }
   }
+
+  .button_remove {
+    color: var(--button-color-default);
+  }
 }
 
-.button_remove {
-  color: $black;
+.button_add {
+  margin-top: 15px;
 }
 
+// Panel head : | Ingredients [+]   v |
 .ingredientForm_head {
   display: flex;
   align-items: center;

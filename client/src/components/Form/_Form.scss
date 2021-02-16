@@ -1,3 +1,9 @@
+.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector,
+.ant-select-dropdown,
+.ant-select-borderless .ant-select-selector {
+  box-shadow: none !important;
+}
+
 .ant-checkbox-group.checkboxWithImage {
   display: flex;
   width: 100%;
@@ -7,7 +13,7 @@
   .ant-checkbox-wrapper {
     &.iconCheckbox {
       display: inline-block;
-      border: 1px solid grey;
+      border: 1px solid var(--grey-border);
       padding: 10px 0;
       border-radius: 15px;
       text-align: center;
@@ -25,8 +31,9 @@
       }
 
       &.ant-checkbox-wrapper-checked {
-        background-color: $green-300;
-        border: 1px solid $green-500;
+        background-color: var(--green-300);
+        border: 1px solid var(--green-500);
+        color: var(--color-categories);
       }
     }
   }

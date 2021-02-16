@@ -19,11 +19,20 @@
       display: inline-block;
       font-size: 14px;
       padding: 0px 30px;
-      background-color: rgba(255, 255, 255, 0.8);
+      background-color: var(--white-100);
       line-height: 35px;
+      color: var(--color-categories);
       &::first-letter {
         text-transform: uppercase;
       }
+    }
+  }
+
+  &_categories.RecipeDetails_categories {
+    font-size: 11px;
+    .categoryTag {
+      padding: 5px 10px;
+      margin: 0 5px;
     }
   }
 

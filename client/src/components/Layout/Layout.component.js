@@ -2,6 +2,7 @@ import React from 'react'
 import { Row, Col } from 'antd'
 import { NavLink } from 'react-router-dom'
 
+import SwitchTheme from 'components/SwitchTheme'
 import RecipeRouter from 'modules/recipe/RecipeRouter'
 import { Routes as RecipeRoutes } from 'modules/recipe/RecipeRoutes'
 import IngredientRouter from 'modules/ingredient/IngredientRouter'
@@ -17,7 +18,7 @@ const Layout = () => {
         sm={{ span: 24, offset: 0 }}
         md={{ span: 24, offset: 0 }}
         lg={{ span: 24, offset: 0 }}
-        xl={{ span: 20, offset: 2 }}
+        xl={{ span: 24, offset: 0 }}
       >
         <div className="layout">
           <nav className="layout_menu">
@@ -35,6 +36,7 @@ const Layout = () => {
                 Liste des ingrédients
               </NavLink>
             </div>
+            <SwitchTheme />
           </nav>
           <main className="layout_content">
             {RecipeRouter}

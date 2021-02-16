@@ -5,6 +5,7 @@ import { Provider } from 'react-redux'
 
 import * as serviceWorker from './serviceWorker.js'
 
+import { ThemeProvider } from './context/Theme.context.js'
 import Layout from './components/Layout'
 import store from './store.js'
 
@@ -14,7 +15,9 @@ import './styles/core.scss'
 ReactDOM.render(
   <Provider store={store}>
     <Router>
-      <Layout />
+      <ThemeProvider localStorage={window.localStorage.getItem('theme') || 'light'}>
+        <Layout />
+      </ThemeProvider>
     </Router>
   </Provider>,
   document.getElementById('root')

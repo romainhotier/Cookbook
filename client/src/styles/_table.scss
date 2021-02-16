@@ -1,0 +1,15 @@
+.ant-table {
+  background-color: var(--table-background-content);
+  color: var(--color-text);
+  .ant-table-thead > tr > th {
+    background-color: var(--table-background-header);
+    color: var(--color-text);
+  }
+  .ant-table-tbody {
+    tr:hover {
+      td {
+        background-color: var(--table-background-header);
+      }
+    }
+  }
+}
