@@ -36,7 +36,9 @@ const Layout = () => {
                 Liste des ingrédients
               </NavLink>
             </div>
-            <SwitchTheme />
+            <div className="layout_darkmode">
+              <SwitchTheme />
+            </div>
           </nav>
           <main className="layout_content">
             {RecipeRouter}

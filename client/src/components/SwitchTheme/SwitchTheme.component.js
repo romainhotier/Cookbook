@@ -8,8 +8,13 @@ const SwitchTheme = () => {
     <ThemeContext.Consumer>
       {({ theme, setTheme }) => {
         const checked = theme === 'light' ? false : true
-
-        return <Switch defaultChecked onChange={setTheme} checked={checked} />
+        return (
+          <>
+            <i class="fas fa-sun"></i>
+            <Switch defaultChecked onChange={setTheme} checked={checked} />
+            <i class="fas fa-moon"></i>
+          </>
+        )
       }}
     </ThemeContext.Consumer>
   )

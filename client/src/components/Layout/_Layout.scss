@@ -28,4 +28,13 @@
     padding: 80px 15px 15px;
     min-height: 100vh;
   }
+  &_darkmode {
+    position: fixed;
+    top: 15px;
+    right: 0;
+    display: flex;
+    i {
+      padding: 4px 10px;
+    }
+  }
 }
