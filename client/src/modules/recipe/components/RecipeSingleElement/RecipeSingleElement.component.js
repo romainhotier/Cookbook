@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { NavLink } from 'react-router-dom'
 
 import Routes from '../../RecipeRoutes.js'
+import CategoryTag from 'components/CategoryTag'
 
 import './_RecipeSingleElement.scss'
 
@@ -17,7 +18,7 @@ const convertMinutes = value => {
 }
 
 const RecipeSingleElement = ({ recipe }) => {
-  const { title, categories, preparation_time, cooking_time, nb_people, slug, files = [] } = recipe
+  const { title, categories, preparation_time, cooking_time, nb_people, calories, slug, files = [] } = recipe
 
   return (
     <article className="recipeSingleElement">
@@ -40,8 +41,14 @@ const RecipeSingleElement = ({ recipe }) => {
         </span>{' '}
         |
         <span>
-          <i className="far fa-user"></i> {nb_people}
+          <i className="far fa-list-alt"></i> {Math.round(calories / nb_people, 0)} cal
         </span>
+      </div>
+
+      <div className="RecipeDetails_categories recipeSingleElement_categories">
+        {categories.map(category => (
+          <CategoryTag key={`key-${category}`} category={category} />
+        ))}
       </div>
     </article>
   )
