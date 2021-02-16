@@ -8,8 +8,9 @@ import { RecipeInformations } from 'modules/recipe/components/RecipeDetails/Reci
 import { menuActions } from 'modules/recipe/components/RecipeDetails/RecipeMenu.component'
 import { BuildListIngredients } from '../../components/RecipeDetails/BuildListIngredients.component'
 import { EditPortion } from '../../components/RecipeDetails/EditPortion.component'
-import Carousel from 'components/Carousel'
 import RecipeModalDelete from '../../components/RecipeModalDelete'
+import Carousel from 'components/Carousel'
+import CategoryTag from 'components/CategoryTag'
 
 import './_RecipePageDetails.scss'
 
@@ -82,7 +83,21 @@ class RecipePageDetails extends Component {
       return <Spin />
     }
 
-    const { title, steps, preparation_time, cooking_time, nb_people, categories, ingredients, files, _id } = recipe
+    const {
+      title,
+      steps,
+      preparation_time,
+      cooking_time,
+      nb_people,
+      categories,
+      ingredients,
+      files,
+      _id,
+      calories,
+    } = recipe
+
+    const caloriesForOnePortion = Math.round(calories / nb_people, 2)
+
     return (
       <section className="RecipeDetails">
         <div className="RecipeDetails_actions">
@@ -123,12 +138,16 @@ class RecipePageDetails extends Component {
                 ''
               )}
 
-              {nb_people ? <RecipeInformations label="Nombre de part" value={`${nb_people}`} icon="portion" /> : ''}
+              {nb_people ? (
+                <RecipeInformations label="Calories par portions" value={`${caloriesForOnePortion}`} icon="portion" />
+              ) : (
+                ''
+              )}
             </div>
             {categories && (
               <div className="RecipeDetails_categories">
                 {categories.map(category => (
-                  <div key={category}>{category}</div>
+                  <CategoryTag key={`key-${category}`} category={category} />
                 ))}
               </div>
             )}
