@@ -126,10 +126,11 @@ class RecipeIngredientsForm extends Component {
               <>
                 {fields.map((field, index) => (
                   <div
-                    className={`IngredientsForm IngredientsForm-${index % 2 ? 'odd' : 'even'}`}
-                    key={`IngredientsForm-${field.key}`}
+                    className={`ingredientsForm ingredientsForm-${index % 2 ? 'odd' : 'even'}`}
+                    key={`ingredientsForm-${field.key}`}
                   >
-                    <div>
+                    <div className={'ingredientsForm_row'}>
+                      {/* Name */}
                       <Form.Item
                         {...field}
                         key={`fieldName-${field.key}`}
@@ -156,6 +157,7 @@ class RecipeIngredientsForm extends Component {
                           {options}
                         </Select>
                       </Form.Item>
+                      {/* Quantity */}
                       <Form.Item
                         {...field}
                         className="quantity-form"
@@ -173,6 +175,7 @@ class RecipeIngredientsForm extends Component {
                         <Input placeholder={RecipeIngredientsValidator['quantity'].placeholder} />
                       </Form.Item>
 
+                      {/* Unity */}
                       <Form.Item
                         {...field}
                         key={`fieldunit-${field.key}`}
@@ -190,12 +193,14 @@ class RecipeIngredientsForm extends Component {
                           {this.createUnitOption(field.name)}
                         </Select>
                       </Form.Item>
+
+                      {/* Button */}
                       <Button
                         key={`buttonRemoveIngredientsfield-${field.name}`}
                         htmlType="button"
                         type="text"
                         onClick={() => remove(field.name)}
-                        className="button_remove"
+                        className="ingredientsForm_row button_remove"
                       >
                         <i className="fas fa-trash"></i>
                       </Button>
@@ -206,14 +211,14 @@ class RecipeIngredientsForm extends Component {
                       type="text"
                       size={'large'}
                       onClick={() => remove(field.name)}
-                      className="button_remove"
+                      className="ingredientsForm button_remove"
                     >
                       <i className="fas fa-trash"></i>
                     </Button>
                   </div>
                 ))}
                 <Form.Item style={{ textAlign: 'right' }}>
-                  <Button type="default" onClick={() => add()}>
+                  <Button className="ingredientsForm button_add" type="default" onClick={() => add()}>
                     Ajouter un ingrédient
                   </Button>
                 </Form.Item>

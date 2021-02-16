@@ -1,27 +1,20 @@
 .RecipeIngredientsForm {
-  border-right: 1px solid $greyBorder;
+  border-right: 1px solid var(--grey-border);
 }
 
 div.FormRecipe {
   &_collapse {
     border: 0;
     padding: 0;
+    &.ant-collapse {
+      border-radius: 0;
+      background-color: var(--background-primary);
+    }
   }
   &_panel {
     &.ant-collapse-item {
       border: 0;
     }
     padding: 0;
-    .ant-collapse-header[role='button'] {
-      background-color: $white;
-      border: 0;
-      padding-left: 0;
-    }
-    .ant-collapse-content {
-      border: 0;
-      .ant-collapse-content-box {
-        padding: 0;
-      }
-    }
   }
 }

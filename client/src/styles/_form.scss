@@ -1,0 +1,39 @@
+.ant-form {
+  label {
+    color: var(--color-text);
+  }
+  .ant-form-item-label {
+    > label {
+      color: var(--color-text);
+      &.ant-form-item-required::before {
+        position: absolute;
+        right: -15px;
+      }
+    }
+  }
+
+  input,
+  .ant-form-item-has-error .ant-input,
+  .ant-form-item-has-error .ant-input-affix-wrapper,
+  .ant-form-item-has-error .ant-input:hover,
+  .ant-form-item-has-error .ant-input-affix-wrapper:hover,
+  textarea,
+  .ant-select .ant-select-selector,
+  .ant-input-affix-wrapper {
+    background-color: transparent;
+    color: var(--color-text);
+  }
+
+  .ant-select-dropdown,
+  .ant-select-dropdown-empty,
+  .ant-select-selector,
+  .ant-select-focused,
+  .ant-select-dropdown .ant-select-dropdown-empty {
+    background-color: var(--background-primary);
+    box-shadow: 0;
+  }
+
+  .ant-select-arrow {
+    color: var(--color-text);
+  }
+}

@@ -12,8 +12,8 @@
         li {
           width: 20px;
           height: 20px;
-          background-color: $black;
-          border: 1px solid $greyBorder;
+          background-color: var(--black);
+          border: 1px solid var(--grey-border);
           button {
             width: 20px;
             height: 20px;
@@ -24,7 +24,7 @@
         li.slick-active {
           width: 20px;
           button {
-            background-color: $primary;
+            background-color: var(--primary);
           }
         }
       }

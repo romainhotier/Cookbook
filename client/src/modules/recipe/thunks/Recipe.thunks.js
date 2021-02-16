@@ -27,6 +27,7 @@ import {
   deleteRecipeURL,
 } from '../api/Recipe.api'
 
+import Routes from '../RecipeRoutes'
 import { codeMsg } from 'constants/codeMsg.constants'
 import { slugifyResponse } from 'constants/functions.constants'
 
@@ -64,7 +65,7 @@ export const fetchRecipe = slug => dispatch => {
     })
 }
 
-export const postRecipe = data => dispatch => {
+export const postRecipe = (data, ownProps) => dispatch => {
   dispatch(postRecipeRequest())
 
   fetch(createRecipeURL(), {
@@ -82,6 +83,7 @@ export const postRecipe = data => dispatch => {
           message: 'Recette créée !',
           description: `${get(codeMsg, `${response.codeMsg}`)}`,
         })
+        ownProps.history.push(Routes.recipeEdit(response.data.slug))
       } else {
         dispatch(dispatch(postRecipeFailed(response.detail)))
 

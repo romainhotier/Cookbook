@@ -16,7 +16,7 @@ export const EditPortion = ({ portion = 0, portionEdited, updatePortionEdited })
 
   return (
     <div className="RecipeDetails_editPortion">
-      <Button shape="circle" onClick={() => addOrRemoveANumber(-1)}>
+      <Button type="primary" shape="circle" onClick={() => addOrRemoveANumber(-1)}>
         -
       </Button>
       <Input
@@ -25,7 +25,7 @@ export const EditPortion = ({ portion = 0, portionEdited, updatePortionEdited })
         suffix={suffix}
         onChange={e => updatePortionEdited(parseInt(e.target.value))}
       />
-      <Button shape="circle" onClick={() => addOrRemoveANumber(+1)}>
+      <Button type="primary" shape="circle" onClick={() => addOrRemoveANumber(+1)}>
         +
       </Button>
     </div>

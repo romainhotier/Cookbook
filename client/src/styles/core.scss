@@ -9,8 +9,9 @@ body {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  background-color: $white-600;
+  background-color: var(--background-primary);
   font-family: 'Sansation';
+  color: var(--color-text);
 }
 
 a {
@@ -18,20 +19,20 @@ a {
 }
 
 h1 {
-  color: $primary;
+  color: var(--primary);
 }
 
 h2 {
   font-size: 50px;
   line-height: 50px;
-  color: $primary;
+  color: var(--primary);
   font-weight: 600;
 }
 
 h3 {
   font-size: 25px;
   font-weight: 600;
-  color: $primary;
+  color: var(--primary);
   text-transform: uppercase;
 }
 
@@ -42,15 +43,8 @@ h3 {
   }
 }
 
-.ant-collapse-header {
-  h3 {
-    margin-bottom: 5px;
-  }
-  .anticon.anticon-right.ant-collapse-arrow {
-    width: 33px;
-    height: 33px;
-    font-size: 20px;
-    line-height: 38px;
-    color: $primary;
-  }
-}
+@import './collapse';
+@import './form';
+@import './buttons';
+@import './table';
+@import './modal';

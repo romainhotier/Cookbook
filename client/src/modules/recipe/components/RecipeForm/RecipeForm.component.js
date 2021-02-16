@@ -128,7 +128,7 @@ const RecipeForm = ({ sendRecipe, values, addFileInRecipe, deleteFileInRecipe })
           </Col>
 
           {/* Steps */}
-          <Col lg={12} md={12} sm={24} xs={24} style={{ borderLeft: '1px solid $greyBorder' }}>
+          <Col lg={12} md={12} sm={24} xs={24} style={{ borderLeft: '1px solid var(--grey-border)' }}>
             <RecipeStepForm listSteps={listSteps} setListSteps={setListSteps} />
           </Col>
         </Row>

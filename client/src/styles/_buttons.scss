@@ -1,0 +1,18 @@
+button.ant-btn {
+  &.ant-btn-default {
+    background-color: var(--button-background-default);
+    color: var(--button-color-default);
+    &:hover {
+      background-color: var(--button-background-default-hover);
+      color: var(--primary);
+    }
+  }
+  &.ant-btn-primary {
+    background-color: var(--button-background-primary);
+    color: var(--button-color-primary);
+    &:hover {
+      background-color: var(--button-background-primary-hover);
+      color: var(--button-color-primary);
+    }
+  }
+}

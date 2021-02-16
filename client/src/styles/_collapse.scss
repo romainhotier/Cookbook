@@ -1,0 +1,30 @@
+.ant-collapse-header {
+  h3 {
+    margin-bottom: 5px;
+  }
+  .anticon.anticon-right.ant-collapse-arrow {
+    width: 33px;
+    height: 33px;
+    font-size: 20px;
+    line-height: 38px;
+    color: var(--primary);
+  }
+}
+
+.ant-collapse {
+  .ant-collapse-header[role='button'] {
+    background-color: var(--background-primary);
+    border: 0;
+    padding-left: 0;
+    border-radius: 0;
+  }
+  .ant-collapse-content {
+    border: 0;
+    border-radius: 0;
+    background-color: var(--background-primary);
+    .ant-collapse-content-box {
+      padding: 0;
+      border-radius: 0;
+    }
+  }
+}

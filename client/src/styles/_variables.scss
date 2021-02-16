@@ -37,3 +37,86 @@ $purple-800: #391085;
 $purple-900: #22075e;
 
 $primary: $green-500;
+
+:root,
+[data-theme='light'] {
+  --green-100: #f6ffed;
+  --green-200: #d9f7be;
+  --green-300: #b7eb8f;
+  --green-400: #95de64;
+  --green-500: #85b72c;
+  --green-600: #52c41a;
+  --green-700: #389e0d;
+  --green-800: #237804;
+  --green-900: #135200;
+  --white-100: rgba(255, 255, 255, 0.8);
+  --primary: #85b72c;
+  --grey-border: rgba(0, 0, 0, 0.06);
+  --black: #333333;
+
+  --background-primary: #ffffff;
+  --background-secondary: #d9f7be;
+  --background-ternary: #f9f9f9;
+
+  --color-text: #333333;
+  --color-categories: #333333;
+  --color-steps: #333333;
+
+  --button-background-primary: var(--primary);
+  --button-background-primary-hover: var(--primary);
+  --button-color-primary: #ffffff;
+  --button-background-default: var(--background-primary);
+  --button-background-default-hover: var(--background-secondary);
+  --button-color-default: var(--color-text);
+
+  --table-background-content: var(--background-primary);
+  --table-background-header: var(--background-ternary);
+
+  --white: #ffffff;
+}
+
+[data-theme='dark'] {
+  --green-100: #135200;
+  --green-200: #237804;
+  --green-300: #389e0d;
+  --green-400: #52c41a;
+  --green-500: #85b72c;
+  --green-600: #95de64;
+  --green-700: #b7eb8f;
+  --green-800: #d9f7be;
+  --green-900: #f6ffed;
+  --primary: #85b72c;
+  --grey-border: rgba(255, 255, 255, 0.06);
+  --black: #ffffff;
+
+  --background-primary: #202125;
+  --background-secondary: #1b1b1d;
+  --background-ternary: #1c1d21;
+
+  --color-text: #ffffff;
+  --color-categories: #333333;
+  --color-steps: #333333;
+
+  --button-background-primary: var(--green-500);
+  --button-background-primary-hover: var(--green-600);
+  --button-color-primary: #333333;
+  --button-background-default: var(--background-primary);
+  --button-background-default-hover: var(--background-primary);
+  --button-color-default: #ffffff;
+
+  --table-background-content: var(--background-primary);
+  --table-background-header: var(--background-ternary);
+
+  --white: #333333;
+}
+
+// 50 #E4E4E5
+// 100 #BCBCBE
+// 200 #909092
+// 300 #636466
+// 400 #414246
+// 500 #202125
+// 600 #1C1D21
+// 700 #18181B
+// 800 #131416
+// 900 #0B0B0D
