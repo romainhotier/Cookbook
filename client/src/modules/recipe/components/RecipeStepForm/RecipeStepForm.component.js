@@ -56,7 +56,7 @@ const RecipeStepForm = ({ listSteps, setListSteps }) => {
                 {map(listSteps, ({ idFront, description }, index) => (
                   <article className="step_item" key={`${index}-step`}>
                     <Draggable key={`Draggable-${idFront}`} draggableId={`${idFront}-step`} index={index}>
-                      {(draggableProvided, draggableSnapshot) => (
+                      {draggableProvided => (
                         <div
                           ref={draggableProvided.innerRef}
                           {...draggableProvided.draggableProps}

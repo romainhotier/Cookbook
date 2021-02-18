@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { Row, Col } from 'antd'
@@ -7,6 +6,7 @@ import { Row, Col } from 'antd'
 import { PUBLISH_STATUS } from 'constants/data.constants'
 import { fetchAllRecipe } from '../../thunks'
 import RecipeSingleElement from '../../components/RecipeSingleElement'
+import Loader from 'components/Loader'
 
 import './_RecipePageList.scss'
 
@@ -18,7 +18,7 @@ class RecipePageList extends Component {
   render() {
     const { loadingFetchRecipes, recipes } = this.props
     if (loadingFetchRecipes || Object.entries(recipes).length === 0) {
-      return 'Patientez'
+      return <Loader />
     }
 
     return (

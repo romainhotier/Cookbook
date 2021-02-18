@@ -22,6 +22,10 @@
   .ant-input-affix-wrapper {
     background-color: transparent;
     color: var(--color-text);
+    &::placeholder {
+      color: var(--color-placeholder);
+      font-style: italic;
+    }
   }
 
   .ant-select-dropdown,

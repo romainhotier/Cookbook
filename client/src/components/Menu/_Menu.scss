@@ -1,0 +1,77 @@
+// Desktop
+.layout {
+  &_menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    background-color: var(--background-secondary);
+
+    padding: 10px;
+    z-index: 10;
+    &_items {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      margin-left: 50px;
+      a {
+        margin-left: 50px;
+        &.active {
+          color: var(--primary);
+        }
+      }
+    }
+    h1 {
+      margin-bottom: 0;
+    }
+  }
+  &_content {
+    background-color: var(--background-primary);
+    padding: 80px 15px 15px;
+    min-height: 100vh;
+  }
+  &_darkmode {
+    position: fixed;
+    top: 15px;
+    right: 0;
+    display: flex;
+    i {
+      padding: 4px 10px;
+    }
+  }
+}
+
+// Mobile
+.ant-drawer-wrapper-body {
+  background-color: var(--background-drawer);
+
+  .ant-drawer-header {
+    background-color: var(--background-drawer);
+    .ant-drawer-title {
+      color: var(--primary);
+    }
+  }
+  .ant-drawer-body {
+    padding: 0;
+  }
+  .layout_menu_items {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    align-items: flex-start;
+    a {
+      margin: 0;
+      display: block;
+      width: 100%;
+      padding: 10px 0 10px 20px;
+      border-bottom: 1px solid var(--grey-border);
+      &.active,
+      &:hover {
+        background-color: var(--primary);
+        color: var(--background-drawer);
+      }
+    }
+  }
+}

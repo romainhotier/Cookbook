@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Col, Row, Spin, Dropdown, Divider } from 'antd'
+import { Col, Row, Dropdown, Divider } from 'antd'
 
 import { fetchRecipe, deleteRecipe } from 'modules/recipe/thunks'
 import { fetchAllIngredients } from 'modules/ingredient/thunks'
@@ -11,6 +11,7 @@ import { EditPortion } from '../../components/RecipeDetails/EditPortion.componen
 import RecipeModalDelete from '../../components/RecipeModalDelete'
 import Carousel from 'components/Carousel'
 import CategoryTag from 'components/CategoryTag'
+import Loader from 'components/Loader'
 
 import './_RecipePageDetails.scss'
 
@@ -80,7 +81,7 @@ class RecipePageDetails extends Component {
       loadingFetchRecipes ||
       Object.keys(allIngredients).length === 0
     ) {
-      return <Spin />
+      return <Loader />
     }
 
     const {

@@ -10,9 +10,9 @@ const SwitchTheme = () => {
         const checked = theme === 'light' ? false : true
         return (
           <>
-            <i class="fas fa-sun"></i>
+            <i className="fas fa-sun"></i>
             <Switch defaultChecked onChange={setTheme} checked={checked} />
-            <i class="fas fa-moon"></i>
+            <i className="fas fa-moon"></i>
           </>
         )
       }}

@@ -1,12 +1,10 @@
 import React from 'react'
 import { Row, Col } from 'antd'
-import { NavLink } from 'react-router-dom'
 
-import SwitchTheme from 'components/SwitchTheme'
 import RecipeRouter from 'modules/recipe/RecipeRouter'
-import { Routes as RecipeRoutes } from 'modules/recipe/RecipeRoutes'
 import IngredientRouter from 'modules/ingredient/IngredientRouter'
-import { Routes as IngredientRoutes } from 'modules/ingredient/IngredientRoutes'
+import { Menu } from 'components/Menu/Menu.component'
+import { MobileMenu } from 'components/Menu/MobileMenu.component'
 
 import './_Layout.scss'
 
@@ -21,25 +19,8 @@ const Layout = () => {
         xl={{ span: 24, offset: 0 }}
       >
         <div className="layout">
-          <nav className="layout_menu">
-            <div className="layout_logo">
-              <h1>Cook</h1>
-            </div>
-            <div className="layout_menu_items">
-              <NavLink to={RecipeRoutes.recipe()} exact>
-                Liste des recettes
-              </NavLink>
-              <NavLink to={RecipeRoutes.recipeAdd()} exact>
-                Ajouter une recette
-              </NavLink>
-              <NavLink to={IngredientRoutes.ingredient()} exact>
-                Liste des ingrédients
-              </NavLink>
-            </div>
-            <div className="layout_darkmode">
-              <SwitchTheme />
-            </div>
-          </nav>
+          <Menu className={'layout_desktopMenu'} />
+          <MobileMenu className={'layout_mobileMenu'} />
           <main className="layout_content">
             {RecipeRouter}
             {IngredientRouter}
