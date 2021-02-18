@@ -36,11 +36,9 @@ h3 {
   text-transform: uppercase;
 }
 
-.page {
-  &_loader {
-    text-align: center;
-    margin-top: 100px;
-  }
+.page_loader {
+  text-align: center;
+  margin-top: 100px;
 }
 
 @import './collapse';

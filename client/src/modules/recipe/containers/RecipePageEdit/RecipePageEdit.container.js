@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { Col, Row, Spin } from 'antd'
+import { Col, Row } from 'antd'
 import omit from 'lodash/omit'
 
 import RecipeForm from 'modules/recipe/components/RecipeForm'
 import { putRecipe, fetchRecipe, postFileRecipe, deleteFileRecipe } from 'modules/recipe/thunks'
+import Loader from 'components/Loader'
 
 const RecipePageEdit = ({ recipes, putRecipe, match, fetchRecipe, postFileRecipe, deleteFileRecipe }) => {
   const slug = match.params.id
@@ -34,7 +35,7 @@ const RecipePageEdit = ({ recipes, putRecipe, match, fetchRecipe, postFileRecipe
   }
 
   if (recipe === undefined) {
-    return <Spin />
+    return <Loader />
   }
 
   const stepsWithIdFront = recipe.steps.map((step, index) => ({ ...step, idFront: index }))

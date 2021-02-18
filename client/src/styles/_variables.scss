@@ -59,6 +59,7 @@ $primary: $green-500;
   --background-ternary: #f9f9f9;
 
   --color-text: #333333;
+  --color-placeholder: #cccccc;
   --color-categories: #333333;
   --color-steps: #333333;
 
@@ -72,6 +73,7 @@ $primary: $green-500;
   --table-background-content: var(--background-primary);
   --table-background-header: var(--background-ternary);
 
+  --background-drawer: #ffffff;
   --white: #ffffff;
 }
 
@@ -94,6 +96,7 @@ $primary: $green-500;
   --background-ternary: #1c1d21;
 
   --color-text: #ffffff;
+  --color-placeholder: #333c3c;
   --color-categories: #333333;
   --color-steps: #333333;
 
@@ -107,6 +110,7 @@ $primary: $green-500;
   --table-background-content: var(--background-primary);
   --table-background-header: var(--background-ternary);
 
+  --background-drawer: #1b1b1d;
   --white: #333333;
 }
 

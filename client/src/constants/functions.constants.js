@@ -32,20 +32,23 @@ export const slugifyResponse = str => {
 
 export const searchInListIcons = slug => {
   const icon = listIconsIngredients[`${slug}`]
-
   if (icon !== undefined) {
     return icon
   }
 
   const data = []
   forEach(listIconsIngredients, icon => {
-    if (icon.includes(slug)) {
+    const pathArray = icon.split('/')
+    const nameFileArray = pathArray[pathArray.length - 1].split('.')
+
+    const iconName = nameFileArray[0]
+    if (slug.includes(iconName)) {
       data.push(icon)
     }
   })
 
   if (data.length > 0) {
-    return data[0]
+    return data[data.length - 1]
   }
 
   const slugArray = slug.split('-')
