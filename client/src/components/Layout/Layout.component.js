@@ -16,7 +16,7 @@ const Layout = () => {
         sm={{ span: 24, offset: 0 }}
         md={{ span: 24, offset: 0 }}
         lg={{ span: 24, offset: 0 }}
-        xl={{ span: 24, offset: 0 }}
+        xl={{ span: 22, offset: 1 }}
       >
         <div className="layout">
           <Menu className={'layout_desktopMenu'} />

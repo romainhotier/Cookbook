@@ -12,6 +12,6 @@ export const RecipeIngredientsValidator = {
   unit: {
     required: false,
     errorMessage: '',
-    placeholder: 'gr',
+    placeholder: 'g',
   },
 }

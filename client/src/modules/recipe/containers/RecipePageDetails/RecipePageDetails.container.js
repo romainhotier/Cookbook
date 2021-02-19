@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Col, Row, Dropdown, Divider } from 'antd'
+import { Col, Row, Dropdown } from 'antd'
 
 import { fetchRecipe, deleteRecipe } from 'modules/recipe/thunks'
 import { fetchAllIngredients } from 'modules/ingredient/thunks'
@@ -120,31 +120,13 @@ class RecipePageDetails extends Component {
           <Col xs={24} sm={24} md={24} lg={24} xl={12}>
             <h2>{title}</h2>
             <em>Créé par XXXX XXXX</em>
-            <div className="RecipeDetails_informations">
-              {preparation_time ? (
-                <>
-                  <RecipeInformations label="Temps de préparation" value={`${preparation_time} min`} icon="times" />
-                  <Divider type="vertical" />
-                </>
-              ) : (
-                ''
-              )}
 
-              {cooking_time ? (
-                <>
-                  <RecipeInformations label="Temps de cuisson" value={`${cooking_time} min`} icon="cook_times" />
-                  <Divider type="vertical" />
-                </>
-              ) : (
-                ''
-              )}
+            <RecipeInformations
+              preparation_time={preparation_time}
+              cooking_time={cooking_time}
+              caloriesForOnePortion={caloriesForOnePortion}
+            />
 
-              {nb_people ? (
-                <RecipeInformations label="Calories par portions" value={`${caloriesForOnePortion}`} icon="portion" />
-              ) : (
-                ''
-              )}
-            </div>
             {categories && (
               <div className="RecipeDetails_categories">
                 {categories.map(category => (

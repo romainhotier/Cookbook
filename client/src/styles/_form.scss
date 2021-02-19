@@ -18,6 +18,8 @@
   .ant-form-item-has-error .ant-input:hover,
   .ant-form-item-has-error .ant-input-affix-wrapper:hover,
   textarea,
+  input.ant-select-selection-search-input,
+  [aria-haspopup='listbox'],
   .ant-select .ant-select-selector,
   .ant-input-affix-wrapper {
     background-color: transparent;

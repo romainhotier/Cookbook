@@ -121,7 +121,7 @@ const RecipeForm = ({ sendRecipe, values, addFileInRecipe, deleteFileInRecipe })
         </Collapse>
         <Divider />
 
-        <Row gutter={32}>
+        <Row gutter={24}>
           {/* Ingrédients */}
           <Col lg={12} md={12} sm={24} xs={24} className="RecipeIngredientsForm">
             <RecipeIngredientsForm ingredientsRecipe={values.ingredients} />
@@ -139,7 +139,7 @@ const RecipeForm = ({ sendRecipe, values, addFileInRecipe, deleteFileInRecipe })
               Sauvegarder la recette
             </Button>
             <Button type="primary" size="large" htmlType="button" onClick={() => validateForm('finished')}>
-              Publier la recette
+              Publier la recette sur le site
             </Button>
           </Space>
         </Row>
