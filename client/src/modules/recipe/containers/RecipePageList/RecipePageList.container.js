@@ -8,8 +8,6 @@ import { fetchAllRecipe } from '../../thunks'
 import RecipeSingleElement from '../../components/RecipeSingleElement'
 import Loader from 'components/Loader'
 
-import './_RecipePageList.scss'
-
 class RecipePageList extends Component {
   componentDidMount() {
     this.props.fetchAllRecipe()
@@ -30,7 +28,7 @@ class RecipePageList extends Component {
             }
 
             return (
-              <Col key={key} xs={24} sm={12} md={12} lg={6} xl={6}>
+              <Col key={key} xs={24} sm={12} md={12} lg={8} xl={6}>
                 <RecipeSingleElement recipe={singleRecipe} />
               </Col>
             )

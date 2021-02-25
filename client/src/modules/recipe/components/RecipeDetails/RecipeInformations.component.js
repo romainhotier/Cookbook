@@ -2,7 +2,7 @@ import React from 'react'
 import { Divider } from 'antd'
 
 import { ReactComponent as CookTimesSVG } from 'ressources/iconsGlobals/cook_times.svg'
-import { ReactComponent as PortionSVG } from 'ressources/iconsGlobals/portion.svg'
+import { ReactComponent as CaloriesSVG } from 'ressources/iconsGlobals/calories.svg'
 import { ReactComponent as TimesSVG } from 'ressources/iconsGlobals/times.svg'
 
 import './_RecipeDetails.scss'
@@ -42,7 +42,7 @@ export const RecipeInformations = ({ preparation_time, cooking_time, caloriesFor
 
       {caloriesForOnePortion ? (
         <div className="RecipeDetails_information">
-          <PortionSVG className={`RecipeDetails_information_icon`} />
+          <CaloriesSVG className={`RecipeDetails_information_icon`} />
           <br />
           <strong className="RecipeDetails_information_label">Calories par portions</strong>
           <br />

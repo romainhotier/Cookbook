@@ -1,35 +1,58 @@
 // Desktop
+.layout_desktopMenu {
+  padding: 0 15px;
+}
 .layout {
-  &_menu {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+  &_header {
     display: flex;
     justify-content: space-between;
-    background-color: var(--background-secondary);
-
-    padding: 10px;
-    z-index: 10;
+    align-items: center;
+    height: 120px;
+    h1 {
+      line-height: 35px;
+      font-family: 'Sharlene';
+      font-size: 95px;
+      height: 85px;
+      margin-bottom: 0;
+    }
+  }
+  &_search {
+    width: 30%;
+    padding-top: 20px;
+  }
+  &_user {
+    padding-top: 20px;
+    > a {
+      padding: 15px 0 10px 15px;
+      display: inline-block;
+      > i {
+        display: block;
+        text-align: center;
+        font-size: 20px;
+      }
+    }
+  }
+  &_menu {
+    border-top: 1px solid var(--grey-border);
+    border-bottom: 1px solid var(--grey-border);
+    width: 100%;
+    padding: 15px;
     &_items {
       display: flex;
       align-items: center;
       width: 100%;
-      margin-left: 50px;
       a {
-        margin-left: 50px;
+        margin-right: 50px;
+        font-size: 14px;
         &.active {
           color: var(--primary);
         }
       }
     }
-    h1 {
-      margin-bottom: 0;
-    }
   }
   &_content {
     background-color: var(--background-primary);
-    padding: 80px 15px 15px;
+    padding: 30px 15px 15px;
     min-height: 100vh;
   }
   &_darkmode {
@@ -44,6 +67,16 @@
 }
 
 // Mobile
+.layout_mobileMenu {
+  .layout_header {
+    padding-left: 15px;
+  }
+  .layout_menu {
+    border: 0;
+    text-align: right;
+  }
+}
+
 .ant-drawer-wrapper-body {
   background-color: var(--background-drawer);
 
