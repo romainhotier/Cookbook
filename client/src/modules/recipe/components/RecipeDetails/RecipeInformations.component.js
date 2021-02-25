@@ -1,23 +1,56 @@
 import React from 'react'
+import { Divider } from 'antd'
 
-import * as listIcons from 'ressources/iconsGlobals'
+import { ReactComponent as CookTimesSVG } from 'ressources/iconsGlobals/cook_times.svg'
+import { ReactComponent as CaloriesSVG } from 'ressources/iconsGlobals/calories.svg'
+import { ReactComponent as TimesSVG } from 'ressources/iconsGlobals/times.svg'
 
 import './_RecipeDetails.scss'
 
-export const RecipeInformations = ({ label, value, icon }) => {
+export const RecipeInformations = ({ preparation_time, cooking_time, caloriesForOnePortion }) => {
   return (
-    <div className="RecipeDetails_information">
-      <img
-        alt={`${icon}`}
-        className={`RecipeDetails_information_icon`}
-        src={listIcons[`${icon}`]}
-        width="40"
-        height="40"
-      />
-      <br />
-      <strong className="RecipeDetails_information_label">{label}</strong>
-      <br />
-      <span className="RecipeDetails_information_value">{value}</span>
+    <div className="RecipeDetails_informations">
+      {preparation_time ? (
+        <>
+          <div className="RecipeDetails_information">
+            <TimesSVG className={`RecipeDetails_information_icon`} />
+            <br />
+            <strong className="RecipeDetails_information_label">Temps de préparation</strong>
+            <br />
+            <span className="RecipeDetails_information_value">{`${preparation_time} min`}</span>
+          </div>
+          <Divider type="vertical" />
+        </>
+      ) : (
+        ''
+      )}
+
+      {cooking_time ? (
+        <>
+          <div className="RecipeDetails_information">
+            <CookTimesSVG className={`RecipeDetails_information_icon`} />
+            <br />
+            <strong className="RecipeDetails_information_label">Temps de cuisson</strong>
+            <br />
+            <span className="RecipeDetails_information_value">{`${cooking_time} min`}</span>
+          </div>
+          <Divider type="vertical" />
+        </>
+      ) : (
+        ''
+      )}
+
+      {caloriesForOnePortion ? (
+        <div className="RecipeDetails_information">
+          <CaloriesSVG className={`RecipeDetails_information_icon`} />
+          <br />
+          <strong className="RecipeDetails_information_label">Calories par portions</strong>
+          <br />
+          <span className="RecipeDetails_information_value">{caloriesForOnePortion}</span>
+        </div>
+      ) : (
+        ''
+      )}
     </div>
   )
 }

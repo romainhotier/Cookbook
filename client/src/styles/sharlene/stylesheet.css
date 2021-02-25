@@ -1,0 +1,13 @@
+@font-face {
+    font-family: 'Sharlene';
+    src: url('Sharlene.eot');
+    src: url('Sharlene.eot?#iefix') format('embedded-opentype'),
+        url('Sharlene.woff2') format('woff2'),
+        url('Sharlene.woff') format('woff'),
+        url('Sharlene.ttf') format('truetype'),
+        url('Sharlene.svg#Sharlene') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+

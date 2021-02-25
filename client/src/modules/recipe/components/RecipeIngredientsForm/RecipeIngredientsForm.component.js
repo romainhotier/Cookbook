@@ -111,16 +111,18 @@ class RecipeIngredientsForm extends Component {
           header={
             <div className="ingredientForm_head">
               <h3>Ingrédients</h3>
-              <IngredientModalAdd
-                contentButton={<i className="fas fa-plus"></i>}
-                shapeButton="circle"
-                sizeButton={'small'}
-              />
             </div>
           }
           key="ingredientForm"
           className="FormRecipe_panel"
         >
+          <div className="ingredientsForm_buttonModalContainer">
+            <IngredientModalAdd
+              className="ingredientsForm_buttonModal"
+              type="link"
+              contentButton={'Vous ne trouvez pas un ingrédient ? Créez le ici !'}
+            />
+          </div>
           <Form.List name="ingredients">
             {(fields, { add, remove }) => (
               <>
@@ -139,7 +141,7 @@ class RecipeIngredientsForm extends Component {
                         rules={[
                           {
                             required: RecipeIngredientsValidator['name'].required,
-                            message: RecipeIngredientsValidator['name'].message,
+                            message: RecipeIngredientsValidator['name'].errorMessage,
                           },
                         ]}
                         label="Nom"
@@ -161,14 +163,14 @@ class RecipeIngredientsForm extends Component {
                       <Form.Item
                         {...field}
                         className="quantity-form"
-                        key={`fieldquantity-${field.key}`}
+                        key={`fieldQuantity-${field.key}`}
                         name={[field.name, 'quantity']}
                         label="Quantité"
                         fieldKey={[field.fieldKey, 'quantity']}
                         rules={[
                           {
                             required: RecipeIngredientsValidator['quantity'].required,
-                            message: RecipeIngredientsValidator['quantity'].message,
+                            message: RecipeIngredientsValidator['quantity'].errorMessage,
                           },
                         ]}
                       >
@@ -178,14 +180,14 @@ class RecipeIngredientsForm extends Component {
                       {/* Unity */}
                       <Form.Item
                         {...field}
-                        key={`fieldunit-${field.key}`}
+                        key={`fieldUnit-${field.key}`}
                         name={[field.name, 'unit']}
                         label="Unité"
                         fieldKey={[field.fieldKey, 'unit']}
                         rules={[
                           {
                             required: RecipeIngredientsValidator['unit'].required,
-                            message: RecipeIngredientsValidator['unit'].message,
+                            message: RecipeIngredientsValidator['unit'].errorMessage,
                           },
                         ]}
                       >
@@ -200,7 +202,7 @@ class RecipeIngredientsForm extends Component {
                         htmlType="button"
                         type="text"
                         onClick={() => remove(field.name)}
-                        className="ingredientsForm_row button_remove"
+                        className="ingredientsForm_buttonRemove desktopButton"
                       >
                         <i className="fas fa-trash"></i>
                       </Button>
@@ -211,7 +213,7 @@ class RecipeIngredientsForm extends Component {
                       type="text"
                       size={'large'}
                       onClick={() => remove(field.name)}
-                      className="ingredientsForm button_remove"
+                      className="ingredientsForm_buttonRemove mobileButton"
                     >
                       <i className="fas fa-trash"></i>
                     </Button>
@@ -219,7 +221,7 @@ class RecipeIngredientsForm extends Component {
                 ))}
                 <Form.Item style={{ textAlign: 'right' }}>
                   <Button className="ingredientsForm button_add" type="default" onClick={() => add()}>
-                    Ajouter un ingrédient
+                    Ajouter un ingrédient à la recette
                   </Button>
                 </Form.Item>
               </>

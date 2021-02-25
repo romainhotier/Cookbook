@@ -11,6 +11,8 @@ const IngredientModalAdd = ({
   postIngredient,
   contentButton,
   shapeButton,
+  className = '',
+  type = 'primary',
   sizeButton = 'default',
 }) => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -21,8 +23,14 @@ const IngredientModalAdd = ({
 
   return (
     <>
-      <Button type="primary" onClick={() => setModalVisible(true)} shape={shapeButton} size={sizeButton}>
-        {contentButton ?? 'Ajouter un nouvel ingrédient'}
+      <Button
+        className={className}
+        type={type}
+        onClick={() => setModalVisible(true)}
+        shape={shapeButton}
+        size={sizeButton}
+      >
+        {contentButton ?? 'Créer un nouvel ingrédient'}
       </Button>
       <Modal
         title="Ajouter un nouvel ingrédient"

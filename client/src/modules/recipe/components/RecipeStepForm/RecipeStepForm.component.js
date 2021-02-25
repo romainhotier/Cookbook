@@ -16,7 +16,7 @@ const { Panel } = Collapse
 const RecipeStepForm = ({ listSteps, setListSteps }) => {
   const addStep = () => {
     const lastIndex = listSteps.length - 1
-    const lastIdFront = listSteps[lastIndex].idFront
+    const lastIdFront = listSteps > 0 ? listSteps[lastIndex].idFront : 0
     setListSteps([...listSteps, { idFront: lastIdFront + 1, description: '' }])
   }
 

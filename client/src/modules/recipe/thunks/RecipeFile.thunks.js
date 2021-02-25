@@ -28,7 +28,6 @@ export const postFileRecipe = (id, data) => dispatch => {
         dispatch(postFileRecipeSuccess(response.data))
         notification['success']({
           message: 'Image ajoutée !',
-          description: `${get(codeMsg, `${response.codeMsg}`)}`,
         })
       } else {
         dispatch(dispatch(postFileRecipeFailed(response.detail)))

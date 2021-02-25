@@ -4,7 +4,7 @@ import { Carousel as CarouselAntd } from 'antd'
 
 import './_Carousel.scss'
 
-const Carousel = ({ files, className, heightImage = '400px' }) => {
+const Carousel = ({ files, className = '', heightImage = '400px' }) => {
   return (
     <CarouselAntd className={className} dots={{ className: 'carousel_dots' }}>
       {files &&

@@ -19,13 +19,11 @@ const convertMinutes = value => {
 
 const RecipeSingleElement = ({ recipe }) => {
   const { title, categories, preparation_time, cooking_time, nb_people, calories, slug, files = [] } = recipe
+  const imagePath = files[0] ? `${process.env.REACT_APP_IMAGES_SERVER}/${files[0]}` : '/default.jpg'
 
   return (
     <article className="recipeSingleElement">
-      <div
-        className="recipeSingleElement_image"
-        style={{ backgroundImage: `url(${process.env.REACT_APP_IMAGES_SERVER}/${files[0]})` }}
-      >
+      <div className="recipeSingleElement_image" style={{ backgroundImage: `url(${imagePath})` }}>
         <div className="recipeSingleElement_mainCategorie">
           <a href="/">{categories[0]}</a>
         </div>

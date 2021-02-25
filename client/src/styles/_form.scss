@@ -13,14 +13,17 @@
   }
 
   input,
+  .ant-input,
   .ant-form-item-has-error .ant-input,
   .ant-form-item-has-error .ant-input-affix-wrapper,
   .ant-form-item-has-error .ant-input:hover,
   .ant-form-item-has-error .ant-input-affix-wrapper:hover,
   textarea,
+  input.ant-select-selection-search-input,
+  [aria-haspopup='listbox'],
   .ant-select .ant-select-selector,
   .ant-input-affix-wrapper {
-    background-color: transparent;
+    background-color: var(--background-primary);
     color: var(--color-text);
     &::placeholder {
       color: var(--color-placeholder);
@@ -39,5 +42,16 @@
 
   .ant-select-arrow {
     color: var(--color-text);
+  }
+}
+
+input,
+.ant-input,
+.ant-input-affix-wrapper {
+  background-color: var(--background-primary);
+  color: var(--color-text);
+  &::placeholder {
+    color: var(--color-placeholder);
+    font-style: italic;
   }
 }
