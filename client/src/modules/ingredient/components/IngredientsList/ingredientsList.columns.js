@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button, Popover, Tag, Space } from 'antd'
 
+import TableTitleWithSearch from 'components/TableTitleWithSearch'
 import IngredientModalEdit from 'modules/ingredient/containers/IngredientModalEdit'
 import { searchInListIcons } from 'constants/functions.constants'
 
@@ -16,17 +17,21 @@ const contentPopover = (deleteIngredient, _id) => (
   </div>
 )
 
-export const IngredientsListColumns = deleteIngredient => [
+export const IngredientsListColumns = (deleteIngredient, searchIngredients) => [
   {
     title: '',
     dataIndex: 'icon',
     key: 'icon',
     align: 'left',
-
     render: (_text, { slug, name }) => <img src={searchInListIcons(slug)} alt={name} width="40" height="40" />,
   },
   {
-    title: 'Ingrédients',
+    title: TableTitleWithSearch({
+      title: 'Ingrédients',
+      placeholder: 'Rechercher un ingrédient..',
+      filterName: 'name',
+      onChange: (filter, value) => (value.length === 0 ? searchIngredients() : searchIngredients({ [filter]: value })),
+    }),
     dataIndex: 'name',
     key: 'name',
     align: 'left',

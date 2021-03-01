@@ -19,3 +19,7 @@ export const deleteIngredientFailed = createAction('DELETE_INGREDIENT_FAILED')
 export const postIngredientsRecipeRequest = createAction('POST_INGREDIENTS_RECIPE_REQUEST')
 export const postIngredientsRecipeSuccess = createAction('POST_INGREDIENTS_RECIPE_SUCCESS')
 export const postIngredientsRecipeFailed = createAction('POST_INGREDIENTS_RECIPE_FAILED')
+
+export const searchIngredientsRequest = createAction('SEARCH_INGREDIENTS_REQUEST')
+export const searchIngredientsSuccess = createAction('SEARCH_INGREDIENTS_SUCCESS')
+export const searchIngredientsFailed = createAction('SEARCH_INGREDIENTS_FAILED')

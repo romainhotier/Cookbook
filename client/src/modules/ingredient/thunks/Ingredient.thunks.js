@@ -14,6 +14,9 @@ import {
   postIngredientsRecipeRequest,
   postIngredientsRecipeSuccess,
   postIngredientsRecipeFailed,
+  searchIngredientsRequest,
+  searchIngredientsSuccess,
+  searchIngredientsFailed,
 } from '../actions'
 
 import {
@@ -22,6 +25,7 @@ import {
   postIngredientsRecipeURL,
   deleteIngredientURL,
   putIngredientURL,
+  searchIngredientsURL,
 } from '../api/Ingredient.api'
 
 import { notification } from 'antd'
@@ -38,8 +42,7 @@ export const fetchAllIngredients = () => dispatch => {
       if (res.error) {
         throw res.error
       }
-      dispatch(getAllIngredientsSuccess(res.data))
-      return res.recipes
+      return dispatch(getAllIngredientsSuccess(res.data))
     })
     .catch(error => {
       dispatch(getAllIngredientsFailed(error))
@@ -169,5 +172,22 @@ export const postIngredientsRecipe = data => dispatch => {
     })
     .catch(error => {
       dispatch(postIngredientFailed(error))
+    })
+}
+
+export const searchIngredients = param => dispatch => {
+  let params = new URLSearchParams(param)
+  dispatch(searchIngredientsRequest())
+
+  fetch(searchIngredientsURL() + '?' + params)
+    .then(res => res.json())
+    .then(res => {
+      if (res.error) {
+        throw res.error
+      }
+      return dispatch(searchIngredientsSuccess(res.data))
+    })
+    .catch(error => {
+      dispatch(searchIngredientsFailed(error))
     })
 }
