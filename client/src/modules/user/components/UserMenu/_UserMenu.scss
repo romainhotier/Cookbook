@@ -1,0 +1,21 @@
+.UserMenu {
+  ul.ant-menu {
+    background-color: var(--background-secondary);
+    width: 100%;
+    border-right: var(--background-secondary);
+    color: var(--color-text);
+
+    li.ant-menu-item {
+      background-color: var(--background-secondary);
+      a {
+        color: var(--color-text);
+      }
+    }
+    li.ant-menu-item-only-child.ant-menu-item-selected {
+      background-color: var(--background-secondary);
+      a {
+        color: var(--primary);
+      }
+    }
+  }
+}

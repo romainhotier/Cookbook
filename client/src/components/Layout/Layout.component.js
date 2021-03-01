@@ -3,6 +3,7 @@ import { Row, Col } from 'antd'
 
 import RecipeRouter from 'modules/recipe/RecipeRouter'
 import IngredientRouter from 'modules/ingredient/IngredientRouter'
+import UserRouter from 'modules/user/UserRouter'
 import { Menu } from 'components/Menu/Menu.component'
 import { MobileMenu } from 'components/Menu/MobileMenu.component'
 
@@ -26,6 +27,7 @@ const Layout = () => {
           <main className="layout_content">
             {RecipeRouter}
             {IngredientRouter}
+            {UserRouter}
           </main>
         </div>
       </Col>
