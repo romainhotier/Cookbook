@@ -22,6 +22,7 @@ export const IngredientsListColumns = deleteIngredient => [
     dataIndex: 'icon',
     key: 'icon',
     align: 'left',
+
     render: (_text, { slug, name }) => <img src={searchInListIcons(slug)} alt={name} width="40" height="40" />,
   },
   {
@@ -29,12 +30,15 @@ export const IngredientsListColumns = deleteIngredient => [
     dataIndex: 'name',
     key: 'name',
     align: 'left',
+    width: 270,
+    sorter: (a, b) => a.name.localeCompare(b.name),
   },
   {
     title: 'Groupe alternatif',
     dataIndex: 'categories',
     key: 'categories',
     align: 'center',
+    responsive: ['lg'],
     render: categories => categories.map(elem => <Tag key={elem}>{elem}</Tag>),
   },
   {
@@ -45,6 +49,7 @@ export const IngredientsListColumns = deleteIngredient => [
         dataIndex: 'unit',
         key: 'unit',
         align: 'right',
+        responsive: ['lg'],
         render: unit => `Pour 100 ${unit ?? 'g'} :`,
       },
       {
@@ -52,6 +57,7 @@ export const IngredientsListColumns = deleteIngredient => [
         dataIndex: 'calories',
         key: 'calories',
         align: 'center',
+        sorter: (a, b) => a.nutriments.calories - b.nutriments.calories,
         render: (_text, { nutriments }) => (nutriments.calories ? `${nutriments.calories} cal` : '-'),
       },
       {
@@ -59,6 +65,7 @@ export const IngredientsListColumns = deleteIngredient => [
         dataIndex: 'proteins',
         key: 'proteins',
         align: 'center',
+        sorter: (a, b) => a.nutriments.proteins - b.nutriments.proteins,
         render: (_text, { nutriments }) => (nutriments.proteins ? `${nutriments.proteins} g` : '-'),
       },
       {
@@ -66,6 +73,7 @@ export const IngredientsListColumns = deleteIngredient => [
         dataIndex: 'carbohydrates',
         key: 'carbohydrates',
         align: 'center',
+        sorter: (a, b) => a.nutriments.carbohydrates - b.nutriments.carbohydrates,
         render: (_text, { nutriments }) => (nutriments.carbohydrates ? `${nutriments.carbohydrates} g` : '-'),
       },
       {
@@ -73,6 +81,7 @@ export const IngredientsListColumns = deleteIngredient => [
         dataIndex: 'fats',
         key: 'fats',
         align: 'center',
+        sorter: (a, b) => a.nutriments.fats - b.nutriments.fats,
         render: (_text, { nutriments }) => (nutriments.fats ? `${nutriments.fats} g` : '-'),
       },
       {

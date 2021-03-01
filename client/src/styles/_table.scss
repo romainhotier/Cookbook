@@ -1,15 +1,35 @@
 .ant-table {
   background-color: var(--table-background-content);
   color: var(--color-text);
-  .ant-table-thead > tr > th {
+  .ant-table-thead > tr > th,
+  .ant-table-thead th.ant-table-column-sort,
+  .ant-table-column-sorters-with-tooltip th,
+  .ant-table-thead th.ant-table-column-has-sorters:hover {
     background-color: var(--table-background-header);
     color: var(--color-text);
   }
   .ant-table-tbody {
+    td {
+      background-color: var(--table-background-content);
+    }
     tr:hover {
       td {
         background-color: var(--table-background-header);
       }
+    }
+  }
+}
+
+.ant-pagination.ant-table-pagination {
+  color: var(--color-text);
+  .ant-pagination-item a,
+  .ant-pagination-next,
+  .ant-pagination-prev,
+  button.ant-pagination-item-link {
+    color: var(--color-text);
+    background-color: var(--table-background-content);
+    &:hover {
+      color: var(--primary);
     }
   }
 }
