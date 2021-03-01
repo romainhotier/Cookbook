@@ -7,3 +7,5 @@ export const putIngredientURL = id => `${process.env.REACT_APP_API_URL}/ingredie
 export const deleteIngredientURL = id => `${process.env.REACT_APP_API_URL}/ingredient/${id}`
 
 export const postIngredientsRecipeURL = () => `${process.env.REACT_APP_API_URL}/ingredient/recipe/multi`
+
+export const searchIngredientsURL = () => `${process.env.REACT_APP_API_URL}/ingredient/search`

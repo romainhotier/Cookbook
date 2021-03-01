@@ -66,7 +66,7 @@ const IngredientForm = ({ createIngredient, loading, updateIngredient, values = 
     >
       <Input hidden={true} name="_id" style={{ hidden: 0, display: 'none' }} />
       <Row gutter={32}>
-        <Col span={12}>
+        <Col xl={12} lg={12} md={24} sm={24} xs={24}>
           <Input
             label="Nom de l'ingrédient"
             name="name"
@@ -75,7 +75,7 @@ const IngredientForm = ({ createIngredient, loading, updateIngredient, values = 
             placeholder={IngredientValidator['name'].placeholder}
           />
         </Col>
-        <Col span={12}>
+        <Col xl={12} lg={12} md={24} sm={24} xs={24}>
           <Input
             label="Groupe alimentaire"
             name="categories"
@@ -87,7 +87,7 @@ const IngredientForm = ({ createIngredient, loading, updateIngredient, values = 
       </Row>
 
       <Row gutter={32}>
-        <Col span={12}>
+        <Col xl={12} lg={12} md={24} sm={24} xs={24}>
           <Select
             label="Unité"
             name="unit"
@@ -100,7 +100,7 @@ const IngredientForm = ({ createIngredient, loading, updateIngredient, values = 
             ]}
           />
         </Col>
-        <Col span={12}>
+        <Col xl={12} lg={12} md={24} sm={24} xs={24}>
           <Input
             label="Portion"
             name="portion"
@@ -113,7 +113,7 @@ const IngredientForm = ({ createIngredient, loading, updateIngredient, values = 
       </Row>
 
       <Row gutter={32}>
-        <Col span={6}>
+        <Col xl={6} lg={6} md={6} sm={12} xs={12}>
           <Input
             label="Nombre de calories"
             name="calories"
@@ -122,7 +122,7 @@ const IngredientForm = ({ createIngredient, loading, updateIngredient, values = 
             placeholder={IngredientValidator['calories'].placeholder}
           />
         </Col>
-        <Col span={6}>
+        <Col xl={6} lg={6} md={6} sm={12} xs={12}>
           <Input
             label="Protéines"
             name="proteins"
@@ -132,7 +132,7 @@ const IngredientForm = ({ createIngredient, loading, updateIngredient, values = 
             suffix={'g'}
           />
         </Col>
-        <Col span={6}>
+        <Col xl={6} lg={6} md={6} sm={12} xs={12}>
           <Input
             label="Glucides"
             name="carbohydrates"
@@ -142,7 +142,7 @@ const IngredientForm = ({ createIngredient, loading, updateIngredient, values = 
             suffix={'g'}
           />
         </Col>
-        <Col span={6}>
+        <Col xl={6} lg={6} md={6} sm={12} xs={12}>
           <Input
             label="Lipides"
             name="fats"

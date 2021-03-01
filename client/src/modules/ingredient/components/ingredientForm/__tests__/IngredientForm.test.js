@@ -21,6 +21,13 @@ const ingredient = {
   unit: 'g',
 }
 
+const ingredientWithoutNutriment = {
+  name: 'Banane',
+  slug: 'banane',
+  unit: 'g',
+  categories: ['Farines'],
+}
+
 describe('IngredientForm.component', () => {
   it('should be Form in IngredientForm', () => {
     const wrapper = shallow(<IngredientForm {...defaultProps} />)
@@ -50,10 +57,18 @@ describe('IngredientForm.component', () => {
     expect(wrapper.find("Input[name='portion']").props().suffix).toEqual('ml')
   })
 
-  it('should be a call to the createIngredient function', () => {
+  it('should be a call to the createIngredient function with complete ingredient', () => {
     const wrapper = shallow(<IngredientForm {...defaultProps} />)
 
     wrapper.find(Form).props().onFinish(ingredient)
+
+    expect(defaultProps.createIngredient).toHaveBeenCalled()
+  })
+
+  it('should be a call to the createIngredient function without nutriment', () => {
+    const wrapper = shallow(<IngredientForm {...defaultProps} />)
+
+    wrapper.find(Form).props().onFinish(ingredientWithoutNutriment)
 
     expect(defaultProps.createIngredient).toHaveBeenCalled()
   })

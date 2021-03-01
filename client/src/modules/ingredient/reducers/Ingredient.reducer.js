@@ -15,6 +15,9 @@ import {
   deleteIngredientRequest,
   deleteIngredientSuccess,
   deleteIngredientFailed,
+  searchIngredientsRequest,
+  searchIngredientsSuccess,
+  searchIngredientsFailed,
 } from './../actions'
 
 const defaultState = {
@@ -158,6 +161,37 @@ const IngredientReducer = handleActions(
       return {
         ...state,
         loadingDeleteIngredient: false,
+        error: `${action.payload}`,
+      }
+    },
+
+    /*
+     ** SEARCH INGREDIENT
+     */
+    [searchIngredientsRequest](state, action) {
+      return {
+        ...state,
+        error: null,
+      }
+    },
+
+    [searchIngredientsSuccess](state, action) {
+      let data = {}
+      action.payload.forEach(ing => {
+        data[ing.slug] = {
+          ...ing,
+        }
+      })
+
+      return {
+        ...state,
+        content: data,
+      }
+    },
+
+    [searchIngredientsFailed](state, action) {
+      return {
+        ...state,
         error: `${action.payload}`,
       }
     },
