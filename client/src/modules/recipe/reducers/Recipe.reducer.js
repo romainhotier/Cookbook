@@ -19,7 +19,7 @@ import {
   deleteRecipeFailed,
 } from './../actions'
 
-const defaultState = {
+export const defaultState = {
   content: {},
   loading: false,
   loadingFetchRecipes: false,

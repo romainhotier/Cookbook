@@ -1,8 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { NavLink } from 'react-router-dom'
 
 import { Nav } from './Nav.component'
-import { NavLink } from 'react-router-dom'
+import { Routes as UserRoutes } from 'modules/user/UserRoutes'
 import SearchBar from 'components/SearchBar'
 import SwitchTheme from 'components/SwitchTheme'
 
@@ -22,7 +23,7 @@ export const Menu = ({ className = '' }) => {
           <SearchBar />
         </div>
         <div className="layout_user">
-          <NavLink to={''} exact>
+          <NavLink to={UserRoutes.myAccount()} exact>
             <i className="fas fa-user"></i> Mon compte
           </NavLink>
         </div>
