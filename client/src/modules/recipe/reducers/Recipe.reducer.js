@@ -17,6 +17,9 @@ import {
   deleteRecipeRequest,
   deleteRecipeSuccess,
   deleteRecipeFailed,
+  postFileRecipeRequest,
+  postFileRecipeSuccess,
+  postFileRecipeFailed,
 } from './../actions'
 
 export const defaultState = {
@@ -194,6 +197,39 @@ const RecipeReducer = handleActions(
       return {
         ...state,
         loading: false,
+        error: true,
+      }
+    },
+
+    /*
+     ** POST FILES IN RECIPE
+     */
+    [postFileRecipeRequest](state) {
+      return {
+        ...state,
+        error: null,
+      }
+    },
+
+    [postFileRecipeSuccess](state, { payload }) {
+      const { content } = state
+      const url = payload[0]
+      const splitUrl = url.split('/')
+      const id = splitUrl[1]
+
+      const recipeSlug = findKey(content, recipe => recipe._id === id)
+
+      content[recipeSlug].files = [...content[recipeSlug].files, url]
+
+      return {
+        ...state,
+        content: content,
+      }
+    },
+
+    [postFileRecipeFailed](state) {
+      return {
+        ...state,
         error: true,
       }
     },

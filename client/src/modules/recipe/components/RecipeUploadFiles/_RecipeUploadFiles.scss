@@ -1,0 +1,13 @@
+.RecipeDetails_uploadImages {
+  height: 400px;
+
+  .ant-upload-list-picture-card-container,
+  .ant-upload.ant-upload-select-picture-card {
+    width: 150px;
+    height: 150px;
+  }
+  .ant-upload-list-item-info,
+  .anticon.anticon-delete {
+    color: var(--color-text);
+  }
+}
