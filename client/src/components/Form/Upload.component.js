@@ -22,7 +22,6 @@ export const Upload = ({ label, name, filesUpladed = [], setFilesUpladed, addFil
     },
     beforeUpload: file => {
       addFileInRecipe(file)
-      setFilesUpladed([...filesUpladed, file])
       return false
     },
   }

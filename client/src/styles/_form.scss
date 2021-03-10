@@ -56,6 +56,11 @@ input,
   }
 }
 
+.ant-select-selection-placeholder {
+  color: var(--color-placeholder);
+  font-style: italic;
+}
+
 .ant-form-item-label > label {
   color: var(--color-text);
   &.ant-form-item-required::before {

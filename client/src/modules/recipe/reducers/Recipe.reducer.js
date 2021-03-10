@@ -1,5 +1,5 @@
 import { handleActions } from 'redux-actions'
-import findKey from 'lodash/findKey'
+import { List } from 'immutable'
 
 import {
   getAllRecipesRequest,
@@ -20,16 +20,21 @@ import {
   postFileRecipeRequest,
   postFileRecipeSuccess,
   postFileRecipeFailed,
+  deleteFileRecipeRequest,
+  deleteFileRecipeSuccess,
+  deleteFileRecipeFailed,
 } from './../actions'
 
-export const defaultState = {
-  content: {},
-  loading: false,
-  loadingFetchRecipes: false,
-  loadingPostRecipes: false,
-  loadingPutRecipes: false,
-  error: null,
-}
+import {
+  RecipeStateFactory,
+  getAllRecipes,
+  findRecipeEntry,
+  removeFileInRecipe,
+  updateFilesInRecipe,
+  setRecipes,
+} from './Recipe.store'
+
+export const defaultInitialState = RecipeStateFactory()
 
 const RecipeReducer = handleActions(
   {
@@ -37,204 +42,145 @@ const RecipeReducer = handleActions(
      ** GET ALL RECIPES
      */
     [getAllRecipesRequest](state) {
-      return {
-        ...state,
-        loadingFetchRecipes: true,
-        error: null,
-      }
+      return state.set('loadingFetchRecipe', true)
     },
 
     [getAllRecipesSuccess](state, action) {
-      let data = {}
-      action.payload.forEach(recipe => {
-        data[recipe.slug] = {
-          ...recipe,
-        }
-      })
-
-      return {
-        ...state,
-        content: data,
-        loadingFetchRecipes: false,
-      }
+      return state.set('loadingFetchRecipe', false).set('content', List(action.payload))
     },
 
     [getAllRecipesFailed](state) {
-      return {
-        ...state,
-        loadingFetchRecipes: false,
-        error: true,
-      }
+      return state.set('loadingFetchRecipe', false).set('error', true)
     },
 
     /*
      ** GET RECIPE
      */
     [getRecipeRequest](state) {
-      return {
-        ...state,
-        loadingFetchRecipes: true,
-        error: null,
-      }
+      return state.set('loadingFetchRecipe', true)
     },
 
     [getRecipeSuccess](state, action) {
-      let data = {}
-      const recipe = action.payload
-
-      data[recipe.slug] = {
-        ...recipe,
-      }
-
-      return {
-        ...state,
-        content: data,
-        loadingFetchRecipes: false,
-      }
+      return state.set('loadingFetchRecipe', false).set('content', List([action.payload]))
     },
 
     [getRecipeFailed](state) {
-      return {
-        ...state,
-        loadingFetchRecipes: false,
-        error: true,
-      }
+      return state.set('loadingFetchRecipe', false).set('error', true)
     },
 
     /*
      ** POST RECIPE
      */
     [postRecipeRequest](state) {
-      return {
-        ...state,
-        loadingPostRecipes: true,
-        error: null,
-      }
+      return state.set('loadingPostRecipe', true)
     },
 
     [postRecipeSuccess](state, action) {
-      let data = {}
-      const recipe = action.payload
-
-      data[recipe.slug] = {
-        ...recipe,
-      }
-
-      return {
-        ...state,
-        content: data,
-        loadingPostRecipes: false,
-      }
+      const newRecipes = getAllRecipes(state).push(action.payload)
+      return state.set('loadingPostRecipe', false).set('content', List(newRecipes))
     },
 
     [postRecipeFailed](state) {
-      return {
-        ...state,
-        loadingPostRecipes: false,
-        error: true,
-      }
+      return state.set('loadingPostRecipe', false).set('error', true)
     },
 
     /*
      ** PUT RECIPE
      */
     [putRecipeRequest](state) {
-      return {
-        ...state,
-        loadingPutRecipes: true,
-        error: null,
-      }
+      return state.set('loadingPutRecipe', true)
     },
 
     [putRecipeSuccess](state, action) {
-      let data = {}
       const recipe = action.payload
-
-      data[recipe.slug] = {
-        ...recipe,
+      const [index] = findRecipeEntry(state, recipe.id)
+      if (index < 0) {
+        return state.set('loadingPostRecipe', false)
       }
-
-      return {
-        ...state,
-        content: data,
-        loadingPutRecipes: false,
-      }
+      const newRecipes = getAllRecipes(state).updateIn(state, index, recipe)
+      return state.set('loadingPostRecipe', false).set('content', List(newRecipes))
     },
 
     [putRecipeFailed](state) {
-      return {
-        ...state,
-        loadingPutRecipes: false,
-        error: true,
-      }
+      return state.set('loadingPutRecipe', false).set('error', true)
     },
 
     /*
      ** DELETE RECIPE
      */
     [deleteRecipeRequest](state) {
-      return {
-        ...state,
-        loading: true,
-        error: null,
-      }
+      return state.set('loading', true)
     },
 
     [deleteRecipeSuccess](state, action) {
-      let { content } = state
+      const recipeId = action.payload
 
-      const recipeSlug = findKey(content, recipe => recipe._id === action.payload)
-      delete content[recipeSlug]
-
-      return {
-        ...state,
-        content,
-        loading: false,
+      const [index] = findRecipeEntry(state, recipeId)
+      if (index < 0) {
+        return state.set('loading', false)
       }
+
+      return state.set('loading', false).removeIn('content', index)
     },
 
     [deleteRecipeFailed](state) {
-      return {
-        ...state,
-        loading: false,
-        error: true,
-      }
+      return state.set('loading', false).set('error', true)
     },
 
     /*
      ** POST FILES IN RECIPE
      */
     [postFileRecipeRequest](state) {
-      return {
-        ...state,
-        error: null,
-      }
+      return state.set('error', null)
     },
 
     [postFileRecipeSuccess](state, { payload }) {
-      const { content } = state
       const url = payload[0]
       const splitUrl = url.split('/')
       const id = splitUrl[1]
 
-      const recipeSlug = findKey(content, recipe => recipe._id === id)
-
-      content[recipeSlug].files = [...content[recipeSlug].files, url]
-
-      return {
-        ...state,
-        content: content,
+      const { index } = findRecipeEntry(state, id)
+      if (index < 0) {
+        return state
       }
+
+      const updatedRecipesList = updateFilesInRecipe(state, index, payload)
+      return setRecipes(state, updatedRecipesList)
     },
 
-    [postFileRecipeFailed](state) {
-      return {
-        ...state,
-        error: true,
+    [postFileRecipeFailed](state, error) {
+      return state.set('error', error)
+    },
+
+    /*
+     ** POST FILES IN RECIPE
+     */
+    [deleteFileRecipeRequest](state) {
+      return state.set('error', null)
+    },
+
+    [deleteFileRecipeSuccess](state, { payload }) {
+      const splitUrl = payload.split('/')
+      const id = splitUrl[1]
+
+      const { index } = findRecipeEntry(state, id)
+      if (index < 0) {
+        return state
       }
+
+      console.log('index', index)
+      console.log('payload', payload)
+      const updatedRecipesList = removeFileInRecipe(state, index, payload)
+      console.log('updatedRecipesList', updatedRecipesList)
+
+      return setRecipes(state, updatedRecipesList)
+    },
+
+    [deleteFileRecipeFailed](state, error) {
+      return state.set('error', error)
     },
   },
-  defaultState
+  defaultInitialState
 )
 
 export default RecipeReducer

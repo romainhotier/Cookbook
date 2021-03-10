@@ -5,19 +5,23 @@ import { Row, Col } from 'antd'
 
 import { PUBLISH_STATUS } from 'constants/data.constants'
 import { fetchAllRecipe } from '../../thunks'
+import { getAllRecipes, getloadingFetchRecipe } from '../../reducers'
 import RecipeSingleElement from '../../components/RecipeSingleElement'
 import Loader from 'components/Loader'
 
-class RecipePageList extends Component {
+export class RecipePageList extends Component {
   componentDidMount() {
     this.props.fetchAllRecipe()
   }
 
   render() {
-    const { loadingFetchRecipes, recipes } = this.props
-    if (loadingFetchRecipes || Object.entries(recipes).length === 0) {
+    const { loading, recipesList } = this.props
+
+    if (loading || recipesList.size === 0) {
       return <Loader />
     }
+
+    const recipes = recipesList.toJS()
 
     return (
       <>
@@ -43,12 +47,15 @@ const mapDispatchToProps = {
   fetchAllRecipe,
 }
 
-const mapStateToProps = ({ recipes: { content, loadingFetchRecipes } }) => ({ recipes: content, loadingFetchRecipes })
+const mapStateToProps = ({ recipes }) => ({
+  recipesList: getAllRecipes(recipes),
+  loading: getloadingFetchRecipe(recipes),
+})
 
 RecipePageList.propTypes = {
   fetchAllRecipe: PropTypes.func,
   recipes: PropTypes.object,
-  loadingFetchRecipes: PropTypes.bool,
+  loadingFetchRecipe: PropTypes.bool,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(RecipePageList)

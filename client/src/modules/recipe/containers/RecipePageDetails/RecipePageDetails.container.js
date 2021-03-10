@@ -1,12 +1,15 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import find from 'lodash/find'
 
 import { fetchRecipe, deleteRecipe } from 'modules/recipe/thunks'
 import { fetchAllIngredients } from 'modules/ingredient/thunks'
 import { RecipePageDetailsComponent } from './RecipePageDetails.component'
+import { getAllRecipes, getloadingFetchRecipe } from 'modules/recipe/reducers'
 import Loader from 'components/Loader'
 
-class RecipePageDetails extends Component {
+export class RecipePageDetails extends Component {
   constructor(props) {
     super(props)
 
@@ -18,19 +21,30 @@ class RecipePageDetails extends Component {
   }
 
   componentDidMount() {
-    const { recipes, match, fetchRecipe, allIngredients, loadingFetchIngredients, fetchAllIngredients } = this.props
-    const { slug } = match.params
-    if (recipes[slug] === undefined) {
+    const {
+      recipesList,
+      match: {
+        params: { slug },
+      },
+      fetchRecipe,
+      allIngredients,
+      loadingFetchIngredients,
+      fetchAllIngredients,
+    } = this.props
+
+    const recipe = find(recipesList.toJS(), recipe => recipe.slug === slug)
+
+    if (recipe === undefined) {
       fetchRecipe(slug)
     }
 
-    if (recipes[slug] !== undefined && Object.keys(allIngredients).length === 0 && !loadingFetchIngredients) {
+    if (recipe !== undefined && Object.keys(allIngredients).length === 0 && !loadingFetchIngredients) {
       fetchAllIngredients()
     }
   }
 
-  componentDidUpdate() {
-    const { allIngredients, fetchAllIngredients, loadingFetchIngredients, recipes } = this.props
+  componentDidUpdate(prevProps) {
+    const { allIngredients, fetchAllIngredients, loadingFetchIngredients } = this.props
     if (Object.keys(allIngredients).length === 0 && !loadingFetchIngredients) {
       fetchAllIngredients()
     }
@@ -62,23 +76,24 @@ class RecipePageDetails extends Component {
 
   render() {
     const {
-      recipes,
-      match,
+      recipesList,
+      match: {
+        params: { slug },
+      },
       loadingFetchIngredients,
-      loadingFetchRecipes,
+      loadingFetchRecipe,
       allIngredients,
       deleteRecipe,
       history,
     } = this.props
 
     const { portionEdited, modalDeleteRecipeIsVisible, uploadFilesIsVisible } = this.state
-    const { slug } = match.params
-    const recipe = recipes[slug]
+    const recipe = find(recipesList.toJS(), recipe => recipe.slug === slug)
 
     if (
       recipe === undefined ||
       loadingFetchIngredients ||
-      loadingFetchRecipes ||
+      loadingFetchRecipe ||
       Object.keys(allIngredients).length === 0
     ) {
       return <Loader />
@@ -108,11 +123,21 @@ const mapDispatchToProps = {
 }
 
 const mapStateToProps = ({ recipes, ingredients }) => ({
-  recipes: recipes.content,
-  loadingFetchRecipes: recipes.loadingFetchRecipes,
+  recipesList: getAllRecipes(recipes),
+  loadingFetchRecipe: getloadingFetchRecipe(recipes),
   allIngredients: ingredients.content,
   loadingFetchIngredients: ingredients.loadingFetchIngredients,
   loadingDeleteRecipe: recipes.loading,
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(RecipePageDetails)
+
+RecipePageDetails.propTypes = {
+  recipesList: PropTypes.array,
+  history: PropTypes.object,
+  match: PropTypes.object,
+  allIngredients: PropTypes.array,
+  fetchRecipe: PropTypes.func,
+  fetchAllIngredients: PropTypes.func,
+  loadingFetchIngredients: PropTypes.bool,
+}

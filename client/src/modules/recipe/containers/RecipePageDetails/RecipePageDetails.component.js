@@ -39,6 +39,7 @@ export const RecipePageDetailsComponent = ({
   } = recipe
 
   const caloriesForOnePortion = Math.round(calories / nb_people, 2)
+
   return (
     <section className="RecipeDetails">
       <div className="RecipeDetails_actions">
@@ -60,7 +61,7 @@ export const RecipePageDetailsComponent = ({
       <Row className="RecipeDetails_header" gutter={16}>
         <Col xs={24} sm={24} md={24} lg={24} xl={12}>
           {uploadFilesIsVisible ? (
-            <UploadFilesRecipe _id={_id} files={files} slug={slug} />
+            <UploadFilesRecipe _id={_id} files={files} />
           ) : (
             <Carousel files={files} className={'RecipeDetails_carousel'} height={'400px'} />
           )}

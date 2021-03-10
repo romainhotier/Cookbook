@@ -3,21 +3,22 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Col, Row } from 'antd'
 import omit from 'lodash/omit'
+import find from 'lodash/find'
 
+import { getAllRecipes, getloadingPutRecipe } from '../../reducers'
 import RecipeForm from 'modules/recipe/components/RecipeForm'
 import { putRecipe, fetchRecipe, postFileRecipe, deleteFileRecipe } from 'modules/recipe/thunks'
 import Loader from 'components/Loader'
 
-const RecipePageEdit = ({ recipes, putRecipe, match, fetchRecipe, postFileRecipe, deleteFileRecipe }) => {
+const RecipePageEdit = ({ recipesList, putRecipe, match, fetchRecipe, postFileRecipe, deleteFileRecipe }) => {
   const slug = match.params.id
+  const recipe = find(recipesList.toJS(), recipe => recipe.slug === slug)
 
   useEffect(() => {
-    if (recipes[slug] === undefined) {
+    if (recipe === undefined) {
       fetchRecipe(slug)
     }
   })
-
-  const recipe = recipes[slug]
 
   const addFileInRecipe = file => {
     const formData = new FormData()
@@ -63,9 +64,9 @@ const mapDispatchToProps = {
   deleteFileRecipe,
 }
 
-const mapStateToProps = ({ recipes: { content, loadingPutRecipes } }) => ({
-  recipes: content,
-  loadingPutRecipes,
+const mapStateToProps = ({ recipes }) => ({
+  recipesList: getAllRecipes(recipes),
+  loading: getloadingPutRecipe(recipes),
 })
 
 RecipePageEdit.propTypes = {
