@@ -11,7 +11,7 @@ const normFile = e => {
   return e && e.fileList
 }
 
-export const Upload = ({ label, name, filesUpladed = [], setFilesUpladed, addFileInRecipe, deleteFileInRecipe }) => {
+export const Upload = ({ label, name, filesUpladed = [], addFileInRecipe, deleteFileInRecipe }) => {
   const uploads = {
     onRemove: file => {
       deleteFileInRecipe(file)
@@ -42,6 +42,5 @@ Upload.propTypes = {
   name: PropTypes.string,
   addFileInRecipe: PropTypes.func,
   filesUpladed: PropTypes.array,
-  setFilesUpladed: PropTypes.func,
   deleteFileInRecipe: PropTypes.func,
 }
