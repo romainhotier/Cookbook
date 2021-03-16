@@ -22,7 +22,7 @@ const RecipeModalDelete = ({ deleteRecipe, id, isModalVisible, closeModal, histo
   )
 
   return (
-    <Modal title="Supprimer la recette" visible={isModalVisible} footer={footerButtons}>
+    <Modal title="Supprimer la recette" visible={isModalVisible} footer={footerButtons} onCancel={closeModal}>
       <p>Êtes-vous sûr de vouloir supprimer cette recette ?</p>
     </Modal>
   )

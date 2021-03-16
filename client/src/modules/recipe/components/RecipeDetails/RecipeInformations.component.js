@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Divider } from 'antd'
 
 import { ReactComponent as CookTimesSVG } from 'ressources/iconsGlobals/cook_times.svg'
@@ -53,4 +54,10 @@ export const RecipeInformations = ({ preparation_time, cooking_time, caloriesFor
       )}
     </div>
   )
+}
+
+RecipeInformations.propTypes = {
+  preparation_time: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  cooking_time: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  caloriesForOnePortion: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 }

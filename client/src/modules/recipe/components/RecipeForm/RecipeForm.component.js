@@ -28,12 +28,11 @@ const RecipeForm = ({ sendRecipe, values }) => {
     sendRecipe({ ...values, slug, steps: listSteps })
   }
 
-  const { Panel } = Collapse
   return (
     <>
       <Form layout="vertical" form={formRecipe} onFinish={onFinish} initialValues={values}>
         <Collapse defaultActiveKey={['Informations']} expandIconPosition="right" className="FormRecipe_collapse">
-          <Panel
+          <Collapse.Panel
             header={
               <>
                 <h3>Informations</h3>
@@ -99,7 +98,7 @@ const RecipeForm = ({ sendRecipe, values }) => {
                 <CheckboxWithImage label="Catégories" name="categories" datas={categories} />
               </Col>
             </Row>
-          </Panel>
+          </Collapse.Panel>
         </Collapse>
         <Divider />
 
@@ -133,8 +132,6 @@ const RecipeForm = ({ sendRecipe, values }) => {
 RecipeForm.propTypes = {
   sendRecipe: PropTypes.func,
   values: PropTypes.object,
-  addFileInRecipe: PropTypes.func,
-  deleteFileInRecipe: PropTypes.func,
 }
 
 export default RecipeForm

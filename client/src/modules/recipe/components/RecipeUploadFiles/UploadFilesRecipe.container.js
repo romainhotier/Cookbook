@@ -11,9 +11,10 @@ import { postFileRecipe, deleteFileRecipe } from 'modules/recipe/thunks'
 
 import './_RecipeUploadFiles.scss'
 
-const UploadFilesRecipe = ({ _id, postFileRecipe, deleteFileRecipe, recipesList }) => {
+export const UploadFilesRecipe = ({ _id, postFileRecipe, deleteFileRecipe, recipesList }) => {
   const recipe = find(recipesList.toJS(), recipe => recipe._id === _id)
-  const filesFormated = recipe.files !== undefined ? recipe.files.map((file, index) => displayFile(file, index)) : []
+  const filesFormated =
+    recipe && recipe.files !== undefined ? recipe.files.map((file, index) => displayFile(file, index)) : []
   const [filesUpladed, setFilesUpladed] = useState(filesFormated)
 
   useEffect(
@@ -65,7 +66,7 @@ const mapDispatchToProps = {
 
 UploadFilesRecipe.propTypes = {
   _id: PropTypes.string,
-  files: PropTypes.array,
+  recipesList: PropTypes.object,
   postFileRecipe: PropTypes.func,
   deleteFileRecipe: PropTypes.func,
 }

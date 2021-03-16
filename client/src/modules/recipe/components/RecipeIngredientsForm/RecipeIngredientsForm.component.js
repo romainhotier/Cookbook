@@ -10,9 +10,6 @@ import IngredientModalAdd from 'modules/ingredient/containers/IngredientModalAdd
 
 import './_RecipeIngredientsForm.scss'
 
-const { Option } = Select
-const { Panel } = Collapse
-
 class RecipeIngredientsForm extends Component {
   constructor(props) {
     super(props)
@@ -77,16 +74,16 @@ class RecipeIngredientsForm extends Component {
     if (parseInt(ingredient.nutriments.portion) > 1) {
       return (
         <>
-          <Option value={ingredient.unit}>{`${ingredient.unit}`}</Option>
-          <Option value="portion">
+          <Select.Option value={ingredient.unit}>{`${ingredient.unit}`}</Select.Option>
+          <Select.Option value="portion">
             {`${ingredient.name} soit (${ingredient.nutriments.portion} ${ingredient.unit})`}
-          </Option>
+          </Select.Option>
         </>
       )
     }
     return (
       <>
-        <Option value={ingredient.unit}>{`${ingredient.unit}`}</Option>
+        <Select.Option value={ingredient.unit}>{`${ingredient.unit}`}</Select.Option>
       </>
     )
   }
@@ -100,14 +97,14 @@ class RecipeIngredientsForm extends Component {
     }
 
     const options = researchIngredients.map(d => (
-      <Option key={`researchIngredientsOption-${d._id}`} value={d._id}>
+      <Select.Option key={`researchIngredientsOption-${d._id}`} value={d._id}>
         {d.name}
-      </Option>
+      </Select.Option>
     ))
 
     return (
       <Collapse defaultActiveKey={['ingredientForm']} expandIconPosition="right" className="FormRecipe_collapse">
-        <Panel
+        <Collapse.Panel
           header={
             <div className="ingredientForm_head">
               <h3>Ingrédients</h3>
@@ -227,7 +224,7 @@ class RecipeIngredientsForm extends Component {
               </>
             )}
           </Form.List>
-        </Panel>
+        </Collapse.Panel>
       </Collapse>
     )
   }

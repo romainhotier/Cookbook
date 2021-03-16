@@ -1,5 +1,5 @@
 import React from 'react'
-
+import PropTypes from 'prop-types'
 import { worldConnector, searchInListIcons } from 'constants/functions.constants'
 import { useAllIngredients } from 'modules/recipe/containers/RecipePageDetails/RecipePageDetails.helpers'
 
@@ -11,7 +11,7 @@ const crossProduct = (base, comparative, newBase) => {
 export const BuildListIngredients = ({ allIngredients, ingredients = [], portionEdited, portion }) => {
   const listIngredients = useAllIngredients(allIngredients, ingredients)
   if (listIngredients.length === 0) {
-    return
+    return ''
   }
 
   return listIngredients.map(({ quantity, slug, unit, name }) => {
@@ -39,4 +39,11 @@ export const BuildListIngredients = ({ allIngredients, ingredients = [], portion
       </li>
     )
   })
+}
+
+BuildListIngredients.propTypes = {
+  allIngredients: PropTypes.object,
+  ingredients: PropTypes.array,
+  portionEdited: PropTypes.number,
+  portion: PropTypes.number,
 }

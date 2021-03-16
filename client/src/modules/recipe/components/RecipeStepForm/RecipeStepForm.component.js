@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Button, Collapse } from 'antd'
 import map from 'lodash/map'
 import remove from 'lodash/remove'
@@ -11,12 +12,10 @@ import RecipeStepElement from './RecipeStepElement.component'
 
 import './_RecipeStepForm.scss'
 
-const { Panel } = Collapse
-
 const RecipeStepForm = ({ listSteps, setListSteps }) => {
   const addStep = () => {
     const lastIndex = listSteps.length - 1
-    const lastIdFront = listSteps > 0 ? listSteps[lastIndex].idFront : 0
+    const lastIdFront = listSteps.length > 0 ? listSteps[lastIndex].idFront : 0
     setListSteps([...listSteps, { idFront: lastIdFront + 1, description: '' }])
   }
 
@@ -45,7 +44,7 @@ const RecipeStepForm = ({ listSteps, setListSteps }) => {
 
   return (
     <Collapse defaultActiveKey={['RecipeStepForm']} expandIconPosition="right" className="FormRecipe_collapse">
-      <Panel header={<h3>Préparation</h3>} key="RecipeStepForm" className="FormRecipe_panel">
+      <Collapse.Panel header={<h3>Préparation</h3>} key="RecipeStepForm" className="FormRecipe_panel">
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="droppable">
             {(droppableProvided, droppableSnapshot) => (
@@ -87,9 +86,14 @@ const RecipeStepForm = ({ listSteps, setListSteps }) => {
             Ajouter une étape
           </Button>
         </div>
-      </Panel>
+      </Collapse.Panel>
     </Collapse>
   )
+}
+
+RecipeStepForm.propTypes = {
+  listSteps: PropTypes.array,
+  setListSteps: PropTypes.func,
 }
 
 export default RecipeStepForm

@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Input, Button } from 'antd'
 
 import './_RecipeDetails.scss'
@@ -30,4 +31,10 @@ export const EditPortion = ({ portion = 0, portionEdited, updatePortionEdited })
       </Button>
     </div>
   )
+}
+
+EditPortion.propTypes = {
+  portion: PropTypes.number,
+  portionEdited: PropTypes.number,
+  updatePortionEdited: PropTypes.func,
 }
