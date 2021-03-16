@@ -556,7 +556,7 @@ class TestPostRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(rep.check_not_present(value="data", response=response_body))
         detail = rep.format_detail(param=api.param_ingredient+"."+api.param_ingredient_quantity,
-                                   msg=rep.detail_must_be_an_integer,
+                                   msg=rep.detail_must_be_a_float,
                                    value=body[api.param_ingredients][0][api.param_ingredient_quantity])
         self.assertEqual(response_body["detail"], detail)
         """ check """
@@ -589,7 +589,7 @@ class TestPostRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(rep.check_not_present(value="data", response=response_body))
         detail = rep.format_detail(param=api.param_ingredient+"."+api.param_ingredient_quantity,
-                                   msg=rep.detail_must_be_an_integer,
+                                   msg=rep.detail_must_be_a_float,
                                    value=body[api.param_ingredients][0][api.param_ingredient_quantity])
         self.assertEqual(response_body["detail"], detail)
         """ check """
@@ -622,7 +622,7 @@ class TestPostRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(rep.check_not_present(value="data", response=response_body))
         detail = rep.format_detail(param=api.param_ingredient+"."+api.param_ingredient_quantity,
-                                   msg=rep.detail_must_be_an_integer,
+                                   msg=rep.detail_must_be_a_float,
                                    value=body[api.param_ingredients][0][api.param_ingredient_quantity])
         self.assertEqual(response_body["detail"], detail)
         """ check """
@@ -663,7 +663,7 @@ class TestPostRecipe(unittest.TestCase):
         """ BodyParameter ingredients.quantity is a number.
 
         Return
-            400 - Bad request.
+            201 - Inserted Recipe.
         """
 
         tc_ingredient = IngredientTest().insert()
@@ -672,6 +672,37 @@ class TestPostRecipe(unittest.TestCase):
                 api.param_slug: "slug",
                 api.param_ingredients: [{api.param_ingredient_id: tc_ingredient.get_id(),
                                          api.param_ingredient_quantity: 5,
+                                         api.param_ingredient_unit: "qa_rhr_unit"}]}
+        """ call api """
+        url = server.main_url + "/" + api.url
+        response = requests.post(url, json=body, verify=False)
+        response_body = response.json()
+        """ change """
+        tc_recipe = RecipeTest().custom_from_body(data=body)
+        """ assert """
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body["codeStatus"], 201)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
+        data_check = rep.json_schema_check(data=response_body["data"], schema=api.create_schema(recipe=tc_recipe))
+        self.assertTrue(data_check["result"], data_check["error"])
+        self.assertTrue(rep.check_not_present(value="detail", response=response_body))
+        """ check """
+        tc_recipe.custom_id_from_body(data=response_body).check_bdd_data()
+
+    def test_ingredients_quantity_float(self):
+        """ BodyParameter ingredients.quantity is a number float.
+
+        Return
+            201 - Inserted Recipe.
+        """
+
+        tc_ingredient = IngredientTest().insert()
+        """ param """
+        body = {api.param_title: "qa_rhr_title",
+                api.param_slug: "slug",
+                api.param_ingredients: [{api.param_ingredient_id: tc_ingredient.get_id(),
+                                         api.param_ingredient_quantity: 5.5,
                                          api.param_ingredient_unit: "qa_rhr_unit"}]}
         """ call api """
         url = server.main_url + "/" + api.url

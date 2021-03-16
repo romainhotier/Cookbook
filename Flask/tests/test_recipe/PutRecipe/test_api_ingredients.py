@@ -538,7 +538,7 @@ class TestPutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(rep.check_not_present(value="data", response=response_body))
         detail = rep.format_detail(param=api.param_ingredients+"."+api.param_ingredient_quantity,
-                                   msg=rep.detail_must_be_an_integer,
+                                   msg=rep.detail_must_be_a_float,
                                    value=body[api.param_ingredients][0][api.param_ingredient_quantity])
         self.assertEqual(response_body["detail"], detail)
         """ check """
@@ -570,7 +570,7 @@ class TestPutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(rep.check_not_present(value="data", response=response_body))
         detail = rep.format_detail(param=api.param_ingredients+"."+api.param_ingredient_quantity,
-                                   msg=rep.detail_must_be_an_integer,
+                                   msg=rep.detail_must_be_a_float,
                                    value=body[api.param_ingredients][0][api.param_ingredient_quantity])
         self.assertEqual(response_body["detail"], detail)
         """ check """
@@ -602,7 +602,7 @@ class TestPutRecipe(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(rep.check_not_present(value="data", response=response_body))
         detail = rep.format_detail(param=api.param_ingredients+"."+api.param_ingredient_quantity,
-                                   msg=rep.detail_must_be_an_integer,
+                                   msg=rep.detail_must_be_a_float,
                                    value=body[api.param_ingredients][0][api.param_ingredient_quantity])
         self.assertEqual(response_body["detail"], detail)
         """ check """
@@ -612,7 +612,7 @@ class TestPutRecipe(unittest.TestCase):
         """ BodyParameter ingredients.quantity is a string number.
 
         Return
-            201 - Inserted Recipe.
+            200 - Updated Recipe.
         """
 
         tc_ingredient = IngredientTest().insert()
@@ -643,7 +643,7 @@ class TestPutRecipe(unittest.TestCase):
         """ BodyParameter ingredients.quantity is a number.
 
         Return
-            400 - Bad request.
+            200 - Updated Recipe.
         """
 
         tc_ingredient = IngredientTest().insert()
@@ -653,6 +653,37 @@ class TestPutRecipe(unittest.TestCase):
         tc_id = tc_recipe.get_id()
         body = {api.param_ingredients: [{api.param_ingredient_id: tc_ingredient.get_id(),
                                          api.param_ingredient_quantity: 5,
+                                         api.param_ingredient_unit: "qa_rhr_unit"}]}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        """ change """
+        tc_recipe.custom(body)
+        """ assert """
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertEqual(response_body["data"], api.data_expected(recipe=tc_recipe))
+        self.assertTrue(rep.check_not_present(value="detail", response=response_body))
+        """ check """
+        tc_recipe.check_bdd_data()
+
+    def test_ingredients_quantity_float(self):
+        """ BodyParameter ingredients.quantity is a number float.
+
+        Return
+            200 - Updated Recipe.
+        """
+
+        tc_ingredient = IngredientTest().insert()
+        """ env """
+        tc_recipe = RecipeTest().insert()
+        """ param """
+        tc_id = tc_recipe.get_id()
+        body = {api.param_ingredients: [{api.param_ingredient_id: tc_ingredient.get_id(),
+                                         api.param_ingredient_quantity: 5.1,
                                          api.param_ingredient_unit: "qa_rhr_unit"}]}
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id
@@ -736,7 +767,7 @@ class TestPutRecipe(unittest.TestCase):
         """ BodyParameter ingredients.unit is an empty string.
 
         Return
-            201 - Inserted Recipe.
+            200 - Updated Recipe.
         """
 
         tc_ingredient = IngredientTest().insert()
@@ -767,7 +798,7 @@ class TestPutRecipe(unittest.TestCase):
         """ BodyParameter ingredients.unit is a string.
 
         Return
-            201 - Inserted Recipe.
+            200 - Updated Recipe.
         """
 
         tc_ingredient = IngredientTest().insert()

@@ -141,7 +141,7 @@ class Validator(object):
         """
         param_name = api.param_ingredient + "." + api.param_ingredient_quantity
         validator.is_mandatory(name=param_name, param=api.param_ingredient_quantity, data=data)
-        validator.is_int(param=param_name, value=data[api.param_ingredient_quantity])
+        validator.is_float(param=param_name, value=data[api.param_ingredient_quantity])
         return True
 
     # use in is_ingredients_valid
