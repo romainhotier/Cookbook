@@ -16,6 +16,7 @@ CORS(backend)
 backend.config["ENV"] = "production"
 backend.config["JWT_SECRET_KEY"] = "super-secret-cookbook"
 backend.config["EXPIRATION_TOKEN"] = 5
+backend.config["SYSTEM"] = utils.PathExplorer().system
 backend.config["FLASK_PATH"] = utils.PathExplorer().flask_path
 backend.config["FILE_STORAGE_PATH"] = utils.PathExplorer().files_storage_path
 

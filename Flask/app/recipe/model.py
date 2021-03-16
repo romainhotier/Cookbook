@@ -2,10 +2,11 @@ from pymongo import MongoClient
 from bson import ObjectId
 import re
 
-from app import utils
+from app import utils#, backend
 from app.ingredient import Ingredient
 
 mongo = utils.Mongo()
+converter = utils.PathExplorer()
 
 
 class Recipe(object):
@@ -260,14 +261,12 @@ class Recipe(object):
         client.close()
         return result
 
-    def delete_file(self, _id, data):
-        """ delete files to a recipe.
+    def delete_file(self, path):
+        """ delete files.
 
         Parameters
         ----------
-        _id : str
-            Recipe's ObjectId.
-        data : str
+        path : str
             Files's short_path.
 
         Returns
@@ -275,10 +274,35 @@ class Recipe(object):
         Recipe
             Updated Recipe.
         """
+        if len(path.split("/")) == 3:  #
+            self.delete_file_recipe(path=path)
+        else:
+            pass
+        return self
+
+    def delete_file_recipe(self, path):
+        """ delete files to a recipe.
+
+        Parameters
+        ----------
+        path : str
+            Files's short_path.
+
+        Returns
+        -------
+        Recipe
+            Updated Recipe.
+        """
+        _id_recipe = path.split("/")[1]
+        s_path = path
+        if converter.system == "Windows":
+            s_path = converter.convert_path(target="Windows", path=path)
+        #if backend.config["SYSTEM"] == "Windows":
+            #s_path = converter.convert_path(target="Windows", path=path)
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
-        db.update_one({"_id": ObjectId(_id)}, {'$pull': {"files": data}})
-        result = db.find_one({"_id": ObjectId(_id)})
+        db.update_one({"_id": ObjectId(_id_recipe)}, {'$pull': {"files": s_path}})
+        result = db.find_one({"_id": ObjectId(_id_recipe)})
         client.close()
         self.result = mongo.convert_to_json(result)
         return self

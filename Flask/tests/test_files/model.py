@@ -4,6 +4,8 @@ import mimetypes
 
 from app import utils, backend
 
+converter = utils.PathExplorer()
+
 
 class FileTest(object):
 
@@ -25,6 +27,8 @@ class FileTest(object):
         if "filename" in kwargs:
             self.filename = kwargs["filename"]
         self.origin_test_path = backend.config["FLASK_PATH"] + "tests/file_exemple/" + self.filename
+        if backend.config["SYSTEM"] == "Windows":   # Convert to windows if necessary
+            self.origin_test_path = converter.convert_path(target="Windows", path=self.origin_test_path)
         self.storage_path = ""
         self.short_path = ""
         self.data = open(self.origin_test_path, 'rb')
@@ -55,7 +59,20 @@ class FileTest(object):
         """
         self.storage_path = backend.config["FILE_STORAGE_PATH"] + short_path + "/" + self.filename
         self.short_path = short_path + "/" + self.filename
+        if backend.config["SYSTEM"] == "Windows":  # Convert to windows if necessary
+            self.storage_path = converter.convert_path(target="Windows", path=self.storage_path)
+            self.short_path = converter.convert_path(target="Windows", path=self.short_path)
         return self
+
+    def get_short_path_url(self):
+        """ Get short_path for url.
+
+        Returns
+        -------
+        str
+            short_path in Unix format.
+        """
+        return converter.convert_path(target="Unix", path=self.short_path)
 
     def insert(self, short_path):
         """ Copy FileTest to filestorage repo.
@@ -65,6 +82,8 @@ class FileTest(object):
         FileTest
             File copied.
         """
+        if backend.config["SYSTEM"] == "Windows":  # Convert to windows if necessary
+            short_path = converter.convert_path(target="Windows", path=short_path)
         self.set_file_path(short_path=short_path)
         utils.PathExplorer().check_files_path_folder(short_path=short_path)
         shutil.copyfile(self.origin_test_path, self.storage_path)

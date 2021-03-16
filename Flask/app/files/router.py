@@ -40,8 +40,7 @@ def delete_file(path):
     """ delete file """
     deleted_path = File().delete(short_path=path)
     """ clean in recipe """
-    if api.len_path(path=path) == 3:
-        Recipe().delete_file(_id=path.split("/")[1], data=path)
+    Recipe().delete_file(path=path)
     """ return response """
     return utils.ResponseMaker().return_response(data=deleted_path, api=apis.name, http_code=200)
 

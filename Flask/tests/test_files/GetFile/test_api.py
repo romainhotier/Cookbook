@@ -26,7 +26,7 @@ class TestGetFile(unittest.TestCase):
         tc_file2 = FileTest(filename="image.png").insert(short_path="recipe/{0}".format(tc_recipe.get_id()))
         tc_recipe.add_files_recipe(files=[tc_file1, tc_file2], add_in_mongo=True)
         """ param """
-        tc_path = tc_file1.short_path
+        tc_path = tc_file1.get_short_path_url()
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_path
         response = requests.get(url, verify=False)
@@ -47,7 +47,7 @@ class TestGetFile(unittest.TestCase):
         tc_file2 = FileTest(filename="image.png").insert(short_path="recipe/{0}".format(tc_recipe.get_id()))
         tc_recipe.add_files_recipe(files=[tc_file1, tc_file2], add_in_mongo=True)
         """ param """
-        tc_path = tc_file2.short_path
+        tc_path = tc_file2.get_short_path_url()
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_path
         response = requests.get(url, verify=False)
@@ -67,7 +67,7 @@ class TestGetFile(unittest.TestCase):
         tc_file2 = FileTest(filename="image.png").insert(short_path="recipe/{0}".format(tc_recipe.get_id()))
         tc_recipe.add_files_recipe(files=[tc_file1, tc_file2], add_in_mongo=True)
         """ param """
-        tc_path = tc_file1.short_path
+        tc_path = tc_file1.get_short_path_url()
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_path + "?invalid=invalid"
         response = requests.get(url, verify=False)
@@ -88,7 +88,7 @@ class TestGetFile(unittest.TestCase):
         tc_file2 = FileTest(filename="image.png").insert(short_path="recipe/{0}".format(tc_recipe.get_id()))
         tc_recipe.add_files_recipe(files=[tc_file1, tc_file2], add_in_mongo=True)
         """ param """
-        tc_path = tc_file1.short_path
+        tc_path = tc_file1.get_short_path_url()
         """ call api """
         url = server.main_url + "/" + api.url + "x/" + tc_path
         response = requests.get(url, verify=False)
