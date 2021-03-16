@@ -57,7 +57,7 @@ class File(object):
 
     @staticmethod
     def clean_delete_recipe(_id):
-        """ Delete a File.
+        """ Delete a Recipe's File.
 
         Parameters
         ----------
@@ -66,6 +66,25 @@ class File(object):
         """
         try:
             path = backend.config["FILE_STORAGE_PATH"] + "recipe/{}".format(_id)
+            if backend.config["SYSTEM"] == "Windows":
+                converter.convert_path(target="Windows", path=path)
+            shutil.rmtree(path=path, ignore_errors=True)
+        except FileNotFoundError:
+            pass
+
+    @staticmethod
+    def clean_delete_step(_id_recipe, _id_step):
+        """ Delete a Step's File.
+
+        Parameters
+        ----------
+        _id_recipe: str
+            Recipe's ObjectId
+        _id_step: str
+            Step's ObjectId
+        """
+        try:
+            path = backend.config["FILE_STORAGE_PATH"] + "recipe/{0}/steps/{1}".format(_id_recipe, _id_step)
             if backend.config["SYSTEM"] == "Windows":
                 converter.convert_path(target="Windows", path=path)
             shutil.rmtree(path=path, ignore_errors=True)

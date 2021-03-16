@@ -40,7 +40,7 @@ class Mongo(object):
 
         Returns
         -------
-        dict
+        Any
             Json.
         """
         return json.loads(JSONEncoder().encode(data))

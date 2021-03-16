@@ -73,12 +73,22 @@ class TestDeleteRecipe(unittest.TestCase):
             200 - Recipe Deleted.
         """
         """ env """
-        tc_recipe1 = RecipeTest().insert()
+        tc_recipe1 = RecipeTest()
+        tc_recipe1.add_step(_id_step="aaaaaaaaaaaaaaaaaaaaaaaa", description="step1")
+        tc_recipe1.add_step(_id_step="bbbbbbbbbbbbbbbbbbbbbbbb", description="step2")
+        tc_recipe1.insert()
         tc_recipe2 = RecipeTest().insert()
         """ file recipe1 """
         tc_file11 = FileTest(filename="text.txt").insert(short_path="recipe/{0}".format(tc_recipe1.get_id()))
         tc_file12 = FileTest(filename="image.png").insert(short_path="recipe/{0}".format(tc_recipe1.get_id()))
         tc_recipe1.add_files_recipe(files=[tc_file11, tc_file12], add_in_mongo=True)
+        """ file recipe1 stepb """
+        tc_file1b1 = FileTest(filename="text.txt").insert(short_path="recipe/{0}/steps/bbbbbbbbbbbbbbbbbbbbbbbb"
+                                                          .format(tc_recipe1.get_id()))
+        tc_file1b2 = FileTest(filename="image.png").insert(short_path="recipe/{0}/steps/bbbbbbbbbbbbbbbbbbbbbbbb"
+                                                           .format(tc_recipe1.get_id()))
+        tc_recipe1.add_files_steps(_id_step="bbbbbbbbbbbbbbbbbbbbbbbb", files=[tc_file1b1, tc_file1b2],
+                                   add_in_mongo=True)
         """ file recipe2 """
         tc_file21 = FileTest(filename="text.txt").insert(short_path="recipe/{0}".format(tc_recipe2.get_id()))
         tc_file22 = FileTest(filename="image.png").insert(short_path="recipe/{0}".format(tc_recipe2.get_id()))
@@ -99,6 +109,8 @@ class TestDeleteRecipe(unittest.TestCase):
         """ check recipe1 """
         tc_file11.check_file_not_exist()
         tc_file12.check_file_not_exist()
+        tc_file1b1.check_file_not_exist()
+        tc_file1b2.check_file_not_exist()
         tc_recipe1.check_doesnt_exist_by_id()
         """ check recipe2 """
         tc_file21.check_file_exist()

@@ -92,35 +92,35 @@ class Validator(object):
             return abort(status=400, description=detail)
         else:
             return True
-    #
-    # @staticmethod
-    # def is_object_id_in_recipe_steps(param, _id_recipe, _id_step):
-    #     """ Check if the ObjectId is present in a recipe steps.
-    #
-    #     Parameters
-    #     ----------
-    #     param : str
-    #         Name of the tested parameter.
-    #     _id_recipe : str
-    #         ObjectId of the recipe.
-    #     _id_step : str
-    #         ObjectId of the step.
-    #
-    #     Returns
-    #     -------
-    #     Any
-    #         Raise an "abort 400" if validation failed..
-    #     """
-    #     client = MongoClient(mongo.ip, mongo.port)
-    #     db = client[mongo.name][mongo.collection_recipe]
-    #     result = db.count_documents({"$and": [{"_id": ObjectId(_id_recipe)},
-    #                                           {"steps": {"$elemMatch": {"_id": ObjectId(_id_step)}}}]})
-    #     client.close()
-    #     if result == 0:
-    #         detail = response.format_detail(param=param, msg=response.detail_doesnot_exist, value=_id_step)
-    #         return abort(status=400, description=detail)
-    #     else:
-    #         return True
+
+    @staticmethod
+    def is_object_id_in_recipe_steps(param, _id_recipe, _id_step):
+        """ Check if the ObjectId is present in a recipe steps.
+
+        Parameters
+        ----------
+        param : str
+            Name of the tested parameter.
+        _id_recipe : str
+            ObjectId of the recipe.
+        _id_step : str
+            ObjectId of the step.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed..
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        result = db.count_documents({"$and": [{"_id": ObjectId(_id_recipe)},
+                                              {"steps": {"$elemMatch": {"_id": ObjectId(_id_step)}}}]})
+        client.close()
+        if result == 0:
+            detail = response.format_detail(param=param, msg=response.detail_doesnot_exist, value=_id_step)
+            return abort(status=400, description=detail)
+        else:
+            return True
 
     @staticmethod
     def is_unique_user(param, value):

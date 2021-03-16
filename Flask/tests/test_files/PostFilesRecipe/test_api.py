@@ -25,7 +25,6 @@ class TestPostFilesRecipe(unittest.TestCase):
         """ param """
         tc_id = tc_recipe.get_id()
         tc_file = FileTest()
-        tc_file.display()
         tc_files = [('files', (tc_file.filename, tc_file.data, tc_file.mimetype))]
         """ call api """
         url = server.main_url + "/" + api.url + "/" + tc_id

@@ -5,6 +5,7 @@ import re
 
 from app import utils
 from app.ingredient import Ingredient
+from app.recipe import Recipe
 
 mongo = utils.Mongo()
 
@@ -273,7 +274,7 @@ class RecipeTest(object):
         description : str
             Step's description.
         """
-        data = {"_id": ObjectId(_id_step), "description": description}
+        data = {"_id": ObjectId(_id_step), "description": description, "files": []}
         """ add in model """
         self.steps.append(data)
         """ add in mongo """
@@ -333,7 +334,7 @@ class RecipeTest(object):
 
     """ files """
     def add_files_recipe(self, files, **kwargs):
-        """ Add a  FileTest to RecipeTest's step.
+        """ Add a FileTest to RecipeTest.
 
         Parameters
         ----------
@@ -357,8 +358,37 @@ class RecipeTest(object):
             client.close()
         return self
 
+    def add_files_steps(self, _id_step, files, **kwargs):
+        """ Add a FileTest to RecipeTest's step.
+
+        Parameters
+        ----------
+        _id_step : str
+            Step's ObjectId
+        files : list
+            FileTest to be added
+        kwargs: Any
+            'add_in_mongo'
+
+        Returns
+        -------
+        RecipeTest
+            RecipeTest.
+        """
+        index = Recipe().get_step_position(_id_recipe=self.get_id(), _id_step=_id_step)
+        for f in files:
+            self.steps[index]["files"].append(f.short_path)
+        if "add_in_mongo" in kwargs:
+            client = MongoClient(mongo.ip, mongo.port)
+            db = client[mongo.name][mongo.collection_recipe]
+            for f in files:
+                db.update_one({"_id": ObjectId(self.get_id())},
+                              {'$push': {"steps.{0}.files".format(index): f.short_path}})
+            client.close()
+        return self
+
     def delete_files_recipe(self, files):
-        """ Delete a FileTest to RecipeTest's step.
+        """ Delete a FileTest to RecipeTest.
 
         Parameters
         ----------
@@ -372,6 +402,26 @@ class RecipeTest(object):
         """
         for f in files:
             self.files.remove(f.short_path)
+        return self
+
+    def delete_files_step(self, _id_step, files):
+        """ Delete a FileTest to RecipeTest's step.
+
+        Parameters
+        ----------
+        _id_step : str
+            Step's ObjectId
+        files : list
+            FileTest to be deleted
+
+        Returns
+        -------
+        RecipeTest
+            RecipeTest.
+        """
+        index = Recipe().get_step_position(_id_recipe=self.get_id(), _id_step=_id_step)
+        for f in files:
+            self.steps[index]["files"].remove(f.short_path)
         return self
 
     """ calories """

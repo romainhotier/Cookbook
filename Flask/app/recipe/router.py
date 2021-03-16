@@ -250,9 +250,13 @@ def put_recipe(_id):
     """ check body """
     body = api.clean_body(_id=_id, data=request.json)
     validation.is_body_valid(data=body, _id=_id)
+    steps_ids_tbc = api.get_diff_steps(_id=_id, body=body)
     body_formated = api.reformat_body(data=body)
     """ update recipe """
     data = Recipe().update(_id=_id, data=body_formated)
+    """ clean steps files"""
+    for step_id in steps_ids_tbc:
+        File().clean_delete_step(_id_recipe=_id, _id_step=step_id)
     """ return response """
     return utils.ResponseMaker().return_response(data=data.result, api=apis.name, http_code=200)
 

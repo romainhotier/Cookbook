@@ -142,7 +142,7 @@ class Factory(object):
         self.reformat_steps()
         return self.body
 
-    # use in fill_body
+    # use in reformat_body
     def reformat_steps(self):
         """ Fill steps with ObjectId.
         """
@@ -160,7 +160,7 @@ class Factory(object):
             pass
 
     def get_diff_steps(self, _id, body):
-        """ Return Steps to be deleted.
+        """ Return Steps deleted.
 
         Parameters
         ----------
@@ -177,8 +177,18 @@ class Factory(object):
         try:
             origin = recipe_model.Recipe().select_one(_id=_id).result[self.param_steps]
             update = body[self.param_steps]
-            ids_origin = [str(step["_id"]) for step in origin]
-            ids_update = [str(step["_id"]) for step in update]
+            ids_origin = []
+            ids_update = []
+            for step in origin:
+                try:
+                    ids_origin.append(str(step["_id"]))
+                except KeyError:
+                    pass
+            for step in update:
+                try:
+                    ids_update.append(str(step["_id"]))
+                except KeyError:
+                    pass
             ids_to_be_cleaned = []
             for _id in ids_origin:
                 if _id not in ids_update:

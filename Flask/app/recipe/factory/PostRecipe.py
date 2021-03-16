@@ -163,5 +163,6 @@ class Factory(object):
         """
         formated_steps = []
         for step in self.body[self.param_steps]:
-            formated_steps.append({"_id": ObjectId(), self.param_step_description: step[self.param_step_description]})
+            formated_steps.append({"_id": ObjectId(), self.param_step_description: step[self.param_step_description],
+                                   "files": []})
         self.body[self.param_steps] = formated_steps
