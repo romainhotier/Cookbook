@@ -93,12 +93,14 @@ const RecipeReducer = handleActions(
 
     [putRecipeSuccess](state, action) {
       const recipe = action.payload
-      const [index] = findRecipeEntry(state, recipe.id)
+
+      const index = findRecipeEntry(state, recipe._id)
       if (index < 0) {
-        return state.set('loadingPostRecipe', false)
+        return state.set('loadingPutRecipe', false)
       }
-      const newRecipes = getAllRecipes(state).updateIn(state, index, recipe)
-      return state.set('loadingPostRecipe', false).set('content', List(newRecipes))
+
+      const newRecipes = getAllRecipes(state).updateIn([state, index, recipe])
+      return state.set('loadingPutRecipe', false).set('content', List(newRecipes))
     },
 
     [putRecipeFailed](state) {
@@ -115,12 +117,13 @@ const RecipeReducer = handleActions(
     [deleteRecipeSuccess](state, action) {
       const recipeId = action.payload
 
-      const [index] = findRecipeEntry(state, recipeId)
+      const index = findRecipeEntry(state, recipeId)
       if (index < 0) {
         return state.set('loading', false)
       }
 
-      return state.set('loading', false).removeIn('content', index)
+      const newRecipes = getAllRecipes(state).removeIn([index])
+      return state.set('loading', false).set('content', List(newRecipes))
     },
 
     [deleteRecipeFailed](state) {
@@ -139,21 +142,21 @@ const RecipeReducer = handleActions(
       const splitUrl = url.split('/')
       const id = splitUrl[1]
 
-      const { index } = findRecipeEntry(state, id)
+      const index = findRecipeEntry(state, id)
       if (index < 0) {
         return state
       }
-
       const updatedRecipesList = updateFilesInRecipe(state, index, payload)
+
       return setRecipes(state, updatedRecipesList)
     },
 
-    [postFileRecipeFailed](state, error) {
-      return state.set('error', error)
+    [postFileRecipeFailed](state, { payload }) {
+      return state.set('error', payload)
     },
 
     /*
-     ** POST FILES IN RECIPE
+     ** DELETE FILES IN RECIPE
      */
     [deleteFileRecipeRequest](state) {
       return state.set('error', null)
@@ -163,21 +166,17 @@ const RecipeReducer = handleActions(
       const splitUrl = payload.split('/')
       const id = splitUrl[1]
 
-      const { index } = findRecipeEntry(state, id)
+      const index = findRecipeEntry(state, id)
       if (index < 0) {
         return state
       }
 
-      console.log('index', index)
-      console.log('payload', payload)
       const updatedRecipesList = removeFileInRecipe(state, index, payload)
-      console.log('updatedRecipesList', updatedRecipesList)
-
       return setRecipes(state, updatedRecipesList)
     },
 
-    [deleteFileRecipeFailed](state, error) {
-      return state.set('error', error)
+    [deleteFileRecipeFailed](state, { payload }) {
+      return state.set('error', payload)
     },
   },
   defaultInitialState

@@ -1,3 +1,5 @@
+export const fileRecipe = ['recipe/5fdf4387e29e317ae857b5e6/pancake-banane.jpg']
+
 export const recipes = {
   content: [
     {
@@ -9,6 +11,7 @@ export const recipes = {
       note: '',
       preparation_time: '5',
       resume: '',
+      files: [],
       slug: 'pancakes-a-la-banane',
       status: 'finished',
       title: 'Pancakes à la banane',
@@ -20,13 +23,26 @@ export const recipes = {
           unit: 'portion',
         },
       ],
+      steps: [
+        {
+          _id: '5fdf4387e29e317ae857b5e2',
+          description:
+            "Ecraser les bananes en purée et mélanger tous les ingrédients, jusqu'à l'obtention d'une pâte lisse. ",
+        },
+        {
+          _id: '5fdf4387e29e317ae857b5e3',
+          description:
+            "Chauffer une poêle à feu moyen. Si la poêle n'est pas anti-adhésive, badigeonnez-la d'huile de coco (ou autres matières grasses). ",
+        },
+      ],
     },
     {
       _id: '5fdf490ce29e317ae857b60f',
       calories: 3374.98,
-      cooking_time: '45',
+      cooking_time: '120',
       level: 0,
       nb_people: '12',
+      files: ['recipes/12345/marbre.jpg'],
       note: '',
       preparation_time: '15',
       resume: '',

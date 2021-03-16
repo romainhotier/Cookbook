@@ -67,6 +67,12 @@ export class RecipePageDetails extends Component {
     })
   }
 
+  closeModal = () => {
+    return this.setState({
+      modalDeleteRecipeIsVisible: false,
+    })
+  }
+
   handleUploadFiles = () => {
     const isVisible = this.state.uploadFilesIsVisible
     return this.setState({
@@ -101,15 +107,16 @@ export class RecipePageDetails extends Component {
 
     return (
       <RecipePageDetailsComponent
-        recipe={recipe}
         allIngredients={allIngredients}
-        portionEdited={portionEdited}
-        updatePortionEdited={this.updatePortionEdited}
+        closeModal={this.closeModal}
+        deleteRecipe={deleteRecipe}
+        handleUploadFiles={this.handleUploadFiles}
         history={history}
         modalDeleteRecipeIsVisible={modalDeleteRecipeIsVisible}
-        deleteRecipe={deleteRecipe}
+        portionEdited={portionEdited}
+        recipe={recipe}
         showModal={this.showModal}
-        handleUploadFiles={this.handleUploadFiles}
+        updatePortionEdited={this.updatePortionEdited}
         uploadFilesIsVisible={uploadFilesIsVisible}
       />
     )
@@ -133,10 +140,10 @@ const mapStateToProps = ({ recipes, ingredients }) => ({
 export default connect(mapStateToProps, mapDispatchToProps)(RecipePageDetails)
 
 RecipePageDetails.propTypes = {
-  recipesList: PropTypes.array,
+  recipesList: PropTypes.object,
   history: PropTypes.object,
   match: PropTypes.object,
-  allIngredients: PropTypes.array,
+  allIngredients: PropTypes.object,
   fetchRecipe: PropTypes.func,
   fetchAllIngredients: PropTypes.func,
   loadingFetchIngredients: PropTypes.bool,

@@ -21,9 +21,9 @@ export const findRecipeEntry = (state, recipeId) => {
   const entry = getAllRecipes(state).findEntry(({ _id }) => _id === recipeId)
 
   if (!entry) {
-    return [-1, null]
+    return -1
   }
-  return { index: entry[0], value: entry[1] }
+  return entry[0]
 }
 
 export function setRecipes(state, recipes) {
