@@ -4,15 +4,13 @@ import PropTypes from 'prop-types'
 
 import { IngredientsListColumns } from './ingredientsList.columns'
 
-const IngredientsList = ({ data, deleteIngredient, searchIngredients }) => {
-  return (
-    <Table
-      columns={IngredientsListColumns(deleteIngredient, searchIngredients)}
-      dataSource={data}
-      rowKey={record => record._id}
-    />
-  )
-}
+const IngredientsList = ({ data, deleteIngredient, searchIngredients }) => (
+  <Table
+    columns={IngredientsListColumns(deleteIngredient, searchIngredients)}
+    dataSource={data}
+    rowKey={record => record._id}
+  />
+)
 
 IngredientsList.propTypes = {
   data: PropTypes.array,

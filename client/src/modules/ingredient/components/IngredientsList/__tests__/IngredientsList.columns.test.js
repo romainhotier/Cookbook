@@ -2,10 +2,10 @@ import React from 'react'
 import { Tag } from 'antd'
 
 import { IngredientsListColumns } from '../ingredientsList.columns'
-import { ingredient, ingredientEmpty } from 'modules/ingredient/__mocks__/ingredients.mock'
+import { ingredient, ingredientEmpty } from 'modules/ingredient/mocks/ingredients.mock'
 
 describe('IngredientsListColumns', () => {
-  it('should columns are goods', () => {
+  it('should render goods columns', () => {
     const buildColumns = IngredientsListColumns()
 
     expect(buildColumns[0].dataIndex).toEqual('icon')
@@ -55,9 +55,7 @@ describe('IngredientsListColumns', () => {
     expect(childrenColumn[5].render('', ingredientEmpty)).toEqual('-')
 
     expect(buildColumns[4].dataIndex).toEqual('action')
-
     const ActionColumn = buildColumns[4].render('', ingredient)
-
     expect(ActionColumn).toBeDefined()
   })
 })
