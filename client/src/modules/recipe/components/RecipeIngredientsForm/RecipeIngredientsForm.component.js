@@ -234,9 +234,9 @@ const mapDispatchToProps = {
   fetchAllIngredients,
 }
 
-const mapStateToProps = ({ ingredients: { content, loadingFetchIngredients } }) => ({
+const mapStateToProps = ({ ingredients: { content, loadingFetchIngredient } }) => ({
   ingredients: content,
-  loadingFetchIngredients,
+  loadingFetchIngredient,
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(RecipeIngredientsForm)

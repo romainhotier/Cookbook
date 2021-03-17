@@ -28,7 +28,7 @@ export class RecipePageDetails extends Component {
       },
       fetchRecipe,
       allIngredients,
-      loadingFetchIngredients,
+      loadingFetchIngredient,
       fetchAllIngredients,
     } = this.props
 
@@ -38,14 +38,14 @@ export class RecipePageDetails extends Component {
       fetchRecipe(slug)
     }
 
-    if (recipe !== undefined && Object.keys(allIngredients).length === 0 && !loadingFetchIngredients) {
+    if (recipe !== undefined && Object.keys(allIngredients).length === 0 && !loadingFetchIngredient) {
       fetchAllIngredients()
     }
   }
 
   componentDidUpdate(prevProps) {
-    const { allIngredients, fetchAllIngredients, loadingFetchIngredients } = this.props
-    if (Object.keys(allIngredients).length === 0 && !loadingFetchIngredients) {
+    const { allIngredients, fetchAllIngredients, loadingFetchIngredient } = this.props
+    if (Object.keys(allIngredients).length === 0 && !loadingFetchIngredient) {
       fetchAllIngredients()
     }
   }
@@ -86,7 +86,7 @@ export class RecipePageDetails extends Component {
       match: {
         params: { slug },
       },
-      loadingFetchIngredients,
+      loadingFetchIngredient,
       loadingFetchRecipe,
       allIngredients,
       deleteRecipe,
@@ -98,7 +98,7 @@ export class RecipePageDetails extends Component {
 
     if (
       recipe === undefined ||
-      loadingFetchIngredients ||
+      loadingFetchIngredient ||
       loadingFetchRecipe ||
       Object.keys(allIngredients).length === 0
     ) {
@@ -133,7 +133,7 @@ const mapStateToProps = ({ recipes, ingredients }) => ({
   recipesList: getAllRecipes(recipes),
   loadingFetchRecipe: getloadingFetchRecipe(recipes),
   allIngredients: ingredients.content,
-  loadingFetchIngredients: ingredients.loadingFetchIngredients,
+  loadingFetchIngredient: ingredients.loadingFetchIngredient,
   loadingDeleteRecipe: recipes.loading,
 })
 
@@ -146,5 +146,5 @@ RecipePageDetails.propTypes = {
   allIngredients: PropTypes.object,
   fetchRecipe: PropTypes.func,
   fetchAllIngredients: PropTypes.func,
-  loadingFetchIngredients: PropTypes.bool,
+  loadingFetchIngredient: PropTypes.bool,
 }

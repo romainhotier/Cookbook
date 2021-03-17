@@ -7,18 +7,18 @@ import { recipes } from 'modules/recipe/mocks/mock.recipes'
 
 describe('RecipePageDetails.container', () => {
   const match = { params: { slug: 'pancakes-a-la-banane' } }
-  it('should if loader is render if loadingFetchIngredients is true', () => {
-    const wrapperWithLoadingFetchIngredients = shallow(
+  it('should if loader is render if loadingFetchIngredient is true', () => {
+    const wrapperWithloadingFetchIngredient = shallow(
       <RecipePageDetails
         match={match}
         recipesList={List(recipes.content)}
-        loadingFetchIngredients={true}
+        loadingFetchIngredient={true}
         allIngredients={{}}
         fetchAllIngredients={jest.fn()}
       />
     )
 
-    expect(wrapperWithLoadingFetchIngredients.find('Loader').length).toEqual(1)
+    expect(wrapperWithloadingFetchIngredient.find('Loader').length).toEqual(1)
   })
 
   it('should if loader is render if loadingFetchRecipe is true', () => {
