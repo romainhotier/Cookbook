@@ -18,7 +18,7 @@ export const codeMsg = {
       },
       error: {
         bad_request: {
-          already_exist: value => `L'ingrédient ${value} existe déjà.`,
+          already_exist: value => `L'ingrédient "${value}" existe déjà.`,
         },
       },
     },

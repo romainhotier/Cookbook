@@ -56,7 +56,6 @@ export const deleteFileRecipe = path => dispatch => {
         dispatch(deleteFileRecipeSuccess(response.data))
         notification['success']({
           message: 'Image supprimée !',
-          description: `${get(codeMsg, `${response.codeMsg}`)}`,
         })
       } else {
         dispatch(dispatch(deleteFileRecipeFailed(response.detail)))

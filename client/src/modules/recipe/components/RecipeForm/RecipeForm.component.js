@@ -3,8 +3,7 @@ import PropTypes from 'prop-types'
 import { Form, Button, Row, Col, Divider, Space, Collapse } from 'antd'
 
 import { Input } from 'components/Form/Input.component'
-import { Upload } from 'components/Form/Upload.component'
-import { displayFile } from 'components/Form/Upload.helpers'
+
 import { CheckboxWithImage } from 'components/Form/CheckboxWithImage.component'
 import { categories } from 'constants/categories.constants'
 import { slugify } from 'constants/functions.constants'
@@ -15,10 +14,7 @@ import { RecipeValidator } from './RecipeForm.validator'
 
 import './_RecipeForm.scss'
 
-const RecipeForm = ({ sendRecipe, values, addFileInRecipe, deleteFileInRecipe }) => {
-  const filesFormated = values.files !== undefined ? values.files.map((file, index) => displayFile(file, index)) : []
-
-  const [filesUpladed, setFilesUpladed] = useState(filesFormated)
+const RecipeForm = ({ sendRecipe, values }) => {
   const [listSteps, setListSteps] = useState(values.steps)
   const [formRecipe] = Form.useForm()
 
@@ -32,13 +28,11 @@ const RecipeForm = ({ sendRecipe, values, addFileInRecipe, deleteFileInRecipe })
     sendRecipe({ ...values, slug, steps: listSteps })
   }
 
-  const { Panel } = Collapse
-  const isUpdatedForm = addFileInRecipe && deleteFileInRecipe
   return (
     <>
       <Form layout="vertical" form={formRecipe} onFinish={onFinish} initialValues={values}>
         <Collapse defaultActiveKey={['Informations']} expandIconPosition="right" className="FormRecipe_collapse">
-          <Panel
+          <Collapse.Panel
             header={
               <>
                 <h3>Informations</h3>
@@ -99,25 +93,12 @@ const RecipeForm = ({ sendRecipe, values, addFileInRecipe, deleteFileInRecipe })
 
             {/* Catégories + images */}
             <Row gutter="32">
-              <Col lg={isUpdatedForm ? 12 : 24} md={isUpdatedForm ? 12 : 24} sm={24} xs={24}>
+              <Col lg={24} md={24} sm={24} xs={24}>
                 {/* Catégories */}
                 <CheckboxWithImage label="Catégories" name="categories" datas={categories} />
               </Col>
-              {isUpdatedForm && (
-                <Col lg={12} md={12} sm={24} xs={24}>
-                  {/* Images */}
-                  <Upload
-                    label="Images / Photos"
-                    name="filesRecipe"
-                    filesUpladed={filesUpladed}
-                    setFilesUpladed={setFilesUpladed}
-                    addFileInRecipe={addFileInRecipe}
-                    deleteFileInRecipe={deleteFileInRecipe}
-                  />
-                </Col>
-              )}
             </Row>
-          </Panel>
+          </Collapse.Panel>
         </Collapse>
         <Divider />
 
@@ -151,8 +132,6 @@ const RecipeForm = ({ sendRecipe, values, addFileInRecipe, deleteFileInRecipe })
 RecipeForm.propTypes = {
   sendRecipe: PropTypes.func,
   values: PropTypes.object,
-  addFileInRecipe: PropTypes.func,
-  deleteFileInRecipe: PropTypes.func,
 }
 
 export default RecipeForm

@@ -38,13 +38,15 @@
     }
   }
 }
-
-.upload-list-inline .ant-upload-list-item {
-  float: left;
-  width: 200px;
-  margin-right: 8px;
+.ant-upload-picture-card-wrapper .ant-upload.ant-upload-select-picture-card {
+  background-color: transparent;
 }
 
-.upload-list-inline [class*='-upload-list-rtl'] .ant-upload-list-item {
-  float: right;
+.ant-upload.ant-upload-select-picture-card > span.ant-upload,
+.ant-upload {
+  color: var(--color-text);
+
+  &:hover {
+    color: var(--primary);
+  }
 }

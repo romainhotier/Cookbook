@@ -6,7 +6,7 @@ import { Col, Row } from 'antd'
 import RecipeForm from 'modules/recipe/components/RecipeForm'
 import { postRecipe } from 'modules/recipe/thunks'
 
-const RecipePageAdd = ({ postRecipe }) => {
+export const RecipePageAdd = ({ postRecipe }) => {
   const createRecipe = data => {
     postRecipe(data)
   }

@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Upload as UploadAntd, Button, Form } from 'antd'
+import { Upload as UploadAntd, Form } from 'antd'
 
 import './_Form.scss'
 
@@ -11,7 +11,7 @@ const normFile = e => {
   return e && e.fileList
 }
 
-export const Upload = ({ label, name, filesUpladed = [], setFilesUpladed, addFileInRecipe, deleteFileInRecipe }) => {
+export const Upload = ({ label, name, filesUpladed = [], addFileInRecipe, deleteFileInRecipe }) => {
   const uploads = {
     onRemove: file => {
       deleteFileInRecipe(file)
@@ -22,7 +22,6 @@ export const Upload = ({ label, name, filesUpladed = [], setFilesUpladed, addFil
     },
     beforeUpload: file => {
       addFileInRecipe(file)
-      setFilesUpladed([...filesUpladed, file])
       return false
     },
   }
@@ -30,8 +29,8 @@ export const Upload = ({ label, name, filesUpladed = [], setFilesUpladed, addFil
   return (
     <>
       <Form.Item name={name} label={label} valuePropName="fileList" getValueFromEvent={normFile}>
-        <UploadAntd {...uploads} listType="picture" defaultFileList={[...filesUpladed]} className="upload-list-inline">
-          <Button>Importer une photo</Button>
+        <UploadAntd {...uploads} listType="picture-card" defaultFileList={[...filesUpladed]} onPreview>
+          {'+ Upload'}
         </UploadAntd>
       </Form.Item>
     </>
@@ -42,8 +41,6 @@ Upload.propTypes = {
   label: PropTypes.string,
   name: PropTypes.string,
   addFileInRecipe: PropTypes.func,
-  action: PropTypes.string,
   filesUpladed: PropTypes.array,
-  setFilesUpladed: PropTypes.func,
   deleteFileInRecipe: PropTypes.func,
 }

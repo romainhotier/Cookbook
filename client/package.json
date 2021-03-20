@@ -6,6 +6,7 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
+    "test:coverage": "craco test --coverage --watchAll=false",
     "test:lint": "eslint ./src",
     "eject": "craco eject"
   },
@@ -28,7 +29,6 @@
     "@craco/craco": "^5.7.0",
     "@reduxjs/toolkit": "^1.4.0",
     "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "antd": "^4.8.2",
     "babel-loader": "^8.1.0",
@@ -37,6 +37,7 @@
     "craco-less": "^1.17.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.4",
+    "immutable": "^4.0.0-rc.12",
     "lodash": "^4.17.20",
     "node-sass": "^4.14.1",
     "react": "^16.13.1",

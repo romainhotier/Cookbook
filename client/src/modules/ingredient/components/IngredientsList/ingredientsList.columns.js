@@ -1,21 +1,27 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Button, Popover, Tag, Space } from 'antd'
 
 import TableTitleWithSearch from 'components/TableTitleWithSearch'
 import IngredientModalEdit from 'modules/ingredient/containers/IngredientModalEdit'
 import { searchInListIcons } from 'constants/functions.constants'
 
-const contentPopover = (deleteIngredient, _id) => (
+const contentPopover = (deleteIngredient, id) => (
   <div style={{ textAlign: 'center' }}>
     Êtes-vous sur de vouloir supprimer cet ingrédient ?
     <br />
     <Space style={{ marginTop: '20px' }}>
-      <Button onClick={() => deleteIngredient(_id)} htmlType="button">
+      <Button onClick={() => deleteIngredient(id)} htmlType="button">
         Oui !
       </Button>
     </Space>
   </div>
 )
+
+contentPopover.propTypes = {
+  deleteIngredient: PropTypes.func,
+  id: PropTypes.string,
+}
 
 export const IngredientsListColumns = (deleteIngredient, searchIngredients) => [
   {
@@ -120,3 +126,8 @@ export const IngredientsListColumns = (deleteIngredient, searchIngredients) => [
     },
   },
 ]
+
+IngredientsListColumns.propTypes = {
+  deleteIngredient: PropTypes.func,
+  searchIngredients: PropTypes.func,
+}

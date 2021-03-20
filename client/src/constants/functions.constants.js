@@ -62,9 +62,7 @@ export const searchInListIcons = slug => {
     })
   })
 
-  if (data.length > 0) {
-    return data.length > 0 ? data[0] : ''
-  }
+  return data.length > 0 ? data[0] : ''
 }
 
 export const worldConnector = name => {

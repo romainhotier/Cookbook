@@ -1,45 +1,52 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { Col, Row, Dropdown } from 'antd'
+import find from 'lodash/find'
 
 import { fetchRecipe, deleteRecipe } from 'modules/recipe/thunks'
 import { fetchAllIngredients } from 'modules/ingredient/thunks'
-import { RecipeInformations } from 'modules/recipe/components/RecipeDetails/RecipeInformations.component'
-import { menuActions } from 'modules/recipe/components/RecipeDetails/RecipeMenu.component'
-import { BuildListIngredients } from '../../components/RecipeDetails/BuildListIngredients.component'
-import { EditPortion } from '../../components/RecipeDetails/EditPortion.component'
-import RecipeModalDelete from '../../components/RecipeModalDelete'
-import Carousel from 'components/Carousel'
-import CategoryTag from 'components/CategoryTag'
+import { RecipePageDetailsComponent } from './RecipePageDetails.component'
+import { getAllRecipes, getloadingFetchRecipe } from 'modules/recipe/reducers'
+import { getAllIngredients, getloadingFetchIngredient } from 'modules/ingredient/reducers'
 import Loader from 'components/Loader'
 
-import './_RecipePageDetails.scss'
-
-class RecipePageDetails extends Component {
+export class RecipePageDetails extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
       portionEdited: null,
       modalDeleteRecipeIsVisible: false,
+      uploadFilesIsVisible: false,
     }
   }
 
   componentDidMount() {
-    const { recipes, match, fetchRecipe, allIngredients, loadingFetchIngredients, fetchAllIngredients } = this.props
-    const { slug } = match.params
-    if (recipes[slug] === undefined) {
+    const {
+      recipesList,
+      match: {
+        params: { slug },
+      },
+      fetchRecipe,
+      allIngredients,
+      loadingFetchIngredient,
+      fetchAllIngredients,
+    } = this.props
+
+    const recipe = find(recipesList.toJS(), recipe => recipe.slug === slug)
+
+    if (recipe === undefined) {
       fetchRecipe(slug)
     }
 
-    if (recipes[slug] !== undefined && Object.keys(allIngredients).length === 0 && !loadingFetchIngredients) {
+    if (recipe !== undefined && allIngredients.size === 0 && !loadingFetchIngredient) {
       fetchAllIngredients()
     }
   }
 
   componentDidUpdate() {
-    const { allIngredients, fetchAllIngredients, loadingFetchIngredients } = this.props
-    if (Object.keys(allIngredients).length === 0 && !loadingFetchIngredients) {
+    const { allIngredients, fetchAllIngredients, loadingFetchIngredient } = this.props
+    if (allIngredients.size === 0 && !loadingFetchIngredient) {
       fetchAllIngredients()
     }
   }
@@ -61,121 +68,58 @@ class RecipePageDetails extends Component {
     })
   }
 
+  closeModal = () => {
+    return this.setState({
+      modalDeleteRecipeIsVisible: false,
+    })
+  }
+
+  handleUploadFiles = () => {
+    const isVisible = this.state.uploadFilesIsVisible
+    return this.setState({
+      uploadFilesIsVisible: !isVisible,
+    })
+  }
+
   render() {
     const {
-      recipes,
-      match,
-      loadingFetchIngredients,
-      loadingFetchRecipes,
+      recipesList,
+      match: {
+        params: { slug },
+      },
+      loadingFetchIngredient,
+      loadingFetchRecipe,
       allIngredients,
       deleteRecipe,
       history,
     } = this.props
-    const { portionEdited, modalDeleteRecipeIsVisible } = this.state
-    const { slug } = match.params
-    const recipe = recipes[slug]
+
+    const { portionEdited, modalDeleteRecipeIsVisible, uploadFilesIsVisible } = this.state
+    const recipe = find(recipesList.toJS(), recipe => recipe.slug === slug)
 
     if (
       recipe === undefined ||
-      loadingFetchIngredients ||
-      loadingFetchRecipes ||
+      loadingFetchIngredient ||
+      loadingFetchRecipe ||
       Object.keys(allIngredients).length === 0
     ) {
       return <Loader />
     }
 
-    const {
-      title,
-      steps,
-      preparation_time,
-      cooking_time,
-      nb_people,
-      categories,
-      ingredients,
-      files,
-      _id,
-      calories,
-    } = recipe
-
-    const caloriesForOnePortion = Math.round(calories / nb_people, 2)
-
     return (
-      <section className="RecipeDetails">
-        <div className="RecipeDetails_actions">
-          <Dropdown.Button overlay={menuActions(slug, this.showModal)}>
-            <i className="fas fa-play-circle icons"></i> Démarrer la recette
-          </Dropdown.Button>
-        </div>
-        <RecipeModalDelete
-          deleteRecipe={deleteRecipe}
-          id={_id}
-          isModalVisible={modalDeleteRecipeIsVisible}
-          closeModal={() => this.setState({ modalDeleteRecipeIsVisible: false })}
-          history={history}
-        />
-        <Row className="RecipeDetails_header" gutter={16}>
-          <Col xs={24} sm={24} md={24} lg={24} xl={12}>
-            <Carousel files={files} className={'RecipeDetails_carousel'} height={'400px'} />
-          </Col>
-          <Col xs={24} sm={24} md={24} lg={24} xl={12}>
-            <h2>{title}</h2>
-            <em>Créé par XXXX XXXX</em>
-
-            <RecipeInformations
-              preparation_time={preparation_time}
-              cooking_time={cooking_time}
-              caloriesForOnePortion={caloriesForOnePortion}
-            />
-
-            {categories && (
-              <div className="RecipeDetails_categories">
-                {categories.map(category => (
-                  <CategoryTag key={`key-${category}`} category={category} />
-                ))}
-              </div>
-            )}
-          </Col>
-        </Row>
-
-        <Row>
-          {/* INGREDIENTS  */}
-
-          <Col xs={12} sm={12} md={12} lg={8} xl={8} className="listIngredients">
-            <h3>Ingrédients</h3>
-            {!ingredients ? (
-              'Aucun ingrédient'
-            ) : (
-              <>
-                <EditPortion
-                  portion={parseInt(nb_people)}
-                  portionEdited={portionEdited}
-                  updatePortionEdited={this.updatePortionEdited}
-                />
-
-                <ul>
-                  <BuildListIngredients
-                    allIngredients={allIngredients}
-                    ingredients={ingredients}
-                    portion={parseInt(nb_people)}
-                    portionEdited={portionEdited}
-                  />
-                </ul>
-              </>
-            )}
-          </Col>
-
-          {/* ETAPES  */}
-          <Col xs={12} sm={12} md={12} lg={16} xl={16}>
-            <h3>Instructions</h3>
-            {steps.map((element, index) => (
-              <article className="step" key={index}>
-                <div className="step_index">{index + 1}</div>
-                <div className="step_describe">{element.description}</div>
-              </article>
-            ))}
-          </Col>
-        </Row>
-      </section>
+      <RecipePageDetailsComponent
+        allIngredients={allIngredients}
+        closeModal={this.closeModal}
+        deleteRecipe={deleteRecipe}
+        handleUploadFiles={this.handleUploadFiles}
+        history={history}
+        modalDeleteRecipeIsVisible={modalDeleteRecipeIsVisible}
+        portionEdited={portionEdited}
+        recipe={recipe}
+        showModal={this.showModal}
+        updatePortionEdited={this.updatePortionEdited}
+        uploadFilesIsVisible={uploadFilesIsVisible}
+      />
     )
   }
 }
@@ -187,11 +131,20 @@ const mapDispatchToProps = {
 }
 
 const mapStateToProps = ({ recipes, ingredients }) => ({
-  recipes: recipes.content,
-  loadingFetchRecipes: recipes.loadingFetchRecipes,
-  allIngredients: ingredients.content,
-  loadingFetchIngredients: ingredients.loadingFetchIngredients,
-  loadingDeleteRecipe: recipes.loading,
+  recipesList: getAllRecipes(recipes),
+  loadingFetchRecipe: getloadingFetchRecipe(recipes),
+  allIngredients: getAllIngredients(ingredients),
+  loadingFetchIngredient: getloadingFetchIngredient(ingredients),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(RecipePageDetails)
+
+RecipePageDetails.propTypes = {
+  recipesList: PropTypes.object,
+  history: PropTypes.object,
+  match: PropTypes.object,
+  allIngredients: PropTypes.object,
+  fetchRecipe: PropTypes.func,
+  fetchAllIngredients: PropTypes.func,
+  loadingFetchIngredient: PropTypes.bool,
+}

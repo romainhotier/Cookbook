@@ -2,6 +2,14 @@ const CracoAntDesignPlugin = require('craco-antd')
 const sassResourcesLoader = require('craco-sass-resources-loader')
 
 module.exports = {
+  jest: {
+    configure: {
+      verbose: true,
+      testEnvironment: 'jsdom',
+      collectCoverageFrom: ['src/**/*.{js}', '!**/__tests__/**', '!**/__mocks__/**', '!src/**/index.js', '!src/*.js'],
+      setupFiles: ['<rootDir>/src/setupTests.js'],
+    },
+  },
   plugins: [
     {
       plugin: CracoAntDesignPlugin,

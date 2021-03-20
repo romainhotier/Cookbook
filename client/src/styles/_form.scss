@@ -55,3 +55,16 @@ input,
     font-style: italic;
   }
 }
+
+.ant-select-selection-placeholder {
+  color: var(--color-placeholder);
+  font-style: italic;
+}
+
+.ant-form-item-label > label {
+  color: var(--color-text);
+  &.ant-form-item-required::before {
+    position: absolute;
+    right: -15px;
+  }
+}

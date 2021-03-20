@@ -11,9 +11,6 @@ import {
   putIngredientRequest,
   putIngredientSuccess,
   putIngredientFailed,
-  postIngredientsRecipeRequest,
-  postIngredientsRecipeSuccess,
-  postIngredientsRecipeFailed,
   searchIngredientsRequest,
   searchIngredientsSuccess,
   searchIngredientsFailed,
@@ -22,7 +19,6 @@ import {
 import {
   fetchAllIngredientsURL,
   postIngredientURL,
-  postIngredientsRecipeURL,
   deleteIngredientURL,
   putIngredientURL,
   searchIngredientsURL,
@@ -140,38 +136,6 @@ export const putIngredient = ({ data, id }) => dispatch => {
     })
     .catch(error => {
       dispatch(putIngredientFailed(error))
-    })
-}
-
-export const postIngredientsRecipe = data => dispatch => {
-  dispatch(postIngredientsRecipeRequest())
-
-  fetch(postIngredientsRecipeURL(), {
-    method: 'POST',
-    headers: new Headers({
-      'Content-Type': 'application/json',
-    }),
-    body: JSON.stringify(data),
-  })
-    .then(res => res.json())
-    .then(response => {
-      if (response.codeStatus === 201) {
-        dispatch(postIngredientsRecipeSuccess(response))
-        notification['success']({
-          message: 'Ingrédient associé à la recette !',
-          description: `${get(codeMsg, `${response.codeMsg}`)}`,
-        })
-      } else {
-        dispatch(dispatch(postIngredientsRecipeFailed(response.detail)))
-        const errorFormat = get(codeMsg, `${response.codeMsg}.${slugifyResponse(response.detail.msg)}`)
-        notification['error']({
-          message: 'Oooh une erreur',
-          description: `${errorFormat(response.detail.value)}`,
-        })
-      }
-    })
-    .catch(error => {
-      dispatch(postIngredientFailed(error))
     })
 }
 

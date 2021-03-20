@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Form, Input as InputAntd } from 'antd'
 
 export const Input = ({
@@ -15,3 +16,12 @@ export const Input = ({
     <InputAntd placeholder={placeholder} value={value} {...props} />
   </Form.Item>
 )
+
+Input.propTypes = {
+  label: PropTypes.string,
+  name: PropTypes.string,
+  required: PropTypes.bool,
+  error: PropTypes.string,
+  placeholder: PropTypes.string,
+  hidden: PropTypes.bool,
+}
