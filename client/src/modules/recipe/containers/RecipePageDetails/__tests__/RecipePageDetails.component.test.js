@@ -1,9 +1,8 @@
 import React from 'react'
-import { List } from 'immutable'
 import { shallow } from 'enzyme'
 
 import { RecipePageDetailsComponent } from '../RecipePageDetails.component'
-import { recipes } from 'modules/recipe/mocks/mock.recipes'
+import { recipes } from 'modules/recipe/mocks/recipes.mock'
 
 describe('RecipePageDetailsComponent', () => {
   it('should render RecipeDetails without props', () => {

@@ -22,6 +22,11 @@ export const recipes = {
           quantity: '4',
           unit: 'portion',
         },
+        {
+          _id: '6gtr48dc0749c35c039b43f',
+          quantity: '4',
+          unit: 'g',
+        },
       ],
       steps: [
         {

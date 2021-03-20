@@ -2,7 +2,7 @@ import React from 'react'
 import { shallow } from 'enzyme'
 
 import RecipeStepForm from '../RecipeStepForm.component'
-import { recipes } from 'modules/recipe/mocks/mock.recipes'
+import { recipes } from 'modules/recipe/mocks/recipes.mock'
 
 describe('RecipeStepForm.component', () => {
   it('should render RecipeStepForm', () => {

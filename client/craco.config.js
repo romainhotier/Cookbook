@@ -6,7 +6,7 @@ module.exports = {
     configure: {
       verbose: true,
       testEnvironment: 'jsdom',
-      collectCoverageFrom: ['src/**/*.{js}', '!**/__tests__/**', '!**/__mocks__/**', '!src/**/index.js'],
+      collectCoverageFrom: ['src/**/*.{js}', '!**/__tests__/**', '!**/__mocks__/**', '!src/**/index.js', '!src/*.js'],
       setupFiles: ['<rootDir>/src/setupTests.js'],
     },
   },

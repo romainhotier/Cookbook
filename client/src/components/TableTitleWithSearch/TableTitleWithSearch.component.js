@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Input } from 'antd'
 
 const TableTitleWithSearch = ({ title, filterName, placeholder, onChange }) => (
@@ -17,5 +18,12 @@ const TableTitleWithSearch = ({ title, filterName, placeholder, onChange }) => (
     />
   </div>
 )
+
+TableTitleWithSearch.propTypes = {
+  title: PropTypes.string,
+  filterName: PropTypes.string,
+  placeholder: PropTypes.string,
+  onChange: PropTypes.func,
+}
 
 export default TableTitleWithSearch

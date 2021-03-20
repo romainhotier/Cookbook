@@ -9,8 +9,9 @@ const crossProduct = (base, comparative, newBase) => {
 }
 
 export const BuildListIngredients = ({ allIngredients, ingredients = [], portionEdited, portion }) => {
-  const listIngredients = useAllIngredients(allIngredients, ingredients)
-  if (listIngredients.length === 0) {
+  const allIngredientsArray = allIngredients.toJS()
+  const listIngredients = useAllIngredients(allIngredientsArray, ingredients)
+  if (listIngredients.length === 0 || allIngredientsArray.length === 0) {
     return ''
   }
 
@@ -20,10 +21,9 @@ export const BuildListIngredients = ({ allIngredients, ingredients = [], portion
     const nameWithArticle = worldConnector(nameModified)
     let quantityUpdated = quantity
 
-    if (portionEdited !== null) {
+    if (portionEdited && portionEdited !== null) {
       quantityUpdated = crossProduct(portion, parseInt(quantity), portionEdited)
     }
-
     return noUnit ? (
       <li key={slug}>
         <img src={searchInListIcons(slug)} alt={name} width="30" height="30" />

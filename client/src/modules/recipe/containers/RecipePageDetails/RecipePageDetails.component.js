@@ -41,7 +41,6 @@ export const RecipePageDetailsComponent = ({
   } = recipe
 
   const caloriesForOnePortion = Math.round(calories / nb_people, 2)
-
   return (
     <section className="RecipeDetails">
       <div className="RecipeDetails_actions">

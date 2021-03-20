@@ -3,7 +3,7 @@ import { List } from 'immutable'
 import { shallow } from 'enzyme'
 
 import { UploadFilesRecipe } from '../UploadFilesRecipe.container'
-import { recipes } from 'modules/recipe/mocks/mock.recipes'
+import { recipes } from 'modules/recipe/mocks/recipes.mock'
 
 describe('UploadFilesRecipe.component', () => {
   it('should render Upload without files', () => {

@@ -1,5 +1,5 @@
 export const ingredient = {
-  id: '5fdb8dbdc0749c35c039b43f',
+  _id: '5fdb8dbdc0749c35c039b43f',
   name: 'Banane',
   nutriments: {
     calories: '89',
@@ -13,7 +13,7 @@ export const ingredient = {
 }
 
 export const ingredientEmpty = {
-  id: '5fdb8dbdc0749c35c039b43f',
+  _id: '5fdb8dbdc0749c35c039b43f',
   name: 'Banane',
   nutriments: {
     calories: null,
@@ -28,7 +28,7 @@ export const ingredientEmpty = {
 
 export const ingredientsList = [
   {
-    id: '5fdb8dbdc0749c35c039b43f',
+    _id: '5fdb8dbdc0749c35c039b43f',
     name: 'Banane',
     nutriments: {
       calories: '89',
@@ -41,7 +41,7 @@ export const ingredientsList = [
     unit: 'g',
   },
   {
-    id: '6gtr48dc0749c35c039b43f',
+    _id: '6gtr48dc0749c35c039b43f',
     name: 'Farine',
     nutriments: {
       calories: '89',

@@ -7,28 +7,17 @@ import find from 'lodash/find'
 
 import { getAllRecipes, getloadingPutRecipe } from '../../reducers'
 import RecipeForm from 'modules/recipe/components/RecipeForm'
-import { putRecipe, fetchRecipe, postFileRecipe, deleteFileRecipe } from 'modules/recipe/thunks'
+import { putRecipe, fetchRecipe } from 'modules/recipe/thunks'
 import Loader from 'components/Loader'
 
-const RecipePageEdit = ({ recipesList, putRecipe, match, fetchRecipe, postFileRecipe, deleteFileRecipe }) => {
+export const RecipePageEdit = ({ recipesList, putRecipe, match, fetchRecipe }) => {
   const slug = match.params.id
   const recipe = find(recipesList.toJS(), recipe => recipe.slug === slug)
-
   useEffect(() => {
     if (recipe === undefined) {
       fetchRecipe(slug)
     }
   })
-
-  const addFileInRecipe = file => {
-    const formData = new FormData()
-    formData.append('files', file)
-    postFileRecipe(recipe._id, formData)
-  }
-
-  const deleteFileInRecipe = file => {
-    deleteFileRecipe(file.url)
-  }
 
   const updateRecipe = data => {
     const recipeWithoutFiles = omit(data, 'filesRecipe')
@@ -45,13 +34,7 @@ const RecipePageEdit = ({ recipesList, putRecipe, match, fetchRecipe, postFileRe
     <Row>
       <Col span={24}>
         <h2>Modifier une recette</h2>
-        <RecipeForm
-          sendRecipe={updateRecipe}
-          values={{ ...recipe, steps: stepsWithIdFront }}
-          addFileInRecipe={addFileInRecipe}
-          deleteFileInRecipe={deleteFileInRecipe}
-          action={'update'}
-        />
+        <RecipeForm sendRecipe={updateRecipe} values={{ ...recipe, steps: stepsWithIdFront }} />
       </Col>
     </Row>
   )
@@ -60,8 +43,6 @@ const RecipePageEdit = ({ recipesList, putRecipe, match, fetchRecipe, postFileRe
 const mapDispatchToProps = {
   putRecipe,
   fetchRecipe,
-  postFileRecipe,
-  deleteFileRecipe,
 }
 
 const mapStateToProps = ({ recipes }) => ({

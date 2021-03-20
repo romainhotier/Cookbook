@@ -3,7 +3,7 @@ import { List } from 'immutable'
 import { shallow } from 'enzyme'
 
 import { RecipePageList } from '../RecipePageList.container'
-import { recipes } from 'modules/recipe/mocks/mock.recipes'
+import { recipes } from 'modules/recipe/mocks/recipes.mock'
 
 describe('RecipePageList.container', () => {
   it('should if loader is render', () => {

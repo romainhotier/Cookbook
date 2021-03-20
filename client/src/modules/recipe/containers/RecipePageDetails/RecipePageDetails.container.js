@@ -7,6 +7,7 @@ import { fetchRecipe, deleteRecipe } from 'modules/recipe/thunks'
 import { fetchAllIngredients } from 'modules/ingredient/thunks'
 import { RecipePageDetailsComponent } from './RecipePageDetails.component'
 import { getAllRecipes, getloadingFetchRecipe } from 'modules/recipe/reducers'
+import { getAllIngredients, getloadingFetchIngredient } from 'modules/ingredient/reducers'
 import Loader from 'components/Loader'
 
 export class RecipePageDetails extends Component {
@@ -38,14 +39,14 @@ export class RecipePageDetails extends Component {
       fetchRecipe(slug)
     }
 
-    if (recipe !== undefined && Object.keys(allIngredients).length === 0 && !loadingFetchIngredient) {
+    if (recipe !== undefined && allIngredients.size === 0 && !loadingFetchIngredient) {
       fetchAllIngredients()
     }
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate() {
     const { allIngredients, fetchAllIngredients, loadingFetchIngredient } = this.props
-    if (Object.keys(allIngredients).length === 0 && !loadingFetchIngredient) {
+    if (allIngredients.size === 0 && !loadingFetchIngredient) {
       fetchAllIngredients()
     }
   }
@@ -132,9 +133,8 @@ const mapDispatchToProps = {
 const mapStateToProps = ({ recipes, ingredients }) => ({
   recipesList: getAllRecipes(recipes),
   loadingFetchRecipe: getloadingFetchRecipe(recipes),
-  allIngredients: ingredients.content,
-  loadingFetchIngredient: ingredients.loadingFetchIngredient,
-  loadingDeleteRecipe: recipes.loading,
+  allIngredients: getAllIngredients(ingredients),
+  loadingFetchIngredient: getloadingFetchIngredient(ingredients),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(RecipePageDetails)

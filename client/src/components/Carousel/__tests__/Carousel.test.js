@@ -1,5 +1,6 @@
 import React from 'react'
 import { shallow } from 'enzyme'
+
 import Carousel from '../Carousel.component'
 
 const files = ['folders/img_1.jpg', 'folders/img_2.jpg']

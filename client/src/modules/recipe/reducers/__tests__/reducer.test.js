@@ -21,7 +21,7 @@ import {
   deleteFileRecipeFailed,
 } from 'modules/recipe/actions'
 
-import { recipes, fileRecipe } from 'modules/recipe/mocks/mock.recipes'
+import { recipes, fileRecipe } from 'modules/recipe/mocks/recipes.mock'
 
 import { setRecipes } from '../Recipe.store'
 import RecipeReducer from '../Recipe.reducer'

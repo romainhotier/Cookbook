@@ -1,4 +1,4 @@
-import { recipes, fileRecipe } from 'modules/recipe/mocks/mock.recipes'
+import { recipes, fileRecipe } from 'modules/recipe/mocks/recipes.mock'
 
 import {
   RecipeStateFactory,

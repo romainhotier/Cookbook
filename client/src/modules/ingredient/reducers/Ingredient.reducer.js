@@ -1,5 +1,4 @@
 import { handleActions } from 'redux-actions'
-import findKey from 'lodash/findKey'
 import { List } from 'immutable'
 
 import {
@@ -20,14 +19,7 @@ import {
   searchIngredientsFailed,
 } from './../actions'
 
-import {
-  IngredientStateFactory,
-  getAllIngredients,
-  findIngredientEntry,
-  removeFileInIngredient,
-  updateFilesInIngredient,
-  setIngredients,
-} from './Ingredient.store'
+import { IngredientStateFactory, getAllIngredients, findIngredientEntry } from './Ingredient.store'
 
 export const defaultInitialState = IngredientStateFactory()
 

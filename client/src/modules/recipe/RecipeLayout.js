@@ -8,7 +8,7 @@ import RecipePageEdit from './containers/RecipePageEdit'
 
 import Routes from './RecipeRoutes'
 
-const RecipeLayout = () => (
+export const RecipeLayout = () => (
   <Switch>
     <Route path={Routes.recipe()} exact component={RecipePageList} />
     <Route path={Routes.recipeAdd()} exact component={RecipePageAdd} />
@@ -16,5 +16,3 @@ const RecipeLayout = () => (
     <Route path={Routes.recipeEdit()} exact component={RecipePageEdit} />
   </Switch>
 )
-
-export default RecipeLayout
