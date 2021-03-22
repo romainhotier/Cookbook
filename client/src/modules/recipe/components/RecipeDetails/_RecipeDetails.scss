@@ -47,3 +47,11 @@
     margin-right: 5px;
   }
 }
+
+.RecipeDetails_images_step {
+  .ant-image {
+    height: 200px;
+    overflow: hidden;
+    position: relative;
+  }
+}

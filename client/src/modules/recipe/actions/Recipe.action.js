@@ -16,14 +16,6 @@ export const putRecipeRequest = createAction('PUT_RECIPE_REQUEST')
 export const putRecipeSuccess = createAction('PUT_RECIPE_SUCCESS')
 export const putRecipeFailed = createAction('PUT_RECIPE_FAILED')
 
-export const postFileRecipeRequest = createAction('POST_FILE_IN_RECIPE_REQUEST')
-export const postFileRecipeSuccess = createAction('POST_FILE_IN_RECIPE_SUCCESS')
-export const postFileRecipeFailed = createAction('POST_FILE_IN_RECIPE_FAILED')
-
-export const deleteFileRecipeRequest = createAction('REMOVE_FILE_RECIPE_REQUEST')
-export const deleteFileRecipeSuccess = createAction('REMOVE_FILE_RECIPE_SUCCESS')
-export const deleteFileRecipeFailed = createAction('REMOVE_FILE_RECIPE_FAILED')
-
 export const deleteRecipeRequest = createAction('DELETE_RECIPE_REQUEST')
 export const deleteRecipeSuccess = createAction('DELETE_RECIPE_SUCCESS')
 export const deleteRecipeFailed = createAction('DELETE_RECIPE_FAILED')

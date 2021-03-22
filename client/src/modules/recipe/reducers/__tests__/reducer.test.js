@@ -16,12 +16,18 @@ import {
   postFileRecipeRequest,
   postFileRecipeSuccess,
   postFileRecipeFailed,
+  postFileRecipeStepRequest,
+  postFileRecipeStepSuccess,
+  postFileRecipeStepFailed,
   deleteFileRecipeRequest,
   deleteFileRecipeSuccess,
   deleteFileRecipeFailed,
+  deleteFileRecipeStepRequest,
+  deleteFileRecipeStepSuccess,
+  deleteFileRecipeStepFailed,
 } from 'modules/recipe/actions'
 
-import { recipes, fileRecipe } from 'modules/recipe/mocks/recipes.mock'
+import { recipes, fileRecipe, fileRecipeStep } from 'modules/recipe/mocks/recipes.mock'
 
 import { setRecipes } from '../Recipe.store'
 import RecipeReducer from '../Recipe.reducer'
@@ -311,5 +317,134 @@ describe('Recipe Reducer', () => {
     }
 
     expect(deleteFileRecipeFailedState).toMatchObject(expectedState)
+  })
+
+  /*
+   ** POST FILES RECIPE STEP
+   */
+  it('should postFileRecipeStepRequest return expected state', () => {
+    const postFileRecipeStepRequestState = RecipeReducer(initialStateImmutable, postFileRecipeStepRequest()).toJS()
+
+    const expectedState = initialState
+
+    expect(postFileRecipeStepRequestState).toMatchObject(expectedState)
+  })
+
+  it('should postFileRecipeStepSuccess return expected state', () => {
+    const newState = setRecipes(initialStateImmutable, [recipes.content[0]])
+
+    const postFileRecipeStepSuccessState = RecipeReducer(newState, postFileRecipeStepSuccess(fileRecipeStep)).toJS()
+
+    const expectedState = {
+      content: [
+        {
+          ...recipes.content[0],
+          steps: [
+            {
+              _id: '5fdf4387e29e317ae857b5e2',
+              files: [
+                '123.jpg',
+                '456.jpg',
+                'recipe/5fdf4387e29e317ae857b5e6/steps/5fdf4387e29e317ae857b5e2/pancake-banane.jpg',
+              ],
+              description:
+                "Ecraser les bananes en purée et mélanger tous les ingrédients, jusqu'à l'obtention d'une pâte lisse. ",
+            },
+            {
+              _id: '5fdf4387e29e317ae857b5e3',
+              description:
+                "Chauffer une poêle à feu moyen. Si la poêle n'est pas anti-adhésive, badigeonnez-la d'huile de coco (ou autres matières grasses). ",
+            },
+          ],
+        },
+      ],
+    }
+
+    expect(postFileRecipeStepSuccessState).toMatchObject(expectedState)
+  })
+
+  it('should postFileRecipeStepSuccess without good recipe id return expected state', () => {
+    const newState = setRecipes(initialStateImmutable, [recipes.content[0]])
+    const action = 'recipes/123/steps:456/test.jpg'
+
+    const postFileRecipeStepSuccessState = RecipeReducer(newState, postFileRecipeStepSuccess(action)).toJS()
+
+    expect(postFileRecipeStepSuccessState).toMatchObject(newState.toJS())
+  })
+
+  it('should postFileRecipeStepFailed return expected state', () => {
+    const postFileRecipeStepFailedState = RecipeReducer(
+      initialStateImmutable,
+      postFileRecipeStepFailed('new error')
+    ).toJS()
+
+    const expectedState = {
+      error: 'new error',
+    }
+
+    expect(postFileRecipeStepFailedState).toMatchObject(expectedState)
+  })
+
+  /*
+   ** DELETE FILES IN RECIPE
+   */
+  it('should deleteFileRecipeStepRequest return expected state', () => {
+    const deleteFileRecipeStepRequestState = RecipeReducer(initialStateImmutable, deleteFileRecipeStepRequest()).toJS()
+
+    const expectedState = initialState
+
+    expect(deleteFileRecipeStepRequestState).toMatchObject(expectedState)
+  })
+
+  it('should deleteFileRecipeStepSuccess return expected state', () => {
+    const newState = setRecipes(initialStateImmutable, [{ ...recipes.content[0] }])
+    const action = fileRecipeStep[0]
+
+    const deleteFileRecipeStepSuccessState = RecipeReducer(newState, deleteFileRecipeStepSuccess(action)).toJS()
+
+    const expectedState = {
+      content: [
+        {
+          ...recipes.content[0],
+          steps: [
+            {
+              _id: '5fdf4387e29e317ae857b5e2',
+              description:
+                "Ecraser les bananes en purée et mélanger tous les ingrédients, jusqu'à l'obtention d'une pâte lisse. ",
+              files: ['123.jpg', '456.jpg'],
+            },
+            {
+              _id: '5fdf4387e29e317ae857b5e3',
+              description:
+                "Chauffer une poêle à feu moyen. Si la poêle n'est pas anti-adhésive, badigeonnez-la d'huile de coco (ou autres matières grasses). ",
+            },
+          ],
+        },
+      ],
+    }
+
+    expect(deleteFileRecipeStepSuccessState).toMatchObject(expectedState)
+  })
+
+  it('should deleteFileRecipeStepSuccess without good recipe id return expected state', () => {
+    const newState = setRecipes(initialStateImmutable, [{ ...recipes.content[0], files: fileRecipe }])
+    const action = 'recipes/123/steps/abc/test.jpg'
+
+    const deleteFileRecipeStepSuccessState = RecipeReducer(newState, deleteFileRecipeStepSuccess(action)).toJS()
+
+    expect(deleteFileRecipeStepSuccessState).toMatchObject(newState.toJS())
+  })
+
+  it('should deleteFileRecipeStepFailed return expected state', () => {
+    const deleteFileRecipeStepFailedState = RecipeReducer(
+      initialStateImmutable,
+      deleteFileRecipeStepFailed('new error')
+    ).toJS()
+
+    const expectedState = {
+      error: 'new error',
+    }
+
+    expect(deleteFileRecipeStepFailedState).toMatchObject(expectedState)
   })
 })

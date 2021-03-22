@@ -23,6 +23,12 @@ import {
   deleteFileRecipeRequest,
   deleteFileRecipeSuccess,
   deleteFileRecipeFailed,
+  postFileRecipeStepRequest,
+  postFileRecipeStepSuccess,
+  postFileRecipeStepFailed,
+  deleteFileRecipeStepRequest,
+  deleteFileRecipeStepSuccess,
+  deleteFileRecipeStepFailed,
 } from './../actions'
 
 import {
@@ -32,6 +38,8 @@ import {
   removeFileInRecipe,
   updateFilesInRecipe,
   setRecipes,
+  updateFilesRecipeStep,
+  removeFileRecipeStep,
 } from './Recipe.store'
 
 export const defaultInitialState = RecipeStateFactory()
@@ -176,6 +184,57 @@ const RecipeReducer = handleActions(
     },
 
     [deleteFileRecipeFailed](state, { payload }) {
+      return state.set('error', payload)
+    },
+
+    /*
+     ** POST FILES RECIPE STEP
+     */
+    [postFileRecipeStepRequest](state) {
+      return state.set('error', null)
+    },
+
+    [postFileRecipeStepSuccess](state, { payload }) {
+      const url = payload[0]
+      const splitUrl = url.split('/')
+      const recipe_id = splitUrl[1]
+      const step_id = splitUrl[3]
+
+      const index = findRecipeEntry(state, recipe_id)
+      if (index < 0) {
+        return state
+      }
+      const updatedRecipesList = updateFilesRecipeStep(state, index, step_id, payload)
+
+      return setRecipes(state, updatedRecipesList)
+    },
+
+    [postFileRecipeStepFailed](state, { payload }) {
+      return state.set('error', payload)
+    },
+
+    /*
+     ** DELETE FILES RECIPE STEP
+     */
+    [deleteFileRecipeStepRequest](state) {
+      return state.set('error', null)
+    },
+
+    [deleteFileRecipeStepSuccess](state, { payload }) {
+      const splitUrl = payload.split('/')
+      const recipe_id = splitUrl[1]
+      const step_id = splitUrl[3]
+
+      const index = findRecipeEntry(state, recipe_id)
+      if (index < 0) {
+        return state
+      }
+
+      const updatedRecipesList = removeFileRecipeStep(state, index, step_id, payload)
+      return setRecipes(state, updatedRecipesList)
+    },
+
+    [deleteFileRecipeStepFailed](state, { payload }) {
       return state.set('error', payload)
     },
   },
