@@ -51,8 +51,9 @@ class PostRecipe(object):
                 "properties": {
                     "_id": {"type": "string"},
                     "description": {"type": "string",
-                                    "enum": [step["description"] for step in recipe.steps]}},
-                "required": ["_id", "description"],
+                                    "enum": [step["description"] for step in recipe.steps]},
+                    "files": {"enum": [[]]}},
+                "required": ["_id", "description", "files"],
                 "additionalProperties": False}}},
 
             "type": "object",

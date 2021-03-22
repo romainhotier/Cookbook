@@ -3,6 +3,7 @@ import requests
 
 from tests import server, rep
 from tests.test_recipe import RecipeTest
+from tests.test_files import FileTest
 from tests.test_recipe.PutRecipe import api
 
 
@@ -11,6 +12,7 @@ class TestPutRecipe(unittest.TestCase):
     def setUp(self):
         """ Clean RecipeTest."""
         RecipeTest().clean()
+        FileTest().clean()
 
     def test_steps_without(self):
         """ BodyParameter steps is missing.
@@ -554,13 +556,14 @@ class TestPutRecipe(unittest.TestCase):
         tc_recipe = RecipeTest()
         tc_recipe.add_step(_id_step="aaaaaaaaaaaaaaaaaaaaaaaa", description="step1")
         tc_recipe.add_step(_id_step="bbbbbbbbbbbbbbbbbbbbbbbb", description="step2")
+        tc_recipe.add_step(_id_step="cccccccccccccccccccccccc", description="step3")
         tc_recipe.insert()
         """ param """
         tc_id = tc_recipe.get_id()
         body = {api.param_steps: [{api.param_step_id: "aaaaaaaaaaaaaaaaaaaaaaaa",
                                    api.param_step_description: "step1"},
                                   {api.param_step_description: "step_new"},
-                                  {api.param_step_id: "cccccccccccccccccccccccc",
+                                  {api.param_step_id: "dddddddddddddddddddddddd",
                                    api.param_step_description: "step_new_fake"},
                                   {api.param_step_id: "bbbbbbbbbbbbbbbbbbbbbbbb",
                                    api.param_step_description: "step2_update"}]}
@@ -581,6 +584,56 @@ class TestPutRecipe(unittest.TestCase):
         self.assertTrue(rep.check_not_present(value="detail", response=response_body))
         """ check """
         tc_recipe.check_bdd_data()
+
+    def test_steps_clean_files(self):
+        """ Special case : clean_files
+
+        Return
+            400 - Bad request.
+        """
+        """ env """
+        tc_recipe = RecipeTest()
+        tc_recipe.add_step(_id_step="aaaaaaaaaaaaaaaaaaaaaaaa", description="step1")
+        tc_recipe.add_step(_id_step="bbbbbbbbbbbbbbbbbbbbbbbb", description="step2")
+        tc_recipe.add_step(_id_step="cccccccccccccccccccccccc", description="step3")
+        tc_recipe.insert()
+        tc_filea = FileTest(filename="image.png").insert(short_path="recipe/{0}/steps/aaaaaaaaaaaaaaaaaaaaaaaa".
+                                                         format(tc_recipe.get_id()))
+        tc_filec1 = FileTest(filename="text.txt").insert(short_path="recipe/{0}/steps/cccccccccccccccccccccccc".
+                                                         format(tc_recipe.get_id()))
+        tc_filec2 = FileTest(filename="image.png").insert(short_path="recipe/{0}/steps/cccccccccccccccccccccccc".
+                                                          format(tc_recipe.get_id()))
+        tc_recipe.add_files_steps(_id_step="aaaaaaaaaaaaaaaaaaaaaaaa", files=[tc_filea], add_in_mongo=True)
+        tc_recipe.add_files_steps(_id_step="cccccccccccccccccccccccc", files=[tc_filec1, tc_filec2], add_in_mongo=True)
+        """ param """
+        tc_id = tc_recipe.get_id()
+        body = {api.param_steps: [{api.param_step_id: "aaaaaaaaaaaaaaaaaaaaaaaa",
+                                   api.param_step_description: "step1"},
+                                  {api.param_step_description: "step_new"},
+                                  {api.param_step_id: "dddddddddddddddddddddddd",
+                                   api.param_step_description: "step_new_fake"},
+                                  {api.param_step_id: "bbbbbbbbbbbbbbbbbbbbbbbb",
+                                   api.param_step_description: "step2_update"}]}
+        """ call api """
+        url = server.main_url + "/" + api.url + "/" + tc_id
+        response = requests.put(url, json=body, verify=False)
+        response_body = response.json()
+        """ change """
+        tc_recipe.custom(body)
+        """ assert """
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], 'application/json')
+        self.assertEqual(response_body["codeStatus"], 200)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_ok)
+        self.assertEqual(api.response_without_steps(data=response_body["data"]),
+                         api.data_expected_without_steps(recipe=tc_recipe))
+        api.check_steps(recipe=tc_recipe, response_data=response_body["data"])
+        self.assertTrue(rep.check_not_present(value="detail", response=response_body))
+        """ check """
+        tc_recipe.check_bdd_data()
+        tc_filea.check_file_exist()
+        tc_filec1.check_file_not_exist()
+        tc_filec2.check_file_not_exist()
 
     @classmethod
     def tearDownClass(cls):

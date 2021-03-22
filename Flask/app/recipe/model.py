@@ -2,10 +2,11 @@ from pymongo import MongoClient
 from bson import ObjectId
 import re
 
-from app import utils
+from app import utils, backend
 from app.ingredient import Ingredient
 
 mongo = utils.Mongo()
+converter = utils.PathExplorer()
 
 
 class Recipe(object):
@@ -117,31 +118,6 @@ class Recipe(object):
         self.result = mongo.convert_to_json([recipe for recipe in cursor])
         return self
 
-    @staticmethod
-    def check_recipe_is_unique(key, value):
-        """ Check if a Recipe already exist with a specific key.
-
-        Parameters
-        ----------
-        key : str
-            Key to be tested.
-        value : str
-            Value of the tested key.
-
-        Returns
-        -------
-        bool
-            True if key/value doesn't exist in mongo.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_recipe]
-        result = db.count_documents({key: value})
-        client.close()
-        if result == 0:
-            return True
-        else:
-            return False
-
     def insert(self, data):
         """ Insert an Recipe.
 
@@ -215,8 +191,32 @@ class Recipe(object):
         db.update({}, {'$pull': {"ingredients": {"_id": _id_ingredient}}})
         client.close()
 
+    """ steps """
+    @staticmethod
+    def get_step_position(_id_recipe, _id_step):
+        """ Get step position by id.
+
+        Parameters
+        ----------
+        _id_recipe : str
+            Recipe's ObjectId.
+        _id_step : str
+            Step's ObjectId.
+
+        Returns
+        -------
+        int
+            Step's position.
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        recipe = db.find_one({"_id": ObjectId(_id_recipe)})
+        client.close()
+        list_steps = mongo.convert_to_json([steps["_id"] for steps in recipe["steps"]])
+        return list_steps.index(_id_step)
+
     """ files """
-    def add_files(self, _id, data):
+    def add_files_recipe(self, _id, data):
         """ add files to a recipe.
 
         Parameters
@@ -236,6 +236,34 @@ class Recipe(object):
         for url in data:
             db.update_one({"_id": ObjectId(_id)}, {'$push': {"files": url}})
         result = db.find_one({"_id": ObjectId(_id)})
+        client.close()
+        self.result = mongo.convert_to_json(result)
+        return self
+
+    def add_files_step(self, _id_recipe, _id_step, data):
+        """ add files to a recipe.
+
+        Parameters
+        ----------
+        _id_recipe : str
+            Recipe's ObjectId.
+        _id_step : str
+            Step's ObjectId.
+        data : list
+            Files's urls.
+
+        Returns
+        -------
+        Recipe
+            Updated Recipe.
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        self.get_step_position(_id_recipe=_id_recipe, _id_step=_id_step)
+        index = self.get_step_position(_id_recipe=_id_recipe, _id_step=_id_step)
+        for url in data:
+            db.update_one({"_id": ObjectId(_id_recipe)}, {'$push': {"steps.{0}.files".format(index): url}})
+        result = db.find_one({"_id": ObjectId(_id_recipe)})
         client.close()
         self.result = mongo.convert_to_json(result)
         return self
@@ -260,14 +288,41 @@ class Recipe(object):
         client.close()
         return result
 
-    def delete_file(self, _id, data):
-        """ delete files to a recipe.
+    @staticmethod
+    def get_steps_files(_id):
+        """ get Recipe's Steps files.
 
         Parameters
         ----------
         _id : str
             Recipe's ObjectId.
-        data : str
+
+        Returns
+        -------
+        list
+            Recipe's Files.
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        result = db.find_one({"_id": ObjectId(_id)})
+        client.close()
+        steps_files = {}
+        try:
+            for steps in result["steps"]:
+                try:
+                    steps_files[str(steps["_id"])] = steps["files"]
+                except TypeError:
+                    pass
+        except TypeError:
+            pass
+        return mongo.convert_to_json(steps_files)
+
+    def delete_file(self, path):
+        """ delete files.
+
+        Parameters
+        ----------
+        path : str
             Files's short_path.
 
         Returns
@@ -275,10 +330,62 @@ class Recipe(object):
         Recipe
             Updated Recipe.
         """
+        if len(path.split("/")) == 3:
+            self.delete_file_recipe(path=path)
+        elif len(path.split("/")) == 5:
+            self.delete_file_step(path=path)
+        return self
+
+    # use in delete_file
+    def delete_file_recipe(self, path):
+        """ delete files to a recipe.
+
+        Parameters
+        ----------
+        path : str
+            Files's short_path.
+
+        Returns
+        -------
+        Recipe
+            Updated Recipe.
+        """
+        _id_recipe = path.split("/")[1]
+        s_path = path
+        if backend.config["SYSTEM"] == "Windows":
+            s_path = converter.convert_path(target="Windows", path=path)
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
-        db.update_one({"_id": ObjectId(_id)}, {'$pull': {"files": data}})
-        result = db.find_one({"_id": ObjectId(_id)})
+        db.update_one({"_id": ObjectId(_id_recipe)}, {'$pull': {"files": s_path}})
+        result = db.find_one({"_id": ObjectId(_id_recipe)})
+        client.close()
+        self.result = mongo.convert_to_json(result)
+        return self
+
+    # use in delete_file
+    def delete_file_step(self, path):
+        """ delete files to a step.
+
+        Parameters
+        ----------
+        path : str
+            Files's short_path.
+
+        Returns
+        -------
+        Recipe
+            Updated Recipe.
+        """
+        _id_recipe = path.split("/")[1]
+        _id_step = path.split("/")[3]
+        s_path = path
+        if backend.config["SYSTEM"] == "Windows":
+            s_path = converter.convert_path(target="Windows", path=path)
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        index = self.get_step_position(_id_recipe=_id_recipe, _id_step=_id_step)
+        db.update_one({"_id": ObjectId(_id_recipe)}, {'$pull': {"steps.{0}.files".format(index): s_path}})
+        result = db.find_one({"_id": ObjectId(_id_recipe)})
         client.close()
         self.result = mongo.convert_to_json(result)
         return self

@@ -7,7 +7,7 @@ api = Factory.Factory()
 
 
 class Validator(object):
-    """ Class to validate PostFiles.
+    """ Class to validate PostFilesRecipe.
     """
 
     @staticmethod

@@ -3,9 +3,9 @@ from pymongo import MongoClient
 from bson import ObjectId
 
 from app import utils
-from app.ingredient.model import Ingredient
-from app.recipe.model import Recipe
-from app.user.model import User
+#from app.ingredient.model import Ingredient
+#from app.recipe.model import Recipe
+#from app.user.model import User
 
 mongo = utils.Mongo()
 response = utils.ResponseMaker()
@@ -92,38 +92,37 @@ class Validator(object):
             return abort(status=400, description=detail)
         else:
             return True
-    #
-    # @staticmethod
-    # def is_object_id_in_recipe_steps(param, _id_recipe, _id_step):
-    #     """ Check if the ObjectId is present in a recipe steps.
-    #
-    #     Parameters
-    #     ----------
-    #     param : str
-    #         Name of the tested parameter.
-    #     _id_recipe : str
-    #         ObjectId of the recipe.
-    #     _id_step : str
-    #         ObjectId of the step.
-    #
-    #     Returns
-    #     -------
-    #     Any
-    #         Raise an "abort 400" if validation failed..
-    #     """
-    #     client = MongoClient(mongo.ip, mongo.port)
-    #     db = client[mongo.name][mongo.collection_recipe]
-    #     result = db.count_documents({"$and": [{"_id": ObjectId(_id_recipe)},
-    #                                           {"steps": {"$elemMatch": {"_id": ObjectId(_id_step)}}}]})
-    #     client.close()
-    #     if result == 0:
-    #         detail = response.format_detail(param=param, msg=response.detail_doesnot_exist, value=_id_step)
-    #         return abort(status=400, description=detail)
-    #     else:
-    #         return True
 
     @staticmethod
-    def is_unique_user(param, value):
+    def is_object_id_in_recipe_steps(param, _id_recipe, _id_step):
+        """ Check if the ObjectId is present in a recipe steps.
+
+        Parameters
+        ----------
+        param : str
+            Name of the tested parameter.
+        _id_recipe : str
+            ObjectId of the recipe.
+        _id_step : str
+            ObjectId of the step.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed..
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        result = db.count_documents({"$and": [{"_id": ObjectId(_id_recipe)},
+                                              {"steps": {"$elemMatch": {"_id": ObjectId(_id_step)}}}]})
+        client.close()
+        if result == 0:
+            detail = response.format_detail(param=param, msg=response.detail_doesnot_exist, value=_id_step)
+            return abort(status=400, description=detail)
+        else:
+            return True
+
+    def is_unique_user(self, param, value):
         """ Check if User already exist.
 
         Parameters
@@ -138,13 +137,36 @@ class Validator(object):
         Any
             Raise an "abort 400" if validation failed.
         """
-        if not User().check_user_is_unique(email=value):
+        if not self.check_user_is_unique(email=value):
             detail = response.format_detail(param=param, msg=response.detail_already_exist, value=value)
             return abort(status=400, description=detail)
         return True
 
+    # use in is_user_unique
     @staticmethod
-    def is_unique_ingredient(param, value):
+    def check_user_is_unique(email):
+        """ Check if an email already exist.
+
+        Parameters
+        ----------
+        email : str
+            User's email.
+
+        Returns
+        -------
+        bool
+            True if email doesn't exist in mongo.
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_user]
+        result = db.count_documents({"email": email})
+        client.close()
+        if result == 0:
+            return True
+        else:
+            return False
+
+    def is_unique_ingredient(self, param, value):
         """ Check if Ingredient already exist.
 
         Parameters
@@ -159,13 +181,12 @@ class Validator(object):
         Any
             Raise an "abort 400" if validation failed.
         """
-        if not Ingredient().check_ingredient_is_unique(key=param, value=value):
+        if not self.check_ingredient_is_unique(key=param, value=value):
             detail = response.format_detail(param=param, msg=response.detail_already_exist, value=value)
             return abort(status=400, description=detail)
         return True
 
-    @staticmethod
-    def is_coherent_ingredient(param, value, _id):
+    def is_coherent_ingredient(self, param, value, _id):
         """ Check if value and _id are coherent
 
         Parameters
@@ -182,8 +203,12 @@ class Validator(object):
         Any
             Raise an "abort 400" if validation failed.
         """
-        if not Ingredient().check_ingredient_is_unique(key=param, value=value):
-            if Ingredient().select_one(_id).result[param] == value:
+        if not self.check_ingredient_is_unique(key=param, value=value):
+            client = MongoClient(mongo.ip, mongo.port)
+            db = client[mongo.name][mongo.collection_ingredient]
+            result = mongo.convert_to_json(db.find_one({"_id": ObjectId(_id)}))
+            client.close()
+            if result[param] == value:
                 return True
             else:
                 detail = response.format_detail(param=param, msg=response.detail_already_exist, value=value)
@@ -191,8 +216,33 @@ class Validator(object):
         else:
             return True
 
+    # use in is_unique_ingredient
+    # use in is_coherent_ingredient
     @staticmethod
-    def is_unique_recipe(param, value):
+    def check_ingredient_is_unique(key, value):
+        """ Check if an Ingredient already exist with a specific key.
+        Parameters
+        ----------
+        key : str
+            Key to be tested.
+        value : str
+            Value of the tested key.
+
+        Returns
+        -------
+        bool
+        True if key/value doesn't exist in mongo.
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_ingredient]
+        result = db.count_documents({key: value})
+        client.close()
+        if result == 0:
+            return True
+        else:
+            return False
+
+    def is_unique_recipe(self, param, value):
         """ Check if the key/value is unique.
 
         Parameters
@@ -207,13 +257,12 @@ class Validator(object):
         Any
             Raise an "abort 400" if validation failed.
         """
-        if not Recipe().check_recipe_is_unique(key=param, value=value):
+        if not self.check_recipe_is_unique(key=param, value=value):
             detail = response.format_detail(param=param, msg=response.detail_already_exist, value=value)
             return abort(status=400, description=detail)
         return True
 
-    @staticmethod
-    def is_coherent_recipe(param, value, _id):
+    def is_coherent_recipe(self,  param, value, _id):
         """ Check if value and _id are coherent
 
         Parameters
@@ -230,14 +279,45 @@ class Validator(object):
         Any
             Raise an "abort 400" if validation failed.
         """
-        if not Recipe().check_recipe_is_unique(key=param, value=value):
-            if Recipe().select_one(_id).result[param] == value:
+        if not self.check_recipe_is_unique(key=param, value=value):
+            client = MongoClient(mongo.ip, mongo.port)
+            db = client[mongo.name][mongo.collection_recipe]
+            result = mongo.convert_to_json(db.find_one({"_id": ObjectId(_id)}))
+            client.close()
+            if result[param] == value:
                 return True
             else:
                 detail = response.format_detail(param=param, msg=response.detail_already_exist, value=value)
                 return abort(status=400, description=detail)
         else:
             return True
+
+    # use in is_unique_recipe
+    # use in is_coherent_recipe
+    @staticmethod
+    def check_recipe_is_unique(key, value):
+        """ Check if a Recipe already exist with a specific key.
+
+        Parameters
+        ----------
+        key : str
+            Key to be tested.
+        value : str
+            Value of the tested key.
+
+        Returns
+        -------
+        bool
+            True if key/value doesn't exist in mongo.
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        result = db.count_documents({key: value})
+        client.close()
+        if result == 0:
+            return True
+        else:
+            return False
 
     @staticmethod
     def is_unique_ingredient_associated(param, data):

@@ -125,11 +125,13 @@ class Factory(object):
         except KeyError:
             pass
 
-    def reformat_body(self, data):
+    def reformat_body(self, _id, data):
         """ Reformat body for PutRecipe.
 
         Parameters
         ----------
+        _id : str
+            Recipe's ObjectId.
         data : dict
             To be formated.
 
@@ -139,28 +141,40 @@ class Factory(object):
             Correct body.
         """
         self.__setattr__("body", data)
-        self.reformat_steps()
+        self.reformat_steps(_id=_id)
         return self.body
 
-    # use in fill_body
-    def reformat_steps(self):
+    # use in reformat_body
+    def reformat_steps(self, _id):
         """ Fill steps with ObjectId.
         """
+        """ get files """
+        steps_files = recipe_model.Recipe().get_steps_files(_id=_id)
+        """ format steps """
         formated_steps = []
         try:
             for step in self.body[self.param_steps]:
                 if self.param_step_id not in step:
+                    """ new step """
                     formated_steps.append({self.param_step_id: ObjectId(),
-                                           self.param_step_description: step[self.param_step_description]})
+                                           self.param_step_description: step[self.param_step_description],
+                                           "files": []})
                 else:
-                    formated_steps.append({self.param_step_id: ObjectId(step[self.param_step_id]),
-                                           self.param_step_description: step[self.param_step_description]})
+                    """ old step """
+                    old_step = {self.param_step_id: ObjectId(step[self.param_step_id]),
+                                self.param_step_description: step[self.param_step_description]}
+                    try:
+                        """ reinject old files """
+                        old_step["files"] = steps_files[step[self.param_step_id]]
+                    except KeyError:
+                        old_step["files"] = []
+                    formated_steps.append(old_step)
             self.body[self.param_steps] = formated_steps
         except KeyError:
             pass
 
     def get_diff_steps(self, _id, body):
-        """ Return Steps to be deleted.
+        """ Return Steps deleted.
 
         Parameters
         ----------
@@ -177,8 +191,18 @@ class Factory(object):
         try:
             origin = recipe_model.Recipe().select_one(_id=_id).result[self.param_steps]
             update = body[self.param_steps]
-            ids_origin = [str(step["_id"]) for step in origin]
-            ids_update = [str(step["_id"]) for step in update]
+            ids_origin = []
+            ids_update = []
+            for step in origin:
+                try:
+                    ids_origin.append(str(step["_id"]))
+                except KeyError:
+                    pass
+            for step in update:
+                try:
+                    ids_update.append(str(step["_id"]))
+                except KeyError:
+                    pass
             ids_to_be_cleaned = []
             for _id in ids_origin:
                 if _id not in ids_update:

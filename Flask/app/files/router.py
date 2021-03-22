@@ -3,7 +3,6 @@ from flask import Blueprint, request, send_from_directory
 from app import utils, backend
 from app.recipe import Recipe
 from app.files import File
-import app.files.factory as factory
 import app.files.validator as validator
 
 apis = Blueprint('files', __name__, url_prefix='/files')
@@ -22,8 +21,12 @@ def delete_file(path):
     DELETE http://127.0.0.1:5000/files/<path>
 
     @apiSuccessExample {json} Success response:
-    HTTPS 204
-    TBD
+    HTTPS 200
+    {
+        'codeMsg': 'cookbook.files.success.ok',
+        'codeStatus': 200,
+        'data': 'recipe/6050c6b3a888196e9746f217/image.png'
+    }
 
     @apiErrorExample {json} Error response:
     HTTPS 400
@@ -33,15 +36,13 @@ def delete_file(path):
         'detail': 'The requested URL was not found on the server'
     }
     """
-    api = factory.DeleteFile.Factory()
     validation = validator.DeleteFile.Validator()
     """ check param """
     validation.is_path_valid(value=path)
     """ delete file """
     deleted_path = File().delete(short_path=path)
     """ clean in recipe """
-    if api.len_path(path=path) == 3:
-        Recipe().delete_file(_id=path.split("/")[1], data=path)
+    Recipe().delete_file(path=path)
     """ return response """
     return utils.ResponseMaker().return_response(data=deleted_path, api=apis.name, http_code=200)
 
@@ -76,9 +77,9 @@ def get_file(path):
 @apis.route('/recipe/<_id>', methods=['POST'])
 def post_files_recipe(_id):
     """
-    @api {post} /files/<_id>  PostFiles
+    @api {post} files/recipe/<_id>  PostFilesRecipe
     @apiGroup Files
-    @apiDescription Add files to an element
+    @apiDescription Add files to a Recipe
 
     @apiParam (Query param) {String} _id Recipe's ObjectId
     @apiParam (Multipart/form-data) files Files
@@ -113,7 +114,55 @@ def post_files_recipe(_id):
     """ save files """
     urls = File().save_files(short_path="recipe/{}".format(_id), files=request.files.getlist('files'))
     """ update ingredient """
-    Recipe().add_files(_id=_id, data=urls)
+    Recipe().add_files_recipe(_id=_id, data=urls)
+    """ return response """
+    return utils.ResponseMaker().return_response(data=urls, api=apis.name, http_code=201)
+
+
+@apis.route('/recipe/<_id_recipe>/step/<_id_step>', methods=['POST'])
+def post_files_recipe_step(_id_recipe, _id_step):
+    """
+    @api {post} /files/recipe/<_id_recipe>/step/<_id_step>  PostFilesRecipeStep
+    @apiGroup Files
+    @apiDescription Add files to a Step's Recipe
+
+    @apiParam (Query param) {String} _id_recipe Recipe's ObjectId
+    @apiParam (Query param) {String} _id_step Step's ObjectId
+    @apiParam (Multipart/form-data) files Files
+
+    @apiExample {json} Example usage:
+    POST http://127.0.0.1:5000/files/recipe/<_id_recipe>/step/<_id_step>
+    files = [
+             ('files', ('qa_rhr_filename.txt', open(path1, 'rb'), mimetypes)),
+             ('files', ('qa_rhr_filename2.png', open(path2, 'rb'), mimetypes)),
+             ('files', ('qa_rhr_filename3.jpeg', open(path3, 'rb'), mimetypes))]
+
+    @apiSuccessExample {json} Success response:
+    HTTPS 201
+    {
+        'codeMsg': 'cookbook.files.success.created',
+        'codeStatus': 201,
+        'data': ['recipe/5ff5869625fcd58c3ecc5f17/step/5ff5869625fcd58c3ecc5f18/qa_rhr_filename.txt',
+                 'recipe/5ff5869625fcd58c3ecc5f17/step/5ff5869625fcd58c3ecc5f18/qa_rhr_filename2.png',
+                 'recipe/5ff5869625fcd58c3ecc5f17/step/5ff5869625fcd58c3ecc5f18/qa_rhr_filename3.jpeg']}
+
+    @apiErrorExample {json} Error response:
+    HTTPS 400
+    {
+        'codeMsg': 'cookbook.files.error.bad_request',
+        'codeStatus': 400,
+        'detail': {'msg': 'Must be an ObjectId', 'param': '_id_recipe', 'value': 'invalid'}
+    }
+    """
+    validation = validator.PostFilesRecipeStep.Validator()
+    """ check param """
+    validation.is_object_id_valid_recipe(value=_id_recipe)
+    validation.is_object_id_valid_step(_id_recipe=_id_recipe, _id_step=_id_step)
+    """ save files """
+    urls = File().save_files(short_path="recipe/{0}/steps/{1}".format(_id_recipe, _id_step),
+                             files=request.files.getlist('files'))
+    """ update ingredient """
+    Recipe().add_files_step(_id_recipe=_id_recipe, _id_step=_id_step, data=urls)
     """ return response """
     return utils.ResponseMaker().return_response(data=urls, api=apis.name, http_code=201)
 
