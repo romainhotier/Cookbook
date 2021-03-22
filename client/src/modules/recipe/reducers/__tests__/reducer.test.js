@@ -9,6 +9,7 @@ import {
   postRecipeSuccess,
   postRecipeFailed,
   putRecipeRequest,
+  putRecipeSuccess,
   putRecipeFailed,
   deleteRecipeRequest,
   deleteRecipeSuccess,
@@ -169,6 +170,32 @@ describe('Recipe Reducer', () => {
     }
 
     expect(putRecipeRequestState).toMatchObject(expectedState)
+  })
+
+  it('should putRecipeSuccess return expected state', () => {
+    const newState = setRecipes(initialStateImmutable, [recipes.content[0]])
+
+    const updateRecipe = { ...recipes.content[0], nb_people: '40' }
+    const putRecipeSuccessState = RecipeReducer(newState, putRecipeSuccess(updateRecipe)).toJS()
+
+    const expectedState = {
+      content: [updateRecipe],
+      loadingPostRecipe: false,
+    }
+
+    expect(putRecipeSuccessState).toMatchObject(expectedState)
+  })
+
+  it('should putRecipeSuccess without data return state', () => {
+    const updateRecipe = { ...recipes.content[0], title: 'Banane Jaune' }
+    const putRecipeSuccessState = RecipeReducer(initialStateImmutable, putRecipeSuccess(updateRecipe)).toJS()
+
+    const expectedState = {
+      content: [],
+      loadingPostRecipe: false,
+    }
+
+    expect(putRecipeSuccessState).toMatchObject(expectedState)
   })
 
   it('should putRecipeFailed return expected state', () => {

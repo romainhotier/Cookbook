@@ -113,6 +113,7 @@ export const putRecipe = (id, data) => dispatch => {
     .then(response => {
       if (response.codeStatus === 200) {
         dispatch(putRecipeSuccess(response.data))
+
         notification['success']({
           message: 'Recette modifiée !',
           description: `${get(codeMsg, `${response.codeMsg}`)}`,

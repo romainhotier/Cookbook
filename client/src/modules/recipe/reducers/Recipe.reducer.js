@@ -100,14 +100,14 @@ const RecipeReducer = handleActions(
     },
 
     [putRecipeSuccess](state, action) {
-      const recipe = action.payload
+      const recipeEdited = action.payload
+      const index = findRecipeEntry(state, recipeEdited._id)
 
-      const index = findRecipeEntry(state, recipe._id)
       if (index < 0) {
         return state.set('loadingPutRecipe', false)
       }
 
-      const newRecipes = getAllRecipes(state).updateIn([state, index, recipe])
+      const newRecipes = getAllRecipes(state).updateIn([index], recipe => ({ ...recipe, ...recipeEdited }))
       return state.set('loadingPutRecipe', false).set('content', List(newRecipes))
     },
 
