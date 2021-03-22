@@ -68,7 +68,7 @@ export const IngredientsListColumns = (deleteIngredient, searchIngredients) => [
         dataIndex: 'calories',
         key: 'calories',
         align: 'center',
-        sorter: (a, b) => a.nutriments.calories - b.nutriments.calories,
+        sorter: (a, b) => parseInt(a.nutriments.calories) - parseInt(b.nutriments.calories),
         render: (_text, { nutriments }) => (nutriments.calories ? `${nutriments.calories} cal` : '-'),
       },
       {
@@ -76,7 +76,7 @@ export const IngredientsListColumns = (deleteIngredient, searchIngredients) => [
         dataIndex: 'proteins',
         key: 'proteins',
         align: 'center',
-        sorter: (a, b) => a.nutriments.proteins - b.nutriments.proteins,
+        sorter: (a, b) => parseInt(a.nutriments.proteins) - parseInt(b.nutriments.proteins),
         render: (_text, { nutriments }) => (nutriments.proteins ? `${nutriments.proteins} g` : '-'),
       },
       {
@@ -84,7 +84,7 @@ export const IngredientsListColumns = (deleteIngredient, searchIngredients) => [
         dataIndex: 'carbohydrates',
         key: 'carbohydrates',
         align: 'center',
-        sorter: (a, b) => a.nutriments.carbohydrates - b.nutriments.carbohydrates,
+        sorter: (a, b) => parseInt(a.nutriments.carbohydrates) - parseInt(b.nutriments.carbohydrates),
         render: (_text, { nutriments }) => (nutriments.carbohydrates ? `${nutriments.carbohydrates} g` : '-'),
       },
       {
@@ -92,7 +92,7 @@ export const IngredientsListColumns = (deleteIngredient, searchIngredients) => [
         dataIndex: 'fats',
         key: 'fats',
         align: 'center',
-        sorter: (a, b) => a.nutriments.fats - b.nutriments.fats,
+        sorter: (a, b) => parseInt(a.nutriments.fats) - parseInt(b.nutriments.fats),
         render: (_text, { nutriments }) => (nutriments.fats ? `${nutriments.fats} g` : '-'),
       },
       {

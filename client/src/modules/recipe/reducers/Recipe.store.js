@@ -20,10 +20,10 @@ export const getloadingPostRecipe = state => state.get('loadingPostRecipe')
 // SET
 export const findRecipeEntry = (state, recipeId) => {
   const entry = getAllRecipes(state).findEntry(({ _id }) => _id === recipeId)
-
   if (!entry) {
     return -1
   }
+
   return entry[0]
 }
 
