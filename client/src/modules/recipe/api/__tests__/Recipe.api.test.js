@@ -5,6 +5,7 @@ import {
   updateRecipeURL,
   deleteRecipeURL,
   createFileRecipeURL,
+  createFileRecipeStepURL,
   deleteFileRecipeURL,
 } from '../Recipe.api'
 
@@ -30,5 +31,8 @@ describe('Ingredient.api', () => {
 
     const deleteFileRecipe = deleteFileRecipeURL('123')
     expect(deleteFileRecipe).toEqual(`${process.env.REACT_APP_API_URL}/files/123`)
+
+    const createFileRecipeStep = createFileRecipeStepURL('123', 'ABC')
+    expect(createFileRecipeStep).toEqual(`${process.env.REACT_APP_API_URL}/files/recipe/123/step/ABC`)
   })
 })

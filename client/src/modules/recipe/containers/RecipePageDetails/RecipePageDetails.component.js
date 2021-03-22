@@ -6,8 +6,9 @@ import { RecipeInformations } from 'modules/recipe/components/RecipeDetails/Reci
 import { RecipeMenu } from 'modules/recipe/components/RecipeDetails/RecipeMenu.component'
 import { BuildListIngredients } from '../../components/RecipeDetails/BuildListIngredients.component'
 import { EditPortion } from '../../components/RecipeDetails/EditPortion.component'
+import { RecipeImagesStep } from '../../components/RecipeDetails/RecipeImagesStep.component'
 import RecipeModalDelete from '../../components/RecipeModalDelete'
-import { UploadFilesRecipe } from '../../components/RecipeUploadFiles'
+import { UploadFilesRecipe, UploadFilesRecipeStep } from '../../components/RecipeUploadFiles'
 import Carousel from 'components/Carousel'
 import CategoryTag from 'components/CategoryTag'
 
@@ -118,10 +119,16 @@ export const RecipePageDetailsComponent = ({
         <Col xs={12} sm={12} md={12} lg={16} xl={16}>
           <h3>Instructions</h3>
           {steps.map((element, index) => (
-            <article className="step" key={index}>
-              <div className="step_index">{index + 1}</div>
-              <div className="step_describe">{element.description}</div>
-            </article>
+            <>
+              {uploadFilesIsVisible ? <UploadFilesRecipeStep id_recipe={_id} id_step={element._id} /> : ''}
+              <article className="step" key={`key-${element._id}`}>
+                <div className="step_index">{index + 1}</div>
+                <div className="step_describe">
+                  {uploadFilesIsVisible ? '' : <RecipeImagesStep files={element.files} />}
+                  {element.description}
+                </div>
+              </article>
+            </>
           ))}
         </Col>
       </Row>

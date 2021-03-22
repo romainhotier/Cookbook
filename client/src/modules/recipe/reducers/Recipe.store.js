@@ -1,5 +1,6 @@
 import { Record, List } from 'immutable'
 import remove from 'lodash/remove'
+import find from 'lodash/find'
 
 export const RecipeStateFactory = Record({
   content: List.of(),
@@ -36,11 +37,36 @@ export const updateFilesInRecipe = (state, index, file) =>
     files: [...recipe.files, ...file],
   }))
 
+export const updateFilesRecipeStep = (state, index, step_id, file) =>
+  getAllRecipes(state).updateIn([index], recipe => {
+    const step = find(recipe.steps, step => step._id === step_id)
+    const stepsExist = step.files === undefined ? [] : step.files
+    step.files = [...stepsExist, ...file]
+
+    return {
+      ...recipe,
+      steps: [...recipe.steps],
+    }
+  })
+
 export const removeFileInRecipe = (state, index, urlFile) =>
   getAllRecipes(state).updateIn([index], recipe => {
     const newfiles = remove(recipe.files, file => file !== urlFile)
     return {
       ...recipe,
       files: newfiles,
+    }
+  })
+
+export const removeFileRecipeStep = (state, index, step_id, urlFile) =>
+  getAllRecipes(state).updateIn([index], recipe => {
+    const step = find(recipe.steps, step => step._id === step_id)
+    const newfiles = remove(step.files, file => file !== urlFile)
+
+    step.files = newfiles
+
+    return {
+      ...recipe,
+      steps: [...recipe.steps],
     }
   })

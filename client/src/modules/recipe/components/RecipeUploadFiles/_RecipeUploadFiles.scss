@@ -10,4 +10,8 @@
   .anticon.anticon-delete {
     color: var(--color-text);
   }
+
+  &.RecipeDetails_uploadStepImages {
+    height: 180px;
+  }
 }
