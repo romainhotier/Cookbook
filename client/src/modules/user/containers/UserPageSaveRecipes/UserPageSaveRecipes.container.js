@@ -7,6 +7,7 @@ import { DRAFT_STATUS } from 'constants/data.constants'
 import { fetchAllRecipe } from 'modules/recipe/thunks'
 import UserContent from '../../components/UserContent'
 import { columns } from './UserPageSaveRecipes.columns'
+import { getAllRecipes, getloadingFetchRecipe } from 'modules/recipe/reducers'
 import Loader from 'components/Loader'
 
 import './_UserPageSaveRecipes.scss'
@@ -17,12 +18,12 @@ class UserPageSaveRecipes extends Component {
   }
 
   render() {
-    const { loadingFetchRecipes, recipes } = this.props
-    if (loadingFetchRecipes || Object.entries(recipes).length === 0) {
+    const { loadingFetchRecipe, recipesList } = this.props
+    if (loadingFetchRecipe || recipesList.size === 0) {
       return <Loader />
     }
 
-    const data = Object.values(recipes).filter(recipe => recipe.status === DRAFT_STATUS)
+    const data = recipesList.toJS().filter(recipe => recipe.status === DRAFT_STATUS)
 
     return (
       <UserContent title="Recettes non terminées">
@@ -36,7 +37,10 @@ const mapDispatchToProps = {
   fetchAllRecipe,
 }
 
-const mapStateToProps = ({ recipes: { content, loadingFetchRecipes } }) => ({ recipes: content, loadingFetchRecipes })
+const mapStateToProps = ({ recipes }) => ({
+  recipesList: getAllRecipes(recipes),
+  loadingFetchRecipe: getloadingFetchRecipe(recipes),
+})
 
 UserPageSaveRecipes.propTypes = {
   fetchAllRecipe: PropTypes.func,
