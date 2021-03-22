@@ -43,13 +43,15 @@ def auth_handler_missing(err):
 
 
 @jwt.expired_token_loader
-def auth_handler_expired(err):
+def auth_handler_expired(err, data):
     """ Return a response if auth is expired.
 
     Parameters
     ----------
     err
         Error from jwt_verify.
+    data:
+        Other data.
 
     Returns
     -------

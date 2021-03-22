@@ -2,7 +2,7 @@ from pymongo import MongoClient
 from bson import ObjectId
 import re
 
-from app import utils#, backend
+from app import utils, backend
 from app.ingredient import Ingredient
 
 mongo = utils.Mongo()
@@ -117,31 +117,6 @@ class Recipe(object):
         client.close()
         self.result = mongo.convert_to_json([recipe for recipe in cursor])
         return self
-
-    @staticmethod
-    def check_recipe_is_unique(key, value):
-        """ Check if a Recipe already exist with a specific key.
-
-        Parameters
-        ----------
-        key : str
-            Key to be tested.
-        value : str
-            Value of the tested key.
-
-        Returns
-        -------
-        bool
-            True if key/value doesn't exist in mongo.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_recipe]
-        result = db.count_documents({key: value})
-        client.close()
-        if result == 0:
-            return True
-        else:
-            return False
 
     def insert(self, data):
         """ Insert an Recipe.
@@ -313,6 +288,35 @@ class Recipe(object):
         client.close()
         return result
 
+    @staticmethod
+    def get_steps_files(_id):
+        """ get Recipe's Steps files.
+
+        Parameters
+        ----------
+        _id : str
+            Recipe's ObjectId.
+
+        Returns
+        -------
+        list
+            Recipe's Files.
+        """
+        client = MongoClient(mongo.ip, mongo.port)
+        db = client[mongo.name][mongo.collection_recipe]
+        result = db.find_one({"_id": ObjectId(_id)})
+        client.close()
+        steps_files = {}
+        try:
+            for steps in result["steps"]:
+                try:
+                    steps_files[str(steps["_id"])] = steps["files"]
+                except TypeError:
+                    pass
+        except TypeError:
+            pass
+        return mongo.convert_to_json(steps_files)
+
     def delete_file(self, path):
         """ delete files.
 
@@ -348,10 +352,8 @@ class Recipe(object):
         """
         _id_recipe = path.split("/")[1]
         s_path = path
-        if converter.system == "Windows":
+        if backend.config["SYSTEM"] == "Windows":
             s_path = converter.convert_path(target="Windows", path=path)
-        #if backend.config["SYSTEM"] == "Windows":
-            #s_path = converter.convert_path(target="Windows", path=path)
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
         db.update_one({"_id": ObjectId(_id_recipe)}, {'$pull': {"files": s_path}})
@@ -377,10 +379,8 @@ class Recipe(object):
         _id_recipe = path.split("/")[1]
         _id_step = path.split("/")[3]
         s_path = path
-        if converter.system == "Windows":
+        if backend.config["SYSTEM"] == "Windows":
             s_path = converter.convert_path(target="Windows", path=path)
-        # if backend.config["SYSTEM"] == "Windows":
-        #     s_path = converter.convert_path(target="Windows", path=path)
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
         index = self.get_step_position(_id_recipe=_id_recipe, _id_step=_id_step)
@@ -420,6 +420,3 @@ class Recipe(object):
                 recipe_calories += ing_calories
         recipe["calories"] = recipe_calories
         return self
-
-
-# TODO : see backend import

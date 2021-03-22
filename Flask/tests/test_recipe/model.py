@@ -140,11 +140,18 @@ class RecipeTest(object):
                         pass
                     self.__setattr__(i, j)
                 elif i == "steps":
+                    """ custom steps """
+                    steps_files = Recipe().get_steps_files(_id=self.get_id())
                     try:
                         for step in data["steps"]:
                             for key in list(step):
                                 if key not in ["_id", "description"]:
                                     step.pop(key)
+                                """ reinject olf steps """
+                                try:
+                                    step["files"] = steps_files[step["_id"]]
+                                except KeyError:
+                                    step["files"] = []
                     except (TypeError, AttributeError):
                         pass
                     self.__setattr__(i, j)

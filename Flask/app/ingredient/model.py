@@ -158,31 +158,6 @@ class Ingredient(object):
         client.close()
         return
 
-    @staticmethod
-    def check_ingredient_is_unique(key, value):
-        """ Check if an Ingredient already exist with a specific key.
-
-        Parameters
-        ----------
-        key : str
-            Key to be tested.
-        value : str
-            Value of the tested key.
-
-        Returns
-        -------
-        bool
-            True if key/value doesn't exist in mongo.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_ingredient]
-        result = db.count_documents({key: value})
-        client.close()
-        if result == 0:
-            return True
-        else:
-            return False
-
     """ recipe calories """
     @staticmethod
     def get_nutriments(_id):

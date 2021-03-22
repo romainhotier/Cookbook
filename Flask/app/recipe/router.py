@@ -251,7 +251,7 @@ def put_recipe(_id):
     body = api.clean_body(_id=_id, data=request.json)
     validation.is_body_valid(data=body, _id=_id)
     steps_ids_tbc = api.get_diff_steps(_id=_id, body=body)
-    body_formated = api.reformat_body(data=body)
+    body_formated = api.reformat_body(_id=_id, data=body)
     """ update recipe """
     data = Recipe().update(_id=_id, data=body_formated)
     """ clean steps files"""

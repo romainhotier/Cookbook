@@ -109,7 +109,7 @@ class PathExplorer(object):
         storage = self.files_storage_path
         sp = ""
         split_key = ""
-        if self.system == "Unix":
+        if self.system in "Linux":
             split_key = "/"
             sp = self.convert_path(target="Unix", path=short_path)
         elif self.system == "Windows":

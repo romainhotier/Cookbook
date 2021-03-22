@@ -162,26 +162,3 @@ class User(object):
         result = db.find_one({"email": email}, {"_id": 1})
         client.close()
         return str(result["_id"])
-
-    @staticmethod
-    def check_user_is_unique(email):
-        """ Check if an email already exist.
-
-        Parameters
-        ----------
-        email : str
-            User's email.
-
-        Returns
-        -------
-        bool
-            True if email doesn't exist in mongo.
-        """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_user]
-        result = db.count_documents({"email": email})
-        client.close()
-        if result == 0:
-            return True
-        else:
-            return False
