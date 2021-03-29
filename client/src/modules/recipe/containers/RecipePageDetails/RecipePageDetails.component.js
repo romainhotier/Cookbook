@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Col, Row, Dropdown, Button } from 'antd'
+import { Col, Row, Dropdown } from 'antd'
 
 import { RecipeInformations } from 'modules/recipe/components/RecipeDetails/RecipeInformations.component'
 import { RecipeMenu } from 'modules/recipe/components/RecipeDetails/RecipeMenu.component'
@@ -45,12 +45,9 @@ export const RecipePageDetailsComponent = ({
   return (
     <section className="RecipeDetails">
       <div className="RecipeDetails_actions">
-        <Dropdown.Button overlay={RecipeMenu(slug, showModal)}>
+        <Dropdown.Button overlay={RecipeMenu(slug, showModal, handleUploadFiles)}>
           <i className="fas fa-play-circle icons"></i> Démarrer la recette
         </Dropdown.Button>
-        <Button type="default" onClick={handleUploadFiles}>
-          Ajouter/Supprimer des images
-        </Button>
       </div>
       <RecipeModalDelete
         deleteRecipe={deleteRecipe}

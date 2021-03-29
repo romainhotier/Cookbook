@@ -1,6 +1,7 @@
 import forEach from 'lodash/forEach'
 
 import * as listIconsIngredients from 'ressources/iconsIngredients/Icons'
+import { no_image } from 'ressources/iconsGlobals'
 
 export const slugify = (str, charUse = '-') => {
   str = str.replace(/^\s+|\s+$/g, '')
@@ -62,7 +63,7 @@ export const searchInListIcons = slug => {
     })
   })
 
-  return data.length > 0 ? data[0] : ''
+  return data.length > 0 ? data[0] : no_image
 }
 
 export const worldConnector = name => {
