@@ -4,6 +4,7 @@ import { NavLink } from 'react-router-dom'
 
 import Routes from '../../RecipeRoutes.js'
 import CategoryTag from 'components/CategoryTag'
+import { no_image } from 'ressources/iconsGlobals'
 
 import './_RecipeSingleElement.scss'
 
@@ -19,7 +20,7 @@ const convertMinutes = value => {
 
 const RecipeSingleElement = ({ recipe }) => {
   const { title, categories, preparation_time, cooking_time, nb_people, calories, slug, files = [] } = recipe
-  const imagePath = files[0] ? `${process.env.REACT_APP_IMAGES_SERVER}/${files[0]}` : '/default.jpg'
+  const imagePath = files[0] ? `${process.env.REACT_APP_IMAGES_SERVER}/${files[0]}` : no_image
 
   return (
     <article className="recipeSingleElement">
