@@ -1,3 +1,3 @@
 """ Ingredient model """
 
-from app.ingredient.model import Ingredient
+from app.ingredient.ingredient import Ingredient

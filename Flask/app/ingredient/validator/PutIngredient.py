@@ -28,71 +28,61 @@ class Validator(object):
         validator.is_object_id_in_collection(param=api.param_id, value=value, collection=mongo.collection_ingredient)
         return True
 
-    def is_body_valid(self, data, _id):
+    def is_ingredient_valid(self, ingredient):
         """ Check if body is correct.
 
         Parameters
         ----------
-        data : dict
-            PutIngredient's body.
-        _id : str
-            Ingredient's ObjectId.
+        ingredient : Ingredient
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.has_at_least_one_key(param="body", data=data)
-        self.is_categories_valid(data=data)
-        self.is_name_valid(data=data, _id=_id)
-        self.is_nutriments_valid(data=data)
-        self.is_slug_valid(data=data, _id=_id)
-        self.is_unit_valid(data=data)
+        self.is_categories_valid(value=ingredient.categories)
+        self.is_name_valid(value=ingredient.name)
+        self.is_nutriments_valid(nutriments=ingredient.nutriments)
+        self.is_slug_valid(value=ingredient.slug)
+        self.is_unit_valid(value=ingredient.unit)
         return True
 
-    # use in is_body_valid
+    # use in is_ingredient_valid
     @staticmethod
-    def is_categories_valid(data):
+    def is_categories_valid(value):
         """ Check if categories is correct if specified.
 
         Parameters
         ----------
-        data : dict
-            PutIngredient's body.
+        value : list
+            Ingredient's category.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        if api.param_categories in data:
-            validator.is_array(param=api.param_categories, value=data[api.param_categories])
-            return True
+        validator.is_array(param=api.param_categories, value=value)
         return True
 
-    # use in is_body_valid
+    # use in is_ingredient_valid
     @staticmethod
-    def is_name_valid(data, _id):
-        """ Check if name is correct if specified.
+    def is_name_valid(value):
+        """ Check if name is correct.
 
         Parameters
         ----------
-        data : dict
-            PutIngredient's body.
-        _id : str
-            Ingredient's ObjectId.
+        value : str
+            Ingredient's name.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        if api.param_name in data:
-            validator.is_string(param=api.param_name, value=data[api.param_name])
-            validator.is_string_non_empty(param=api.param_name, value=data[api.param_name])
-            validator.is_coherent_ingredient(param=api.param_name, value=data[api.param_name], _id=_id)
-            return True
+        validator.is_string(param=api.param_name, value=value)
+        validator.is_string_non_empty(param=api.param_name, value=value)
+        #validator.is_coherent_ingredient(param=api.param_name, value=data[api.param_name], _id=_id)
 
     # use in is_body_valid
     def is_nutriments_valid(self, data):

@@ -29,22 +29,6 @@ class Mongo(object):
         self.collection_ingredient = 'ingredient'
         self.collection_recipe = 'recipe'
 
-    @staticmethod
-    def convert_to_json(data):
-        """ Format data in a json without ObjectId.
-
-        Parameters
-        ----------
-        data : Any
-            MongoDB result.
-
-        Returns
-        -------
-        Any
-            Json.
-        """
-        return json.loads(JSONEncoder().encode(data))
-
     def check_mongodb_up(self):
         """ Check if MongoDB is UP.
 
@@ -54,9 +38,23 @@ class Mongo(object):
             Close app if there is no connection.
         """
         try:
-            client = MongoClient(self.ip, self.port, serverSelectionTimeoutMS=2000)
-            client.server_info()
-            client.close()
+            with MongoClient(self.ip, self.port, serverSelectionTimeoutMS=2000) as client:
+                client.server_info()
         except errors.ServerSelectionTimeoutError:
             logger.critical("Connexion to MongoDB Failed !!!")
             sys.exit()
+
+    @staticmethod
+    def convert_object_id_to_str(data):
+        """ Format data in a json without ObjectId.
+
+        Parameters
+        ----------
+        data : Any
+
+        Returns
+        -------
+        Dict
+            Json
+        """
+        return json.loads(JSONEncoder().encode(data))

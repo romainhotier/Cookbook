@@ -39,7 +39,7 @@ def auth_handler_missing(err):
     Any
         Server response.
     """
-    return utils.ResponseMaker().return_response(data=err, api="cookbook", http_code=401)
+    return utils.Response().sent(api="cookbook", http_code=401, detail=err)
 
 
 @jwt.expired_token_loader
@@ -58,7 +58,7 @@ def auth_handler_expired(err, data):
     Any
         Server response.
     """
-    return utils.ResponseMaker().return_response(data=err, api="cookbook", http_code=401)
+    return utils.Response().sent(api="cookbook", http_code=401, detail=err, other=data)
 
 
 @jwt.invalid_token_loader
@@ -75,7 +75,7 @@ def auth_handler_invalid(err):
     Any
         Server response.
     """
-    return utils.ResponseMaker().return_response(data=err, api="cookbook", http_code=401)
+    return utils.Response().sent(api="cookbook", http_code=401, detail=err)
 
 
 @backend.errorhandler(404)
@@ -92,7 +92,7 @@ def back_handler_url_not_found(err):
     Any
         Server response.
     """
-    return utils.ResponseMaker().return_response(data=err.description, api="cookbook", http_code=404)
+    return utils.Response().sent(api="cookbook", http_code=404, detail=err)
 
 
 @backend.errorhandler(405)
@@ -109,4 +109,4 @@ def back_handler_not_allowed(err):
     Any
         Server response.
     """
-    return utils.ResponseMaker().return_response(data=err, api="cookbook", http_code=405)
+    return utils.Response().sent(api="cookbook", http_code=405, detail=err)

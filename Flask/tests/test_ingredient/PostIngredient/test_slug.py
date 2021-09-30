@@ -32,7 +32,7 @@ class TestPostIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(rep.check_not_present(value="data", response=response_body))
-        detail = rep.format_detail(param=api.param_slug, msg=rep.detail_is_required)
+        detail = rep.format_detail(param=api.param_slug, msg=rep.detail_is_required, value=None)
         self.assertEqual(response_body["detail"], detail)
         """ check """
         tc_ingredient.check_doesnt_exist_by_name()
@@ -58,7 +58,7 @@ class TestPostIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(rep.check_not_present(value="data", response=response_body))
-        detail = rep.format_detail(param=api.param_slug, msg=rep.detail_must_be_a_string, value=body[api.param_slug])
+        detail = rep.format_detail(param=api.param_slug, msg=rep.detail_is_required, value=body[api.param_slug])
         self.assertEqual(response_body["detail"], detail)
         """ check """
         tc_ingredient.check_doesnt_exist_by_name()

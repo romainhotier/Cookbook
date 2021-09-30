@@ -9,102 +9,94 @@ class Validator(object):
     """ Class to validate PostIngredient.
     """
 
-    def is_body_valid(self, data):
+    def is_ingredient_valid(self, ingredient):
         """ Check if body is correct.
 
         Parameters
         ----------
-        data : dict
-            PostIngredient's body.
+        ingredient : Ingredient
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        self.is_categories_valid(data=data)
-        self.is_name_valid(data=data)
-        self.is_nutriments_valid(data=data)
-        self.is_slug_valid(data=data)
-        self.is_unit_valid(data=data)
+        self.is_categories_valid(value=ingredient.categories)
+        self.is_name_valid(value=ingredient.name)
+        self.is_nutriments_valid(nutriments=ingredient.nutriments)
+        self.is_slug_valid(value=ingredient.slug)
+        self.is_unit_valid(value=ingredient.unit)
         return True
 
-    # use in is_body_valid
+    # use in is_ingredient_valid
     @staticmethod
-    def is_categories_valid(data):
+    def is_categories_valid(value):
         """ Check if categories is correct if specified.
 
         Parameters
         ----------
-        data : dict
-            PostIngredient's body.
+        value : list
+            Ingredient's category.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        if api.param_categories in data:
-            validator.is_array(param=api.param_categories, value=data[api.param_categories])
-            return True
+        validator.is_array(param=api.param_categories, value=value)
         return True
 
-    # use in is_body_valid
+    # use in is_ingredient_valid
     @staticmethod
-    def is_name_valid(data):
+    def is_name_valid(value):
         """ Check if name is correct.
 
         Parameters
         ----------
-        data : dict
-            PostIngredient's body.
+        value : str
+            Ingredient's name.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_mandatory(name=api.param_name, param=api.param_name, data=data)
-        validator.is_string(param=api.param_name, value=data[api.param_name])
-        validator.is_string_non_empty(param=api.param_name, value=data[api.param_name])
-        validator.is_unique_ingredient(param=api.param_name, value=data[api.param_name])
+        validator.is_mandatory(param=api.param_name, value=value)
+        validator.is_string(param=api.param_name, value=value)
+        validator.is_string_non_empty(param=api.param_name, value=value)
+        validator.is_unique_ingredient(param=api.param_name, value=value)
         return True
 
-    # use in is_body_valid
-    def is_nutriments_valid(self, data):
+    # use in is_ingredient_valid
+    def is_nutriments_valid(self, nutriments):
         """ Check if nutriments is correct if specified.
 
         Parameters
         ----------
-        data : dict
-            PostIngredient's body.
+        nutriments : Nutriments
+            Ingredient's Nutriments.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        if api.param_nutriments in data:
-            validator.is_object(param=api.param_nutriments, value=data[api.param_nutriments])
-            nutriments = data[api.param_nutriments]
-            """ calories """
-            self.is_nutriments_calories_valid(data=nutriments)
-            self.is_nutriments_carbohydrates_valid(data=nutriments)
-            self.is_nutriments_fats_valid(data=nutriments)
-            self.is_nutriments_proteins_valid(data=nutriments)
-            self.is_nutriments_portion_valid(data=nutriments)
-            return True
+        self.is_nutriments_calories_valid(value=nutriments.calories)
+        self.is_nutriments_carbohydrates_valid(value=nutriments.carbohydrates)
+        self.is_nutriments_fats_valid(value=nutriments.fats)
+        self.is_nutriments_proteins_valid(value=nutriments.proteins)
+        self.is_nutriments_portion_valid(value=nutriments.portion)
         return True
 
     # use in is_nutriments_valid
     @staticmethod
-    def is_nutriments_calories_valid(data):
+    def is_nutriments_calories_valid(value):
         """ Check if nutriments.calories is correct.
 
         Parameters
         ----------
-        data : dict
-            PostIngredient's body.
+        value : float
+            Nutriments' calories.
 
         Returns
         -------
@@ -112,19 +104,19 @@ class Validator(object):
             Response server if validation failed, True otherwise.
         """
         param_name = api.param_nutriments+"."+api.param_nutriments_calories
-        validator.is_mandatory(name=param_name, param=api.param_nutriments_calories, data=data)
-        validator.is_float(param=param_name, value=data[api.param_nutriments_calories])
+        validator.is_mandatory(param=param_name, value=value)
+        validator.is_float(param=param_name, value=value)
         return True
 
     # use in is_nutriments_valid
     @staticmethod
-    def is_nutriments_carbohydrates_valid(data):
+    def is_nutriments_carbohydrates_valid(value):
         """ Check if nutriments.carbohydrates is correct.
 
         Parameters
         ----------
-        data : dict
-            PostIngredient's body.
+        value : float
+            Nutriments' carbohydrates.
 
         Returns
         -------
@@ -132,19 +124,19 @@ class Validator(object):
             Response server if validation failed, True otherwise.
         """
         param_name = api.param_nutriments + "." + api.param_nutriments_carbohydrates
-        validator.is_mandatory(name=param_name, param=api.param_nutriments_carbohydrates, data=data)
-        validator.is_float(param=param_name, value=data[api.param_nutriments_carbohydrates])
+        validator.is_mandatory(param=param_name, value=value)
+        validator.is_float(param=param_name, value=value)
         return True
 
     # use in is_nutriments_valid
     @staticmethod
-    def is_nutriments_fats_valid(data):
+    def is_nutriments_fats_valid(value):
         """ Check if nutriments.fats is correct.
 
         Parameters
         ----------
-        data : dict
-            PostIngredient's body.
+        value : float
+            Nutriments' fats.
 
         Returns
         -------
@@ -152,19 +144,19 @@ class Validator(object):
             Response server if validation failed, True otherwise.
         """
         param_name = api.param_nutriments + "." + api.param_nutriments_fats
-        validator.is_mandatory(name=param_name, param=api.param_nutriments_fats, data=data)
-        validator.is_float(param=param_name, value=data[api.param_nutriments_fats])
+        validator.is_mandatory(param=param_name, value=value)
+        validator.is_float(param=param_name, value=value)
         return True
 
     # use in is_nutriments_valid
     @staticmethod
-    def is_nutriments_portion_valid(data):
+    def is_nutriments_portion_valid(value):
         """ Check if nutriments.portion is correct.
 
         Parameters
         ----------
-        data : dict
-            PostIngredient's body.
+        value : float
+            Nutriments' portion.
 
         Returns
         -------
@@ -172,19 +164,19 @@ class Validator(object):
             Response server if validation failed, True otherwise.
         """
         param_name = api.param_nutriments + "." + api.param_nutriments_portion
-        validator.is_mandatory(name=param_name, param=api.param_nutriments_portion, data=data)
-        validator.is_float(param=param_name, value=data[api.param_nutriments_portion])
+        validator.is_mandatory(param=param_name, value=value)
+        validator.is_float(param=param_name, value=value)
         return True
 
     # use in is_nutriments_valid
     @staticmethod
-    def is_nutriments_proteins_valid(data):
+    def is_nutriments_proteins_valid(value):
         """ Check if nutriments.proteins is correct.
 
         Parameters
         ----------
-        data : dict
-            PostIngredient's body.
+        value : float
+            Nutriments' proteins.
 
         Returns
         -------
@@ -192,48 +184,46 @@ class Validator(object):
             Response server if validation failed, True otherwise.
         """
         param_name = api.param_nutriments + "." + api.param_nutriments_proteins
-        validator.is_mandatory(name=param_name, param=api.param_nutriments_proteins, data=data)
-        validator.is_float(param=param_name, value=data[api.param_nutriments_proteins])
+        validator.is_mandatory(param=param_name, value=value)
+        validator.is_float(param=param_name, value=value)
         return True
 
-    # use in is_body_valid
+    # use in is_ingredient_valid
     @staticmethod
-    def is_slug_valid(data):
+    def is_slug_valid(value):
         """ Check if slug is correct.
 
         Parameters
         ----------
-        data : dict
-            PostIngredient's body.
+        value : str
+            Ingredient's slug.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        validator.is_mandatory(name=api.param_slug, param=api.param_slug, data=data)
-        validator.is_string(param=api.param_slug, value=data[api.param_slug])
-        validator.is_string_non_empty(param=api.param_slug, value=data[api.param_slug])
-        validator.is_unique_ingredient(param=api.param_slug, value=data[api.param_slug])
+        validator.is_mandatory(param=api.param_slug, value=value)
+        validator.is_string(param=api.param_slug, value=value)
+        validator.is_string_non_empty(param=api.param_slug, value=value)
+        validator.is_unique_ingredient(param=api.param_slug, value=value)
         return True
 
     # use in is_body_valid
     @staticmethod
-    def is_unit_valid(data):
+    def is_unit_valid(value):
         """ Check if unit is correct.
 
         Parameters
         ----------
-        data : dict
-            PostIngredient's body.
+        value : str
+            Ingredient's unit.
 
         Returns
         -------
         Any
             Response server if validation failed, True otherwise.
         """
-        if api.param_unit in data:
-            validator.is_string(param=api.param_unit, value=data[api.param_unit])
-            validator.is_in(param=api.param_unit, value=data[api.param_unit], values=["g", "ml"])
-            return True
+        validator.is_string(param=api.param_unit, value=value)
+        validator.is_in(param=api.param_unit, value=value, values=["g", "ml"])
         return True

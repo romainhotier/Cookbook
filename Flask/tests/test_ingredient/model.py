@@ -78,7 +78,7 @@ class IngredientTest(object):
         dict
             Copy of IngredientTest with ObjectId stringify.
         """
-        return mongo.convert_to_json(self.get())
+        return mongo.convert_object_id_to_str(self.get())
 
     def insert(self):
         """ Insert IngredientTest.

@@ -138,18 +138,31 @@ class TestPostIngredient(unittest.TestCase):
         response = requests.post(url, json=body, verify=False)
         response_body = response.json()
         """ change """
+        #tc_ingredient = IngredientTest().custom_from_body(data=body)
+        #""" assert """
+        #self.assertEqual(response.status_code, 400)
+        #self.assertEqual(response.headers["Content-Type"], "application/json")
+        #self.assertEqual(response_body["codeStatus"], 400)
+        #self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
+        #self.assertTrue(rep.check_not_present(value="data", response=response_body))
+        #detail = rep.format_detail(param=api.param_nutriments, msg=rep.detail_must_be_an_object,
+        #                           value=body[api.param_nutriments])
+        #self.assertEqual(response_body["detail"], detail)
+        #""" check """
+        #tc_ingredient.check_doesnt_exist_by_name()
+        """ change """
         tc_ingredient = IngredientTest().custom_from_body(data=body)
         """ assert """
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.headers["Content-Type"], "application/json")
-        self.assertEqual(response_body["codeStatus"], 400)
-        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
-        self.assertTrue(rep.check_not_present(value="data", response=response_body))
-        detail = rep.format_detail(param=api.param_nutriments, msg=rep.detail_must_be_an_object,
-                                   value=body[api.param_nutriments])
-        self.assertEqual(response_body["detail"], detail)
+        self.assertEqual(response_body["codeStatus"], 201)
+        self.assertEqual(response_body["codeMsg"], api.rep_code_msg_created)
+        data_check = rep.json_schema_check(data=response_body["data"],
+                                           schema=api.create_schema(ingredient=tc_ingredient))
+        self.assertTrue(data_check["result"], data_check["error"])
+        self.assertTrue(rep.check_not_present(value="detail", response=response_body))
         """ check """
-        tc_ingredient.check_doesnt_exist_by_name()
+        tc_ingredient.custom_id_from_body(data=response_body).check_bdd_data()
 
     def test_nutriments_object(self):
         """ BodyParameter nutriments is an object.
@@ -237,7 +250,7 @@ class TestPostIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(rep.check_not_present(value="data", response=response_body))
         detail = rep.format_detail(param=api.param_nutriments+"."+api.param_nutriments_calories,
-                                   msg=rep.detail_must_be_a_float,
+                                   msg=rep.detail_is_required,
                                    value=body[api.param_nutriments][api.param_nutriments_calories])
         self.assertEqual(response_body["detail"], detail)
         """ check """
@@ -431,7 +444,7 @@ class TestPostIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(rep.check_not_present(value="data", response=response_body))
         detail = rep.format_detail(param=api.param_nutriments+"."+api.param_nutriments_carbohydrates,
-                                   msg=rep.detail_must_be_a_float,
+                                   msg=rep.detail_is_required,
                                    value=body[api.param_nutriments][api.param_nutriments_carbohydrates])
         self.assertEqual(response_body["detail"], detail)
         """ check """
@@ -625,7 +638,7 @@ class TestPostIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(rep.check_not_present(value="data", response=response_body))
         detail = rep.format_detail(param=api.param_nutriments+"."+api.param_nutriments_fats,
-                                   msg=rep.detail_must_be_a_float,
+                                   msg=rep.detail_is_required,
                                    value=body[api.param_nutriments][api.param_nutriments_fats])
         self.assertEqual(response_body["detail"], detail)
         """ check """
@@ -819,7 +832,7 @@ class TestPostIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(rep.check_not_present(value="data", response=response_body))
         detail = rep.format_detail(param=api.param_nutriments+"."+api.param_nutriments_proteins,
-                                   msg=rep.detail_must_be_a_float,
+                                   msg=rep.detail_is_required,
                                    value=body[api.param_nutriments][api.param_nutriments_proteins])
         self.assertEqual(response_body["detail"], detail)
         """ check """

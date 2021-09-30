@@ -1,3 +1,5 @@
+import json
+
 from flask import Blueprint, request
 
 from app import utils
@@ -45,7 +47,7 @@ def delete_ingredient(_id):
     """ delete ingredient """
     Ingredient().delete(_id=_id)
     """ return response """
-    return utils.ResponseMaker().return_response(data=_id, api=apis.name, http_code=200)
+    return utils.Response().sent(api=apis.name, http_code=200, data=_id)
 
 
 @apis.route('', methods=['GET'])
@@ -72,9 +74,9 @@ def get_all_ingredient():
     }
     """
     """ get all ingredient """
-    data = Ingredient().select_all()
+    ingredients = Ingredient().select_all()
     """ return response """
-    return utils.ResponseMaker().return_response(data=data.result, api=apis.name, http_code=200)
+    return utils.Response().sent(api=apis.name, http_code=200, data=ingredients)
 
 
 @apis.route('/<_id>', methods=['GET'])
@@ -111,9 +113,9 @@ def get_ingredient(_id):
     """ check param """
     validation.is_object_id_valid(value=_id)
     """ get ingredient """
-    data = Ingredient().select_one(_id=_id)
+    ingredient = Ingredient().select_one(_id=_id)
     """ return response """
-    return utils.ResponseMaker().return_response(data=data.result, api=apis.name, http_code=200)
+    return utils.Response().sent(api=apis.name, http_code=200, data=ingredient)
 
 
 @apis.route('', methods=['POST'])
@@ -161,16 +163,14 @@ def post_ingredient():
         'detail': {'msg': 'Is required', 'param': 'name'}}
     }
     """
-    api = factory.PostIngredient.Factory()
     validation = validator.PostIngredient.Validator()
     """ check body """
-    body = api.clean_body(data=request.json)
-    validation.is_body_valid(data=body)
-    body_filled = api.fill_body(data=body)
+    ingredient = Ingredient(serialize=request.json)
+    validation.is_ingredient_valid(ingredient=ingredient)
     """ add ingredient in bdd """
-    data = Ingredient().insert(data=body_filled)
+    ingredient_created = ingredient.insert()
     """ return response """
-    return utils.ResponseMaker().return_response(data=data.result, api=apis.name, http_code=201)
+    return utils.Response().sent(api=apis.name, http_code=201, data=ingredient_created)
 
 
 @apis.route('/<_id>', methods=['PUT'])
@@ -216,17 +216,31 @@ def put_ingredient(_id):
         'detail': {'msg': 'Is required', 'param': 'name'}}
     }
     """
-    api = factory.PutIngredient.Factory()
+    #api = factory.PutIngredientOld.Factory()
+    #validation = validator.PutIngredientOld.Validator()
     validation = validator.PutIngredient.Validator()
     """ check params """
     validation.is_object_id_valid(value=_id)
     """ check body """
-    body = api.clean_body(data=request.json)
-    validation.is_body_valid(data=body, _id=_id)
+    #body = api.clean_body(data=request.json)
+    #validation.is_body_valid(data=body, _id=_id)
+    ingredient = Ingredient(serialize=request.json)
+    print("###############")
+    print(ingredient.get_as_json())
+    print("###############")
     """ update ingredient """
-    data = Ingredient().update(_id=_id, data=body)
+    #data = Ingredient().update(_id=_id, data=body)
     """ return response """
-    return utils.ResponseMaker().return_response(data=data.result, api=apis.name, http_code=200)
+    return utils.ResponseMaker().return_response(data="a", api=apis.name, http_code=200)
+
+    validation = validator.PostIngredient.Validator()
+    """ check body """
+    ingredient = Ingredient(serialize=request.json)
+    validation.is_ingredient_valid(ingredient=ingredient)
+    """ add ingredient in bdd """
+    ingredient_created = ingredient.insert()
+    """ return response """
+    return utils.Response().sent(api=apis.name, http_code=201, data=ingredient_created)
 
 
 @apis.route('/search', methods=['GET'])

@@ -3,6 +3,7 @@ pymongo==3.10.1
 requests==2.23.0
 pytest==5.3.5
 jsonschema==3.2.0
+jsonpickle==2.0.0
 flask-bcrypt==0.7.1
 flask-jwt-extended==4.1.0
 pyopenssl==19.1.0

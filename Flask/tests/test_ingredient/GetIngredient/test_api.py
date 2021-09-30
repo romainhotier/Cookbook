@@ -27,6 +27,7 @@ class TestGetIngredient(unittest.TestCase):
         url = server.main_url + "/" + api.url + "/" + tc_id
         response = requests.get(url, verify=False)
         response_body = response.json()
+        print(response_body)
         """ assert """
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"],  "application/json")

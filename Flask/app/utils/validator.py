@@ -3,20 +3,72 @@ from pymongo import MongoClient
 from bson import ObjectId
 
 from app import utils
-#from app.ingredient.model import Ingredient
-#from app.recipe.model import Recipe
-#from app.user.model import User
 
 mongo = utils.Mongo()
-response = utils.ResponseMaker()
 
 
 class Validator(object):
     """ All generic validator for the project.
     """
 
-    @staticmethod
-    def is_object_id(param, value):
+    validation_must_be_an_object_id = "Must be an ObjectId"
+    validation_must_be_a_string = "Must be a string"
+    validation_must_be_a_path = "Must be a path with '/'"
+    validation_must_be_an_integer = "Must be an integer"
+    validation_must_be_a_float = "Must be a float"
+    validation_must_be_an_array = "Must be an array"
+    validation_must_be_an_array_of_string = "Must be an array of string"
+    validation_must_be_an_array_of_object = "Must be an array of object"
+    validation_must_be_an_object = "Must be an object"
+    validation_must_be_a_boolean = "Must be a boolean"
+    validation_must_be_not_empty = "Must be not empty"
+    validation_must_be_between = "Must be between"
+    validation_must_be_in = "Must be in"
+    validation_must_contain_at_least_one_key = "Must contain at least one key"
+    validation_already_exist = "Already exist"
+    validation_doesnot_exist = "Doesn't exist"
+    validation_must_be_unique = "Must be unique"
+
+    def __init__(self, **kwargs):
+        """ Validator model.
+
+        - param = Api's param not valid (optional)
+        - msg = Failure's explication
+        - value = Param's value (optional)
+
+        Returns
+        -------
+        Validator
+        """
+        self.param = None
+        self.msg = None
+        self.value = None
+        self.set_attributes(kwargs)
+
+    def get_attributes(self):
+        """ Get Validator attributes.
+
+        Returns
+        -------
+        list
+            Validator attributes.
+        """
+        return [attr for attr in dir(self) if not callable(getattr(self, attr)) and not attr.startswith("__")]
+
+    def set_attributes(self, data):
+        """ Set Validator attributes.
+
+        Parameters
+        ----------
+        data : dict
+            Json.
+
+        """
+        for key, value in data.items():
+            if key in self.get_attributes():
+                self.__setattr__(key, value)
+
+    def is_object_id(self, param, value):
         """ Check if the value is a correct ObjectId.
 
         Parameters
@@ -32,13 +84,12 @@ class Validator(object):
             Raise an "abort 400" if validation failed..
         """
         if value is None or len(value) != 24:
-            detail = response.format_detail(param=param, msg=response.detail_must_be_an_object_id, value=value)
-            return abort(status=400, description=detail)
+            validation = Validator(param=param, msg=self.validation_must_be_an_object_id, value=value)
+            return abort(status=400, description=validation.__dict__)
         else:
             return True
 
-    @staticmethod
-    def is_object_id_in_collection(param, value, collection):
+    def is_object_id_in_collection(self, param, value, collection):
         """ Check if the ObjectId is present in a collection.
 
         Parameters
@@ -55,18 +106,16 @@ class Validator(object):
         Any
             Raise an "abort 400" if validation failed..
         """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][collection]
-        result = db.count_documents({"_id": ObjectId(value)})
-        client.close()
+        with MongoClient(mongo.ip, mongo.port) as client:
+            db = client[mongo.name][collection]
+            result = db.count_documents({"_id": ObjectId(value)})
         if result == 0:
-            detail = response.format_detail(param=param, msg=response.detail_doesnot_exist, value=value)
-            return abort(status=400, description=detail)
+            validation = Validator(param=param, msg=self.validation_doesnot_exist, value=value)
+            return abort(status=400, description=validation.__dict__)
         else:
             return True
 
-    @staticmethod
-    def is_slug_in_collection(param, value, collection):
+    def is_slug_in_collection(self, param, value, collection):
         """ Check if the slug is present in a collection.
 
         Parameters
@@ -83,18 +132,16 @@ class Validator(object):
         Any
             Raise an "abort 400" if validation failed..
         """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][collection]
-        result = db.count_documents({"slug": value})
-        client.close()
+        with MongoClient(mongo.ip, mongo.port) as client:
+            db = client[mongo.name][collection]
+            result = db.count_documents({"slug": value})
         if result == 0:
-            detail = response.format_detail(param=param, msg=response.detail_doesnot_exist, value=value)
-            return abort(status=400, description=detail)
+            validation = Validator(param=param, msg=self.validation_doesnot_exist, value=value)
+            return abort(status=400, description=validation.__dict__)
         else:
             return True
 
-    @staticmethod
-    def is_object_id_in_recipe_steps(param, _id_recipe, _id_step):
+    def is_object_id_in_recipe_steps(self, param, _id_recipe, _id_step):
         """ Check if the ObjectId is present in a recipe steps.
 
         Parameters
@@ -111,14 +158,13 @@ class Validator(object):
         Any
             Raise an "abort 400" if validation failed..
         """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_recipe]
-        result = db.count_documents({"$and": [{"_id": ObjectId(_id_recipe)},
-                                              {"steps": {"$elemMatch": {"_id": ObjectId(_id_step)}}}]})
-        client.close()
+        with MongoClient(mongo.ip, mongo.port) as client:
+            db = client[mongo.name][mongo.collection_recipe]
+            result = db.count_documents({"$and": [{"_id": ObjectId(_id_recipe)},
+                                                  {"steps": {"$elemMatch": {"_id": ObjectId(_id_step)}}}]})
         if result == 0:
-            detail = response.format_detail(param=param, msg=response.detail_doesnot_exist, value=_id_step)
-            return abort(status=400, description=detail)
+            validation = Validator(param=param, msg=self.validation_doesnot_exist, value=_id_step)
+            return abort(status=400, description=validation.__dict__)
         else:
             return True
 
@@ -138,8 +184,8 @@ class Validator(object):
             Raise an "abort 400" if validation failed.
         """
         if not self.check_user_is_unique(email=value):
-            detail = response.format_detail(param=param, msg=response.detail_already_exist, value=value)
-            return abort(status=400, description=detail)
+            validation = Validator(param=param, msg=self.validation_already_exist, value=value)
+            return abort(status=400, description=validation.__dict__)
         return True
 
     # use in is_user_unique
@@ -157,10 +203,9 @@ class Validator(object):
         bool
             True if email doesn't exist in mongo.
         """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_user]
-        result = db.count_documents({"email": email})
-        client.close()
+        with MongoClient(mongo.ip, mongo.port) as client:
+            db = client[mongo.name][mongo.collection_user]
+            result = db.count_documents({"email": email})
         if result == 0:
             return True
         else:
@@ -182,8 +227,8 @@ class Validator(object):
             Raise an "abort 400" if validation failed.
         """
         if not self.check_ingredient_is_unique(key=param, value=value):
-            detail = response.format_detail(param=param, msg=response.detail_already_exist, value=value)
-            return abort(status=400, description=detail)
+            validation = Validator(param=param, msg=self.validation_already_exist, value=value)
+            return abort(status=400, description=validation.__dict__)
         return True
 
     def is_coherent_ingredient(self, param, value, _id):
@@ -204,15 +249,14 @@ class Validator(object):
             Raise an "abort 400" if validation failed.
         """
         if not self.check_ingredient_is_unique(key=param, value=value):
-            client = MongoClient(mongo.ip, mongo.port)
-            db = client[mongo.name][mongo.collection_ingredient]
-            result = mongo.convert_to_json(db.find_one({"_id": ObjectId(_id)}))
-            client.close()
+            with MongoClient(mongo.ip, mongo.port) as client:
+                db = client[mongo.name][mongo.collection_ingredient]
+                result = mongo.convert_object_id_to_str(db.find_one({"_id": ObjectId(_id)}))
             if result[param] == value:
                 return True
             else:
-                detail = response.format_detail(param=param, msg=response.detail_already_exist, value=value)
-                return abort(status=400, description=detail)
+                validation = Validator(param=param, msg=self.validation_already_exist, value=value)
+                return abort(status=400, description=validation.__dict__)
         else:
             return True
 
@@ -233,10 +277,9 @@ class Validator(object):
         bool
         True if key/value doesn't exist in mongo.
         """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_ingredient]
-        result = db.count_documents({key: value})
-        client.close()
+        with MongoClient(mongo.ip, mongo.port) as client:
+            db = client[mongo.name][mongo.collection_ingredient]
+            result = db.count_documents({key: value})
         if result == 0:
             return True
         else:
@@ -258,8 +301,8 @@ class Validator(object):
             Raise an "abort 400" if validation failed.
         """
         if not self.check_recipe_is_unique(key=param, value=value):
-            detail = response.format_detail(param=param, msg=response.detail_already_exist, value=value)
-            return abort(status=400, description=detail)
+            validation = Validator(param=param, msg=self.validation_already_exist, value=value)
+            return abort(status=400, description=validation.__dict__)
         return True
 
     def is_coherent_recipe(self,  param, value, _id):
@@ -280,15 +323,14 @@ class Validator(object):
             Raise an "abort 400" if validation failed.
         """
         if not self.check_recipe_is_unique(key=param, value=value):
-            client = MongoClient(mongo.ip, mongo.port)
-            db = client[mongo.name][mongo.collection_recipe]
-            result = mongo.convert_to_json(db.find_one({"_id": ObjectId(_id)}))
-            client.close()
+            with MongoClient(mongo.ip, mongo.port) as client:
+                db = client[mongo.name][mongo.collection_recipe]
+                result = mongo.convert_object_id_to_str(db.find_one({"_id": ObjectId(_id)}))
             if result[param] == value:
                 return True
             else:
-                detail = response.format_detail(param=param, msg=response.detail_already_exist, value=value)
-                return abort(status=400, description=detail)
+                validation = Validator(param=param, msg=self.validation_already_exist, value=value)
+                return abort(status=400, description=validation.__dict__)
         else:
             return True
 
@@ -310,10 +352,9 @@ class Validator(object):
         bool
             True if key/value doesn't exist in mongo.
         """
-        client = MongoClient(mongo.ip, mongo.port)
-        db = client[mongo.name][mongo.collection_recipe]
-        result = db.count_documents({key: value})
-        client.close()
+        with MongoClient(mongo.ip, mongo.port) as client:
+            db = client[mongo.name][mongo.collection_recipe]
+            result = db.count_documents({key: value})
         if result == 0:
             return True
         else:
@@ -335,17 +376,20 @@ class Validator(object):
         Any
             Raise an "abort 400" if validation failed.
         """
+        """
         len_default = len(data["ingredients"])
         len_unique = len(set([ingr["_id"] for ingr in data["ingredients"]]))
         if len_default != len_unique:
-            detail = response.format_detail(param=param, msg=response.detail_must_be_unique,
+            detail = response.format_detail(param=param, msg=response.validation_must_be_unique,
                                             value=[ingr["_id"] for ingr in data["ingredients"]])
             return abort(status=400, description=detail)
         else:
             return True
+        """
+        assert True == False
+        pass
 
-    @staticmethod
-    def is_string(param, value):
+    def is_string(self, param, value):
         """ Check if the value is a string.
 
         Parameters
@@ -363,11 +407,10 @@ class Validator(object):
         if isinstance(value, str):
             return True
         else:
-            detail = response.format_detail(param=param, msg=response.detail_must_be_a_string, value=value)
-            return abort(status=400, description=detail)
+            validation = Validator(param=param, msg=self.validation_must_be_a_string, value=value)
+            return abort(status=400, description=validation.__dict__)
 
-    @staticmethod
-    def is_string_non_empty(param, value):
+    def is_string_non_empty(self, param, value):
         """ Check if the value is a non empty string.
 
         Parameters
@@ -383,8 +426,8 @@ class Validator(object):
             Raise an "abort 400" if validation failed.
         """
         if value.strip() == "":
-            detail = response.format_detail(param=param, msg=response.detail_must_be_not_empty, value=value)
-            return abort(status=400, description=detail)
+            validation = Validator(param=param, msg=self.validation_must_be_not_empty, value=value)
+            return abort(status=400, description=validation.__dict__)
         else:
             return True
 
@@ -410,8 +453,7 @@ class Validator(object):
             self.is_in(param=param, value=value, values=["true", "false"])
             return True
 
-    @staticmethod
-    def is_string_path(param, value):
+    def is_string_path(self, param, value):
         """ Check if the value is a path string.
 
         Parameters
@@ -427,13 +469,12 @@ class Validator(object):
             Raise an "abort 400" if validation failed.
         """
         if len(value.split("/")) < 2:
-            detail = response.format_detail(param=param, msg=response.detail_must_be_a_path, value=value)
-            return abort(status=400, description=detail)
+            validation = Validator(param=param, msg=self.validation_must_be_a_path, value=value)
+            return abort(status=400, description=validation.__dict__)
         else:
             return True
 
-    @staticmethod
-    def is_int(param, value):
+    def is_int(self, param, value):
         """ Check if the value is an integer.
 
         Parameters
@@ -455,11 +496,10 @@ class Validator(object):
                 int(value)
                 return True
             except (ValueError, TypeError):
-                detail = response.format_detail(param=param, msg=response.detail_must_be_an_integer, value=value)
-                return abort(status=400, description=detail)
+                validation = Validator(param=param, msg=self.validation_must_be_an_integer, value=value)
+                return abort(status=400, description=validation.__dict__)
 
-    @staticmethod
-    def is_float(param, value):
+    def is_float(self, param, value):
         """ Check if the value is an float.
 
         Parameters
@@ -481,11 +521,10 @@ class Validator(object):
                 float(value)
                 return True
             except (ValueError, TypeError):
-                detail = response.format_detail(param=param, msg=response.detail_must_be_a_float, value=value)
-                return abort(status=400, description=detail)
+                validation = Validator(param=param, msg=self.validation_must_be_a_float, value=value)
+                return abort(status=400, description=validation.__dict__)
 
-    @staticmethod
-    def is_array(param, value):
+    def is_array(self, param, value):
         """ Check if the value is an array.
 
         Parameters
@@ -503,11 +542,10 @@ class Validator(object):
         if isinstance(value, list):
             return True
         else:
-            detail = response.format_detail(param=param, msg=response.detail_must_be_an_array, value=value)
-            return abort(status=400, description=detail)
+            validation = Validator(param=param, msg=self.validation_must_be_an_array, value=value)
+            return abort(status=400, description=validation.__dict__)
 
-    @staticmethod
-    def is_array_non_empty(param, value):
+    def is_array_non_empty(self, param, value):
         """ Check if the value is an array non empty.
 
         Parameters
@@ -523,13 +561,12 @@ class Validator(object):
             Raise an "abort 400" if validation failed.
         """
         if len(value) == 0:
-            detail = response.format_detail(param=param, msg=response.detail_must_be_not_empty, value=value)
-            return abort(status=400, description=detail)
+            validation = Validator(param=param, msg=self.validation_must_be_not_empty, value=value)
+            return abort(status=400, description=validation.__dict__)
         else:
             return True
 
-    @staticmethod
-    def is_array_of_object(param, value):
+    def is_array_of_object(self, param, value):
         """ Check if the value is an array of object.
 
         Parameters
@@ -546,13 +583,11 @@ class Validator(object):
         """
         for element in value:
             if not isinstance(element, dict):
-                detail = response.format_detail(param=param, msg=response.detail_must_be_an_array_of_object,
-                                                value=value)
-                return abort(status=400, description=detail)
+                validation = Validator(param=param, msg=self.validation_must_be_an_array_of_object, value=value)
+                return abort(status=400, description=validation.__dict__)
         return True
 
-    @staticmethod
-    def is_object(param, value):
+    def is_object(self, param, value):
         """ Check if the value is an object.
 
         Parameters
@@ -570,11 +605,10 @@ class Validator(object):
         if isinstance(value, dict):
             return True
         else:
-            detail = response.format_detail(param=param, msg=response.detail_must_be_an_object, value=value)
-            return abort(status=400, description=detail)
+            validation = Validator(param=param, msg=self.validation_must_be_an_object, value=value)
+            return abort(status=400, description=validation.__dict__)
 
-    @staticmethod
-    def is_between_x_y(param, value, x, y):
+    def is_between_x_y(self, param, value, x, y):
         """ Check if the param is between two values.
 
         Parameters
@@ -596,13 +630,11 @@ class Validator(object):
         if x <= value <= y:
             return True
         else:
-            detail = response.format_detail(param=param,
-                                            msg=response.detail_must_be_between + " {0} and {1}".format(x, y),
-                                            value=value)
-            return abort(status=400, description=detail)
+            validation = Validator(param=param, msg=self.validation_must_be_between + " {0} and {1}".format(x, y),
+                                   value=value)
+            return abort(status=400, description=validation.__dict__)
 
-    @staticmethod
-    def is_in(param, value, values):
+    def is_in(self, param, value, values):
         """ Check if the param is in defined values.
 
         Parameters
@@ -622,13 +654,11 @@ class Validator(object):
         if value in values:
             return True
         else:
-            detail = response.format_detail(param=param,
-                                            msg=response.detail_must_be_in + " ['" + "', '".join(values) + "']",
-                                            value=value)
-            return abort(status=400, description=detail)
+            validation = Validator(param=param, msg=self.validation_must_be_in + " ['" + "', '".join(values) + "']",
+                                   value=value)
+            return abort(status=400, description=validation.__dict__)
 
-    @staticmethod
-    def has_at_least_one_key(param, data):
+    def has_at_least_one_key(self, param, data):
         """ Check if the body have at least one key.
 
         Parameters
@@ -646,11 +676,10 @@ class Validator(object):
         if len(data) != 0:
             return True
         else:
-            detail = response.format_detail(param=param, msg=response.detail_must_contain_at_least_one_key, value=data)
-            return abort(status=400, description=detail)
+            validation = Validator(param=param, msg=self.validation_must_contain_at_least_one_key, value=data)
+            return abort(status=400, description=validation.__dict__)
 
-    @staticmethod
-    def is_mandatory(name, param, data):
+    def is_mandatory(self, name, param, data):
         """ Check if the param is present in body.
 
         Parameters
@@ -670,5 +699,26 @@ class Validator(object):
         if param in data:
             return True
         else:
-            detail = response.format_detail(param=name, msg=response.detail_is_required)
-            return abort(status=400, description=detail)
+            validation = Validator(param=name, msg=self.validation_is_required)
+            return abort(status=400, description=validation.__dict__)
+
+    def is_mandatoryNew(self, param, value):
+        """ Check if the param is present in body.
+
+        Parameters
+        ----------
+        param : str
+            Value of the tested parameter.
+        value : str
+            Value of the tested parameter.
+
+        Returns
+        -------
+        Any
+            Raise an "abort 400" if validation failed.
+        """
+        if value is None:
+            validation = Validator(param=param, msg=self.validation_is_required)
+            return abort(status=400, description=validation.__dict__)
+        else:
+            return True
