@@ -56,8 +56,8 @@ def get_all_ingredient():
     @apiDescription Get file ingredients
 
     @apiParam (Query param) {String} [categories] ingredient's categories
-    @apiParam (Query param) {String} [order] criteria for order
-    @apiParam (Query param) {String} [orderBy] order direction
+    @apiParam (Query param) {String} [order] criteria for order in ['asc', 'desc']
+    @apiParam (Query param) {String} [orderBy] order direction in ['name', 'slug']
     @apiParam (Query param) {String} [name] ingredient's name
     @apiParam (Query param) {String} [slug] ingredient's slug
 

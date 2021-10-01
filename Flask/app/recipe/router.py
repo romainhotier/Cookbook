@@ -55,6 +55,17 @@ def get_all_recipe():
     @apiGroup Recipe
     @apiDescription Get all recipes
 
+    @apiParam (Query param) {String} [categories] search by categories
+    @apiParam (Query param) {String} [cooking_time] search by cooking_time
+    @apiParam (Query param) {String} [level] search by level
+    @apiParam (Query param) {String} [nb_people] search by nb_people
+    @apiParam (Query param) {String} [order] criteria for order in ['asc', 'desc']
+    @apiParam (Query param) {String} [orderBy] order direction in ['title', 'slug', 'level', 'cooking_time',
+                                                                    'preparation_time', 'nb_people']
+    @apiParam (Query param) {String} [preparation_time] search by preparation_time
+    @apiParam (Query param) {String} [slug] search by slug
+    @apiParam (Query param) {String} [status] search by status
+    @apiParam (Query param) {String} [title] search by title
     @apiParam (Query param) {String} [with_calories] if "true", add Recipe's calories from ingredients
 
     @apiExample {json} Example usage:
@@ -77,9 +88,11 @@ def get_all_recipe():
     validation = validator.GetAllRecipe.Validator()
     with_calories = request.args.get(api.param_with_calories)
     """ check param """
+    search = api.format_body(data=request.args)
+    validation.is_search_valid(data=search)
     validation.is_with_calories_valid(value=with_calories)
     """ get all recipe """
-    data = Recipe().select_all()
+    data = Recipe().search(data=search)
     """ add enrichment if needed """
     if with_calories == "true":
         data.add_enrichment_calories()
@@ -257,56 +270,6 @@ def put_recipe(_id):
     """ clean steps files"""
     for step_id in steps_ids_tbc:
         File().clean_delete_step(_id_recipe=_id, _id_step=step_id)
-    """ return response """
-    return utils.ResponseMaker().return_response(data=data.result, api=apis.name, http_code=200)
-
-
-@apis.route('/search', methods=['GET'])
-def search_recipe():
-    """
-    @api {get} /recipe/search  SearchRecipe
-    @apiGroup Recipe
-    @apiDescription Search an recipe by unique or multiple key/value ($and in query)
-    @apiParam (Query param) {String} [categories] search by categories
-    @apiParam (Query param) {String} [cooking_time] search by cooking_time
-    @apiParam (Query param) {String} [level] search by level
-    @apiParam (Query param) {String} [nb_people] search by nb_people
-    @apiParam (Query param) {String} [preparation_time] search by preparation_time
-    @apiParam (Query param) {String} [slug] search by slug
-    @apiParam (Query param) {String} [status] search by status
-    @apiParam (Query param) {String} [title] search by title
-
-    @apiExample {json} Example usage:
-    GET http://127.0.0.1:5000/recipe/search?title=<recipe_title>
-
-    @apiSuccessExample {json} Success response:
-    HTTPS 200
-    {
-        'codeMsg': 'cookbook.recipe.success.ok',
-        'codeStatus': 200,
-        'data': [{'_id': '5e71eb8f39358991f2ea19f6', 'categories': [], 'cooking_time': 0, 'ingredients': [], 'level': 0,
-                  'nb_people': 0, 'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'status': 'in_progress',
-                  'steps': [], 'title': 'qa_rhr_1', 'files' : []},
-                 {'_id': '5e71eb8f39358991f2ea19f7', 'categories': [], 'cooking_time': 0, 'ingredients': [], 'level': 0,
-                  'nb_people': 0, 'note': '', 'preparation_time': 0, 'resume': '', 'slug': '', 'status': 'in_progress',
-                  'steps': [], 'title': 'qa_rhr_2', 'files' : []}]
-    }
-
-    @apiErrorExample {json} Error response:
-    HTTPS 400
-    {
-        'codeMsg': 'cookbook.recipe.error.bad_request',
-        'codeStatus': 400,
-        'detail': {'msg': 'Must be not empty', 'param': 'title', 'value': ''}
-    }
-    """
-    api = factory.SearchRecipe.Factory()
-    validation = validator.SearchRecipe.Validator()
-    """ check search """
-    search = api.format_body(data=request.args)
-    validation.is_search_valid(data=search)
-    """ get all recipe """
-    data = Recipe().search(data=search)
     """ return response """
     return utils.ResponseMaker().return_response(data=data.result, api=apis.name, http_code=200)
 

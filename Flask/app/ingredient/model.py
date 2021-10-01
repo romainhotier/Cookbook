@@ -81,11 +81,11 @@ class Ingredient(object):
         for i, j in data.items():
             if i == "categories":
                 search[i] = {"$in": [re.compile('.*{0}.*'.format(j), re.IGNORECASE)]}
-            if i in ["name", "slug"]:
+            elif i in ["name", "slug"]:
                 search[i] = {"$regex": re.compile('.*{0}.*'.format(j), re.IGNORECASE)}
-            if i == "order":
+            elif i == "order":
                 direction = j
-            if i == "orderBy":
+            elif i == "orderBy":
                 order_by = j
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient]
@@ -97,7 +97,7 @@ class Ingredient(object):
             else:
                 if direction == "asc":
                     cursor.sort(order_by, ASCENDING)
-                else:
+                elif direction == "desc":
                     cursor.sort(order_by, DESCENDING)
         client.close()
         self.result = mongo.convert_to_json([ingredient for ingredient in cursor])

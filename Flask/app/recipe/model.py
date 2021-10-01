@@ -1,4 +1,4 @@
-from pymongo import MongoClient
+from pymongo import MongoClient, ASCENDING, DESCENDING
 from bson import ObjectId
 import re
 
@@ -104,16 +104,31 @@ class Recipe(object):
             List of matched Recipes.
         """
         search = {}
+        order_by = ""
+        direction = ""
         for i, j in data.items():
             if i == "categories":
                 search[i] = {"$in": [re.compile('.*{0}.*'.format(j), re.IGNORECASE)]}
             elif i in ["level", "cooking_time", "preparation_time", "nb_people"]:
                 search[i] = int(j)
-            else:
+            elif i in ["title", "slug", "status"]:
                 search[i] = {"$regex": re.compile('.*{0}.*'.format(j), re.IGNORECASE)}
+            elif i == "order":
+                direction = j
+            elif i == "orderBy":
+                order_by = j
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_recipe]
+        """ search ordered """
         cursor = db.find(search)
+        if order_by != "":
+            if direction == "":
+                cursor.sort(order_by)
+            else:
+                if direction == "asc":
+                    cursor.sort(order_by, ASCENDING)
+                elif direction == "desc":
+                    cursor.sort(order_by, DESCENDING)
         client.close()
         self.result = mongo.convert_to_json([recipe for recipe in cursor])
         return self
