@@ -3,10 +3,10 @@ import requests
 
 from tests import server, rep
 from tests.test_ingredient import IngredientTest
-from tests.test_ingredient.SearchIngredient import api
+from tests.test_ingredient.GetAllIngredient import api
 
 
-class TestSearchIngredient(unittest.TestCase):
+class TestGetAllIngredient(unittest.TestCase):
 
     def setUp(self):
         """ Clean IngredientTest."""
@@ -106,7 +106,7 @@ class TestSearchIngredient(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(TestSearchIngredient())
+        cls.setUp(TestGetAllIngredient())
 
 
 if __name__ == '__main__':

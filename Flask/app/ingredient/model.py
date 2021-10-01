@@ -1,4 +1,4 @@
-from pymongo import MongoClient, errors
+from pymongo import MongoClient, errors, ASCENDING, DESCENDING
 from bson import ObjectId
 import re
 
@@ -75,14 +75,30 @@ class Ingredient(object):
             List of matched Ingredients.
         """
         search = {}
+        order_by = ""
+        direction = ""
+        """ search regex """
         for i, j in data.items():
             if i == "categories":
                 search[i] = {"$in": [re.compile('.*{0}.*'.format(j), re.IGNORECASE)]}
-            else:
+            if i in ["name", "slug"]:
                 search[i] = {"$regex": re.compile('.*{0}.*'.format(j), re.IGNORECASE)}
+            if i == "order":
+                direction = j
+            if i == "orderBy":
+                order_by = j
         client = MongoClient(mongo.ip, mongo.port)
         db = client[mongo.name][mongo.collection_ingredient]
+        """ search ordered """
         cursor = db.find(search)
+        if order_by != "":
+            if direction == "":
+                cursor.sort(order_by)
+            else:
+                if direction == "asc":
+                    cursor.sort(order_by, ASCENDING)
+                else:
+                    cursor.sort(order_by, DESCENDING)
         client.close()
         self.result = mongo.convert_to_json([ingredient for ingredient in cursor])
         return self

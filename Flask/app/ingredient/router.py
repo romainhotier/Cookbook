@@ -55,6 +55,12 @@ def get_all_ingredient():
     @apiGroup Ingredient
     @apiDescription Get file ingredients
 
+    @apiParam (Query param) {String} [categories] ingredient's categories
+    @apiParam (Query param) {String} [order] criteria for order
+    @apiParam (Query param) {String} [orderBy] order direction
+    @apiParam (Query param) {String} [name] ingredient's name
+    @apiParam (Query param) {String} [slug] ingredient's slug
+
     @apiExample {json} Example usage:
     GET http://127.0.0.1:5000/ingredient
 
@@ -71,8 +77,13 @@ def get_all_ingredient():
                   'slug': 'slug_ex2'}]
     }
     """
+    api = factory.GetAllIngredient.Factory()
+    validation = validator.GetAllIngredient.Validator()
+    """ check search """
+    search = api.format_body(data=request.args)
+    validation.is_search_valid(data=search)
     """ get all ingredient """
-    data = Ingredient().select_all()
+    data = Ingredient().search(data=search)
     """ return response """
     return utils.ResponseMaker().return_response(data=data.result, api=apis.name, http_code=200)
 
@@ -225,50 +236,6 @@ def put_ingredient(_id):
     validation.is_body_valid(data=body, _id=_id)
     """ update ingredient """
     data = Ingredient().update(_id=_id, data=body)
-    """ return response """
-    return utils.ResponseMaker().return_response(data=data.result, api=apis.name, http_code=200)
-
-
-@apis.route('/search', methods=['GET'])
-def search_ingredient():
-    """
-    @api {get} /ingredient/search SearchIngredient
-    @apiGroup Ingredient
-    @apiDescription Search an ingredient by key/value
-
-    @apiParam (Query param) {String} [categories] ingredient's categories
-    @apiParam (Query param) {String} [name] ingredient's name
-    @apiParam (Query param) {String} [slug] ingredient's slug
-
-
-    @apiExample {json} Example usage:
-    GET http://127.0.0.1:5000/ingredient/search?name=<ingredient_name>
-
-    @apiSuccessExample {json} Success response:
-    HTTPS 200
-    {
-        'codeMsg': 'cookbook.ingredient.success.ok',
-        'codeStatus': 200,
-        'data': [{'_id': '5e583de9b0fcef0a922a7bc0', 'categories': [], 'name': 'aqa_rhr',
-                 'nutriments': {'calories': '0', 'carbohydrates': '0', 'fats': '0', 'portion': 1, 'proteins': '0'},
-                 'slug': 'slug_ex', 'unit': 'g'}]
-    }
-
-    @apiErrorExample {json} Error response:
-    HTTPS 400
-    {
-        'codeMsg': 'cookbook.ingredient.error.bad_request',
-        'codeStatus': 400,
-        'detail': {'msg': 'Must be a string', 'param': 'name', 'value': ''}
-    }
-    """
-    api = factory.SearchIngredient.Factory()
-    validation = validator.SearchIngredient.Validator()
-    """ check search """
-    search = api.format_body(data=request.args)
-    validation.is_search_valid(data=search)
-    """ get all recipe """
-    data = Ingredient().search(data=search)
     """ return response """
     return utils.ResponseMaker().return_response(data=data.result, api=apis.name, http_code=200)
 
