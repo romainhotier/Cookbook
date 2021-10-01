@@ -3,27 +3,27 @@ import requests
 
 from tests import server, rep
 from tests.test_ingredient import IngredientTest
-from tests.test_ingredient.SearchIngredient import api
+from tests.test_ingredient.GetAllIngredient import api
 
 
-class TestSearchIngredient(unittest.TestCase):
+class TestGetAllIngredient(unittest.TestCase):
 
     def setUp(self):
         """ Clean IngredientTest."""
         IngredientTest().clean()
-
-    def test_categories_empty(self):
-        """ QueryParameter categories is an empty string.
+        
+    def test_slug_empty(self):
+        """ QueryParameter slug is an empty string.
 
         Return
             400 - Bad request.
         """
         """ env """
-        IngredientTest().custom({"categories": ["qa_rhr_a"]}).insert()
+        IngredientTest().custom({"slug": "qa_rhr_a"}).insert()
         """ param """
-        tc_categories = ""
+        tc_slug = ""
         """ call api """
-        url = server.main_url + "/" + api.url + "?" + api.param_categories + "=" + tc_categories
+        url = server.main_url + "/" + api.url + "?" + api.param_slug + "=" + tc_slug
         response = requests.get(url, verify=False)
         response_body = response.json()
         """ assert """
@@ -32,21 +32,21 @@ class TestSearchIngredient(unittest.TestCase):
         self.assertEqual(response_body["codeStatus"], 400)
         self.assertEqual(response_body["codeMsg"], api.rep_code_msg_error_400)
         self.assertTrue(rep.check_not_present(value="data", response=response_body))
-        detail = rep.format_detail(param=api.param_categories, msg=rep.detail_must_be_not_empty, value=tc_categories)
+        detail = rep.format_detail(param=api.param_slug, msg=rep.detail_must_be_not_empty, value=tc_slug)
         self.assertEqual(response_body["detail"], detail)
 
-    def test_categories_invalid(self):
-        """ QueryParameter categories is a string.
+    def test_slug_invalid(self):
+        """ QueryParameter slug is a string.
 
         Return
             200 - Get Ingredient.
         """
         """ env """
-        IngredientTest().custom({"categories": ["qa_rhr_a"]}).insert()
+        IngredientTest().custom({"slug": "qa_rhr_a"}).insert()
         """ param """
-        tc_categories = "invalid"
+        tc_slug = "invalid"
         """ call api """
-        url = server.main_url + "/" + api.url + "?" + api.param_categories + "=" + tc_categories
+        url = server.main_url + "/" + api.url + "?" + api.param_slug + "=" + tc_slug
         response = requests.get(url, verify=False)
         response_body = response.json()
         """ assert """
@@ -57,19 +57,19 @@ class TestSearchIngredient(unittest.TestCase):
         self.assertCountEqual(response_body["data"], [])
         self.assertTrue(rep.check_not_present(value="detail", response=response_body))
 
-    def test_categories_exact(self):
-        """ QueryParameter categories is exact.
+    def test_slug_exact(self):
+        """ QueryParameter slug is exact.
 
         Return
             200 - Get Ingredient.
         """
         """ env """
-        tc_ingredient1 = IngredientTest().custom({"categories": ["qa_rhr_a"]}).insert()
-        IngredientTest().custom({"categories": ["qa_rhr_b"]}).insert()
+        tc_ingredient1 = IngredientTest().custom({"slug": "qa_rhr_a"}).insert()
+        IngredientTest().custom({"slug": "qa_rhr_b"}).insert()
         """ param """
-        tc_categories = tc_ingredient1.categories[0]
+        tc_slug = tc_ingredient1.slug
         """ call api """
-        url = server.main_url + "/" + api.url + "?" + api.param_categories + "=" + tc_categories
+        url = server.main_url + "/" + api.url + "?" + api.param_slug + "=" + tc_slug
         response = requests.get(url, verify=False)
         response_body = response.json()
         """ assert """
@@ -80,19 +80,19 @@ class TestSearchIngredient(unittest.TestCase):
         self.assertCountEqual(response_body["data"], [api.data_expected(ingredient=tc_ingredient1)])
         self.assertTrue(rep.check_not_present(value="detail", response=response_body))
 
-    def test_categories_partial(self):
-        """ QueryParameter categories is partial.
+    def test_slug_partial(self):
+        """ QueryParameter slug is partial.
 
         Return
             200 - Get Ingredient.
         """
         """ env """
-        tc_ingredient1 = IngredientTest().custom({"categories": ["qa_rhr_a"]}).insert()
-        tc_ingredient2 = IngredientTest().custom({"categories": ["qa_rhr_b"]}).insert()
+        tc_ingredient1 = IngredientTest().custom({"slug": "qa_rhr_a"}).insert()
+        tc_ingredient2 = IngredientTest().custom({"slug": "qa_rhr_b"}).insert()
         """ param """
-        tc_categories = "qa_rhr"
+        tc_slug = "qa_rhr"
         """ call api """
-        url = server.main_url + "/" + api.url + "?" + api.param_categories + "=" + tc_categories
+        url = server.main_url + "/" + api.url + "?" + api.param_slug + "=" + tc_slug
         response = requests.get(url, verify=False)
         response_body = response.json()
         """ assert """
@@ -106,7 +106,7 @@ class TestSearchIngredient(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.setUp(TestSearchIngredient())
+        cls.setUp(TestGetAllIngredient())
 
 
 if __name__ == '__main__':
